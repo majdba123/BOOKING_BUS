@@ -3,7 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use App\Models\Seat;
+use App\Models\Reservation;
 return new class extends Migration
 {
     /**
@@ -13,6 +14,10 @@ return new class extends Migration
     {
         Schema::create('seat__reservations', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(Seat::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(Reservation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('status')->default('padding');
+
             $table->timestamps();
         });
     }
