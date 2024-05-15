@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Charge_Balance extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'image',
+        'point',
+        'status',
+
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class , 'user_id');
+    }
 }
