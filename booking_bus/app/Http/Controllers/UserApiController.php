@@ -24,7 +24,8 @@ class UserApiController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 422);
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
         }
 
         $user = User::create([
@@ -52,7 +53,8 @@ class UserApiController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 422);
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
         }
 
         $user = User::where('email',$request->input('email'))->first();
