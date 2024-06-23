@@ -19,3 +19,56 @@ http://127.0.0.1:8000/api/logout
 token
 
 ____________________________________________________
+تسجيل الدخول بحساب الشركة
+post
+http://127.0.0.1:8000/api/register/company
+
+{
+    name : majd ,
+    email :company@gmail.com
+    password:123456789
+}
+____________________________________________________
+انشاء حساب سائق
+post
+http://127.0.0.1:8000/api/company/register/driver
+token as company
+{
+    name : ahmad ,
+    email :driver@gmail.com
+    password:123456789
+}
+____________________________________________________
+انشاء مساار شركة :
+
+post
+http://127.0.0.1:8000/api/company/path_store
+token as company
+{
+    from : barazeh
+    to :doma
+}
+___________________________________________
+update_path
+put
+
+http://127.0.0.1:8000/api/company/path_update/{id}
+token as company
+{
+    from : barazeh
+    to :doma
+}
+or only from or only to
+___________________________________________
+
+delete_path
+delete
+http://127.0.0.1:8000/api/company/path_delete/{id}
+token as company
+___________________________________________
+
+all_path_of_company
+get
+http://127.0.0.1:8000/api/company/all_path
+token as company
+___________________________________________
