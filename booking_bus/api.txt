@@ -136,4 +136,68 @@ token as company
 http://127.0.0.1:8000/api/company/delete_driver/{id}
 
 _______________________________________
+select_driver_to_bus
+post
+token as company
 
+http://127.0.0.1:8000/api/company/select_driver_to_bus/{bus_id}
+{
+    driver_id : 2
+}
+___________________________________________
+cancelled_driver
+post
+token as company
+
+http://127.0.0.1:8000/api/company/cancelled_driver/{driver_id}
+
+_______________________________________________
+all_driver_with_bus active
+get
+token as company
+
+http://127.0.0.1:8000/api/company/all_driver_with_bus
+_________________________________________
+store_seat:
+
+post
+token as company
+http://127.0.0.1:8000/api/company/store_seat/{bus_id}
+
+{
+    number_seat : 2
+    location_seat : L1
+}
+
+_______________________________________________
+update_seat :
+
+PUT
+token s company
+
+http://127.0.0.1:8000/api/company/update_seat/{seat_id}
+
+{
+    number_seat : 2                not required
+    location_seat : L1      not required
+    bus_id : 2              required
+}
+__________________________________________________
+delete set :
+
+delete
+token as company
+
+http://127.0.0.1:8000/api/company/delete_seat/{seat_id}
+{
+    bus_id : 2              required
+}
+
+________________________________________________________
+all_seat_by_bus_id
+
+post
+token as company
+
+http://127.0.0.1:8000/api/company/all_seat_of_bus/{bus_id}
+___________________________________________________________________

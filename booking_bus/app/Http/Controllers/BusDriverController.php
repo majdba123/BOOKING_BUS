@@ -4,7 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Bus_Driver;
 use Illuminate\Http\Request;
-
+use App\Models\Company;
+use App\Models\Bus;
+use App\Models\user;
+use App\Models\Driver;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class BusDriverController extends Controller
 {
     /**
@@ -12,9 +18,15 @@ class BusDriverController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $company = Auth::user()->Company;
 
+        $busDrivers = $company->bus->load(['bus_driver' => function ($query) {
+            $query->where('status', 'pending');
+            $query->with('driver');
+        }])->flatMap->bus_driver;
+
+        return response()->json($busDrivers);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -26,9 +38,45 @@ class BusDriverController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $bus_id)
     {
-        //
+        $driver_id = $request->input('driver_id');
+
+        $driver = Driver::find($driver_id);
+
+        if (!$driver) {
+            return response()->json(['error' => 'Driver not found'], 404);
+        }
+
+        if ($driver->status!== 'pending') {
+            return response()->json(['error' => 'Driver is not available'], 422);
+        }
+
+        $bus = Bus::find($bus_id);
+
+        if (!$bus) {
+            return response()->json(['error' => 'Bus not found'], 404);
+        }
+
+        if ($bus->status!== 'pending') {
+            return response()->json(['error' => 'bus is not available'], 422);
+        }
+        // Create a new record in the bus_driver table
+        $busDriver = new Bus_Driver();
+        $busDriver->bus_id = $bus_id;
+        $busDriver->driver_id = $driver_id;
+        $busDriver->save();
+
+        // Update the status of the bus and driver to available
+        $bus->status = 'available';
+        $bus->save();
+
+        $driver->status = 'available';
+        $driver->save();
+
+        return response()->json([
+            'message' => 'Bus and driver assigned successfully',
+        ]);
     }
 
     /**
@@ -58,8 +106,23 @@ class BusDriverController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Bus_Driver $bus_Driver)
+    public function cancelAssignment($driver_id)
     {
-        //
+        $busDriver = Bus_Driver::where('driver_id', $driver_id)->first();
+        if (!$busDriver) {
+            return response()->json(['error' => 'Assignment not found'], 404);
+        }
+        $busDriver->status = 'canceled';
+        $busDriver->save();
+        $bus = Bus::find($busDriver->bus_id);
+        $bus->status = 'pending';
+        $bus->save();
+
+        $driver = Driver::find($driver_id);
+        $driver->status = 'pending';
+        $driver->save();
+        return response()->json([
+            'message' => 'Assignment canceled successfully',
+        ]);
     }
 }

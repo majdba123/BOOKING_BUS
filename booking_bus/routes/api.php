@@ -8,6 +8,10 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\BusController;
 use App\Http\Controllers\PathController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\BusDriverController;
+use App\Http\Controllers\SeatController;
+
+
 
 
 
@@ -57,6 +61,16 @@ Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']
     Route::post('/store_bus', [BusController::class, 'store']);
     Route::put('/update_bus/{id}', [BusController::class, 'update']);
     Route::delete('/delete_bus/{id}', [BusController::class, 'destroy']);
+
+
+    Route::post('/select_driver_to_bus/{id}', [BusDriverController::class, 'store']);
+    Route::post('/cancelled_driver/{id}', [BusDriverController::class, 'cancelAssignment']);
+    Route::get('/all_driver_with_bus', [BusDriverController::class, 'index']);
+
+    Route::post('/all_seat_of_bus/{id}', [SeatController::class, 'index']);
+    Route::post('/store_seat/{id}', [SeatController::class, 'store']);
+    Route::put('/update_seat/{id}', [SeatController::class, 'update']);
+    Route::delete('/delete_seat/{id}', [SeatController::class, 'destroy']);
 
 
 });
