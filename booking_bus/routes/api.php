@@ -5,8 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserApiController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\PathController;
 use App\Http\Controllers\BusController;
+use App\Http\Controllers\PathController;
+use App\Http\Controllers\DriverController;
 
 
 
@@ -39,7 +40,11 @@ Route::post('register/company',[CompanyController::class,'register']);
 
 Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']], function () {
 
-    Route::post('register/driver',[CompanyController::class,'register_driver']);
+    Route::get('/get_driver_by_status', [DriverController::class, 'get_driver_by_status']);
+    Route::get('/all_driver', [DriverController::class, 'index']);
+    Route::post('register/driver',[DriverController::class,'register_driver']);
+    Route::delete('/delete_driver/{id}', [DriverController::class, 'destroy']);
+
 
     Route::get('/all_path', [PathController::class, 'index']);
     Route::post('/path_store', [PathController::class, 'store']);

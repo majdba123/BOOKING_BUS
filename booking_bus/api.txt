@@ -114,3 +114,26 @@ http://127.0.0.1:8000/api/company/get_bus_status
     status : [pending , avalibal , finished]
 }
 ___________________________________________________________
+get all driver
+get
+token as company
+http://127.0.0.1:8000/api/company/all_driver
+___________________________________________
+
+get all driver by status
+get
+token as company
+http://127.0.0.1:8000/api/company/get_driver_by_status
+{
+    status : [pending , avalibal , finished]
+}
+___________________________________________
+
+DELETE driver :
+delete
+token as company
+
+http://127.0.0.1:8000/api/company/delete_driver/{id}
+
+_______________________________________
+
