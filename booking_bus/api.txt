@@ -72,3 +72,45 @@ get
 http://127.0.0.1:8000/api/company/all_path
 token as company
 ___________________________________________
+
+store bus :
+post
+token as company
+http://127.0.0.1:8000/api/company/store_bus
+
+{
+    number_bus : 212
+    number_passenger : 3
+}
+
+_______________________________________________
+update bus :
+ put
+ token as company
+ http://127.0.0.1:8000/api/company/update_bus/{id}
+ {
+    number_bus : 212
+    number_passenger : 3
+ }
+_______________________________________________
+delete bus :
+delete
+token as company
+http://127.0.0.1:8000/api/company/delete_bus/{id}
+______________________________________________________
+
+
+get all bus :
+get
+token as company
+http://127.0.0.1:8000/api/company/all_bus
+
+______________________________________________________
+get all bus_by_status  :
+get
+token as company
+http://127.0.0.1:8000/api/company/get_bus_status
+{
+    status : [pending , avalibal , finished]
+}
+___________________________________________________________

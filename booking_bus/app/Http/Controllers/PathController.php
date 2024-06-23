@@ -44,7 +44,7 @@ class PathController extends Controller
         $path = new Path();
         $path->from = $request->input('from');
         $path->to = $request->input('to');
-        $path->company_id = Auth::user()->id;
+        $path->company_id = Auth::user()->Company->id;
         $path->save();
 
         return response()->json([

@@ -6,6 +6,8 @@ use App\Http\Controllers\UserApiController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PathController;
+use App\Http\Controllers\BusController;
+
 
 
 /*
@@ -43,4 +45,13 @@ Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']
     Route::post('/path_store', [PathController::class, 'store']);
     Route::put('/path_update/{id}', [PathController::class, 'update']);
     Route::delete('/path_delete/{id}', [PathController::class, 'destroy']);
+
+
+    Route::get('/all_bus', [BusController::class, 'index']);
+    Route::get('/get_bus_status', [BusController::class, 'get_bus_by_status']);
+    Route::post('/store_bus', [BusController::class, 'store']);
+    Route::put('/update_bus/{id}', [BusController::class, 'update']);
+    Route::delete('/delete_bus/{id}', [BusController::class, 'destroy']);
+
+
 });
