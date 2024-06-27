@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Screen/login/login_ui.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_app/screens/login/UserPage/Dashbord.dart';
+import 'package:mobile_app/screens/login/login_ui.dart';
+import 'package:mobile_app/constants.dart';
+
+import 'package:mobile_app/screens/welcome_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,11 +15,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Booking_Bus',
+      title: 'Flutter Sign In Sign Up Ui',
       theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        // scaffoldBackgroundColor: kBackgroundColor,
         primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const login_ui(),
+      home: Dashbord(),
     );
   }
 }

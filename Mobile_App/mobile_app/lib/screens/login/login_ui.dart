@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 
-import 'package:mobile_app/Screen/login/UserPage/Dashbord.dart';
+import 'package:mobile_app/screens/login/UserPage/Dashbord.dart';
 
 class login_ui extends StatefulWidget {
   const login_ui({Key? key}) : super(key: key);
