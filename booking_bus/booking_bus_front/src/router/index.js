@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import PathTrip from "../views/PathTrip.vue";
 
 const routes = [
     {
@@ -8,11 +7,7 @@ const routes = [
         name: "home",
         component: HomeView,
     },
-    {
-        path: "/PathTrip",
-        name: "PathTrip",
-        component: PathTrip,
-    },
+
     {
         path: "/about",
         name: "about",
