@@ -24,7 +24,8 @@ class UserApiController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 422);
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
         }
 
         $user = User::create([
@@ -52,7 +53,8 @@ class UserApiController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 422);
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
         }
 
         $user = User::where('email',$request->input('email'))->first();
@@ -62,11 +64,22 @@ class UserApiController extends Controller
                 'message' => 'Invalid Credentials'
             ],401);
         }
+        $type_user = '';
+        if ($user->type == 1) {
+            $type_user = 'admin';
+        } elseif ($user->Company) {
+            $type_user = 'company';
+        } elseif ($user->Driver) {
+            $type_user = 'driver';
+        } else {
+            $type_user = 'user';
+        }
 
         $token = $user->createToken($user->name.'-AuthToken')->plainTextToken;
 
         return response()->json([
             'access_token' => $token,
+            'type_user'  => $type_user
         ]);
     }
 

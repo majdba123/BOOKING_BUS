@@ -47,6 +47,10 @@
             Already have an account?
             <router-link to="abour">Sign in.</router-link>
         </p>
+        <div>
+            <h1>Home View</h1>
+            <!-- محتوى القالب هنا -->
+        </div>
     </div>
 </template>
 

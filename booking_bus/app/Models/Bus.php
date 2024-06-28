@@ -13,7 +13,6 @@ class Bus extends Model
         'number_bus',
         'number_passenger',
         'status',
-        'num_passenger',
     ];
     public function bus_trip()
     {
