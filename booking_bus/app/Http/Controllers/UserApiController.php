@@ -64,11 +64,22 @@ class UserApiController extends Controller
                 'message' => 'Invalid Credentials'
             ],401);
         }
+        $type_user = '';
+        if ($user->type == 1) {
+            $type_user = 'admin';
+        } elseif ($user->Company) {
+            $type_user = 'company';
+        } elseif ($user->Driver) {
+            $type_user = 'driver';
+        } else {
+            $type_user = 'user';
+        }
 
         $token = $user->createToken($user->name.'-AuthToken')->plainTextToken;
 
         return response()->json([
             'access_token' => $token,
+            'type_user'  => $type_user
         ]);
     }
 

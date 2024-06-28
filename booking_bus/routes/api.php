@@ -10,6 +10,12 @@ use App\Http\Controllers\PathController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\BusDriverController;
 use App\Http\Controllers\SeatController;
+use App\Http\Controllers\AreaController;
+use App\Http\Controllers\BreaksController;
+use App\Http\Controllers\TripController;
+
+
+
 
 
 
@@ -71,6 +77,38 @@ Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']
     Route::post('/store_seat/{id}', [SeatController::class, 'store']);
     Route::put('/update_seat/{id}', [SeatController::class, 'update']);
     Route::delete('/delete_seat/{id}', [SeatController::class, 'destroy']);
+
+
+    Route::get('/all_trips', [TripController::class, 'index']);
+    Route::get('/all_trips_by_status', [TripController::class, 'index_status']);
+    Route::post('/show_trip/{id}', [TripController::class, 'show']);
+    Route::post('/store_trip', [TripController::class, 'store']);
+    Route::put('/update_trip/{id}', [TripController::class, 'update']);
+    Route::delete('/delete_trip/{id}', [TripController::class, 'destroy']);
+
+
+
+
+
+});
+
+
+Route::group(['prefix' => 'admin' , 'middleware' => ['checkAdmi','auth:sanctum']], function () {
+
+    Route::get('/all_government', [AreaController::class, 'index']);
+    Route::post('/store_government', [AreaController::class, 'store']);
+    Route::put('/update_government/{id}', [AreaController::class, 'update']);
+    Route::delete('/delete_government/{id}', [AreaController::class, 'destroy']);
+    Route::post('/show_goverment/{id}', [AreaController::class, 'show']);
+
+
+    Route::get('/all_breaks/{id}', [BreaksController::class, 'index']);
+    Route::post('/store_breaks/{id}', [BreaksController::class, 'store']);
+    Route::put('/update_breaks/{id}', [BreaksController::class, 'update']);
+    Route::delete('/delete_breaks/{id}', [BreaksController::class, 'destroy']);
+
+
+
 
 
 });

@@ -201,3 +201,149 @@ token as company
 
 http://127.0.0.1:8000/api/company/all_seat_of_bus/{bus_id}
 ___________________________________________________________________
+store_government
+
+post
+admin
+http://127.0.0.1:8000/api/admin/store_government
+
+{
+    name => damascuse
+}
+_______________________________________
+update_government
+
+PUT
+admin
+127.0.0.1:8000/api/admin/update_government
+{
+    name => aleppo
+}
+_______________________________________
+delete_government
+
+
+delete
+admin
+127.0.0.1:8000/api/admin/delete_government/{government_id}
+
+_______________________________________________
+all_government
+get
+admin
+127.0.0.1:8000/api/admin/all_government
+_________________________________________
+show_government
+post
+admin
+127.0.0.1:8000/api/admin/show_goverment/{government_id}
+__________________________________________________
+store_breaks
+post
+admin
+127.0.0.1:8000/api/admin/store_breaks/{area_id}
+{
+    name => barzeh
+}
+________________________________________
+update_breaks
+put
+admin
+127.0.0.1:8000/api/admin/update_breaks/{break_id}
+{
+    name => barzeh
+}
+_______________________________________
+delete_breaks
+delete
+admin
+127.0.0.1:8000/api/admin/delete_breaks/{break_id}
+{
+    name => barzeh
+}
+______________________
+all_breaks_by_area
+get
+admin
+127.0.0.1:8000/api/admin/all_breaks/{area_id}
+_______________________________________
+
+store_trip
+post
+company
+http://127.0.0.1:8000/api/company/store_trip
+{
+    "path_id": 1,
+    "price": "10.00",
+    "breaks_ids": [1,2],
+    "bus_ids": [
+        {
+            "bus_id": 1,
+            "type": "all",
+            "start_time": "08:00",
+            "end_time": "18:00"
+        },
+        {
+            "bus_id": 2,
+            "type": "going",
+            "start_time": "09:00",
+            "end_time": "19:00"
+        }
+    ]
+}
+______________________________________________
+update_trip
+
+put
+company
+http://127.0.0.1:8000/api/company/update_trip/{trip_id}
+{
+    "path_id": 1,
+    "price": "10.00",
+    "breaks_ids": [1],
+    "bus_ids": [
+        {
+            "bus_id": 1,
+            "type": "all",
+            "start_time": "08:00",
+            "end_time": "18:00"
+        },
+        {
+            "bus_id": 2,
+            "type": "going",
+            "start_time": "09:00",
+            "end_time": "19:00"
+        }
+    ]
+}
+___________________________________________________
+delete_trip
+
+delete
+company
+
+http://127.0.0.1:8000/api/company/delete_trip/{trip_id}
+
+________________________________________________________
+all_trips
+
+get
+company
+http://127.0.0.1:8000/api/company/all_trips
+________________________________________________________
+all_trips_by_status
+
+get
+company
+http://127.0.0.1:8000/api/company/all_trips_by_status
+{
+    status => panding
+}
+__________________________________________________
+show_trip
+
+post
+company
+http://127.0.0.1:8000/api/company/show_trip/{trip_id}
+
+___________________________________________________
