@@ -8,15 +8,30 @@
         <div class="menu">
             <ul>
                 <li class="profile">
+                    <h2>LOGO</h2>
+                </li>
+                <li class="profile">
                     <div class="img-box">
                         <img src="تنزيل.webp" alt="" />
                     </div>
-                    <h2>Name Company</h2>
+                    <h2>Admin</h2>
                 </li>
 
                 <li>
-                    <a class="active" href="">
-                        <i class="fas fa-home"></i>
+                    <a class="active" href=""
+                        ><i>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="35"
+                                height="35"
+                                fill="currentColor"
+                                class="bi bi-house"
+                                viewBox="0 0 16 16"
+                            >
+                                <path
+                                    d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"
+                                /></svg
+                        ></i>
                         <p>dashboard</p>
                     </a>
                 </li>
@@ -56,75 +71,13 @@
                 </li>
             </ul>
         </div>
-
-        <div class="content">
-            <div class="title-info">
-                <p>dashboard</p>
-                <i class="fas fa-chart-bar"></i>
-            </div>
-
-            <div class="data-info">
-                <div class="box">
-                    <i class="fas fa-user"></i>
-                    <div class="data">
-                        <p>user</p>
-                        <span>100</span>
-                    </div>
-                </div>
-                <div class="box">
-                    <i class="fas fa-pen"></i>
-                    <div class="data">
-                        <p>Private Trips</p>
-                        <span>100</span>
-                    </div>
-                </div>
-                <div class="box">
-                    <i class="fas fa-table"></i>
-                    <div class="data">
-                        <p>Bookings</p>
-                        <span>100</span>
-                    </div>
-                </div>
-                <div class="box">
-                    <i class="fas fa-dollar"></i>
-                    <div class="data">
-                        <p>revenue</p>
-                        <span>100</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="title-info">
-                <p>Bookings</p>
-                <i class="fas fa-table"></i>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>price</th>
-                        <th>count</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr>
-                        <td>Damascus</td>
-                        <td><span class="price">200$</span></td>
-                        <td><span class="count">20</span></td>
-                        <td>
-                            <span class="price"
-                                ><i class="fa fa-trash"></i
-                            ></span>
-                        </td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </div>
 </template>
+<script>
+export default {
+    name: "NavBar",
+};
+</script>
 
 <style lang="scss">
 * {
@@ -134,7 +87,7 @@
     font-family: sans-serif;
 }
 body {
-    background-color: #f4fbff;
+    background-color: #f4f5f5;
 }
 
 .main-content {
@@ -164,7 +117,7 @@ body {
 }
 
 .menu {
-    background-color: #1b262c;
+    background-color: #2f3234;
     width: 45px;
     height: 100vh;
     padding: 20px;
@@ -216,71 +169,20 @@ ul li a i {
     width: 100%;
     margin: 10px;
 }
-.title-info {
-    background-color: #1b262c;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: 8px;
-    margin: 10px 0;
+
+.menu li a {
+    position: relative; /* تحديد العنصر كمرجع للموقع النسبي */
 }
 
-.data-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
+.menu li a::after {
+    content: " >";
+    position: absolute; /* تحديد موقع العلامة بشكل مطلق داخل العنصر الأصل */
+    left: 90%; /* وضع العلامة في أقصى اليمين */
+    margin-left: 10px; /* يمكنك تعديل المسافة حسب الحاجة */
+    visibility: hidden; /* إخفاء العلامة بشكل افتراضي */
 }
 
-.data-info .box {
-    background-color: #1b262c;
-    height: 150px;
-    flex-basis: 150px;
-    flex-grow: 1;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-.data-info .box:hover,
-td:hover {
-    background-color: #176b87;
-    transition: 0.5s ease;
-}
-.data-info .box i {
-    font-size: 40px;
-}
-.data-info .box .data {
-    text-align: center;
-}
-.data-info .box .data p {
-    margin-bottom: 10px;
-    font-size: 15px;
-}
-.data-info .box .data span {
-    font-size: 30px;
-}
-
-table {
-    width: 100%;
-    text-align: center;
-    border-spacing: 8px;
-}
-td,
-th {
-    background-color: #1b262c;
-    height: 40px;
-    border-radius: 8px;
-}
-th {
-    background-color: #1b262c;
-}
-.price,
-.count,
-.delete {
-    padding: 6px;
-    border-radius: 6px;
+.menu li a:hover::after {
+    visibility: visible; /* إظهار العلامة عند التمرير فوق العنصر */
 }
 </style>
