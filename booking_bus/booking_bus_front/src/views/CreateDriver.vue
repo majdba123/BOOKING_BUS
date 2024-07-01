@@ -16,8 +16,6 @@ import NavBarCompany from "@/components/NavBarCompany.vue";
 export default { name: "CreateDriver", components: { NavBarCompany } };
 </script>
 <style lang="scss">
-* {
-}
 .main-content {
     display: flex;
     width: 100%;

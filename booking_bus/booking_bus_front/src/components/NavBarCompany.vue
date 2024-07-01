@@ -42,11 +42,19 @@
                         <p>Add Driver</p>
                     </router-link>
                 </li>
-                <li>
-                    <router-link to="/PathTrip" class="nav-link">
+                <li
+                    class="dropdown"
+                    @mouseenter="showDropdown"
+                    @mouseleave="hideDropdown"
+                >
+                    <a href="#" class="nav-link">
                         <i class="fas fa-table"></i>
                         <p>Trips</p>
-                    </router-link>
+                    </a>
+                    <ul v-show="dropdownVisible" class="dropdown-content">
+                        <router-link to="/AddPath">AddPath</router-link>
+                        <a href="#">Edit Path</a>
+                    </ul>
                 </li>
 
                 <li>
@@ -76,6 +84,19 @@
 <script>
 export default {
     name: "NavBarCompany",
+    data() {
+        return {
+            dropdownVisible: false,
+        };
+    },
+    methods: {
+        showDropdown() {
+            this.dropdownVisible = true;
+        },
+        hideDropdown() {
+            this.dropdownVisible = false;
+        },
+    },
 };
 </script>
 
