@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <NavBarCompany />
+        <NavBar />
         <div class="content">
             <div class="title">Add Company</div>
             <div class="contentt2">
@@ -40,12 +40,12 @@
 </template>
 
 <script>
-import NavBarCompany from "@/components/NavBarCompany.vue";
+import NavBar from "@/components/NavBar.vue";
 import axios from "axios";
 
 export default {
     name: "CreateCompany",
-    components: { NavBarCompany },
+    components: { NavBar },
     data() {
         return {
             name: "",
