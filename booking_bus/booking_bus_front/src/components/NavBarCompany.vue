@@ -35,6 +35,7 @@
                         <p>dashboard</p>
                     </a>
                 </li>
+
                 <li>
                     <router-link to="/CreateDriver" class="nav-link">
                         <i class="fas fa-user-group"></i>
@@ -74,11 +75,11 @@
 </template>
 <script>
 export default {
-    name: "NavBar",
+    name: "NavBarCompany",
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 * {
     padding: 0;
     margin: 0;
