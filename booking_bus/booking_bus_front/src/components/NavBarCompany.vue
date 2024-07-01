@@ -42,11 +42,19 @@
                         <p>Add Driver</p>
                     </router-link>
                 </li>
-                <li>
-                    <router-link to="/PathTrip" class="nav-link">
+                <li
+                    class="dropdown"
+                    @mouseenter="showDropdown"
+                    @mouseleave="hideDropdown"
+                >
+                    <a href="#" class="nav-link">
                         <i class="fas fa-table"></i>
                         <p>Trips</p>
-                    </router-link>
+                    </a>
+                    <ul v-show="dropdownVisible" class="dropdown-content">
+                        <router-link to="/AddPath">AddPath</router-link>
+                        <a href="#">Edit Path</a>
+                    </ul>
                 </li>
 
                 <li>
@@ -77,6 +85,11 @@ import axios from "axios";
 import router from "@/router";
 export default {
     name: "NavBarCompany",
+    data() {
+        return {
+            dropdownVisible: false,
+        };
+    },
     methods: {
         logout() {
             const token = window.localStorage.getItem("access_token");
@@ -95,6 +108,12 @@ export default {
                     router.push("/");
                 }
             });
+        },
+        showDropdown() {
+            this.dropdownVisible = true;
+        },
+        hideDropdown() {
+            this.dropdownVisible = false;
         },
     },
 };

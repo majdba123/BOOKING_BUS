@@ -2,79 +2,66 @@
     <div class="main-content">
         <NavBarCompany />
         <div class="content">
-            <div class="title">Add Driver</div>
+            <div class="title">Add Company</div>
             <div class="contentt2">
                 <div class="box">
                     <div class="email">
-                        <span>Email</span
+                        <span>Start Path</span
                         ><input
-                            type="email"
-                            placeholder="Inter Email"
+                            type="text"
+                            placeholder="Inter Start Path"
                             class="input"
-                            v-model="email"
+                            v-model="StartPath"
                         />
                     </div>
                     <div class="username">
-                        <span>Username</span
+                        <span>TO</span>
+                    </div>
+                    <div class="password">
+                        <span>End Path</span
                         ><input
                             type="text"
                             class="input"
-                            placeholder="Inter Username"
-                            v-model="name"
-                        />
-                    </div>
-                    <div class="password">
-                        <span>Password</span
-                        ><input
-                            type="password"
-                            class="input"
-                            placeholder="Inter Password"
-                            v-model="password"
+                            placeholder="End Path"
+                            v-model="EndPath"
                         />
                     </div>
                 </div>
-                <button class="Button" @click="CreateDriver">Create</button>
+                <button class="Button" @click="AddPath">Add</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import NavBarCompany from "@/components/NavBarCompany.vue";
 import axios from "axios";
 
 export default {
-    name: "CreateDriver",
-    components: { NavBarCompany },
+    name: "AddPath",
     data() {
         return {
-            name: "",
-            email: "",
-            password: "",
+            StartPath: "",
+            EndPath: "",
         };
     },
     methods: {
-        CreateDriver() {
-            const token = window.localStorage.getItem("access_token");
-
+        AddPath() {
             axios({
                 method: "post",
-                url: "http://127.0.0.1:8000/api/company/register/driver",
+                url: "http://127.0.0.1:8000/api/register/company",
                 data: {
-                    name: this.name,
-                    email: this.email,
-                    password: this.password,
+                    StartPath: this.StartPath,
+                    EndPath: this.EndPath,
                 },
-                headers: { Authorization: `Bearer ${token}` },
             })
                 .then((response) => {
                     if (response.status == 200) {
                         console.log(response);
-                        window.alert("تم اضافة حساب سائق");
+                        window.alert("Complete ADD");
                     }
                 })
                 .catch((error) => {
-                    window.alert("البريد مسجل سابقا ");
+                    window.alert("ERROR ADD");
                     console.log(error);
                 });
         },

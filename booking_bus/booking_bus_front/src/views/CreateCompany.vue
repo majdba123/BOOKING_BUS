@@ -79,8 +79,6 @@ export default {
 };
 </script>
 <style lang="scss">
-* {
-}
 .main-content {
     display: flex;
     width: 100%;

@@ -4,6 +4,8 @@ import CompanyPage from "../views/CompanyPage.vue";
 import CreateDriver from "../views/CreateDriver.vue";
 import CreateCompany from "../views/CreateCompany.vue";
 import AdminPage from "../views/AdminPage.vue";
+import AddPath from "../views/AddPath.vue";
+import EditePath from "../views/EditePath.vue";
 
 const routes = [
     {
@@ -31,6 +33,8 @@ const routes = [
         name: "CreateDriver",
         component: CreateDriver,
     },
+    { path: "/AddPath", name: "AddPath", component: AddPath },
+    { path: "/EditePath", name: "EditePath", component: EditePath },
     {
         path: "/about",
         name: "about",
