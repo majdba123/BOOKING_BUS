@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import LoginView from "../views/LoginView.vue";
 import CompanyPage from "../views/CompanyPage.vue";
 import CreateDriver from "../views/CreateDriver.vue";
+import CreateCompany from "../views/CreateCompany.vue";
+import AdminPage from "../views/AdminPage.vue";
 
 const routes = [
     {
@@ -11,9 +12,14 @@ const routes = [
         component: HomeView,
     },
     {
-        path: "/login",
-        name: "login",
-        component: LoginView,
+        path: "/AdminPage",
+        name: "AdminPage",
+        component: AdminPage,
+    },
+    {
+        path: "/CreateCompany",
+        name: "CreateCompany",
+        component: CreateCompany,
     },
     {
         path: "/CompanyPage",

@@ -36,13 +36,13 @@
                     </a>
                 </li>
                 <li>
-                    <router-link to="/CreateDriver" class="nav-link">
+                    <router-link to="/CreateCompany" class="nav-link">
                         <i class="fas fa-user-group"></i>
-                        <p>Add Driver</p>
+                        <p>Add Company</p>
                     </router-link>
                 </li>
                 <li>
-                    <router-link to="/PathTrip" class="nav-link">
+                    <router-link to="/about" class="nav-link">
                         <i class="fas fa-table"></i>
                         <p>Trips</p>
                     </router-link>
@@ -63,18 +63,40 @@
                 </li>
 
                 <li class="log-out">
-                    <a href="">
-                        <i class="fas fa-sign-out"></i>
-                        <p>Log Out</p>
-                    </a>
+                    <i class="fas fa-sign-out"></i>
+                    <div class="nav-link"></div>
+                    <p class="nav-link" @click="logout">Log Out</p>
                 </li>
             </ul>
         </div>
     </div>
 </template>
 <script>
+import axios from "axios";
+import router from "@/router";
 export default {
     name: "NavBar",
+
+    methods: {
+        logout() {
+            const token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/logout",
+                headers: { Authorization: `Bearer ${token}` },
+            }).then(function (response) {
+                if (response.status == 200) {
+                    console.log(response);
+                    window.alert("Logout succesful");
+                    window.localStorage.setItem(
+                        "access_token",
+                        response.data.access_token
+                    );
+                    router.push("/");
+                }
+            });
+        },
+    },
 };
 </script>
 

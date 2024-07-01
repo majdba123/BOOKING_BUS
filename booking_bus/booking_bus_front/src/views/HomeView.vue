@@ -19,9 +19,10 @@
 
 <script>
 import axios from "axios";
+import router from "@/router";
 
 export default {
-    name: "LoginForm",
+    name: "HomeView",
     data() {
         return {
             email: "",
@@ -47,6 +48,36 @@ export default {
                             response.data.access_token
                         );
                     }
+                    if (response.data.type_user == "admin") {
+                        router.push("/AdminPage");
+                    } else router.push("/");
+                })
+                .catch((error) => {
+                    window.alert("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+                    console.log(error);
+                });
+        },
+        logincompany() {
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/login",
+                data: {
+                    email: this.email,
+                    password: this.password,
+                },
+            })
+                .then((response) => {
+                    if (response.status == 200) {
+                        console.log(response);
+                        window.alert("تسجيل الدخول ناجح");
+                        window.localStorage.setItem(
+                            "access_token",
+                            response.data.access_token
+                        );
+                    }
+                    if (response.data.type_user == "admin") {
+                        router.push("/AdminPage");
+                    } else router.push("/");
                 })
                 .catch((error) => {
                     window.alert("البريد الإلكتروني أو كلمة المرور غير صحيحة");

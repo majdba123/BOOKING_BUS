@@ -14,7 +14,7 @@
                     <div class="img-box">
                         <img src="تنزيل.webp" alt="" />
                     </div>
-                    <h2>Admin</h2>
+                    <h2>Company</h2>
                 </li>
 
                 <li>
