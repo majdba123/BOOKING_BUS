@@ -33,7 +33,11 @@ const routes = [
         name: "CreateDriver",
         component: CreateDriver,
     },
-    { path: "/AddPath", name: "AddPath", component: AddPath },
+    {
+        path: "/AddPath",
+        name: "AddPath",
+        component: AddPath,
+    },
     { path: "/EditePath", name: "EditePath", component: EditePath },
     {
         path: "/about",

@@ -1,7 +1,7 @@
 import { createApp } from "vue";
+import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import EditePath from "./views/EditePath.vue";
 
-const app = createApp(EditePath);
+const app = createApp(App);
 app.use(store).use(router).mount("#app");
