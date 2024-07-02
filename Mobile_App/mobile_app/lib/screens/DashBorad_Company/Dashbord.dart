@@ -59,14 +59,14 @@ class _DashbordState extends State<Dashbord> {
                     MaterialPageRoute(builder: (context) => DriverManagementPage()));
               },
             ),
-            ListTile(
-              leading: Icon(Icons.info),
-              title: Text('About'),
-              onTap: () {
-                // Handle About button tap
-                Navigator.pop(context);
-              },
-            ),
+            // ListTile(
+            //   leading: Icon(Icons.info),
+            //   title: Text('About'),
+            //   onTap: () {
+            //     // Handle About button tap
+            //     Navigator.pop(context);
+            //   },
+            // ),
           ],
         ),
       ),
