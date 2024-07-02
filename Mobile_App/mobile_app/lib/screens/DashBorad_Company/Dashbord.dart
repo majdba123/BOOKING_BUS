@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/screens/login/Trip_mangement/Trip_managemt_page.dart';
+import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
+import 'package:mobile_app/screens/DashBorad_Company/Driver_managment/Driver_managment_page.dart';
+
+import 'package:mobile_app/screens/DashBorad_Company/Trip_mangement/Trip_managemt_page.dart';
+
+
+
 import 'package:mobile_app/widgets/my_text_button.dart';
 
 class Dashbord extends StatefulWidget {
@@ -38,18 +44,19 @@ class _DashbordState extends State<Dashbord> {
             ),
             ListTile(
               leading: Icon(Icons.settings),
-              title: Text('Settings'),
+              title: Text('ادارة الباصات'),
               onTap: () {
-                // Handle Settings button tap
-                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Bus_management_Page()));
+             
               },
             ),
             ListTile(
               leading: Icon(Icons.contacts),
-              title: Text('Contacts'),
+              title: Text('ادارة السائقين'),
               onTap: () {
-                // Handle Contacts button tap
-                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => DriverManagementPage()));
               },
             ),
             ListTile(
@@ -63,7 +70,7 @@ class _DashbordState extends State<Dashbord> {
           ],
         ),
       ),
-      appBar: AppBar(),
+      appBar: AppBar(title: Text('واجهة الشركة'),centerTitle: true,),
       backgroundColor: Colors.white,
       body: Center(
         child: Text('this is Dashbord of the company account '),

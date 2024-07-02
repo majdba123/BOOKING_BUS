@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/screens/login/Trip_mangement/Add_Trip.dart';
+import 'package:mobile_app/screens/DashBorad_Company/Trip_mangement/Add_Trip.dart';
+import 'package:mobile_app/screens/DashBorad_Company/Trip_mangement/All_Trips.dart';
+
 
 class Trip_managment extends StatelessWidget {
   @override
@@ -17,7 +19,8 @@ class Trip_managment extends StatelessWidget {
           children: <Widget>[
             ElevatedButton.icon(
               onPressed: () {
-                // Handle Get All Trips action
+              Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => TripListPage()));
               },
               icon: Icon(Icons.list),
               label: Text('كافة مسارات الرحلات'),
@@ -41,32 +44,7 @@ class Trip_managment extends StatelessWidget {
                 primary: Colors.green,
               ),
             ),
-            SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Handle Update Trip action
-              },
-              icon: Icon(Icons.update),
-              label: Text('تعديل مسار رحلة'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                textStyle: TextStyle(fontSize: 18),
-                primary: Colors.orange,
-              ),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Handle Delete Trip action
-              },
-              icon: Icon(Icons.delete),
-              label: Text('حذف مسار رحلة'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                textStyle: TextStyle(fontSize: 18),
-                primary: Colors.red,
-              ),
-            ),
+           
           ],
         ),
       ),

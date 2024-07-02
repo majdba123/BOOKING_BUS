@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_app/screens/login/UserPage/Dashbord.dart';
+import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
+
 import 'package:mobile_app/screens/register_page.dart';
 import '../constants.dart';
 
