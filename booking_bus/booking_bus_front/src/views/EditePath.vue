@@ -1,5 +1,8 @@
 <template>
     <div class="continer">
+        <div class="title">
+            <p>Paths List</p>
+        </div>
         <table class="table">
             <thead>
                 <tr>
@@ -9,27 +12,70 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Damascus</td>
+                <tr v-for="(path, index) in paths" :key="index">
+                    <td>{{ path.name }}</td>
                     <td>
-                        <button>
-                            <router-link to="">Delete</router-link>
-                        </button>
+                        <button @click="editPath(index)">Edit</button>
                     </td>
                     <td>
-                        <button>
-                            <router-link to="">Edit</router-link>
+                        <button @click="deletePath(index, path.id)">
+                            Delete
                         </button>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <div v-if="editingIndex !== null" class="edit-form">
+            <form @submit.prevent="saveChanges">
+                <label for="start">Start Path:</label>
+                <input type="text" id="start" v-model="editedPath.start" />
+                <br />
+                <label for="end">End Path:</label>
+                <input type="text" id="end" v-model="editedPath.end" />
+                <br />
+                <button type="submit">Save Changes</button>
+                <button @click="cancelEdit">Cancel</button>
+            </form>
+        </div>
     </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-    name: "EditePath",
+    name: "EditPath",
+    data() {
+        return {
+            paths: [],
+            editingIndex: null,
+            editedPath: {
+                start: "",
+                end: "",
+            },
+        };
+    },
+    async created() {
+        await this.fetchPaths();
+    },
+    methods: {
+        async fetchPaths() {
+            try {
+                const response = await axios({
+                    method: "get",
+                    url: "http://127.0.0.1:8000/api/company/all_path",
+                    headers: {
+                        Authorization: "access_token",
+                    },
+                });
+                this.paths = response.data.paths;
+            } catch (error) {
+                window.alert("Error get paths");
+                console.error(error);
+            }
+        },
+    },
 };
 </script>
 
@@ -48,6 +94,13 @@ export default {
     margin: 20px auto;
     text-align: center;
 }
+.title p {
+    padding: 15px;
+    background-color: #176b87;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 26px;
+}
 
 .table {
     border-collapse: collapse;
@@ -57,7 +110,7 @@ export default {
     min-width: 100%;
     overflow: hidden;
     border-radius: 4px;
-    margin: 35px auto;
+    margin: 11px auto;
 }
 
 .table thead tr {
@@ -109,9 +162,5 @@ tr td a {
 tr td a:hover,
 .dd:hover {
     color: #ffffff;
-}
-
-.dd {
-    color: #000000;
 }
 </style>
