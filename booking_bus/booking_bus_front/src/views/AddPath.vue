@@ -2,32 +2,37 @@
     <div class="main-content">
         <NavBarCompany />
         <div class="content">
-            <div class="title">Add Company</div>
+            <div class="title">ADD Path</div>
             <div class="contentt2">
                 <div class="box">
                     <div class="email">
                         <span>Start Path</span
                         ><input
                             type="text"
-                            placeholder="Inter Start Path"
+                            placeholder="Enter Start Path"
                             class="input"
                             v-model="StartPath"
                         />
                     </div>
                     <div class="username">
-                        <span>TO</span>
+                        <span
+                            >TO
+                            <p>>>>></p>
+                        </span>
                     </div>
                     <div class="password">
-                        <span>End Path</span
-                        ><input
+                        <span>End Path</span>
+                        <input
                             type="text"
                             class="input"
                             placeholder="End Path"
                             v-model="EndPath"
+                            style="text-align: "
+                        />
                         />
                     </div>
                 </div>
-                <button class="Button" @click="AddPath">Add</button>
+                <button class="Button" @click="AddPath">ADD</button>
             </div>
         </div>
     </div>
@@ -105,6 +110,14 @@ export default {
     display: block;
     margin: 15px;
 }
+.username span p {
+    color: #176b87;
+    margin-top: 19px;
+}
+.password .input::placeholder,
+.email .input::placeholder {
+    text-align: center;
+}
 input[type="text"],
 input[type="password"],
 input[type="email"] {
@@ -114,6 +127,7 @@ input[type="email"] {
     border-radius: 5px;
     border: 1px solid gray;
     font-size: 16px;
+    text-align: center;
 }
 input:focus {
     box-shadow: 0 0 5px red;
