@@ -37,6 +37,7 @@ dependencies:
   http:
   flutter_svg_provider: ^0.1.8 # to use svg images
   google_fonts: ^1.1.2 # to import google fonts and text theme 
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
