@@ -22,5 +22,9 @@ class Pivoit extends Model
     {
         return $this->belongsTo(Breaks_trip::class,'breaks_trip_id');
     }
+    public function Reservation()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 
 }

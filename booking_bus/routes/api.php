@@ -13,6 +13,11 @@ use App\Http\Controllers\SeatController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\BreaksController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\BusTripController;
+
+use App\Http\Controllers\ReservationController;
+
+
 
 
 
@@ -106,9 +111,21 @@ Route::group(['prefix' => 'admin' , 'middleware' => ['checkAdmi','auth:sanctum']
     Route::post('/store_breaks/{id}', [BreaksController::class, 'store']);
     Route::put('/update_breaks/{id}', [BreaksController::class, 'update']);
     Route::delete('/delete_breaks/{id}', [BreaksController::class, 'destroy']);
+});
 
 
 
 
+
+
+Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function () {
+
+    Route::get('/trips', [TripController::class, 'index_user']);
+    Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
+
+    Route::post('/get_bus_trip/{id}', [BusTripController::class, 'getBusTripsByTripId']);
+    Route::get('/get_bus_trip_fillter', [BusTripController::class, 'getBusTripsByFillter']);
+
+    Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
 
 });

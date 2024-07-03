@@ -21,7 +21,7 @@ class TripController extends Controller
     public function index()
     {
         $company_id = Auth::user()->Company->id;
-        $trips=Trip::where('company_id' ,$company_id)->with(['bus_trip.Pivoit','breaks_trip.break.area','path_id'])->get();
+        $trips=Trip::where('company_id' ,$company_id)->with(['bus_trip.Pivoit','breaks_trip.break.area','path'])->get();
         return response()->json($trips);
     }
 
@@ -34,7 +34,7 @@ class TripController extends Controller
         $company_id = Auth::user()->Company->id;
         $trips=Trip::where('company_id' ,$company_id)
                     ->where('status',$request->input('status'))
-                    ->with(['bus_trip.Pivoit','breaks_trip.break.area','path_id'])->get();
+                    ->with(['bus_trip.Pivoit','breaks_trip.break.area','path'])->get();
         return response()->json($trips);
     }
 
@@ -60,12 +60,41 @@ class TripController extends Controller
             $errors = $validator->errors()->first();
             return response()->json(['error' => $errors], 422);
         }
+        $busIds = $request->input('bus_ids');
+        $availableBuses = [];
+        // Check if buses are available
+        foreach ($busIds as $busId) {
+            $bus = Bus::find($busId['bus_id']);
+            if ($bus && $bus->status == 'available') {
+                $availableBuses[] = $busId;
+            } else {
+                return response()->json([
+                    'essage' => 'bus not available',
+                ]);
+            }
+        }
+        if (count($availableBuses) == 0) {
+            return response()->json([
+                'essage' => 'no buses available',
+            ]);
+        }
 
         $trip =New Trip();
         $trip->path_id = $request->input('path_id');
         $trip->company_id= $company;
         $trip->price= $request->input('price');
         $trip->save();
+
+        $breakTripStart = new Breaks_trip();
+
+        $breakTripStart->trip_id = $trip->id;
+        $breakTripStart->breaks_id = 1; // start break
+        $breakTripStart->save();
+
+        $breakTripEnd = new Breaks_trip();
+        $breakTripEnd->trip_id = $trip->id;
+        $breakTripEnd->breaks_id = 2; // end break
+        $breakTripEnd->save();
 
         $breakIds = $request->input('breaks_ids');
 
@@ -123,7 +152,7 @@ class TripController extends Controller
         $company_id = Auth::user()->Company->id;
         $trips=Trip::where('company_id' ,$company_id )
                     ->where('id',$trip)
-                    ->with(['bus_trip.Pivoit.break_trip','breaks_trip.break.area','path_id'])->get();
+                    ->with(['bus_trip.Pivoit.break_trip','breaks_trip.break.area','path'])->get();
         return response()->json($trips);
     }
 
@@ -284,4 +313,152 @@ class TripController extends Controller
             'message' => 'Trip deleted successfully',
         ]);
     }
+
+
+    public function index_user()
+    {
+        $trips = Trip::where('status', 'padding')->with('bus_trip')->get();
+
+        $data = [];
+        foreach ($trips as $trip) {
+            $busTrips = $trip->bus_trip;
+            $busTripsData = [];
+            foreach ($busTrips as $busTrip) {
+                $busTripData = [
+
+                    'bus_id' => $busTrip->bus_id,
+                    'from_time' => $busTrip->from_time,
+                    'to_time' => $busTrip->to_time,
+                    'type' => $busTrip->type,
+                    'event' => $busTrip->type,
+                ];
+
+                $pivotData = $busTrip->Pivoit;
+                $customPivotData = [];
+                foreach ($pivotData as $pivot) {
+                    $customPivotData[] = [
+                        'break_id'  => $pivot->id,
+                        'government'  => $pivot->break_trip->break->area->name,
+                        'name_break' => $pivot->break_trip->break->name,
+                        'status' => $pivot->status,
+
+                    ];
+                }
+                $busTripData['pivot'] = $customPivotData;
+
+                $seats = $busTrip->bus->seat; // Assuming you have a seats relationship on the bus_trip model
+                $seatsData = [];
+                foreach ($seats as $seat) {
+                    $seatsData[] = [
+                        'status' => $seat->status,
+                        // Add any other columns you want to include from the seats table
+                    ];
+                }
+                $busTripData['seats'] = $seatsData;
+
+                $busTripsData[] = $busTripData;
+            }
+
+            $data[] = [
+                'trip_id' => $trip->id,
+                'company_id' => $trip->company->user->name,
+                'from'  => $trip->path->from,
+                'to'  => $trip->path->to,
+                'price' => $trip->price,
+                'bus_trips' => $busTripsData,
+
+                // Add any other columns you want to include from the trips table
+            ];
+        }
+        return response()->json($data);
+
+    }
+
+
+    public function trip_user_by_path(Request $request)
+    {
+            $from = $request->input('from');
+            $to = $request->input('to');
+            $companyName = $request->input('company_name');
+            $name_break = $request->input('name_break');
+
+            $tripsQuery = Trip::where('status', 'padding')
+
+                ->whereHas('path', function ($query) use ($from, $to) {
+
+                    $query->where('from', 'like', "%{$from}%")
+                        ->orWhere('to', 'like', "%{$to}%");
+
+                })
+                ->with('bus_trip');
+
+            if ($companyName) {
+                $tripsQuery->whereHas('company', function ($query) use ($companyName) {
+                    $query->where('name_company', 'like', "%{$companyName}%");
+                });
+            }
+
+            if ($name_break) {
+                $tripsQuery->whereHas('breaks_trip.break', function ($query) use ($name_break) {
+                    $query->where('name', 'like', "%{$name_break}%");
+                });
+            }
+
+
+
+            $trips = $tripsQuery->get();
+            $data = [];
+            foreach ($trips as $trip) {
+                $busTrips = $trip->bus_trip;
+                $busTripsData = [];
+                foreach ($busTrips as $busTrip) {
+                    $busTripData = [
+
+                        'bus_id' => $busTrip->bus_id,
+                        'from_time' => $busTrip->from_time,
+                        'to_time' => $busTrip->to_time,
+                        'type' => $busTrip->type,
+                        'event' => $busTrip->type,
+                    ];
+
+                    $pivotData = $busTrip->Pivoit;
+                    $customPivotData = [];
+                    foreach ($pivotData as $pivot) {
+                        $customPivotData[] = [
+                            'break_id'  => $pivot->id,
+                            'government'  => $pivot->break_trip->break->area->name,
+                            'name_break' => $pivot->break_trip->break->name,
+                            'status' => $pivot->status,
+
+                        ];
+                    }
+                    $busTripData['pivot'] = $customPivotData;
+
+                    $seats = $busTrip->bus->seat; // Assuming you have a seats relationship on the bus_trip model
+                    $seatsData = [];
+                    foreach ($seats as $seat) {
+                        $seatsData[] = [
+                            'status' => $seat->status,
+                            // Add any other columns you want to include from the seats table
+                        ];
+                    }
+                    $busTripData['seats'] = $seatsData;
+
+                    $busTripsData[] = $busTripData;
+                }
+
+                $data[] = [
+                    'trip_id' => $trip->id,
+                    'company_id' => $trip->company->user->name,
+                    'from'  => $trip->path->from,
+                    'to'  => $trip->path->to,
+                    'price' => $trip->price,
+                    'bus_trips' => $busTripsData,
+
+                    // Add any other columns you want to include from the trips table
+                ];
+            }
+            return response()->json($data);
+    }
+
 }

@@ -18,7 +18,7 @@ class Trip extends Model
     {
         return $this->belongsTo(Company::class , 'company_id');
     }
-    public function path_id()
+    public function path()
     {
         return $this->belongsTo(Path::class , 'path_id');
     }

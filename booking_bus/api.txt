@@ -157,42 +157,6 @@ get
 token as company
 
 http://127.0.0.1:8000/api/company/all_driver_with_bus
-_________________________________________
-store_seat:
-
-post
-token as company
-http://127.0.0.1:8000/api/company/store_seat/{bus_id}
-
-{
-    number_seat : 2
-    location_seat : L1
-}
-
-_______________________________________________
-update_seat :
-
-PUT
-token s company
-
-http://127.0.0.1:8000/api/company/update_seat/{seat_id}
-
-{
-    number_seat : 2                not required
-    location_seat : L1      not required
-    bus_id : 2              required
-}
-__________________________________________________
-delete set :
-
-delete
-token as company
-
-http://127.0.0.1:8000/api/company/delete_seat/{seat_id}
-{
-    bus_id : 2              required
-}
-
 ________________________________________________________
 all_seat_by_bus_id
 
@@ -347,3 +311,383 @@ company
 http://127.0.0.1:8000/api/company/show_trip/{trip_id}
 
 ___________________________________________________
+display_all_trip
+
+user
+get
+
+http://127.0.0.1:8000/api/user/trips
+________________________________________________________
+display _trip_by_path
+
+user
+get
+http://127.0.0.1:8000/api/user/trip_by_path
+{
+
+    from :  "slslsl"
+    to  : "xwxwxwx"
+}or
+{
+
+    company_name : almajd
+} or
+
+{
+    name_break : barzeh
+}
+________________________________________________________
+get bus_trip of trip :
+
+user
+post
+http://127.0.0.1:8000/api/user/get_bus_trip/{trip_id}
+
+___________________________________________________
+fillter bus_trip by :
+
+user
+
+get
+
+http://127.0.0.1:8000/api/user/get_bus_trip_fillter
+
+{
+    from_time : 8:00
+    to_time  : 10:00                            any selection optional
+    type :  [0,1]
+    from :  barazeh
+    to : masaken
+}
+
+___________________________________________________________________
+make reservation :
+
+user
+post
+http://127.0.0.1:8000/api/user/store_reservation/{bus_trip_id}
+
+{
+
+  "type": 1,
+  "seat": [1,3],
+  "break_id": 1
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+store_seat:
+
+post
+token as company
+http://127.0.0.1:8000/api/company/store_seat/{bus_id}
+
+{
+    number_seat : 2
+    location_seat : L1
+}
+
+_______________________________________________
+update_seat :
+
+PUT
+token s company
+
+http://127.0.0.1:8000/api/company/update_seat/{seat_id}
+
+{
+    number_seat : 2                not required
+    location_seat : L1      not required
+    bus_id : 2              required
+}
+__________________________________________________
+delete set :
+
+delete
+token as company
+
+http://127.0.0.1:8000/api/company/delete_seat/{seat_id}
+{
+    bus_id : 2              required
+}

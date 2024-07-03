@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Bus::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(0);
-            $table->integer('number_seat');
-            $table->string('location_seat', 20);
             $table->timestamps();
         });
     }
