@@ -12,4 +12,9 @@ class Area extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function breaks()
+    {
+        return $this->hasMany(Breaks::class);
+    }
 }

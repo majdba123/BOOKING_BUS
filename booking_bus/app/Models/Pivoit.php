@@ -9,20 +9,22 @@ class Pivoit extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'bus_trip_id',
-        'break_trip_id',
-        'from_time',
-        'to_time',
+        'bus__trip_id',
+        'breaks_trip_id',
         'status',
     ];
 
     public function bus_trip()
     {
-        return $this->belongsTo(Bus_Trip::class,'path_id');
+        return $this->belongsTo(Bus_Trip::class,'bus__trip_id');
     }
     public function break_trip()
     {
-        return $this->belongsTo(Breaks_trip::class,'path_id');
+        return $this->belongsTo(Breaks_trip::class,'breaks_trip_id');
+    }
+    public function Reservation()
+    {
+        return $this->hasMany(Reservation::class);
     }
 
 }

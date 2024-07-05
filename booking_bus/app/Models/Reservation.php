@@ -11,7 +11,7 @@ class Reservation extends Model
 
     protected $fillable = [
         'user_id',
-        'breaks_trip_id',
+        'pivoit_id',
         'bus_trip_id',
         'price',
         'type',
@@ -22,9 +22,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(User::class , 'user_id');
     }
-    public function breaks_trip()
+    public function pivoit()
     {
-        return $this->belongsTo(Breaks_trip::class , 'breaks_trip_id');
+        return $this->belongsTo(Pivoit::class , 'pivoit_id');
     }
     public function bus_trip()
     {

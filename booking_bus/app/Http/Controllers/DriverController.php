@@ -52,10 +52,12 @@ class DriverController extends Controller
         ]);
 
         $id= $user->id;
-        $company = Driver::create([
-            'user_id' => $id,
-            'company_id' => Auth::user()->id,
+        $company_id =Auth::user()->Company->id;
+        #return response()->json($id);
 
+        $driver = Driver::create([
+            'user_id' => $id,
+            'company_id' => $company_id,
         ]);
 
 
