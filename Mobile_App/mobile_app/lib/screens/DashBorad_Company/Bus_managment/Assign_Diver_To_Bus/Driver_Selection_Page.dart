@@ -70,7 +70,7 @@ class _DriverSelectionPageState extends State<DriverSelectionPage> {
                         },
                         child: Text('Assign'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.green,
+                          backgroundColor: Colors.green,
                         ),
                       ),
                     ),

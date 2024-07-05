@@ -1,5 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:mobile_app/constants.dart';
+import 'package:http/http.dart' as http;
+import 'package:mobile_app/screens/login/login_ui.dart';
 class AddTripPage extends StatefulWidget {
   @override
   _AddTripPageState createState() => _AddTripPageState();
@@ -16,7 +20,30 @@ class _AddTripPageState extends State<AddTripPage> {
     _destinationController.dispose();
     super.dispose();
   }
-
+  String access_token="2|F6Qt2hWRZ98NGd0UAhcY7PMRoIhuaaVHTDPoYTTEeaa05b04";
+Future<String> Addtrip(var From, var To, ) async {
+    String url = name_domain_server+"company/path_store";
+    print(From);
+    print(To);
+   
+    var res = await http.post(
+      Uri.parse('$url'),
+      body: {'from': From, 'to': To, },
+       headers: <String, String>{
+      'Authorization': 'Bearer $access_token',
+    },
+    );
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      Map<String, dynamic> parsedJson = json.decode(res.body);
+      String message = parsedJson['message'];
+      return message;
+    } else {
+      Map<String, dynamic> parsedJson = json.decode(res.body);
+      String error = parsedJson['error'];
+      return error;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,9 +118,26 @@ class _AddTripPageState extends State<AddTripPage> {
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async{
                           if (_formKey.currentState!.validate()) {
-                            // Handle form submission
+                           
+                            showDialog(
+                            context: context,
+                            builder: (context) => Center(
+                                  child: CircularProgressIndicator(),
+                                ));
+                        var message = await Addtrip(_sourceController.text,_destinationController.text);
+                        print('the res is $message');
+                        if (message == "driver Created ") {
+                        
+
+                          showAlertDialog(context, message as String);
+                          Navigator.of(context).pop();
+                        } else {
+                          showAlertDialog(context, message as String);
+                          Navigator.of(context).pop();
+                          // Navigator.of(context).pop();
+                        }
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Trip Added')),
                             );
@@ -105,7 +149,7 @@ class _AddTripPageState extends State<AddTripPage> {
                         },
                         child: Text('Add Trip'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.blue[900],
+                          backgroundColor: Colors.blue[900],
                           padding: EdgeInsets.symmetric(vertical: 16),
                           textStyle: TextStyle(fontSize: 18),
                           shape: RoundedRectangleBorder(

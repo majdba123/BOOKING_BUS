@@ -31,9 +31,8 @@ class Bus_management_Page extends StatelessWidget {
                 },
                 child: Text('Add Bus'),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue[900],
                   textStyle: TextStyle(fontSize: 18),
-                  primary: Colors.blue[900],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -52,9 +51,8 @@ class Bus_management_Page extends StatelessWidget {
                 },
                 child: Text('Get All Buses'),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue[900],
                   textStyle: TextStyle(fontSize: 18),
-                  primary: Colors.blue[900],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -73,9 +71,8 @@ class Bus_management_Page extends StatelessWidget {
                 },
                 child: Text('get status page'),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue[900],
                   textStyle: TextStyle(fontSize: 18),
-                  primary: Colors.blue[900],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -94,9 +91,8 @@ class Bus_management_Page extends StatelessWidget {
                 },
                 child: Text('Assign Bus to Driver'),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue[900],
                   textStyle: TextStyle(fontSize: 18),
-                  primary: Colors.blue[900],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -115,9 +111,8 @@ class Bus_management_Page extends StatelessWidget {
                 },
                 child: Text('Cancel Bus to Driver'),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue[900],
                   textStyle: TextStyle(fontSize: 18),
-                  primary: Colors.blue[900],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -136,9 +131,8 @@ class Bus_management_Page extends StatelessWidget {
                 },
                 child: Text('bus seats'),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue[900],
                   textStyle: TextStyle(fontSize: 18),
-                  primary: Colors.blue[900],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

@@ -29,7 +29,7 @@ class DeleteBusPage extends StatelessWidget {
                 },
                 child: Text('Delete Bus'),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.red[900],
+                  backgroundColor: Colors.red[900],
                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 40),
                   textStyle: TextStyle(fontSize: 18),
                   shape: RoundedRectangleBorder(

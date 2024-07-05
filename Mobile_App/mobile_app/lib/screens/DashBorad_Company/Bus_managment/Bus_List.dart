@@ -76,6 +76,16 @@ class _BusListPageState extends State<BusListPage> {
                             style: TextStyle(color: Colors.red[900]),
                           ),
                         ),
+                        SizedBox(width: 16),
+                        TextButton(
+                          onPressed: () {
+                            _confirmDeleteBus(context, bus);
+                          },
+                          child: Text(
+                            'All setas',
+                            style: TextStyle(color: Colors.red[900]),
+                          ),
+                        ),
                       ],
                     ),
                   ],

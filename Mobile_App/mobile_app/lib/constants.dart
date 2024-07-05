@@ -23,3 +23,5 @@ const kButtonText = TextStyle(
 
 const kBodyText2 =
     TextStyle(fontSize: 28, fontWeight: FontWeight.w500, color: Colors.white);
+
+const name_domain_server="http://127.0.0.1:8000/api/";

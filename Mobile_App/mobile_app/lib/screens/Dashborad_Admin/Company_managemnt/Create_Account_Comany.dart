@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/login/login_ui.dart';
 
 import 'package:mobile_app/screens/signin_page.dart';
-import '../widgets/widget.dart';
-import '../constants.dart';
+
 import 'package:http/http.dart' as http;
+import 'package:mobile_app/widgets/my_password_field.dart';
+import 'package:mobile_app/widgets/my_text_button.dart';
 import 'dart:convert';
 
-class RegisterPage extends StatefulWidget {
+import 'package:mobile_app/widgets/my_text_field.dart';
+
+class RegisterPageCompany extends StatefulWidget {
+
+
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _RegisterPageCompany createState() => _RegisterPageCompany();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageCompany extends State<RegisterPageCompany> {
   bool passwordVisibility = true;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
 
-  Future<String> Register(var email, var name, var password) async {
-    String url = name_domain_server+"register";
+  Future<String> RegisterCompany(var email, var name, var password) async {
+    String url = name_domain_server+"register/company";
     print(email);
     print(password);
     print(name);
@@ -105,34 +112,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         ],
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Already have an account? ",
-                          style: kBodyText,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SignInPage(),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            'Sign In',
-                            style: kBodyText.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    
+                    
                     MyTextButton(
                       buttonName: 'Register',
                       onTap: () async {
@@ -141,19 +122,16 @@ class _RegisterPageState extends State<RegisterPage> {
                             builder: (context) => Center(
                                   child: CircularProgressIndicator(),
                                 ));
-                        var message = await Register(emailController.text,
+                        var message = await RegisterCompany(emailController.text,
                             nameController.text, passwordController.text);
                         print('the res is $message');
-                        if (message == "User Created ") {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignInPage()));
+                        if (message == "company Created ") {
+                         
 
-                          showAlertDialog(context, message);
+                          showAlertDialog(context, message as String);
                           // Navigator.of(context).pop();
                         } else {
-                          showAlertDialog(context, message);
+                          showAlertDialog(context, message as String);
                           Navigator.of(context).pop();
                           // Navigator.of(context).pop();
                         }
@@ -171,5 +149,4 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
-
 

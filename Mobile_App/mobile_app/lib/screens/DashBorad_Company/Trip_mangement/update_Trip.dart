@@ -115,7 +115,7 @@ class _UpdateTripPageState extends State<UpdateTripPage> {
                         },
                         child: Text('Update Trip'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.blue[900],
+                          backgroundColor: Colors.blue[900],
                           padding: EdgeInsets.symmetric(vertical: 16),
                           textStyle: TextStyle(fontSize: 18),
                           shape: RoundedRectangleBorder(

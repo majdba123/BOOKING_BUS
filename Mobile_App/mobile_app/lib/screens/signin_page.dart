@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
+import 'package:mobile_app/screens/login/login_ui.dart';
 
 import 'package:mobile_app/screens/register_page.dart';
 import '../constants.dart';
@@ -17,7 +18,7 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   Future<String> SignIn(var email, var password) async {
-    String url = "http://127.0.0.1:8001/api/login";
+    String url = name_domain_server+"login";
     print(email);
     print(password);
     var res = await http.post(
@@ -173,45 +174,3 @@ class _SignInPageState extends State<SignInPage> {
   }
 }
 
-showAlertDialog(BuildContext context, String result) {
-  // Create button
-  print('the result is in shhhh!!!!!!!!!!! $result');
-  Widget okButton = ElevatedButton(
-    child: Text("OK"),
-    onPressed: () {
-      Navigator.of(context).pop();
-    },
-  );
-
-  // Create AlertDialog
-  if (result != "Invalid Credentials") {
-    AlertDialog alert = AlertDialog(
-      title: Text("Hi"),
-      content: Text("Wlcome in your account."),
-      actions: [
-        okButton,
-      ],
-    );
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  } else {
-    AlertDialog alert = AlertDialog(
-      title: Text("Error"),
-      content: Text("please check your usename or your password"),
-      actions: [
-        okButton,
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-}

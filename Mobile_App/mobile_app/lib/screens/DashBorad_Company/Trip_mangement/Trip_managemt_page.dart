@@ -25,9 +25,8 @@ class Trip_managment extends StatelessWidget {
               icon: Icon(Icons.list),
               label: Text('كافة مسارات الرحلات'),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue,
                 textStyle: TextStyle(fontSize: 18),
-                primary: Colors.blue,
               ),
             ),
             SizedBox(height: 16),
@@ -39,9 +38,8 @@ class Trip_managment extends StatelessWidget {
               icon: Icon(Icons.add),
               label: Text('اضافة مسار رحلة'),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.green,
                 textStyle: TextStyle(fontSize: 18),
-                primary: Colors.green,
               ),
             ),
            

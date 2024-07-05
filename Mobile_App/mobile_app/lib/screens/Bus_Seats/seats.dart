@@ -1,57 +1,170 @@
+
 import 'package:flutter/material.dart';
 
-
-
-class BusSeatLayoutPage extends StatefulWidget {
-  @override
-  _BusSeatLayoutPageState createState() => _BusSeatLayoutPageState();
-}
-
-class _BusSeatLayoutPageState extends State<BusSeatLayoutPage> {
-  final List<Seat> seats = [
-    Seat(id: '1A', isAvailable: true),
-    Seat(id: '1B', isAvailable: false),
-    Seat(id: '1C', isAvailable: true),
-    Seat(id: '1D', isAvailable: false),
-    Seat(id: '2A', isAvailable: true),
-    Seat(id: '2B', isAvailable: false),
-    Seat(id: '2C', isAvailable: true),
-    Seat(id: '2D', isAvailable: false),
-    Seat(id: '3A', isAvailable: true),
-    Seat(id: '3B', isAvailable: false),
-    Seat(id: '3C', isAvailable: true),
-    Seat(id: '3D', isAvailable: false),
-    // Add more seats as needed
-  ];
-
+class BusSeatLayoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Bus Seat Layout'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              'Bus Seat Layout',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, // Number of seats per row
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                ),
-                itemCount: seats.length,
-                itemBuilder: (context, index) {
-                  final seat = seats[index];
-                  return SeatWidget(seat: seat);
-                },
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text('Bus Booking'),
+          centerTitle: true,
+          backgroundColor: Colors.orange,
+          elevation: 0.0,
+          bottom: PreferredSize(
+              child: TabBar(
+                indicatorColor: Colors.deepPurple,
+                tabs: [
+                  Tab(text: 'Block'),
+                  Tab(text: 'Available'),
+                ],
               ),
+              preferredSize: Size(0.0, 40.0)),
+        ),
+        bottomNavigationBar: Container(
+          height: 50,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  offset: Offset(0, 0),
+                  blurRadius: 10,
+                )
+              ]),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total: 1457 for 2 seat',
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text('Next'),
+                  // color: Colors.orange,
+                )
+              ],
+            ),
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            ListView(
+              physics: BouncingScrollPhysics(),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      height: 50,
+                      padding: EdgeInsets.only(left: 12.0),
+                      child: Center(child: Text('GATE')),
+                    ),
+                    Container(
+                      height: 50,
+                      padding: EdgeInsets.only(right: 12.0),
+                      child: Center(child: Text('DRIVER')),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'A1', color: Colors.grey[200]!),
+                    Spacer(),
+                    SeatWidget(name: 'A2', color: Colors.grey[200]!),
+                    SeatWidget(name: 'A3', color: Colors.grey[200]!!),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'B1', color: Colors.grey[200]!),
+                    SeatWidget(name: 'B2', color: Colors.grey[200]!!),
+                    Spacer(),
+                    SeatWidget(name: 'B3', color: Colors.grey[200]!!),
+                    SeatWidget(name: 'B4', color: Colors.grey[200]!!),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'C1', color: Colors.red[100]!),
+                    SeatWidget(name: 'C2', color: Colors.grey[200]!),
+                    Spacer(),
+                    SeatWidget(name: 'C3', color: Colors.red[100]!),
+                    SeatWidget(name: 'C4', color: Colors.grey[200]!),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'D1', color: Colors.grey[200]!),
+                    SeatWidget(name: 'D2', color: Colors.red[100]!),
+                    Spacer(),
+                    SeatWidget(name: 'D3', color: Colors.red[100]!),
+                    SeatWidget(name: 'D4', color: Colors.grey[200]!),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'E1', color: Colors.green[100]!),
+                    SeatWidget(name: 'E2', color: Colors.green[100]!),
+                    Spacer(),
+                    SeatWidget(name: 'E3', color: Colors.grey[200]!),
+                    SeatWidget(name: 'E4', color: Colors.grey[200]!),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'F1', color: Colors.red[100]!),
+                    SeatWidget(name: 'F2', color: Colors.grey[200]!),
+                    Spacer(),
+                    SeatWidget(name: 'F3', color: Colors.grey[200]!),
+                    SeatWidget(name: 'F4', color: Colors.grey[200]!),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'G1', color: Colors.grey[200]!),
+                    SeatWidget(name: 'G2', color: Colors.grey[200]!),
+                    Spacer(),
+                    SeatWidget(name: 'G3', color: Colors.red[100]!),
+                    SeatWidget(name: 'G4', color: Colors.grey[200]!),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'H1', color: Colors.grey[200]!),
+                    SeatWidget(name: 'H2', color: Colors.grey[200]!),
+                    Spacer(),
+                    SeatWidget(name: 'H3', color: Colors.grey[200]!),
+                    SeatWidget(name: 'H4', color: Colors.red[100]!),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'I1', color: Colors.grey[200]!),
+                    SeatWidget(name: 'I2', color: Colors.grey[200]!),
+                    Spacer(),
+                    SeatWidget(name: 'I3', color: Colors.grey[200]!),
+                    SeatWidget(name: 'I4', color: Colors.grey[200]!),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SeatWidget(name: 'J1', color: Colors.grey[200]!),
+                    SeatWidget(name: 'J2', color: Colors.grey[200]!),
+                    SeatWidget(name: 'J3', color: Colors.grey[200]!),
+                    SeatWidget(name: 'J4', color: Colors.grey[200]!),
+                    SeatWidget(name: 'J5', color: Colors.grey[200]!),
+                  ],
+                ),
+              ],
+            ),
+            Container(
+              child: Center(child: Text('Available')),
             ),
           ],
         ),
@@ -60,34 +173,22 @@ class _BusSeatLayoutPageState extends State<BusSeatLayoutPage> {
   }
 }
 
-class Seat {
-  final String id;
-  final bool isAvailable;
-
-  Seat({required this.id, required this.isAvailable});
-}
-
 class SeatWidget extends StatelessWidget {
-  final Seat seat;
-
-  SeatWidget({required this.seat});
+  final String name;
+  final Color color;
+  SeatWidget({required this.name,required this.color});
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width / 5 - 4;
     return Container(
-      decoration: BoxDecoration(
-        color: seat.isAvailable ? Colors.green : Colors.red,
-        borderRadius: BorderRadius.circular(8),
-      ),
+      margin: EdgeInsets.all(2.0),
+      width: width,
+      height: width / 1.5,
+      color: color,
       child: Center(
-        child: Text(
-          seat.id,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+          child: Text(name.toString(),
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))),
     );
   }
 }

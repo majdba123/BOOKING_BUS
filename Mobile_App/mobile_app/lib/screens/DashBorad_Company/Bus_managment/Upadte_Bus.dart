@@ -118,7 +118,7 @@ class _UpdateBusPageState extends State<UpdateBusPage> {
                         },
                         child: Text('Update Info'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.orange[900],
+                          backgroundColor: Colors.orange[900],
                           padding: EdgeInsets.symmetric(vertical: 16),
                           textStyle: TextStyle(fontSize: 18),
                           shape: RoundedRectangleBorder(

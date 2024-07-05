@@ -66,7 +66,7 @@ class _CancelDriverPageState extends State<CancelDriverPage> {
                         },
                         child: Text('Cancel'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
+                          backgroundColor: Colors.red,
                         ),
                       ),
                     ),

@@ -110,7 +110,7 @@ class _StoreBusPageState extends State<StoreBusPage> {
                         },
                         child: Text('Store Info'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.blue[900],
+                          backgroundColor: Colors.blue[900],
                           padding: EdgeInsets.symmetric(vertical: 16),
                           textStyle: TextStyle(fontSize: 18),
                           shape: RoundedRectangleBorder(
