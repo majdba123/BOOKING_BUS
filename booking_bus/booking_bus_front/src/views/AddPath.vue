@@ -40,8 +40,11 @@
 
 <script>
 import axios from "axios";
+import NavBarCompany from "@/components/NavBarCompany.vue";
 
 export default {
+    components: { NavBarCompany },
+
     name: "AddPath",
     data() {
         return {
@@ -51,19 +54,20 @@ export default {
     },
     methods: {
         AddPath() {
+            const token = window.localStorage.getItem("access_token");
+
             axios({
                 method: "post",
-                url: "http://127.0.0.1:8000/api/register/company",
+                url: "http://127.0.0.1:8000/api/company/path_store",
                 data: {
-                    StartPath: this.StartPath,
-                    EndPath: this.EndPath,
+                    from: this.StartPath,
+                    to: this.EndPath,
                 },
+                headers: { Authorization: `Bearer ${token}` },
             })
                 .then((response) => {
-                    if (response.status == 200) {
-                        console.log(response);
-                        window.alert("Complete ADD");
-                    }
+                    console.log(response);
+                    window.alert("Complete ADD");
                 })
                 .catch((error) => {
                     window.alert("ERROR ADD");
@@ -73,7 +77,7 @@ export default {
     },
 };
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 .main-content {
     display: flex;
     width: 100%;

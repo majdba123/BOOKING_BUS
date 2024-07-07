@@ -52,8 +52,8 @@
                         <p>Trips</p>
                     </a>
                     <ul v-show="dropdownVisible" class="dropdown-content">
-                        <router-link to="/AddPath">AddPath</router-link>
-                        <a href="#">Edit Path</a>
+                        <router-link to="/AddPath">Add Path</router-link>
+                        <router-link to="/EditePath">Edit Path</router-link>
                     </ul>
                 </li>
 

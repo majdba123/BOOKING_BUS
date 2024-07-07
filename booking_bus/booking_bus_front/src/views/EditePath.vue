@@ -1,85 +1,98 @@
 <template>
-    <div class="continer">
-        <div class="title">
-            <p>Paths List</p>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name Path</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(path, index) in paths" :key="index">
-                    <td>{{ path.name }}</td>
-                    <td>
-                        <button @click="editPath(index)">Edit</button>
-                    </td>
-                    <td>
-                        <button @click="deletePath(index, path.id)">
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="main-content">
+        <NavBarCompany />
+        <div class="content">
+            <div class="continer">
+                <div class="title">
+                    <p>Paths List</p>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name Path</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(paths, index) in path" :key="index">
+                            <td>{{ paths.from }} >> {{ paths.to }}</td>
+                            <td>
+                                <button @click="editPath(index)">Edit</button>
+                            </td>
+                            <td>
+                                <button @click="deletePath(index, path.id)">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-        <div v-if="editingIndex !== null" class="edit-form">
-            <form @submit.prevent="saveChanges">
-                <label for="start">Start Path:</label>
-                <input type="text" id="start" v-model="editedPath.start" />
-                <br />
-                <label for="end">End Path:</label>
-                <input type="text" id="end" v-model="editedPath.end" />
-                <br />
-                <button type="submit">Save Changes</button>
-                <button @click="cancelEdit">Cancel</button>
-            </form>
+                <div v-if="editingIndex !== null" class="edit-form">
+                    <form @submit.prevent="saveChanges">
+                        <label for="start">Start Path:</label>
+                        <input type="text" id="start" v-model="start" />
+                        <br />
+                        <label for="end">End Path:</label>
+                        <input type="text" id="end" v-model="editedPath.end" />
+                        <br />
+                        <button type="submit">Save Changes</button>
+                        <button @click="cancelEdit">Cancel</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import NavBarCompany from "@/components/NavBarCompany.vue";
 import axios from "axios";
 
 export default {
     name: "EditPath",
+    component: { NavBarCompany },
     data() {
         return {
-            paths: [],
             editingIndex: null,
-            editedPath: {
-                start: "",
-                end: "",
-            },
+            path: "",
         };
     },
-    async created() {
-        await this.fetchPaths();
+    mounted() {
+        this.fetchPaths();
     },
     methods: {
-        async fetchPaths() {
-            try {
-                const response = await axios({
-                    method: "get",
-                    url: "http://127.0.0.1:8000/api/company/all_path",
-                    headers: {
-                        Authorization: "access_token",
-                    },
+        fetchPaths() {
+            const access_token = window.localStorage.getItem("access_token");
+
+            axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/company/all_path",
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.path = response.data;
+                    console.log(this.path);
+                    console.log(this.path);
+                })
+                .catch(function (error) {
+                    window.alert("Error get paths");
+                    console.error(error);
                 });
-                this.paths = response.data.paths;
-            } catch (error) {
-                window.alert("Error get paths");
-                console.error(error);
-            }
         },
     },
 };
 </script>
 
 <style scoped>
+.main-content {
+    display: flex;
+    width: 100%;
+}
+.content {
+    flex: 1600%;
+}
 * {
     margin: 0;
     padding: 0;
@@ -90,7 +103,7 @@ export default {
     font-family: "Poppins", sans-serif;
 }
 .continer {
-    width: 70%;
+    width: 90%;
     margin: 20px auto;
     text-align: center;
 }

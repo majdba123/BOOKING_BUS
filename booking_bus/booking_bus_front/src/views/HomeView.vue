@@ -118,7 +118,7 @@ export default {
 
 @keyframes movePlaceholder {
     from {
-        top: 250%;
+        top: 50%;
         font-size: inherit;
         line-height: inherit;
     }
