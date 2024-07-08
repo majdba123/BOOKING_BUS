@@ -10,7 +10,7 @@ class Rate_Driver extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'diver_id',
+        'driver_id',
         'rating',
 
     ];
@@ -20,6 +20,6 @@ class Rate_Driver extends Model
     }
     public function driver()
     {
-        return $this->belongsTo(Driver::class , 'diver_id');
+        return $this->belongsTo(Driver::class , 'driver_id');
     }
 }

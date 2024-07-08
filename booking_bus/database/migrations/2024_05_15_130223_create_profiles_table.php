@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('phone');
             $table->string('image');
-            $table->string('point');
             $table->timestamps();
         });
     }

@@ -89,9 +89,7 @@ class PathController extends Controller
         $path->from = $request->input('from') ?? $path->from;
         $path->to = $request->input('to') ?? $path->to;
         $path->save();
-        return response()->json([
-            'message' => 'path updated',
-        ]);
+        return response()->json($path);
     }
     /**
      * Remove the specified resource from storage.

@@ -90,10 +90,7 @@ class AreaController extends Controller
         }
         $area->name = $request->input('name');
         $area->save();
-        return response()->json([
-            'Message' => 'Area updated successfully',
-
-        ]);
+        return response()->json($area);
     }
 
     /**

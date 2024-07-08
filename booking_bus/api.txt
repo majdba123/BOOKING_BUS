@@ -373,33 +373,219 @@ http://127.0.0.1:8000/api/user/store_reservation/{bus_trip_id}
   "seat": [1,3],
   "break_id": 1
 }
+_________________________________________________________________________
 
 
 
+create private _trip:
+127.0.0.1:8000/api/user/store_private_trip
+user
+post
+
+{
+    from : harasta
+    to : altal
+    date : 2/3/2025
+    start_time :10:00
+}
+
+___________________________________________________________________
+update_private_trip:
+127.0.0.1:8000/api/user/update_private_trip/{private_trip_id}
+user
+put
+{
+    from : harasta
+    to : altal                                      not_required
+    date : 2/3/2025
+    start_time :10:00
+}
+______________________________________________
+delete_private_trip:
+127.0.0.1:8000/api/user/delete_private_trip/{private_trip_id}
+user
+delete
+______________________________________________
+get_my_private_trip_by_status:
+127.0.0.1:8000/api/user/get_my_private_order_by_status
+
+{
+    status : ['padding' , 'completed']
+}
+
+___________________________________________________
+get all company accepted my private_trip (get all orser_private) :
+
+127.0.0.1:8000/api/user/OrderPrivateTripController/{private_trip}
+
+get
+user
+___________________________________________________________
+accepted company for my private_trip:
 
 
+127.0.0.1:8000/api/user/accept_company_for_private/{oreder_private_id}
 
+user
+post
+___________________________________________________________
+charge_balance :
 
+127.0.0.1:8000/api/user/charge_blance
+user
+post
+{
+    image : file
+    point : 2000
+}
+___________________________________________________________________
+add company to favourite :
 
+127.0.0.1:8000/api/user/add_company_to_favourite
+post
+user
+{
+    company_id ; 2
+}
+_______________________________________
+remove_company_from_favourite:
+127.0.0.1:8000/api/user/remove_company_from_favourite
+delete
+user
+{
+    company_id ; 2
+}
+______________________________________________
+rate_driver :
+http://127.0.0.1:8000/api/user/rate_driver/{driver_id}
+post
+user
+{
+    num : (1 to 5)
+}
+___________________________________________
+store_addres
+http://127.0.0.1:8000/api/user/store_address
+post
+user
+{
+    city : damascuse
+    area: barazeh
+}
+_____________________________________________
+ all my address :
+ http://127.0.0.1:8000/api/user/all_my_address
+ user
+ get
+ ________________________________________
+update _ address
+http://127.0.0.1:8000/api/user/update_address/{address_id}
 
+put
+user
+{
+    city : damascuse
+    area: barazeh                             not required
+}
+___________________________________________________________________
+all_breaks _by_id
+http://127.0.0.1:8000/api/user/all_breaks/{area_id}
 
+user
+get
 
+_________________________________________________
+get all charge_balance order that padding status :
 
+127.0.0.1:8000/api/admin/charge_balance_padding
+admin
+get
+_____________________________________________
+get all charge_balance by status  :
 
+127.0.0.1:8000/api/admin/charge_balance_by_status
 
+get
+admin
+{
+    status : [padding , completed]
+}
+_________________________________________________________________________
+show single order charge_balance :
 
+127.0.0.1:8000/api/admin/show_order_balance/{charge_balance_id}
 
+admin
+post
 
+______________________________________________________
+accepted_order_balance :
 
+127.0.0.1:8000/api/admin/accepted_order_balance/{charge_balance_id}
+admin
+post
+___________________________________________________________________
+cancelled_order_balance :
+127.0.0.1:8000/api/admin/cancelled_order_balance/{charge_balance_id}
+admin
+post
 
+____________________________________________________________________________
 
+get all trip rating:
+http://127.0.0.1:8000/api/company/all_trip_rating
+company
+get
+_________________________________
+all_trip_rating_by_trip_id :
+http://127.0.0.1:8000/api/company/all_trip_rating_by_trip_id/{trip_id}
+company
+post
+______________________________________________________
+get_all_private_trip :
+127.0.0.1:8000/api/company/private_trips
 
+company
+get
+___________________________________________________________________
+accepted_private_order :
+127.0.0.1:8000/api/company/accept_private_order/{private_trip_id}
 
+company
+post
+{
+    price : 2000
+}
+___________________________________________________________________
+status of my orders on private trip :
 
+127.0.0.1:8000/api/company/my_ordes_for_private_trip
+company
+get
+___________________________________________________
+get_our_favourite :
+127.0.0.1:8000/api/company/our_favourite
+company
+get
 
+_________________________________
+all_rate_driver
+http://127.0.0.1:8000/api/company/all_driver_rating
+company
+get
 
+_________________________________________________
+get all rate_of_drive_by_driverId :
+http://127.0.0.1:8000/api/company/all_driver_rating_by_driver_id/{driver_id}
 
+company
+post
 
+____________________________________
+all_breaks _by_id
+http://127.0.0.1:8000/api/company/all_breaks/{area_id}
+company
+get
 
 
 

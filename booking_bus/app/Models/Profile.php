@@ -12,7 +12,6 @@ class Profile extends Model
         'user_id',
         'phone',
         'image',
-        'point',
     ];
     public function user()
     {

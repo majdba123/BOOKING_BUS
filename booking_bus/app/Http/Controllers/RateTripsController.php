@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Rate_Trips;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class RateTripsController extends Controller
 {
     /**
@@ -12,23 +14,54 @@ class RateTripsController extends Controller
      */
     public function index()
     {
-        //
+        $company = Auth::user()->Company;
+        $company->load('trip.rate_trip');
+
+        $rateTrips = $company->trip->flatMap->rate_trip;
+
+        return response()->json($rateTrips);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function rate_trip__by_id($tripId)
     {
-        //
+        $company = Auth::user()->Company;
+
+        $trip = $company->trip()->where('id', $tripId)->first();
+
+        if (!$trip) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $trip->load('rate_trip');
+        $rateTrips = $trip->rate_trip;
+        return response()->json($rateTrips);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request ,$trip_id)
     {
-        //
+        $user = auth()->user();
+        // Get the rating value from the request (1-5)
+        $rating = $request->input('num');
+        // Validate the rating value
+        if (!in_array($rating, range(1, 5))) {
+            return response()->json(['error' => 'Invalid rating value'], 400);
+        }
+        // Get the trip ID from the request
+        // Create a new rating instance
+        $ratingInstance = new Rate_Trips();
+        // Set the rating value, user ID, and trip ID
+        $ratingInstance->rating = $rating;
+        $ratingInstance->user_id = $user->id;
+        $ratingInstance->trip_id = $trip_id;
+        // Save the rating instance
+        $ratingInstance->save();
+        // Return a success response
+        return response()->json(['message' => 'Rating submited successfully']);
     }
 
     /**
