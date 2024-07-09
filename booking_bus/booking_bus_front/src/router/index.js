@@ -6,12 +6,21 @@ import CreateCompany from "../views/CreateCompany.vue";
 import AdminPage from "../views/AdminPage.vue";
 import AddPath from "../views/AddPath.vue";
 import EditePath from "../views/EditePath.vue";
+import AddBus from "../views/AddBus.vue";
+import EditeBus from "../views/EditeBus.vue";
+import BusStatus from "../views/BusStatus.vue";
+import AllDriver from "../views/AllDriver.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/AllDriver",
+        name: "AllDriver",
+        component: AllDriver,
     },
     {
         path: "/AdminPage",
@@ -37,6 +46,21 @@ const routes = [
         path: "/AddPath",
         name: "AddPath",
         component: AddPath,
+    },
+    {
+        path: "/AddBus",
+        name: "AddBus",
+        component: AddBus,
+    },
+    {
+        path: "/BusStatus",
+        name: "BusStatus",
+        component: BusStatus,
+    },
+    {
+        path: "/EditeBus",
+        name: "EditeBus",
+        component: EditeBus,
     },
     { path: "/EditePath", name: "EditePath", component: EditePath },
     {

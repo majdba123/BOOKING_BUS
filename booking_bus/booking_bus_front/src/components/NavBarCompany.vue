@@ -35,13 +35,25 @@
                         <p>dashboard</p>
                     </a>
                 </li>
-
-                <li>
-                    <router-link to="/CreateDriver" class="nav-link">
+                <li
+                    class="dropdown"
+                    @mouseenter="showDropdown2"
+                    @mouseleave="hideDropdown2"
+                >
+                    <a href="#" class="nav-link">
                         <i class="fas fa-user-group"></i>
-                        <p>Add Driver</p>
-                    </router-link>
+                        <p>Driver</p>
+                    </a>
+                    <ul v-show="dropdownVisible2" class="dropdown-content">
+                        <router-link to="/CreateDriver" class="nav-link">
+                            <p>Add Driver</p>
+                        </router-link>
+                        <router-link to="/AllDriver" class="nav-link">
+                            <p>Get All Driver</p>
+                        </router-link>
+                    </ul>
                 </li>
+
                 <li
                     class="dropdown"
                     @mouseenter="showDropdown"
@@ -57,11 +69,20 @@
                     </ul>
                 </li>
 
-                <li>
-                    <a href="">
+                <li
+                    class="dropdown"
+                    @mouseenter="showDropdown1"
+                    @mouseleave="hideDropdown1"
+                >
+                    <a href="#" class="nav-link">
                         <i class="fas fa-chart-pie"></i>
-                        <p>bookings</p>
+                        <p>Bus</p>
                     </a>
+                    <ul v-show="dropdownVisible1" class="dropdown-content">
+                        <router-link to="/AddBus">Add Bus</router-link>
+                        <router-link to="/EditeBus">Edit Bus</router-link>
+                        <router-link to="/BusStatus">Bus Status</router-link>
+                    </ul>
                 </li>
 
                 <li>
@@ -88,6 +109,8 @@ export default {
     data() {
         return {
             dropdownVisible: false,
+            dropdownVisible1: false,
+            dropdownVisible2: false,
         };
     },
     methods: {
@@ -114,6 +137,18 @@ export default {
         },
         hideDropdown() {
             this.dropdownVisible = false;
+        },
+        showDropdown2() {
+            this.dropdownVisible2 = true;
+        },
+        hideDropdown2() {
+            this.dropdownVisible2 = false;
+        },
+        showDropdown1() {
+            this.dropdownVisible1 = true;
+        },
+        hideDropdown1() {
+            this.dropdownVisible1 = false;
         },
     },
 };
