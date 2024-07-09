@@ -3,6 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bus_Trip;
+use App\Models\Trip;
+use App\Models\Breaks_trip;
+use App\Models\Bus_Driver;
+use App\Models\Pivoit;
+use App\Models\Bus;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class BusTripController extends Controller
@@ -58,8 +66,138 @@ class BusTripController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Bus_Trip $bus_Trip)
+    public function getBusTripsByTripId($tripId)
     {
-        //
+        $trip = Trip::find($tripId);
+        if (!$trip) {
+            // Return an error or a default response if the trip is not found
+            return response()->json(['error' => 'Trip not found'], 404);
+        }
+
+        $busTrips = $trip->bus_trip;
+
+
+        $busTripsData = [];
+        foreach ($busTrips as $busTrip) {
+            $busTripData = [
+                'bus_id' => $busTrip->bus_id,
+                'from' => $trip->path->from,
+                'to' => $trip->path->to,
+                'from_time' => $busTrip->from_time,
+                'to_time' => $busTrip->to_time,
+                'type' => $busTrip->type,
+                'event' => $busTrip->event,
+            ];
+
+            $breaksData = [];
+            foreach ($busTrip->Pivoit as $pivot) {
+                $breakData = [
+                    'government' => $pivot->break_trip->break->area->name,
+                    'name_break' => $pivot->break_trip->break->name,
+                    'status' => $pivot->status,
+                ];
+                $breaksData[] = $breakData;
+            }
+
+            $busTripData['breaks'] = $breaksData;
+
+            $seats = $busTrip->bus->seat;
+            $seatsData = [];
+            foreach ($seats as $seat) {
+                $seatsData[] = [
+                    'status' => $seat->status,
+                    // Add any other columns you want to include from the seats table
+                ];
+            }
+            $busTripData['seats'] = $seatsData;
+
+            $busTripsData[] = $busTripData;
+        }
+
+        return response()->json($busTripsData);
+    }
+
+
+    public function getBusTripsByFillter(Request $request)
+    {
+        $fromTime = $request->input('from_time');
+        $toTime = $request->input('to_time');
+        $type = $request->input('type');
+        $from = $request->input('from');
+        $to = $request->input('to');
+
+        $busTrips = Bus_Trip::query();
+
+        if ($fromTime) {
+            $busTrips->where('from_time', $fromTime);
+        }
+
+        if ($toTime) {
+            $busTrips->where('to_time', $toTime);
+        }
+
+        if ($type) {
+            $busTrips->where('type', $type);
+        }
+
+        if ($from) {
+
+            $busTrips->whereHas('trip.path', function ($query) use ($from) {
+
+                $query->where('from', $from);
+
+            });
+
+        }
+
+
+        if ($to) {
+
+            $busTrips->whereHas('trip.path', function ($query) use ($to) {
+
+                $query->where('to', $to);
+
+            });
+
+        }
+
+        $busTrips = $busTrips->get();
+
+        $busTripsData = [];
+        foreach ($busTrips as $busTrip) {
+            $busTripData = [
+                'bus_id' => $busTrip->bus_id,
+                'from_time' => $busTrip->from_time,
+                'to_time' => $busTrip->to_time,
+                'type' => $busTrip->type,
+                'event' => $busTrip->event,
+            ];
+
+            $breaksData = [];
+            foreach ($busTrip->Pivoit as $pivot) {
+                $breakData = [
+                    'government' => $pivot->break_trip->break->area->name,
+                    'name_break' => $pivot->break_trip->break->name,
+                    'status' => $pivot->status,
+                ];
+                $breaksData[] = $breakData;
+            }
+
+            $busTripData['breaks'] = $breaksData;
+
+            $seats = $busTrip->bus->seat;
+            $seatsData = [];
+            foreach ($seats as $seat) {
+                $seatsData[] = [
+                    'status' => $seat->status,
+                    // Add any other columns you want to include from the seats table
+                ];
+            }
+            $busTripData['seats'] = $seatsData;
+
+            $busTripsData[] = $busTripData;
+        }
+
+        return response()->json($busTripsData);
     }
 }

@@ -12,6 +12,7 @@ class inquires extends Model
         'user_id',
         'email',
         'quastion',
+        'status',
 
     ];
     public function user()

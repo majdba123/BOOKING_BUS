@@ -17,6 +17,16 @@ return new class extends Migration
             $table->string('name');
             $table->timestamps();
         });
+        DB::table('breaks')->insert([
+            [
+                'area_id' => 1,
+                'name' => 'start',
+            ],
+            [
+                'area_id' => 1,
+                'name' => 'end',
+            ],
+        ]);
     }
 
     /**

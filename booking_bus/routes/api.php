@@ -13,6 +13,15 @@ use App\Http\Controllers\SeatController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\BreaksController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\BusTripController;
+use App\Http\Controllers\RateTripsController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\PrivateTripController;
+use App\Http\Controllers\OrderPrivateTripController;
+use App\Http\Controllers\ChargeBalanceController;
+use App\Http\Controllers\FavouriteController;
+use App\Http\Controllers\RateDriverController;
+use App\Http\Controllers\AddressController;
 
 
 
@@ -86,10 +95,22 @@ Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']
     Route::put('/update_trip/{id}', [TripController::class, 'update']);
     Route::delete('/delete_trip/{id}', [TripController::class, 'destroy']);
 
+    Route::get('/all_trip_rating', [RateTripsController::class, 'index']);
+    Route::post('/all_trip_rating_by_trip_id/{trip_id}', [RateTripsController::class, 'rate_trip__by_id']);
+
+    Route::get('/private_trips', [PrivateTripController::class, 'index']);
+
+    Route::post('/accept_private_order/{private_order_id}', [OrderPrivateTripController::class, 'store']);
+    Route::get('/my_ordes_for_private_trip', [OrderPrivateTripController::class, 'my_orders']);
+
+    Route::get('/our_favourite', [FavouriteController::class, 'getUsersWhoFavouritedCompany']);
 
 
+    Route::get('/all_driver_rating', [RateDriverController::class, 'index']);
+    Route::post('/all_driver_rating_by_driver_id/{driver_id}', [RateDriverController::class, 'rate_driver__by_id']);
 
 
+    Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
 });
 
 
@@ -108,7 +129,57 @@ Route::group(['prefix' => 'admin' , 'middleware' => ['checkAdmi','auth:sanctum']
     Route::delete('/delete_breaks/{id}', [BreaksController::class, 'destroy']);
 
 
+    Route::get('/charge_balance_padding', [ChargeBalanceController::class, 'index']);
+    Route::get('/charge_balance_by_status', [ChargeBalanceController::class, 'index1']);
+    Route::post('/show_order_balance/{balance_id}', [ChargeBalanceController::class, 'show']);
+    Route::post('/accepted_order_balance/{balance_id}', [ChargeBalanceController::class, 'accepted']);
+    Route::post('/cancelled_order_balance/{balance_id}', [ChargeBalanceController::class, 'cancelled']);
+    /**<img src="{{ asset('storage/photo.jpg') }}" alt="My Photo"> */
 
+
+});
+
+
+
+
+
+Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function () {
+
+    Route::get('/trips', [TripController::class, 'index_user']);
+    Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
+
+    Route::post('/get_bus_trip/{id}', [BusTripController::class, 'getBusTripsByTripId']);
+    Route::get('/get_bus_trip_fillter', [BusTripController::class, 'getBusTripsByFillter']);
+
+    Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
+
+    Route::post('/rate_trip/{trip_id}', [RateTripsController::class, 'store']);
+
+    Route::post('/store_private_trip', [PrivateTripController::class, 'store']);
+    Route::put('/update_private_trip/{private_trip_id}', [PrivateTripController::class, 'update']);
+    Route::delete('/delete_private_trip/{private_trip_id}', [PrivateTripController::class, 'destroy']);
+    Route::get('/get_my_private_order_by_status', [PrivateTripController::class, 'getPrivateTripsByStatus']);
+
+    Route::get('/OrderPrivateTripController/{private_trip_id}', [OrderPrivateTripController::class, 'index']);
+    Route::post('/accept_company_for_private/{oreder_private_id}', [OrderPrivateTripController::class, 'accept']);
+
+
+    Route::post('/charge_blance', [ChargeBalanceController::class, 'store']);
+
+
+    Route::post('/add_company_to_favourite', [FavouriteController::class, 'store']);
+    Route::delete('/remove_company_from_favourite', [FavouriteController::class, 'destroy']);
+
+
+    Route::post('/rate_driver/{driver_id}', [RateDriverController::class, 'store']);
+
+
+    Route::get('/all_my_address', [AddressController::class, 'index']);
+    Route::post('/store_address', [AddressController::class, 'store']);
+    Route::put('/update_address/{address_id}', [AddressController::class, 'update']);
+
+
+    Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
 
 
 });

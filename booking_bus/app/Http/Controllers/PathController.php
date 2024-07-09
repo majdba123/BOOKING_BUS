@@ -73,6 +73,7 @@ class PathController extends Controller
      */
     public function update(Request $request,  $pathh)
     {
+        $company = Auth::user()->Company->id;
         $validator = Validator::make($request->all(), [
             'from' => 'sometimes|string',
             'to' => 'sometimes|string',
@@ -83,23 +84,30 @@ class PathController extends Controller
             return response()->json(['error' => $errors], 422);
         }
         $path=Path::findOrfail($pathh);
-        if ($path->company_id!== auth()->user()->id) {
+        if ($path->company_id!== $company) {
             return response()->json(['error' => 'you are not owner to update path'], 403);
         }
-        $path->from = $request->input('from') ?? $path->from;
-        $path->to = $request->input('to') ?? $path->to;
-        $path->save();
-        return response()->json([
-            'message' => 'path updated',
-        ]);
+        if($request->has('from'))
+        {
+            $path->from = $request->input('from');
+            $path->save();
+        }
+        if($request->has('to'))
+        {
+            $path->to = $request->input('to');
+            $path->save();
+        }
+
+        return response()->json($path);
     }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($path)
     {
+        $company = Auth::user()->Company->id;
         $path=Path::findOrfail($path);
-        if ($path->company_id!== auth()->user()->id) {
+        if ($path->company_id !== $company) {
             return response()->json(['error' => 'you are not owner to update path'], 403);
         }
         $path->delete();

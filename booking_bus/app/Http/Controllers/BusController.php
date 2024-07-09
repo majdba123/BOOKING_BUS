@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Bus;
 use Illuminate\Http\Request;
+use App\Models\Seat;
+
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +56,16 @@ class BusController extends Controller
         $bus->company_id = $company;
         $bus->save();
 
+        $number_passenger = $bus->number_passenger;
+
+
+        // Create seats equal to the number of passengers
+
+        for ($i = 0; $i < $number_passenger; $i++) {
+            $seat = new Seat();
+            $seat->bus_id = $bus->id;
+            $seat->save();
+        }
         return response()->json([
             'message' => 'bus Created ',
         ]);
@@ -98,14 +110,29 @@ class BusController extends Controller
         if ($bus->company_id!== $company) {
             return response()->json(['error' => 'Unauthorized to update bus'], 403);
         }
+        if($request->has('number_bus'))
+        {
+            $bus->number_bus = $request->input('number_bus');
 
-        $bus->number_bus = $request->input('number_bus')?? $bus->number_bus;
-        $bus->number_passenger = $request->input('number_passenger')?? $bus->number_passenger;
-        $bus->save();
+        }
+        if($request->has('number_passenger'))
+        {
+            $bus->seat()->delete();
+            $bus->number_passenger = $request->input('number_passenger');
+            $number_passenger = $request->input('number_passenger');
+            for ($i = 0; $i < $number_passenger; $i++) {
+                $seat = new Seat();
+                $seat->bus_id = $bus->id;
+                $seat->save();
+            }
 
-        return response()->json([
-            'message' => 'bus updated',
-        ]);
+            $bus->save();
+        }
+
+
+
+
+        return response()->json($bus);
     }
 
     /**
