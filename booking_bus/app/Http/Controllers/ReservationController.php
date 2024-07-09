@@ -161,8 +161,20 @@ class ReservationController extends Controller
         $company->save();
 
 
+
         $bookink->load(['seat_reservation', 'pivoit']);
-        return response()->json($bookink);
+
+
+        $responseData = [
+            'message' => 'Reservation created successfully',
+            'reservation_id' => $bookink->id,
+            'break' => $bookink->pivoit->break_trip->name,
+            'bus_trip_id' => $bus_trip_id,
+           'seats' => $bookink->seat_reservation->where('status', 'padding')->all(),
+            'price' => $bookink->price,
+            'user_name' => $bookink->user->name,
+        ];
+        return response()->json($responseData);
     }
 
     /**

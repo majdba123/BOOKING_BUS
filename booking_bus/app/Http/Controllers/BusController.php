@@ -115,9 +115,7 @@ class BusController extends Controller
         $bus->number_passenger = $request->input('number_passenger')?? $bus->number_passenger;
         $bus->save();
 
-        return response()->json([
-            'message' => 'bus updated',
-        ]);
+        return response()->json($bus);
     }
 
     /**

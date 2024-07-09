@@ -18,7 +18,7 @@ class DriverController extends Controller
     {
         $company=Auth::user()->Company->id;
 
-        $driver = Driver::where('company_id', $company )->get();
+        $driver = Driver::where('company_id', $company )->with(['company.user','user'])->get();
         return response()->json($driver, 200);
     }
 

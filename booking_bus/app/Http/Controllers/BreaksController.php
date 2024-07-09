@@ -99,9 +99,7 @@ class BreaksController extends Controller
         $break->name = $request->input('name');
         $break->save();
 
-        return response()->json([
-            'message' => 'Break updated successfully',
-        ]);
+        return response()->json($break);
     }
 
     /**
