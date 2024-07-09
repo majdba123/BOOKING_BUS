@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Driver_managment/Driver_managment_page.dart';
-
-import 'package:mobile_app/screens/DashBorad_Company/Trip_mangement/Trip_managemt_page.dart';
+import 'package:mobile_app/screens/DashBorad_Company/path_mangement/path_managemt_page.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Break_Places_Mnagement/Breack_Place_mangemt.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Company_managemnt/Create_Account_Comany.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Country_managment/Country_Mnagament.dart';
-
-
-
 import 'package:mobile_app/widgets/my_text_button.dart';
 
 class DashbordAdmin extends StatefulWidget {
+ 
   @override
   State<DashbordAdmin> createState() => _DashbordAdminState();
 }
 
 class _DashbordAdminState extends State<DashbordAdmin> {
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(

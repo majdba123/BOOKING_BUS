@@ -1,9 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
-import 'package:mobile_app/screens/login/login_ui.dart';
+import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
+
 
 import 'package:mobile_app/screens/register_page.dart';
+import 'package:mobile_app/widgets/Alert_Box.dart';
+import 'package:provider/provider.dart';
 import '../constants.dart';
 
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
@@ -17,26 +23,7 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  Future<String> SignIn(var email, var password) async {
-    String url = name_domain_server+"login";
-    print(email);
-    print(password);
-    var res = await http.post(
-      Uri.parse('$url'),
-      body: {'email': email, 'password': password},
-    );
-    print(res.statusCode);
-    if (res.statusCode == 200) {
-      Map<String, dynamic> parsedJson = json.decode(res.body);
-      String accessToken = parsedJson['access_token'];
-
-      return accessToken;
-    } else {
-      Map<String, dynamic> parsedJson = json.decode(res.body);
-      String message = parsedJson['message'];
-      return message;
-    }
-  }
+ 
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -137,27 +124,42 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     MyTextButton(
                       buttonName: 'Sign In',
-                      onTap: () async {
+                     onTap: () async {
                         showDialog(
-                            context: context,
-                            builder: (context) => Center(
-                                  child: CircularProgressIndicator(),
-                                ));
-                        var user_token = await SignIn(
-                            emailController.text, passwordController.text);
-                        print('the res is $user_token');
-                        if (user_token != "Invalid Credentials") {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Dashbord()));
+                          context: context,
+                          builder: (context) => Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
 
-                          showAlertDialog(context, user_token);
-                          // Navigator.of(context).pop();
+                        AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+                        await authProvider.setAuthData(emailController.text, passwordController.text);
+
+                        Navigator.of(context).pop(); // Close the progress indicator
+
+                        if (authProvider.accessToken.isNotEmpty) {
+                          // Determine which dashboard to navigate to based on user type
+                          Widget destinationPage;
+                          if (authProvider.userType == "company") {
+                            destinationPage = Dashbord();
+                          } else if (authProvider.userType == "user") {
+                            destinationPage =DashbordUser();
+                          } else if (authProvider.userType == "driver") {
+                            destinationPage = DashbordDriver();
+                          } else if (authProvider.userType == "admin") {
+                            destinationPage = DashbordAdmin();
+                          } else {
+                            // Handle unexpected user type
+                            showAlertDialog(context, "Unexpected user type: ${authProvider.userType}");
+                            return;
+                          }
+                          
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => destinationPage),
+                          );
                         } else {
-                          showAlertDialog(context, user_token);
-                          Navigator.of(context).pop();
-                          // Navigator.of(context).pop();
+                          showAlertDialog(context, "Invalid Credentials");
                         }
                       },
                       bgColor: Colors.white,

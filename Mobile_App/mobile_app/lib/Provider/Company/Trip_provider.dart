@@ -1,41 +1,109 @@
+// trip_provider.dart
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Api_Services/Company/Trip.dart';
-import 'package:mobile_app/Data_Models/Trip_Model/Trip.dart';
+import 'package:http/http.dart' as http;
+import 'package:mobile_app/Api_Services/Admin/Break_Area.dart';
+import 'package:mobile_app/Api_Services/Admin/area.dart';
+import 'package:mobile_app/Api_Services/Company/Bus.dart';
+import 'package:mobile_app/Api_Services/Company/TripBus.dart';
+import 'package:mobile_app/Api_Services/Company/path.dart';
+
+import 'package:mobile_app/Data_Models/Break_area.dart';
+import 'package:mobile_app/Data_Models/Bus.dart';
+import 'package:mobile_app/Data_Models/area.dart';
+import 'dart:convert';
+import 'package:mobile_app/Data_Models/path.dart';
+import 'package:mobile_app/Data_Models/Trip.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:provider/provider.dart';
 
 
-class TripProvider with ChangeNotifier {
-  List<Trip> _trips = [];
+class TripBusProvider with ChangeNotifier {
+
+  List<Path> _paths = [];
   bool _isLoading = false;
 
-  List<Trip> get trips => _trips;
+  List<Path> get paths => _paths;
   bool get isLoading => _isLoading;
+ 
 
-  void fetchTrips(String accessToken) async {
+  void fetchpaths(String accessToken) async {
+   
     _isLoading = true;
     notifyListeners();
 
     try {
-      _trips = await TripApiService().fetchTrips(accessToken);
+      _paths = await PathApiService().fetchpaths(accessToken);
     } catch (e) {
-      print('Failed to fetch trips: $e');
+      print('Failed to fetch paths: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateTrip(String accessToken, Trip trip) async {
-    await TripApiService().updateTrip(accessToken, trip);
-    int index = _trips.indexWhere((t) => t.id == trip.id);
-    if (index != -1) {
-      _trips[index] = trip;
+List<area> _areas = [];
+
+
+  List<area> get areas => _areas;
+
+
+ Future <void> fetchareas(String accessToken) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _areas = await areaApiService().fetchareas(accessToken);
+      
+    } catch (e) {
+      print('Failed to fetch areas: $e');
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> deleteTrip(String accessToken, int tripId) async {
-    await TripApiService().deleteTrip(accessToken, tripId);
-    _trips.removeWhere((trip) => trip.id == tripId);
+  List<BreakArea> _BreakAreas = [];
+  
+
+  List<BreakArea> get BreakAreas => _BreakAreas;
+  
+
+  void fetchBreakAreas(String accessToken,var breakId) async {
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      _BreakAreas = await BreakAreaApiService().fetchBreakArea(accessToken,breakId);
+    } catch (e) {
+      print('Failed to fetch BreakAreas: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+   List<Bus> _Buss = [];
+
+
+  List<Bus> get Buss => _Buss;
+ 
+
+  void fetchBuss(String accessToken) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _Buss = await BusApiService().fetchBus(accessToken);
+    } catch (e) {
+      print('Failed to fetch Buss: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+ Future<String> addTrip(String accessToken,Trip trip) async {
+    String message = await TripBusApi().addTrip(accessToken,trip);
+    notifyListeners();
+    return message;
   }
 }

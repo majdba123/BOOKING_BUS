@@ -1,9 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:mobile_app/constants.dart';
-import 'package:http/http.dart' as http;
-import 'package:mobile_app/screens/login/login_ui.dart';
+import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:provider/provider.dart';
+
+
 class RegistrationForm extends StatefulWidget {
   @override
   _RegistrationFormState createState() => _RegistrationFormState();
@@ -21,32 +21,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
     _passwordController.dispose();
     super.dispose();
   }
- String access_token="2|F6Qt2hWRZ98NGd0UAhcY7PMRoIhuaaVHTDPoYTTEeaa05b04";
-Future<String> RegisterDriver(var email, var name, var password) async {
-    String url = name_domain_server+"company/register/driver";
-    print(email);
-    print(password);
-    print(name);
-    var res = await http.post(
-      headers: <String, String>{
-      // 'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $access_token',
-    },
-      Uri.parse('$url'),
-      body: {'email': email, 'name': name, 'password': password},
-    );
-     print(res.body);
-    print(res.statusCode);
-    if (res.statusCode == 200) {
-      Map<String, dynamic> parsedJson = json.decode(res.body);
-      String message = parsedJson['message'];
-      return message;
-    } else {
-      Map<String, dynamic> parsedJson = json.decode(res.body);
-      String error = parsedJson['error'];
-      return error;
-    }
-  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +70,6 @@ Future<String> RegisterDriver(var email, var name, var password) async {
                 if (value!.isEmpty) {
                   return 'Please enter your email';
                 }
-                // Add more email validation logic if needed
                 return null;
               },
             ),
@@ -111,41 +87,51 @@ Future<String> RegisterDriver(var email, var name, var password) async {
                 if (value!.isEmpty) {
                   return 'Please enter a password';
                 }
-                // Add more password validation logic if needed
                 return null;
               },
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async{
-                if (_validateInputs()) {
-                  // Perform registration logic here
-               
+            Consumer<DriverProvider>(
+              builder: (context, driverProvider, child) {
+                return driverProvider.isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                        onPressed: () async {
 
-                  // For demonstration, print values to console
-                  // print('Name: $name, Email: $email, Password: $password');
 
-                showDialog(
-                            context: context,
-                            builder: (context) => Center(
-                                  child: CircularProgressIndicator(),
-                                ));
-                        var message = await RegisterDriver(_emailController.text,
-                            _nameController.text, _passwordController.text);
-                        print('the res is $message');
-                        if (message == "driver Created ") {
-                        
+                          if (_validateInputs()) {
+                            await driverProvider.addDriver(
+                             Provider.of<AuthProvider>(context,listen: false).accessToken,
+                                _nameController.text,
+                              _emailController.text,
+                            
+                              _passwordController.text,
+                            );
 
-                          showAlertDialog(context, message as String);
-                          Navigator.of(context).pop();
-                        } else {
-                          showAlertDialog(context, message as String);
-                          Navigator.of(context).pop();
-                          // Navigator.of(context).pop();
-                        }
-                }
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Registration Status'),
+                                content: Text(driverProvider.message),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      _nameController.text="";
+                                        _emailController.text="";
+                                        _passwordController.text="";
+                                       
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                        child: Text('Register'),
+                      );
               },
-              child: Text('Register'),
             ),
           ],
         ),
@@ -165,4 +151,3 @@ Future<String> RegisterDriver(var email, var name, var password) async {
     return true;
   }
 }
-

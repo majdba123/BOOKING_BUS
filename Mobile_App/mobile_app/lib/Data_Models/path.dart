@@ -1,4 +1,4 @@
-class Trip {
+class Path {
   final int id;
   final int companyId;
   final String from;
@@ -6,7 +6,7 @@ class Trip {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  Trip({
+  Path({
     required this.id,
     required this.companyId,
     required this.from,
@@ -15,8 +15,8 @@ class Trip {
     required this.updatedAt,
   });
 
-  factory Trip.fromJson(Map<String, dynamic> json) {
-    return Trip(
+  factory Path.fromJson(Map<String, dynamic> json) {
+    return Path(
       id: json['id'],
       companyId: json['company_id'],
       from: json['from'],

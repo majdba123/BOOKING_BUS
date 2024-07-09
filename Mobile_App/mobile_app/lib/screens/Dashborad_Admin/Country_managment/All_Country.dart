@@ -1,43 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Data_Models/area.dart';
+import 'package:mobile_app/Provider/Admin/Area_Provider.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:provider/provider.dart';
+// Import your CountryProvider
 
 class CountryListPage extends StatefulWidget {
-  List<String> countries = ['USA', 'Canada', 'Mexico', 'France', 'Germany'];
-
   @override
   State<CountryListPage> createState() => _CountryListPageState();
 }
 
 class _CountryListPageState extends State<CountryListPage> {
   final TextEditingController _searchController = TextEditingController();
-  List<String> filteredCountries = [];
+  List<area> filteredCountries = [];
 
   @override
   void initState() {
     super.initState();
-    filteredCountries = widget.countries;
     _searchController.addListener(_filterCountries);
+    _fetchCountries();
+  }
+
+  void _fetchCountries() {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final countryProvider = Provider.of<areaProvider>(context, listen: false);
+    countryProvider.fetchareas(authProvider.accessToken).then((_) {
+      setState(() {
+        filteredCountries = countryProvider.areas;
+      });
+    });
   }
 
   void _filterCountries() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      filteredCountries = widget.countries.where((country) {
-        return country.toLowerCase().contains(query);
+      final countryProvider = Provider.of<areaProvider>(context, listen: false);
+      filteredCountries = countryProvider.areas.where((country) {
+        return country.name.toLowerCase().contains(query);
       }).toList();
     });
   }
 
   void onUpdateCountry(int index, String newName) {
-    setState(() {
-      widget.countries[index] = newName;
-      _filterCountries();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final countryProvider = Provider.of<areaProvider>(context, listen: false);
+    final country = filteredCountries[index];
+    countryProvider
+        .updatearea(authProvider.accessToken, index, newName)
+        .then((_) {
+      _fetchCountries();
     });
   }
 
   void onDeleteCountry(int index) {
-    setState(() {
-      widget.countries.removeAt(index);
-      _filterCountries();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final countryProvider = Provider.of<areaProvider>(context, listen: false);
+    final country = filteredCountries[index];
+    countryProvider.deletearea(authProvider.accessToken, index).then((_) {
+      _fetchCountries();
     });
   }
 
@@ -60,91 +80,96 @@ class _CountryListPageState extends State<CountryListPage> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'Search by Name or ID',
+                labelText: 'Search by Name',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
               ),
             ),
             SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredCountries.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    elevation: 4,
-                    child: ListTile(
-                      title: Text(filteredCountries[index]),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () async {
-                              final newName = await showDialog<String>(
-                                context: context,
-                                builder: (context) {
-                                  final _editController = TextEditingController(
-                                    text: filteredCountries[index],
+              child: Consumer<areaProvider>(
+                builder: (context, areaProvider, child) {
+                  return ListView.builder(
+                    itemCount: filteredCountries.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        elevation: 4,
+                        child: ListTile(
+                          title: Text(filteredCountries[index].name),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () async {
+                                  final newName = await showDialog<String>(
+                                    context: context,
+                                    builder: (context) {
+                                      final _editController =
+                                          TextEditingController(
+                                        text: filteredCountries[index].name,
+                                      );
+                                      return AlertDialog(
+                                        title: Text('Update Country'),
+                                        content: TextField(
+                                          controller: _editController,
+                                          decoration: InputDecoration(
+                                            labelText: 'Country Name',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(_editController.text);
+                                            },
+                                            child: Text('Update'),
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
-                                  return AlertDialog(
-                                    title: Text('Update Country'),
-                                    content: TextField(
-                                      controller: _editController,
-                                      decoration: InputDecoration(
-                                        labelText: 'Country Name',
-                                        border: OutlineInputBorder(),
-                                      ),
+                                  if (newName != null) {
+                                    onUpdateCountry(index, newName);
+                                  }
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Delete Country'),
+                                      content: Text(
+                                          'Are you sure you want to delete ${filteredCountries[index].name}?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            onDeleteCountry(index);
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Delete'),
+                                        ),
+                                      ],
                                     ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(_editController.text);
-                                        },
-                                        child: Text('Update'),
-                                      ),
-                                    ],
                                   );
                                 },
-                              );
-                              if (newName != null) {
-                                onUpdateCountry(
-                                  widget.countries.indexOf(filteredCountries[index]),
-                                  newName,
-                                );
-                              }
-                            },
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text('Delete Country'),
-                                  content: Text('Are you sure you want to delete ${filteredCountries[index]}?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        onDeleteCountry(widget.countries.indexOf(filteredCountries[index]));
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('Delete'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

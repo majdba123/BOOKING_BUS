@@ -1,15 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:mobile_app/constants.dart';
-import 'package:http/http.dart' as http;
-import 'package:mobile_app/screens/login/login_ui.dart';
-class AddTripPage extends StatefulWidget {
+import 'package:mobile_app/Provider/Company/path_provider.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:provider/provider.dart';
+
+
+class AddPathPage extends StatefulWidget {
   @override
-  _AddTripPageState createState() => _AddTripPageState();
+  _AddPathPageState createState() => _AddPathPageState();
 }
 
-class _AddTripPageState extends State<AddTripPage> {
+class _AddPathPageState extends State<AddPathPage> {
   final _formKey = GlobalKey<FormState>();
   final _sourceController = TextEditingController();
   final _destinationController = TextEditingController();
@@ -20,35 +20,12 @@ class _AddTripPageState extends State<AddTripPage> {
     _destinationController.dispose();
     super.dispose();
   }
-  String access_token="2|F6Qt2hWRZ98NGd0UAhcY7PMRoIhuaaVHTDPoYTTEeaa05b04";
-Future<String> Addtrip(var From, var To, ) async {
-    String url = name_domain_server+"company/path_store";
-    print(From);
-    print(To);
-   
-    var res = await http.post(
-      Uri.parse('$url'),
-      body: {'from': From, 'to': To, },
-       headers: <String, String>{
-      'Authorization': 'Bearer $access_token',
-    },
-    );
-    print(res.statusCode);
-    if (res.statusCode == 200) {
-      Map<String, dynamic> parsedJson = json.decode(res.body);
-      String message = parsedJson['message'];
-      return message;
-    } else {
-      Map<String, dynamic> parsedJson = json.decode(res.body);
-      String error = parsedJson['error'];
-      return error;
-    }
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Trip'),
+        title: Text('Add path'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -75,7 +52,7 @@ Future<String> Addtrip(var From, var To, ) async {
                   child: Column(
                     children: [
                       Text(
-                        'Add a New Trip',
+                        'Add a New path',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -118,36 +95,31 @@ Future<String> Addtrip(var From, var To, ) async {
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () async{
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                           
                             showDialog(
-                            context: context,
-                            builder: (context) => Center(
-                                  child: CircularProgressIndicator(),
-                                ));
-                        var message = await Addtrip(_sourceController.text,_destinationController.text);
-                        print('the res is $message');
-                        if (message == "driver Created ") {
-                        
-
-                          showAlertDialog(context, message as String);
-                          Navigator.of(context).pop();
-                        } else {
-                          showAlertDialog(context, message as String);
-                          Navigator.of(context).pop();
-                          // Navigator.of(context).pop();
-                        }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Trip Added')),
+                              context: context,
+                              builder: (context) => Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             );
+                            
+                            final pathProvider = Provider.of<PathProvider>(context, listen: false);
+                             final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                            String message = await pathProvider.addpath(authProvider.accessToken,_sourceController.text, _destinationController.text);
+                            Navigator.of(context).pop();
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(message)),
+                            );
+
                             Navigator.pop(context, {
                               'source': _sourceController.text,
                               'destination': _destinationController.text,
                             });
                           }
                         },
-                        child: Text('Add Trip'),
+                        child: Text('Add path'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue[900],
                           padding: EdgeInsets.symmetric(vertical: 16),

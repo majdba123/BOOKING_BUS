@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/screens/DashBorad_Company/Trip_mangement/Add_Trip.dart';
-import 'package:mobile_app/screens/DashBorad_Company/Trip_mangement/All_Trips.dart';
+import 'package:mobile_app/screens/DashBorad_Company/path_mangement/Add_path.dart';
+import 'package:mobile_app/screens/DashBorad_Company/path_mangement/All_paths.dart';
 
 
-class Trip_managment extends StatelessWidget {
+class Path_managment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +20,7 @@ class Trip_managment extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () {
               Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => TripListPage()));
+                    MaterialPageRoute(builder: (context) => PathListPage()));
               },
               icon: Icon(Icons.list),
               label: Text('كافة مسارات الرحلات'),
@@ -33,7 +33,7 @@ class Trip_managment extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddTripPage()));
+                    MaterialPageRoute(builder: (context) => AddPathPage()));
               },
               icon: Icon(Icons.add),
               label: Text('اضافة مسار رحلة'),

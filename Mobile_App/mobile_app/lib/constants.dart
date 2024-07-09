@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 // Colors
-const kBackgroundColor = Color(0xff191720);
-const kTextFieldFill = Color(0xff1E1C24);
+const kBackgroundColor = Color.fromARGB(255, 179, 175, 193);
+const kTextFieldFill = Color.fromARGB(255, 55, 55, 56);
 // TextStyles
 const kHeadline = TextStyle(
   color: Colors.white,

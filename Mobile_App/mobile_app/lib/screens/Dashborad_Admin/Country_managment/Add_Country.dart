@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Admin/Area_Provider.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:provider/provider.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Country_managment/All_Country.dart';
-
-
+ // import your CountryProvider
 
 class AddCountry extends StatefulWidget {
   @override
@@ -10,7 +12,6 @@ class AddCountry extends StatefulWidget {
 
 class _AddCountryState extends State<AddCountry> {
   final TextEditingController _countryController = TextEditingController();
-  List<String> countries = [];
 
   @override
   void dispose() {
@@ -20,14 +21,12 @@ class _AddCountryState extends State<AddCountry> {
 
   void _addCountry() {
     if (_countryController.text.isNotEmpty) {
-      setState(() {
-        countries.add(_countryController.text);
-      });
+       final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      // Access the CountryProvider and call the addCountry method
+      Provider.of<areaProvider>(context, listen: false).addarea(authProvider.accessToken,_countryController.text);
       _countryController.clear();
     }
   }
-
- 
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +54,6 @@ class _AddCountryState extends State<AddCountry> {
                 textStyle: TextStyle(fontSize: 18),
               ),
             ),
-           
           ],
         ),
       ),

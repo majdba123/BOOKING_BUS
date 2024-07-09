@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Company/Assign_bus_provider.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:provider/provider.dart';
 class CancelDriverPage extends StatefulWidget {
   @override
   _CancelDriverPageState createState() => _CancelDriverPageState();
 }
 
 class _CancelDriverPageState extends State<CancelDriverPage> {
-  List<String> drivers = [
-    'Driver 201',
-    'Driver 202',
-    'Driver 203',
-    // Add more driver entries here
-  ];
-  List<String> filteredDrivers = [];
+
 
   @override
   void initState() {
     super.initState();
-    filteredDrivers = drivers;
+    _fetchDrivers();
   }
-
+ Future<void> _fetchDrivers() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final driverProvider = Provider.of<AssingBusProvider>(context, listen: false);
+     driverProvider.fetchDrivers(authProvider.accessToken);
+  }
   void _filterDrivers(String query) {
-    setState(() {
-      filteredDrivers = drivers
-          .where((driver) => driver.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
+   
   }
 
   void _cancelDriver(String driverId) {
     // Implement the logic to cancel driver from bus here
+final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final driverProvider = Provider.of<AssingBusProvider>(context, listen: false);
+     driverProvider.CancelAssignDriver(authProvider.accessToken, driverId);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$driverId cancelled')),
+      SnackBar(content: Text('$driverId cancel')),
     );
   }
 
@@ -52,17 +52,25 @@ class _CancelDriverPageState extends State<CancelDriverPage> {
               onChanged: _filterDrivers,
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredDrivers.length,
+              child: Consumer<AssingBusProvider>(
+                builder: (context, driverProvider, _) {
+                  if (driverProvider.isLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (driverProvider.Drivers.isEmpty) {
+                    return Center(child: Text('No drivers found'));
+                  }
+                  return ListView.builder(
+                itemCount:  driverProvider.Drivers.length,
                 itemBuilder: (context, index) {
-                  final driver = filteredDrivers[index];
+                  final driver =  driverProvider.Drivers[index];
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 8),
                     child: ListTile(
-                      title: Text(driver),
+                      title: Text('${driver.id}'),
                       trailing: ElevatedButton(
                         onPressed: () {
-                          _cancelDriver(driver);
+                          _cancelDriver(driver.id.toString());
                         },
                         child: Text('Cancel'),
                         style: ElevatedButton.styleFrom(
@@ -72,8 +80,8 @@ class _CancelDriverPageState extends State<CancelDriverPage> {
                     ),
                   );
                 },
-              ),
-            ),
+              );
+              },))
           ],
         ),
       ),

@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Driver_managment/Driver_managment_page.dart';
-
-import 'package:mobile_app/screens/DashBorad_Company/Trip_mangement/Trip_managemt_page.dart';
-
-
-
+import 'package:mobile_app/screens/DashBorad_Company/Trip_managemt/trip_managemt_page.dart';
+import 'package:mobile_app/screens/DashBorad_Company/path_mangement/path_managemt_page.dart';
 import 'package:mobile_app/widgets/my_text_button.dart';
 
 class Dashbord extends StatefulWidget {
+  
   @override
   State<Dashbord> createState() => _DashbordState();
 }
 
 class _DashbordState extends State<Dashbord> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,12 +33,12 @@ class _DashbordState extends State<Dashbord> {
             ),
             ListTile(
               leading: Icon(Icons.home),
-              title: Text('ادارة مسار الرحلات'),
+              title: Text('ادارة مسار '),
               onTap: () {
                 // Handle Home button tap
 
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Trip_managment()));
+                    MaterialPageRoute(builder: (context) => Path_managment()));
               },
             ),
             ListTile(
@@ -57,6 +56,14 @@ class _DashbordState extends State<Dashbord> {
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => DriverManagementPage()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.contacts),
+              title: Text('ادارة الرحلات'),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => TripBusmanagment()));
               },
             ),
             // ListTile(

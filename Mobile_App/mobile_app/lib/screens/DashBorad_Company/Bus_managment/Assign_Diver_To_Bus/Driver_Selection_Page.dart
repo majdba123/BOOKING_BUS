@@ -1,38 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Company/Assign_bus_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:mobile_app/Provider/Company/driver_provider.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+
 class DriverSelectionPage extends StatefulWidget {
   final String busId;
 
   DriverSelectionPage({required this.busId});
 
   @override
-  _DriverSelectionPageState createState() => _DriverSelectionPageState();
+  _DriverSelectionPageState createState() => _DriverSelectionPageState(busId: busId);
 }
 
 class _DriverSelectionPageState extends State<DriverSelectionPage> {
-  List<String> drivers = [
-    'Driver 201',
-    'Driver 202',
-    'Driver 203',
-    // Add more driver entries here
-  ];
-  List<String> filteredDrivers = [];
+   final String busId;
+  _DriverSelectionPageState({required this.busId});
+  
 
   @override
   void initState() {
     super.initState();
-    filteredDrivers = drivers;
+    _fetchDrivers();
+  }
+
+  Future<void> _fetchDrivers() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final driverProvider = Provider.of<AssingBusProvider>(context, listen: false);
+     driverProvider.fetchDrivers(authProvider.accessToken);
   }
 
   void _filterDrivers(String query) {
-    setState(() {
-      filteredDrivers = drivers
-          .where((driver) => driver.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
+    final driverProvider = Provider.of<AssingBusProvider>(context, listen: false);
+    // setState(() {
+    //   driverProvider.Drivers = driverProvider.Drivers
+    //       .where((driver) => driver.driverName.toLowerCase().contains(query.toLowerCase()))
+    //       .toList();
+    // });
   }
 
-  void _assignDriver(String driverId) {
-    // Implement the logic to assign driver to bus here
+  void _assignDriver(int driverId,String busId) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final driverProvider = Provider.of<AssingBusProvider>(context, listen: false);
+    await driverProvider.AssignDriverToBus(authProvider.accessToken,busId, driverId);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('$driverId assigned to ${widget.busId}')),
     );
@@ -56,24 +66,36 @@ class _DriverSelectionPageState extends State<DriverSelectionPage> {
               onChanged: _filterDrivers,
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredDrivers.length,
-                itemBuilder: (context, index) {
-                  final driver = filteredDrivers[index];
-                  return Card(
-                    margin: EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      title: Text(driver),
-                      trailing: ElevatedButton(
-                        onPressed: () {
-                          _assignDriver(driver);
-                        },
-                        child: Text('Assign'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+              child: Consumer<AssingBusProvider>(
+                builder: (context, driverProvider, _) {
+                  if (driverProvider.isLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (driverProvider.Drivers.isEmpty) {
+                    return Center(child: Text('No drivers found'));
+                  }
+                  return ListView.builder(
+                    itemCount: driverProvider.Drivers.length,
+                    itemBuilder: (context, index) {
+                      final driver = driverProvider.Drivers[index];
+                      return Card(
+                        margin: EdgeInsets.symmetric(vertical: 8),
+                        child: ListTile(
+                          title: Text('${driver.id}'),
+                          trailing: ElevatedButton(
+                            onPressed: () {
+                              print('the driver id is ');
+                              print(driver.id);
+                              _assignDriver(driver.id,busId);
+                            },
+                            child: Text('Assign'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
               ),

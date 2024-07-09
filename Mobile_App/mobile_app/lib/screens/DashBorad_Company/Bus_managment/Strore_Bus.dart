@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:provider/provider.dart';
+
 
 class StoreBusPage extends StatefulWidget {
   @override
@@ -55,11 +59,6 @@ class _StoreBusPageState extends State<StoreBusPage> {
                           color: Colors.blue[900],
                         ),
                       ),
-                      // SizedBox(height: 16),
-                      // Image.asset(
-                      //   'assets/bus_image.png',
-                      //   height: 150,
-                      // ),
                       SizedBox(height: 16),
                       TextFormField(
                         controller: _busNumberController,
@@ -96,16 +95,18 @@ class _StoreBusPageState extends State<StoreBusPage> {
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            // Handle form submission
+                            final busProvider = Provider.of<BusProvider>(context, listen: false);
+                              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                            await busProvider.addBus(authProvider.accessToken,
+                              _busNumberController.text,
+                             _passengerNumberController.text,
+                            );
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Bus Info Stored')),
                             );
-                            Navigator.pop(context, {
-                              'busNumber': _busNumberController.text,
-                              'passengerNumber': _passengerNumberController.text,
-                            });
+                            Navigator.pop(context);
                           }
                         },
                         child: Text('Store Info'),

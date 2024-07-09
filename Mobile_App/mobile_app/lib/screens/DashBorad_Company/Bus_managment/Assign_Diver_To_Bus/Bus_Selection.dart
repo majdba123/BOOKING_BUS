@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Assign_Diver_To_Bus/Driver_Selection_Page.dart';
+import 'package:mobile_app/Provider/Company/Assign_bus_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:mobile_app/Provider/Company/bus_provider.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'Driver_Selection_Page.dart';
+
 class BusSelectionPage extends StatefulWidget {
   @override
   _BusSelectionPageState createState() => _BusSelectionPageState();
 }
 
 class _BusSelectionPageState extends State<BusSelectionPage> {
-  List<String> buses = [
-    'Bus 101',
-    'Bus 102',
-    'Bus 103',
-    // Add more bus entries here
-  ];
-  List<String> filteredBuses = [];
-
   @override
   void initState() {
     super.initState();
-    filteredBuses = buses;
+    _fetchBuses();
+  }
+
+  Future<void> _fetchBuses() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final busProvider = Provider.of<AssingBusProvider>(context, listen: false);
+     busProvider.fetchBuss(authProvider.accessToken);
   }
 
   void _filterBuses(String query) {
-    setState(() {
-      filteredBuses = buses
-          .where((bus) => bus.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
+    final busProvider = Provider.of<AssingBusProvider>(context, listen: false);
+    // setState(() {
+    //   busProvider.Buss = busProvider.buses
+    //       .where((bus) => bus.busNumber.toLowerCase().contains(query.toLowerCase()))
+    //       .toList();
+    // });
   }
 
   @override
@@ -46,23 +50,33 @@ class _BusSelectionPageState extends State<BusSelectionPage> {
               onChanged: _filterBuses,
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredBuses.length,
-                itemBuilder: (context, index) {
-                  final bus = filteredBuses[index];
-                  return Card(
-                    margin: EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      title: Text(bus),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DriverSelectionPage(busId: bus),
-                          ),
-                        );
-                      },
-                    ),
+              child: Consumer<AssingBusProvider>(
+                builder: (context, busProvider, _) {
+                  if (busProvider.isLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (busProvider.Buss.isEmpty) {
+                    return Center(child: Text('No buses found'));
+                  }
+                  return ListView.builder(
+                    itemCount: busProvider.Buss.length,
+                    itemBuilder: (context, index) {
+                      final bus = busProvider.Buss[index];
+                      return Card(
+                        margin: EdgeInsets.symmetric(vertical: 8),
+                        child: ListTile(
+                          title: Text('${bus.id}'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DriverSelectionPage(busId: bus.id.toString()),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
                   );
                 },
               ),
