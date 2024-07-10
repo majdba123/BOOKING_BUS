@@ -587,7 +587,16 @@ http://127.0.0.1:8000/api/company/all_breaks/{area_id}
 company
 get
 
-
+___________________________________________________________
+all_government
+get
+company
+127.0.0.1:8000/api/company/all_government
+_________________________________________
+show_government
+post
+company
+127.0.0.1:8000/api/company/show_goverment/{government_id}
 
 
 

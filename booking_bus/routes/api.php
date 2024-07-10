@@ -22,6 +22,7 @@ use App\Http\Controllers\ChargeBalanceController;
 use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\RateDriverController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\ProfileController;
 
 
 
@@ -111,6 +112,11 @@ Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']
 
 
     Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
+
+    Route::get('/all_government', [AreaController::class, 'index']);
+    Route::post('/show_goverment/{id}', [AreaController::class, 'show']);
+
+
 });
 
 
@@ -180,6 +186,10 @@ Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function (
 
 
     Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
+
+
+    Route::post('/store_profile_info', [ProfileController::class, 'store']);
+    Route::put('/update_profile_info', [ProfileController::class, 'update']);
 
 
 });
