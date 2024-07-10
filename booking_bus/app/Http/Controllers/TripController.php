@@ -6,6 +6,7 @@ use App\Models\Trip;
 use App\Models\Breaks_trip;
 use App\Models\Bus_Driver;
 use App\Models\Bus_Trip;
+use App\Models\Breaks;
 use App\Models\Pivoit;
 use App\Models\Bus;
 use Illuminate\Support\Facades\Validator;
@@ -76,7 +77,7 @@ class TripController extends Controller
         }
         if (count($availableBuses) == 0) {
             return response()->json([
-                'essage' => 'no buses available',
+                'message' => 'no buses available',
             ]);
         }
 
@@ -100,6 +101,13 @@ class TripController extends Controller
         $breakIds = $request->input('breaks_ids');
 
         foreach ($breakIds as $breakId) {
+            $FIND=Breaks::FIND($breakId);
+            if(!$FIND)
+            {
+                return response()->json([
+                    'message' => 'break not found',
+                ]);
+            }
             $breakTrip = new Breaks_trip();
             $breakTrip->trip_id = $trip->id;
             $breakTrip->breaks_id = $breakId;
@@ -244,6 +252,13 @@ class TripController extends Controller
 
                 $breakIds = $request->input('breaks_ids');
                 foreach ($breakIds as $breakId) {
+                        $FIND=Breaks::FIND($breakId);
+                        if(!$FIND)
+                        {
+                            return response()->json([
+                                'message' => 'break not found',
+                            ]);
+                        }
                         $breakTrip = new Breaks_trip();
                         $breakTrip->trip_id = $trip->id;
                         $breakTrip->breaks_id = $breakId;
