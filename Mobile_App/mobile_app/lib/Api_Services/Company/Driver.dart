@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mobile_app/Data_Models/Driver.dart';
+import 'package:mobile_app/Data_Models/DriverBusActive.dart';
 import 'package:mobile_app/constants.dart';
 
 
@@ -60,7 +61,7 @@ Future<String> AssignDriverToBus(String accessToken,var bus_id ,var driver_id ) 
    print(url);
     var res = await http.post(
       Uri.parse('$url'),
-      body: {'driver_id ': driver_id.toString()  },
+      body: {'driver_id': driver_id.toString()  },
        headers: <String, String>{
       'Authorization': 'Bearer $accessToken',
      
@@ -111,7 +112,7 @@ Future<String> CancelAssignDriver(String accessToken,var driver_id ) async {
         'Authorization': 'Bearer $accessToken',
       },
     );
-  print(response.body);
+  // print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
       return jsonList.map((json) => Driver.fromJson(json)).toList();
@@ -119,7 +120,7 @@ Future<String> CancelAssignDriver(String accessToken,var driver_id ) async {
       throw Exception('Failed to load Driver');
     }
   }
-  Future<List<Driver>> fetchDriversOnActiveBus(String accessToken) async {
+  Future<List<DriverBusActive>> fetchDriversOnActiveBus(String accessToken) async {
     String url = name_domain_server+"company/all_driver_with_bus";
     final response = await http.get(
       Uri.parse('$url'),
@@ -129,22 +130,25 @@ Future<String> CancelAssignDriver(String accessToken,var driver_id ) async {
     );
 print(url);
 print(response.statusCode);
+// print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
-      return jsonList.map((json) => Driver.fromJson(json)).toList();
+      
+      return jsonList.map((json) => DriverBusActive.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load Driver');
     }
   }
    Future<List<Driver>> fetchDriverByStatus(String accessToken,String Status) async {
-    String url = name_domain_server+"company/get_driver_status?status='$Status'";
+    String url = name_domain_server+"company/get_driver_by_status?status=$Status";
+    print(url);
     final response = await http.get(
       Uri.parse('$url'),
       headers: <String, String>{
         'Authorization': 'Bearer $accessToken',
       },
     );
-
+  print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
       return jsonList.map((json) => Driver.fromJson(json)).toList();

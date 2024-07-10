@@ -90,6 +90,8 @@ print(response.statusCode);
   }
 
   Future<Bus> updateBus(String accessToken,var number_bus ,int id, var number_passenger ) async {
+   print(number_bus);
+   print(number_passenger);
     print('${name_domain_server}company/update_bus/$id');
     final response = await http.put(
       Uri.parse('${name_domain_server}company/update_bus/$id'),
@@ -100,6 +102,7 @@ print(response.statusCode);
       body: json.encode({'number_bus': number_bus, 'number_passenger': number_passenger}),
     );
     print(response.statusCode);
+     print(response.body);
     if (response.statusCode == 200) {
       return Bus.fromJson(json.decode(response.body));
     } else {

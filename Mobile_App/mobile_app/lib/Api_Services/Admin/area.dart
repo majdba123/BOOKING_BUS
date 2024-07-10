@@ -62,14 +62,14 @@ Future<String> Addarea(String accessToken,var name ) async {
   }
   
   Future<area> updatearea(String accessToken, int id, String name) async {
-    print('${name_domain_server}admin/update_government');
+    print('${name_domain_server}admin/update_government/$id?name=$name');
     final response = await http.put(
-      Uri.parse('${name_domain_server}admin/update_government'),
+      Uri.parse('${name_domain_server}admin/update_government/$id?name=$name'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         
       },
-      body: json.encode({'name': name,}),
+      // body: json.encode({'name': name,}),
     );
     print(response.statusCode);
     if (response.statusCode == 200) {

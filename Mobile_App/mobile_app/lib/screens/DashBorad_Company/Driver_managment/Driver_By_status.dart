@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/screens/DashBorad_Company/Driver_managment/Driver.dart';
-
-
+import 'package:mobile_app/Data_Models/Driver.dart';
+import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
+import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:provider/provider.dart';
 
 class GetDriversByStatusPage extends StatefulWidget {
   @override
@@ -11,22 +12,22 @@ class GetDriversByStatusPage extends StatefulWidget {
 class _GetDriversByStatusPageState extends State<GetDriversByStatusPage> {
   String selectedStatus = 'pending'; // Default status selection
 
-  final List<Driver> drivers = [
-    Driver(name: 'John Doe', email: 'john.doe@example.com', status: 'pending'),
-    Driver(name: 'Jane Smith', email: 'jane.smith@example.com', status: 'available'),
-     Driver(name: 'Jane Smith', email: 'jane.smith@example.com', status: 'available'),
-      Driver(name: 'Jane Smith', email: 'jane.smith@example.com', status: 'available'),
-       Driver(name: 'Jane Smith', email: 'jane.smith@example.com', status: 'available'),
-        Driver(name: 'Jane Smith', email: 'jane.smith@example.com', status: 'available'),
-    Driver(name: 'Michael Johnson', email: 'michael.johnson@example.com', status: 'finished'),
-  ];
-
-  List<Driver> getFilteredDrivers(String status) {
-    return drivers.where((driver) => driver.status == status).toList();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final driverProvider = Provider.of<DriverProvider>(context, listen: false);
+      driverProvider.fetchDriverByStatus( authProvider.accessToken,selectedStatus);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final driverProvider = Provider.of<DriverProvider>(context);
+    final List<Driver> drivers = driverProvider.Drivers;
+    final bool isLoading = driverProvider.isLoading;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Drivers by Status'),
@@ -41,9 +42,12 @@ class _GetDriversByStatusPageState extends State<GetDriversByStatusPage> {
               onChanged: (value) {
                 setState(() {
                   selectedStatus = value!;
+                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                  final driverProvider = Provider.of<DriverProvider>(context, listen: false);
+                  driverProvider.fetchDriverByStatus( authProvider.accessToken,selectedStatus);
                 });
               },
-              items: ['pending', 'available', 'finished']
+              items: ['pending', 'available', 'completed']
                   .map((status) => DropdownMenuItem(
                         value: status,
                         child: Text(status.toUpperCase()),
@@ -55,20 +59,23 @@ class _GetDriversByStatusPageState extends State<GetDriversByStatusPage> {
               ),
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: getFilteredDrivers(selectedStatus).length,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: ListTile(
-                    title: Text(getFilteredDrivers(selectedStatus)[index].name),
-                    subtitle: Text(getFilteredDrivers(selectedStatus)[index].email),
-                    trailing: Text(getFilteredDrivers(selectedStatus)[index].status.toUpperCase()),
+          isLoading
+              ? Expanded(child: Center(child: CircularProgressIndicator()))
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: drivers.length,
+                    itemBuilder: (context, index) {
+                      final driver = drivers[index];
+                      return Card(
+                        child: ListTile(
+                          title: Text(driver.id.toString()),
+                          subtitle: Text(driver.status),
+                          trailing: Text(driver.status.toUpperCase()),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
+                ),
         ],
       ),
     );

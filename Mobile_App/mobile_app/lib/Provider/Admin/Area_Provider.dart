@@ -9,6 +9,7 @@ class areaProvider with ChangeNotifier {
   bool _isLoading = false;
 
   List<area> get areas => _areas;
+  
   bool get isLoading => _isLoading;
 
  Future <void> fetchareas(String accessToken) async {
@@ -69,4 +70,6 @@ Future<String> addarea(String accessToken,String  name,) async {
       print(error);
     }
   }
+
+  
 }

@@ -78,10 +78,12 @@ class _DriverSelectionPageState extends State<DriverSelectionPage> {
                     itemCount: driverProvider.Drivers.length,
                     itemBuilder: (context, index) {
                       final driver = driverProvider.Drivers[index];
+                    
                       return Card(
                         margin: EdgeInsets.symmetric(vertical: 8),
                         child: ListTile(
-                          title: Text('${driver.id}'),
+                          title: Text('Name : ${driver.user!.name}'),
+                          subtitle:Text('Status :${driver.status}') ,
                           trailing: ElevatedButton(
                             onPressed: () {
                               print('the driver id is ');

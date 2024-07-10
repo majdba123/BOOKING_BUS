@@ -26,7 +26,7 @@ class _BusSelectionPageState extends State<BusSelectionPage> {
   void _filterBuses(String query) {
     final busProvider = Provider.of<AssingBusProvider>(context, listen: false);
     // setState(() {
-    //   busProvider.Buss = busProvider.buses
+    //   busProvider.Buss = busProvider.Buss
     //       .where((bus) => bus.busNumber.toLowerCase().contains(query.toLowerCase()))
     //       .toList();
     // });
@@ -65,7 +65,8 @@ class _BusSelectionPageState extends State<BusSelectionPage> {
                       return Card(
                         margin: EdgeInsets.symmetric(vertical: 8),
                         child: ListTile(
-                          title: Text('${bus.id}'),
+                          title: Text('number bus :${bus.number_bus}'),
+                           subtitle: Text('number passenger : ${bus.number_passenger}'),
                           onTap: () {
                             Navigator.push(
                               context,

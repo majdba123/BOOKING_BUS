@@ -119,26 +119,26 @@ class Bus_management_Page extends StatelessWidget {
                 ),
               ),
             ),
-              SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BusSeatLayoutPage()),
-                  );
-                },
-                child: Text('bus seats'),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue[900],
-                  textStyle: TextStyle(fontSize: 18),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
+            //   SizedBox(height: 20),
+            // SizedBox(
+            //   width: double.infinity,
+            //   child: ElevatedButton(
+            //     onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(builder: (context) => BusSeatLayoutPage()),
+            //       );
+            //     },
+            //     child: Text('bus seats'),
+            //     style: ElevatedButton.styleFrom(
+            //       padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue[900],
+            //       textStyle: TextStyle(fontSize: 18),
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(10),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

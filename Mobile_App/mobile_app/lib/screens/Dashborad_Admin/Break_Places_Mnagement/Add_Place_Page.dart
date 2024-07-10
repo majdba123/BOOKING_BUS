@@ -4,7 +4,6 @@ import 'package:mobile_app/Provider/Admin/Break_Area_Provider.dart';
 import 'package:mobile_app/Provider/Login_Provider.dart';
 import 'package:provider/provider.dart';
 
-
 class AddPlacePage extends StatefulWidget {
   @override
   _AddPlacePageState createState() => _AddPlacePageState();
@@ -18,7 +17,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
   @override
   void initState() {
     super.initState();
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     Provider.of<areaProvider>(context, listen: false).fetchareas(authProvider.accessToken);
   }
 
@@ -30,15 +29,20 @@ class _AddPlacePageState extends State<AddPlacePage> {
 
   void _addPlace() {
     if (_formKey.currentState!.validate()) {
-              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final placeProvider = Provider.of<BreakAreaProvider>(context, listen: false);
-      placeProvider.addBreakArea(authProvider.accessToken, _selectedArea!,_placeNameController.text);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Place Added')),
-      );
-      _placeNameController.clear();
-      setState(() {
-        _selectedArea = null;
+      placeProvider.addBreakArea(authProvider.accessToken, _selectedArea!, _placeNameController.text).then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Place added successfully!')),
+        );
+        _placeNameController.clear();
+        setState(() {
+          _selectedArea = null;
+        });
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add place: $error')),
+        );
       });
     }
   }

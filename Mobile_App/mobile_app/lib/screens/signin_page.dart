@@ -33,7 +33,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: kBackgroundColor,
+        backgroundColor: Colors.blueGrey,
         elevation: 0,
         leading: IconButton(
           onPressed: () {

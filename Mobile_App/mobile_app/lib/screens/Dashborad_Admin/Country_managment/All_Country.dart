@@ -3,7 +3,6 @@ import 'package:mobile_app/Data_Models/area.dart';
 import 'package:mobile_app/Provider/Admin/Area_Provider.dart';
 import 'package:mobile_app/Provider/Login_Provider.dart';
 import 'package:provider/provider.dart';
-// Import your CountryProvider
 
 class CountryListPage extends StatefulWidget {
   @override
@@ -13,6 +12,7 @@ class CountryListPage extends StatefulWidget {
 class _CountryListPageState extends State<CountryListPage> {
   final TextEditingController _searchController = TextEditingController();
   List<area> filteredCountries = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -21,13 +21,13 @@ class _CountryListPageState extends State<CountryListPage> {
     _fetchCountries();
   }
 
-  void _fetchCountries() {
+  void _fetchCountries() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final countryProvider = Provider.of<areaProvider>(context, listen: false);
-    countryProvider.fetchareas(authProvider.accessToken).then((_) {
-      setState(() {
-        filteredCountries = countryProvider.areas;
-      });
+    await countryProvider.fetchareas(authProvider.accessToken);
+    setState(() {
+      filteredCountries = countryProvider.areas;
+      _isLoading = false;
     });
   }
 
@@ -45,10 +45,11 @@ class _CountryListPageState extends State<CountryListPage> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final countryProvider = Provider.of<areaProvider>(context, listen: false);
     final country = filteredCountries[index];
-    countryProvider
-        .updatearea(authProvider.accessToken, index, newName)
-        .then((_) {
+    countryProvider.updatearea(authProvider.accessToken, country.id, newName).then((_) {
       _fetchCountries();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Country updated successfully!')),
+      );
     });
   }
 
@@ -56,8 +57,11 @@ class _CountryListPageState extends State<CountryListPage> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final countryProvider = Provider.of<areaProvider>(context, listen: false);
     final country = filteredCountries[index];
-    countryProvider.deletearea(authProvider.accessToken, index).then((_) {
+    countryProvider.deletearea(authProvider.accessToken, country.id).then((_) {
       _fetchCountries();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Country deleted successfully!')),
+      );
     });
   }
 
@@ -71,12 +75,22 @@ class _CountryListPageState extends State<CountryListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Countries'),
+        title: Text('Country Management'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(
+              'All Countries',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -86,94 +100,99 @@ class _CountryListPageState extends State<CountryListPage> {
               ),
             ),
             SizedBox(height: 16),
-            Expanded(
-              child: Consumer<areaProvider>(
-                builder: (context, areaProvider, child) {
-                  return ListView.builder(
-                    itemCount: filteredCountries.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        elevation: 4,
-                        child: ListTile(
-                          title: Text(filteredCountries[index].name),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.edit),
-                                onPressed: () async {
-                                  final newName = await showDialog<String>(
-                                    context: context,
-                                    builder: (context) {
-                                      final _editController =
-                                          TextEditingController(
-                                        text: filteredCountries[index].name,
-                                      );
-                                      return AlertDialog(
-                                        title: Text('Update Country'),
-                                        content: TextField(
-                                          controller: _editController,
-                                          decoration: InputDecoration(
-                                            labelText: 'Country Name',
-                                            border: OutlineInputBorder(),
+            Text(
+              'Total Countries: ${filteredCountries.length}',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16),
+            _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: ListView.builder(
+                      itemCount: filteredCountries.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: ListTile(
+                            title: Text(filteredCountries[index].name),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () async {
+                                    final newName = await showDialog<String>(
+                                      context: context,
+                                      builder: (context) {
+                                        final _editController = TextEditingController(
+                                          text: filteredCountries[index].name,
+                                        );
+                                        return AlertDialog(
+                                          title: Text('Update Country'),
+                                          content: TextField(
+                                            controller: _editController,
+                                            decoration: InputDecoration(
+                                              labelText: 'Country Name',
+                                              border: OutlineInputBorder(),
+                                            ),
                                           ),
-                                        ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop(_editController.text);
+                                              },
+                                              child: Text('Update'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                    if (newName != null) {
+                                      onUpdateCountry(index, newName);
+                                    }
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Delete Country'),
+                                        content: Text('Are you sure you want to delete ${filteredCountries[index].name}?'),
                                         actions: [
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.of(context)
-                                                  .pop(_editController.text);
+                                              Navigator.of(context).pop();
                                             },
-                                            child: Text('Update'),
+                                            child: Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              onDeleteCountry(index);
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Delete'),
                                           ),
                                         ],
-                                      );
-                                    },
-                                  );
-                                  if (newName != null) {
-                                    onUpdateCountry(index, newName);
-                                  }
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text('Delete Country'),
-                                      content: Text(
-                                          'Are you sure you want to delete ${filteredCountries[index].name}?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            onDeleteCountry(index);
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('Delete'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
+                        );
+                      },
+                    ),
+                  ),
           ],
         ),
       ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Api_Services/Admin/Break_Area.dart';
 import 'package:mobile_app/Provider/Admin/Area_Provider.dart';
 import 'package:mobile_app/Provider/Admin/Break_Area_Provider.dart';
 import 'package:mobile_app/Provider/Login_Provider.dart';
@@ -16,10 +15,12 @@ class _ShowPlacesPageState extends State<ShowPlacesPage> {
   @override
   void initState() {
     super.initState();
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
+ 
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     Provider.of<areaProvider>(context, listen: false).fetchareas(authProvider.accessToken);
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +47,12 @@ class _ShowPlacesPageState extends State<ShowPlacesPage> {
                     );
                   }).toList(),
                   onChanged: (value) {
-                        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
                     setState(() {
                       _selectedArea = value;
                     });
                     if (value != null) {
-                      Provider.of<BreakAreaProvider>(context, listen: false).fetchBreakAreas(authProvider.accessToken,value);
+                      Provider.of<BreakAreaProvider>(context, listen: false).fetchBreakAreas(authProvider.accessToken, value);
                     }
                   },
                   validator: (value) {
@@ -70,7 +71,7 @@ class _ShowPlacesPageState extends State<ShowPlacesPage> {
                   child: ListView.builder(
                     itemCount: placeProvider.BreakAreas.length,
                     itemBuilder: (context, index) {
-                          final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                      final authProvider = Provider.of<AuthProvider>(context, listen: false);
                       return Card(
                         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         elevation: 4,
@@ -109,7 +110,7 @@ class _ShowPlacesPageState extends State<ShowPlacesPage> {
                                     },
                                   );
                                   if (newName != null) {
-                                    placeProvider.updateBreakArea(authProvider.accessToken,placeProvider.BreakAreas[index].id, newName);
+                                    placeProvider.updateBreakArea(authProvider.accessToken, placeProvider.BreakAreas[index].id, newName);
                                   }
                                 },
                               ),
@@ -120,8 +121,7 @@ class _ShowPlacesPageState extends State<ShowPlacesPage> {
                                     context: context,
                                     builder: (context) => AlertDialog(
                                       title: Text('Delete Place'),
-                                      content: Text(
-                                          'Are you sure you want to delete ${placeProvider.BreakAreas[index].name}?'),
+                                      content: Text('Are you sure you want to delete ${placeProvider.BreakAreas[index].name}?'),
                                       actions: [
                                         TextButton(
                                           onPressed: () {
@@ -131,7 +131,7 @@ class _ShowPlacesPageState extends State<ShowPlacesPage> {
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            placeProvider.deleteBreakArea(authProvider.accessToken,placeProvider.BreakAreas[index].id);
+                                            placeProvider.deleteBreakArea(authProvider.accessToken, placeProvider.BreakAreas[index].id);
                                             Navigator.of(context).pop();
                                           },
                                           child: Text('Delete'),

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Api_Services/Company/Driver.dart';
 import 'package:mobile_app/Data_Models/Driver.dart';
+import 'package:mobile_app/Data_Models/DriverBusActive.dart';
 
 
 
 class DriverProvider with ChangeNotifier {
   List<Driver> _Drivers = [];
+  List<DriverBusActive> _DriversBusActive = [];
   bool _isLoading = false;
 String message='';
   List<Driver> get Drivers => _Drivers;
+    List<DriverBusActive> get DriversBusActive => _DriversBusActive;
   bool get isLoading => _isLoading;
 
   void fetchDrivers(String accessToken) async {
@@ -24,12 +27,12 @@ String message='';
       notifyListeners();
     }
   }
-  void fetchDriversOnActiveBus(String accessToken) async {
+ Future<void>fetchDriversOnActiveBus(String accessToken) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _Drivers = await DriverApiService().fetchDriversOnActiveBus(accessToken);
+     _DriversBusActive = await DriverApiService().fetchDriversOnActiveBus(accessToken);
     } catch (e) {
       print('Failed to fetch Drivers: $e');
     } finally {
@@ -62,7 +65,7 @@ Future<String> addDriver(String accessToken,String  name, String  email,String p
 
  
 
-  // Future<void> updateDriver(String token, int id, String number_Driver, String number_passenger) async {
+  // Future<void> updateDriver(String token, int id, String name, String email) async {
   //   try {
   //     final updatedDriver = await DriverApiService().updateDriver(token, number_Driver, id, number_passenger);
   //     final index = _Drivers.indexWhere((Driver) => Driver.id == id);
@@ -83,4 +86,11 @@ Future<String> addDriver(String accessToken,String  name, String  email,String p
       print(error);
     }
   }
+
+
+    void clearBreakAreas() {
+    _Drivers = [];
+    notifyListeners();
+  }
+
 }

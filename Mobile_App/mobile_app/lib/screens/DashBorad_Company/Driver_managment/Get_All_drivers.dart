@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
 import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
 import 'package:mobile_app/Provider/Login_Provider.dart';
 import 'package:mobile_app/Data_Models/Driver.dart';
@@ -18,25 +19,26 @@ class _GetAllDriversPageState extends State<GetAllDriversPage> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     Provider.of<DriverProvider>(context, listen: false).fetchDrivers(authProvider.accessToken);
   }
-// void _showUpdateDialog(BuildContext context, Driver trip, int index) {
-//     final _fromController = TextEditingController(text: trip.from);
-//     final _toController = TextEditingController(text: trip.to);
+// void _showUpdateDialog(BuildContext context, Driver driver, int index) {
+//     final _namecontroller = TextEditingController(text:driver.user.name);
+//     final _emailController = TextEditingController(text:driver.user.email );
 
 //     showDialog(
 //       context: context,
 //       builder: (context) => AlertDialog(
-//         title: Text('Update Trip'),
+//         title: Text('Update driver'),
 //         content: Column(
 //           mainAxisSize: MainAxisSize.min,
 //           children: [
 //             TextField(
-//               controller: _fromController,
-//               decoration: InputDecoration(labelText: 'From'),
+//               controller: _namecontroller,
+//               decoration: InputDecoration(labelText: 'name'),
 //             ),
 //             TextField(
-//               controller: _toController,
-//               decoration: InputDecoration(labelText: 'To'),
+//               controller: _emailController,
+//               decoration: InputDecoration(labelText: 'email'),
 //             ),
+            
 //           ],
 //         ),
 //         actions: [
@@ -48,9 +50,9 @@ class _GetAllDriversPageState extends State<GetAllDriversPage> {
 //           ),
 //           TextButton(
 //             onPressed: () async {
-//               final tripProvider = Provider.of<TripProvider>(context, listen: false);
+//               final driverProvider = Provider.of<DriverProvider>(context, listen: false);
 //                final authProvider = Provider.of<AuthProvider>(context, listen: false);
-//               await tripProvider.updateTrip(authProvider.accessToken, trip.id, _fromController.text, _toController.text);
+//               await driverProvider.updated(authProvider.accessToken, index, _fromController.text, _toController.text);
 //               Navigator.of(context).pop();
 //             },
 //             child: Text('Update'),
@@ -58,7 +60,7 @@ class _GetAllDriversPageState extends State<GetAllDriversPage> {
 //         ],
 //       ),
 //     );
-//   }
+  // }
 
   void _showDeleteDialog(BuildContext context, int id, int index) {
     showDialog(
@@ -122,11 +124,32 @@ class _GetAllDriversPageState extends State<GetAllDriversPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${driver.id}',
+                                    'id :${driver.id}',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.blue[900],
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                      Text(
+                                    'name :${driver.user!.name}',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                      Text(
+                                    'email: ${driver.user!.email}',
+                                   style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                   SizedBox(height: 8),
+                                      Text(
+                                    'status :${driver.status}',
+                                   style: TextStyle(
+                                      color: Colors.grey[600],
                                     ),
                                   ),
                                   SizedBox(height: 8),
@@ -146,12 +169,12 @@ class _GetAllDriversPageState extends State<GetAllDriversPage> {
                               ),
                               Row(
                                 children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit, color: Colors.blue),
-                                    onPressed: () {
-                                      // _showUpdateDialog(context, trip, index);
-                                    },
-                                  ),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.edit, color: Colors.blue),
+                                  //   onPressed: () {
+                                  //     // _showUpdateDialog(context, trip, index);
+                                  //   },
+                                  // ),
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Colors.red),
                                     onPressed: () {

@@ -43,7 +43,7 @@ Future<String> Addpath(String accessToken,var From, var To, ) async {
       List<dynamic> jsonList = json.decode(response.body);
       return jsonList.map((json) => Path.fromJson(json)).toList();
     } else {
-      throw Exception('Failed to load trips');
+      throw Exception('Failed to load paths');
     }
   }
   
@@ -51,32 +51,34 @@ Future<String> Addpath(String accessToken,var From, var To, ) async {
     print(id);
     print(from);
     print(to);
-    print('${name_domain_server}company/path_update/$id');
+    print('${name_domain_server}company/path_update/$id?from=$from&to=$to');
     final response = await http.put(
       Uri.parse('${name_domain_server}company/path_update/$id'),
       headers: {
         'Authorization': 'Bearer $accessToken',
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
       },
-      body: json.encode({'from': from, 'to': to}),
+      // body: json.encode({'from': from, 'to': to}),
     );
     print(response.statusCode);
+    print(response.body);
     if (response.statusCode == 200) {
       print(response.body);
       return Path.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to update trip');
+      throw Exception('Failed to update path');
     }
   }
 
  Future<void> deletepath(String accessToken, int id) async {
+  print('${name_domain_server}company/path_delete/$id');
     final response = await http.delete(
       Uri.parse('${name_domain_server}company/path_delete/$id'),
       headers: {'Authorization': 'Bearer $accessToken'},
     );
-
+  print(response.body);
     if (response.statusCode != 200) {
-      throw Exception('Failed to delete trip');
+      throw Exception('Failed to delete path');
     }
   }
 

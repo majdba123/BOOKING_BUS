@@ -3,6 +3,7 @@ import 'package:mobile_app/Provider/Admin/Break_Area_Provider.dart';
 import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
 import 'package:mobile_app/Provider/Company/Trip_Provider.dart';
 import 'package:mobile_app/Provider/Company/path_provider.dart';
+import 'package:mobile_app/screens/DashBorad_Company/Trip_managemt/All_Trips.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Trip_managemt/strore_trip.dart';
 import 'package:mobile_app/screens/DashBorad_Company/path_mangement/Add_path.dart';
 import 'package:mobile_app/screens/DashBorad_Company/path_mangement/All_paths.dart';
@@ -23,17 +24,24 @@ class TripBusmanagment extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // ElevatedButton.icon(
-            //   onPressed: () {
-            
-            //   },
-            //   icon: Icon(Icons.list),
-            //   label: Text('كافة  الرحلات'),
-            //   style: ElevatedButton.styleFrom(
-            //     padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue,
-            //     textStyle: TextStyle(fontSize: 18),
-            //   ),
-            // ),
+            ElevatedButton.icon(
+              onPressed: () {
+              Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => 
+             
+               AllTrip()
+              ),
+            );
+              },
+              icon: Icon(Icons.list),
+              label: Text('كافة  الرحلات'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 16), backgroundColor: Colors.blue,
+                textStyle: TextStyle(fontSize: 18),
+              ),
+            ),
             SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () {

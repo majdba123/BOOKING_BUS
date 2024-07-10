@@ -52,12 +52,12 @@ Future<String> AddBreakArea(String accessToken,var areaId,var name ) async {
     // print('${name_domain_server}admin/update_government');
     print('${name_domain_server}admin/update_breaks/$breakId');
     final response = await http.put(
-      Uri.parse('${name_domain_server}admin/update_breaks/$breakId'),
+      Uri.parse('${name_domain_server}admin/update_breaks/$breakId?name=$name'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         
       },
-      body: json.encode({'name': name,}),
+      
     );
     print(response.statusCode);
     if (response.statusCode == 200) {

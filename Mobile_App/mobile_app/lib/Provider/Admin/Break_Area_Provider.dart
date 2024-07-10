@@ -56,4 +56,10 @@ Future<String> addBreakArea(String accessToken,var areaId,String  name,) async {
       print(error);
     }
   }
+
+    void clearBreakAreas() {
+    _BreakAreas = [];
+    notifyListeners();
+  }
+
 }
