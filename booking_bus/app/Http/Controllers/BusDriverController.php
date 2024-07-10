@@ -25,7 +25,20 @@ class BusDriverController extends Controller
             $query->with('driver');
         }])->flatMap->bus_driver;
 
-        return response()->json($busDrivers);
+        $customData = $busDrivers->map(function ($busDriver) {
+            return [
+                'id' => $busDriver->id,
+                'bus_id' => $busDriver->bus->id,
+                'driver_name' => $busDriver->driver->user->name,
+                'driver_phone' => $busDriver->driver->user->profile->phone,
+                'status' => $busDriver->status,
+                'company_name' => $busDriver->driver->company->user->name,
+                'bus_plate_number' => $busDriver->bus->plate_number,
+                // Add or remove fields as needed
+            ];
+        });
+
+        return response()->json($customData);
     }
     /**
      * Show the form for creating a new resource.

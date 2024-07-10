@@ -188,8 +188,9 @@ Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function (
     Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
 
 
+    Route::get('/my_info', [ProfileController::class, 'index']);
     Route::post('/store_profile_info', [ProfileController::class, 'store']);
     Route::put('/update_profile_info', [ProfileController::class, 'update']);
-
+    Route::put('/update_password', [ProfileController::class, 'update_password']);
 
 });

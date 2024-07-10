@@ -597,15 +597,39 @@ show_government
 post
 company
 127.0.0.1:8000/api/company/show_goverment/{government_id}
+_________________________________________________________________
+store profile _info :
+127.0.0.1:8000/api/user/store_profile_info
+user
+post
+{
+    image : file
+    phone : 0935027218
+}
+_________________________________
+update profile
+127.0.0.1:8000/api/user/update_profile_info
+user
+put
+{
+    image : file
+    phone : 0935027218
+    name :majd                                        optional
+    email : bayer@gmail.com
+}
 
+_________________________________________
+update password :
+127.0.0.1:8000/api/user/update_password
 
-
-
-
-
-
-
-
+user
+put
+{
+    current_password:12345678
+    new_password:123456789
+    new_password_confirmation:123456789
+}
+____________________________________________________________
 
 
 

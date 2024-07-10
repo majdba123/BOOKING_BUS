@@ -54,6 +54,7 @@ class TripController extends Controller
             'bus_ids.*.type' => 'string|required',
             'bus_ids.*.start_time' => 'nullable|date_format:H:i',
             'bus_ids.*.end_time' => 'nullable|date_format:H:i',
+            'bus_ids.*.date' => 'nullable|date',
           ]);
 
         if ($validator->fails()) {
@@ -116,6 +117,7 @@ class TripController extends Controller
                 $busTrip->type = $busId['type'];
                 $busTrip->from_time = $busId['start_time']; // optional
                 $busTrip->to_time = $busId['end_time']; // optional
+                $busTrip->date = $busId['date'];
                 $busTrip->save();
                 $bus->status ='completed';
                 $bus->bus_driver->pluck('driver')->each->update(['status' => 'completed']);
@@ -180,6 +182,7 @@ class TripController extends Controller
             'bus_ids.*.type' => 'string',
             'bus_ids.*.start_time' => 'nullable|date_format:H:i',
             'bus_ids.*.end_time' => 'nullable|date_format:H:i',
+            'bus_ids.*.date' => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
@@ -229,6 +232,16 @@ class TripController extends Controller
                 $trip->bus_trip()->delete();
                 $trip->breaks_trip()->delete();
 
+                $breakTripStart = new Breaks_trip();
+                $breakTripStart->trip_id = $trip->id;
+                $breakTripStart->breaks_id = 1; // start break
+                $breakTripStart->save();
+
+                $breakTripEnd = new Breaks_trip();
+                $breakTripEnd->trip_id = $trip->id;
+                $breakTripEnd->breaks_id = 2; // end break
+                $breakTripEnd->save();
+
                 $breakIds = $request->input('breaks_ids');
                 foreach ($breakIds as $breakId) {
                         $breakTrip = new Breaks_trip();
@@ -247,6 +260,7 @@ class TripController extends Controller
                             $busTrip->type = $busId['type'];
                             $busTrip->from_time = $busId['start_time']; // optional
                             $busTrip->to_time = $busId['end_time']; // optional
+                            $busTrip->date = $busId['date'];
                             $busTrip->save();
                             $bus->status = 'completed';
                             $bus->bus_driver->pluck('driver')->each->update(['status' => 'completed']);
