@@ -80,7 +80,7 @@ class DriverController extends Controller
                 'id' => $driver->id,
                 'name' => $driver->user->name,
                 'email' => $driver->user->email,
-                'phone' => $driver->user->profile->phone,
+                'driver_phone' => $driver->user->profile->phone ?? null,
                 'status' => $driver->status,
                 // Add or remove fields as needed
             ];

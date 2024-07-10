@@ -30,10 +30,10 @@ class BusDriverController extends Controller
                 'id' => $busDriver->id,
                 'bus_id' => $busDriver->bus->id,
                 'driver_name' => $busDriver->driver->user->name,
-                'driver_phone' => $busDriver->driver->user->profile->phone,
+                'driver_phone' => $busDriver->driver->user->profile->phone ?? null,
                 'status' => $busDriver->status,
                 'company_name' => $busDriver->driver->company->user->name,
-                'bus_plate_number' => $busDriver->bus->plate_number,
+                'bus_plate_number' => $busDriver->bus->number_bus,
                 // Add or remove fields as needed
             ];
         });
