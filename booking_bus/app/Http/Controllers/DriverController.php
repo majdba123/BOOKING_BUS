@@ -70,11 +70,23 @@ class DriverController extends Controller
      */
     public function get_driver_by_status(Request $request)
     {
-        $company=Auth::user()->Company->id;
-        $driver = Driver::where('company_id', $company )
-               ->where('status' , $request->input('status'))
-               ->get();
-        return response()->json($driver, 200);
+        $company = Auth::user()->Company->id;
+        $drivers = Driver::where('company_id', $company)
+            ->where('status', $request->input('status'))
+            ->get();
+
+        $customData = $drivers->map(function ($driver) {
+            return [
+                'id' => $driver->id,
+                'name' => $driver->user->name,
+                'email' => $driver->user->email,
+                'driver_phone' => $driver->user->profile->phone ?? null,
+                'status' => $driver->status,
+                // Add or remove fields as needed
+            ];
+        });
+
+        return response()->json($customData, 200);
     }
 
     /**

@@ -72,16 +72,17 @@ class ChargeBalanceController extends Controller
         }
         try {
             $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
+            $imageUrl = asset('storage/order_balance' . $imageName);
             $user = auth()->user();
             // Create Post
             Charge_Balance::create([
                 'user_id' => $user->id,
-                'image' => $imageName,
+                'image' => $imageUrl,
                 'point' => $request->point
             ]);
 
             // Save Image in Storage folder
-            Storage::disk('public')->put($imageName, file_get_contents($request->image));
+            $request->image->storeAs('public/order_balance', $imageName);
 
             // Return Json Response
             return response()->json([

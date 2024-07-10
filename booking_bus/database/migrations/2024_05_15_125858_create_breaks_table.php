@@ -21,10 +21,16 @@ return new class extends Migration
             [
                 'area_id' => 1,
                 'name' => 'start',
+                'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'area_id' => 1,
                 'name' => 'end',
+                'created_at' => now(),
+                'updated_at' => now(),
+
             ],
         ]);
     }

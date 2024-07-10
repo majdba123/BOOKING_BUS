@@ -14,6 +14,7 @@ class Bus_Trip extends Model
         'bus_id',
         'status',
         'from_time',
+        'date',
         'to_time',
         'type',
         'event',
