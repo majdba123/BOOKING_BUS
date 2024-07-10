@@ -22,7 +22,7 @@ Future<String> addTrip(String accessToken,Trip trip) async {
         'end_time': bus.endTime,
       }).toList(),
     };
-
+  print(jsonEncode(data));
     final response = await http.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -30,7 +30,7 @@ Future<String> addTrip(String accessToken,Trip trip) async {
       },
       body: jsonEncode(data),
     );
-
+  print(response.statusCode);
     if (response.statusCode == 200) {
       Map<String, dynamic> parsedJson = json.decode(response.body);
       String message = parsedJson['message'];

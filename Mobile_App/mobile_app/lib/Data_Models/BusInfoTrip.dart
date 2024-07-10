@@ -1,8 +1,8 @@
 class BusInfo {
-  late final int busId;
-  late final String type;
-  late final String startTime;
-  late final String endTime;
+  int busId;
+  String type;
+  String startTime;
+  String endTime;
 
   BusInfo({
     required this.busId,
@@ -10,4 +10,18 @@ class BusInfo {
     required this.startTime,
     required this.endTime,
   });
+
+  BusInfo copyWith({
+    int? busId,
+    String? type,
+    String? startTime,
+    String? endTime,
+  }) {
+    return BusInfo(
+      busId: busId ?? this.busId,
+      type: type ?? this.type,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+    );
+  }
 }

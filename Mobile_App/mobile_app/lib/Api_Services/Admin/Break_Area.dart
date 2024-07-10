@@ -30,7 +30,7 @@ Future<String> AddBreakArea(String accessToken,var areaId,var name ) async {
   }
 
   Future<List<BreakArea>> fetchBreakArea(String accessToken,var areaId ) async {
-    String url = name_domain_server+"admin/all_breaks/$areaId";
+    String url = name_domain_server+"company/all_breaks/$areaId";
     final response = await http.get(
       Uri.parse('$url'),
       headers: <String, String>{

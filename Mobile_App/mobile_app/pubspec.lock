@@ -70,6 +70,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_datetime_picker_plus:
+    dependency: "direct main"
+    description:
+      name: flutter_datetime_picker_plus
+      sha256: "7d82da02c4e070bb28a9107de119ad195e2319b45c786fecc13482a9ffcc51da"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -139,6 +147,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  lint:
+    dependency: transitive
+    description:
+      name: lint
+      sha256: d758a5211fce7fd3f5e316f804daefecdc34c7e53559716125e6da7388ae8565
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0"
   lints:
     dependency: transitive
     description:
@@ -171,6 +187,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.0"
+  multiple_search_selection:
+    dependency: "direct main"
+    description:
+      name: multiple_search_selection
+      sha256: "803fd802bb6bb55d28cb983c2e3ac72077b6efd44513ac4c673f22421230083b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.4"
   nested:
     dependency: transitive
     description:

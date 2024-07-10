@@ -44,6 +44,23 @@ Future<String> Addarea(String accessToken,var name ) async {
       throw Exception('Failed to load areas');
     }
   }
+  Future<List<area>> fetchareascompany(String accessToken) async {
+    String url = name_domain_server+"company/all_government";
+    final response = await http.get(
+      Uri.parse('$url'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  print(response.statusCode);
+    print(response.body);
+    if (response.statusCode == 200) {
+      List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.map((json) => area.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load areas');
+    }
+  }
    Future<List<area>> fetchSpecficArea(String accessToken,var id) async {
     String url = name_domain_server+"show_goverment/$id";
     final response = await http.post(

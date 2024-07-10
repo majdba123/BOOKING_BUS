@@ -62,6 +62,21 @@ List<area> _areas = [];
     }
   }
 
+ Future <void> fetchareasbycomapny(String accessToken) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _areas = await areaApiService().fetchareascompany(accessToken);
+      
+    } catch (e) {
+      print('Failed to fetch areas: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   List<BreakArea> _BreakAreas = [];
   
 
