@@ -2,7 +2,7 @@
     <div class="main-content">
         <NavBarCompany />
         <div class="content">
-            <div class="continer">
+            <div class="container">
                 <div class="title">
                     <p>Paths List</p>
                 </div>
@@ -15,13 +15,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(paths, index) in path" :key="index">
-                            <td>{{ paths.from }} >> {{ paths.to }}</td>
+                        <tr v-for="(pathItem, index) in path" :key="index">
+                            <td>{{ pathItem.from }} >> {{ pathItem.to }}</td>
                             <td>
                                 <button @click="editPath(index)">Edit</button>
                             </td>
                             <td>
-                                <button @click="deletePath(index, path.id)">
+                                <button @click="deletePath(pathItem.id)">
                                     Delete
                                 </button>
                             </td>
@@ -29,17 +29,31 @@
                     </tbody>
                 </table>
 
-                <div v-if="editingIndex !== null" class="edit-form">
-                    <form @submit.prevent="saveChanges">
-                        <label for="start">Start Path:</label>
-                        <input type="text" id="start" v-model="start" />
-                        <br />
-                        <label for="end">End Path:</label>
-                        <input type="text" id="end" v-model="editedPath.end" />
-                        <br />
-                        <button type="submit">Save Changes</button>
-                        <button @click="cancelEdit">Cancel</button>
-                    </form>
+                <!-- Edit Modal -->
+                <div v-if="editingIndex !== null" class="modal">
+                    <div class="modal-content">
+                        <span class="close" @click="cancelEdit">&times;</span>
+                        <form @submit.prevent="saveChanges">
+                            <label for="start">Start Path:</label>
+                            <input
+                                type="text"
+                                id="start"
+                                v-model="editedPath.from"
+                            />
+                            <br />
+                            <label for="end">End Path:</label>
+                            <input
+                                type="text"
+                                id="end"
+                                v-model="editedPath.to"
+                            />
+                            <br />
+                            <button type="submit">Save Changes</button>
+                            <button type="button" @click="cancelEdit">
+                                Cancel
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,11 +66,15 @@ import axios from "axios";
 
 export default {
     name: "EditPath",
-    component: { NavBarCompany },
+    components: { NavBarCompany },
     data() {
         return {
             editingIndex: null,
-            path: "",
+            path: [],
+            editedPath: {
+                from: "",
+                to: "",
+            },
         };
     },
     mounted() {
@@ -74,10 +92,64 @@ export default {
                 .then((response) => {
                     this.path = response.data;
                     console.log(this.path);
-                    console.log(this.path);
                 })
-                .catch(function (error) {
-                    window.alert("Error get paths");
+                .catch((error) => {
+                    window.alert("Error getting paths");
+                    console.error(error);
+                });
+        },
+
+        editPath(index) {
+            this.editingIndex = index;
+            this.editedPath = { ...this.path[index] };
+        },
+
+        saveChanges() {
+            const access_token = window.localStorage.getItem("access_token");
+            const pathId = this.path[this.editingIndex].id;
+
+            axios({
+                method: "put",
+                url: `http://127.0.0.1:8000/api/company/path_update/${pathId}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+                data: {
+                    from: this.editedPath.from,
+                    to: this.editedPath.to,
+                },
+            })
+                .then((response) => {
+                    this.path.splice(this.editingIndex, 1, this.editedPath);
+                    this.editingIndex = null;
+                    this.editedPath = { from: "", to: "" };
+                    console.log(response);
+                    window.alert("Complete update");
+                })
+                .catch((error) => {
+                    window.alert("Error updating path");
+                    console.error(error);
+                });
+        },
+
+        cancelEdit() {
+            this.editingIndex = null;
+            this.editedPath = { from: "", to: "" };
+        },
+
+        deletePath(id) {
+            const access_token = window.localStorage.getItem("access_token");
+
+            axios({
+                method: "delete",
+                url: `http://127.0.0.1:8000/api/company/path_delete/${id}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then(() => {
+                    this.path = this.path.filter(
+                        (pathItem) => pathItem.id !== id
+                    );
+                })
+                .catch((error) => {
+                    window.alert("Error deleting path");
                     console.error(error);
                 });
         },
@@ -102,7 +174,7 @@ export default {
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
 }
-.continer {
+.container {
     width: 90%;
     margin: 20px auto;
     text-align: center;
@@ -175,5 +247,57 @@ tr td a {
 tr td a:hover,
 .dd:hover {
     color: #ffffff;
+}
+.edit-form label,
+button {
+    color: #000000;
+}
+.edit-form button {
+    margin-top: 10px;
+    padding: 10px;
+    width: 50%;
+    align-items: center;
+    border-radius: 6px;
+}
+
+/* Modal styles */
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 </style>
