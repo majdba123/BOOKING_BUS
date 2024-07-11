@@ -51,6 +51,12 @@
                         <router-link to="/AllDriver" class="nav-link">
                             <p>Get All Driver</p>
                         </router-link>
+                        <router-link to="/DriverStatus"
+                            >Driver Status</router-link
+                        >
+                        <router-link to="/CancelDriver"
+                            >Cancel Driver</router-link
+                        >
                     </ul>
                 </li>
 

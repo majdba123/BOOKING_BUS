@@ -14,43 +14,40 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Status</th>
-                            <th>Created</th>
-                            <th>Updated</th>
+                            <th>Select Driver To Bus</th>
+
                             <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(bus, index) in bus" :key="index">
-                            <td v-if="selectedStatus === 'pending'">
-                                {{ bus.number_bus }}
+                        <tr v-for="(user, index) in Driver" :key="index">
+                            <td>
+                                {{ user.id }}
                             </td>
-                            <td v-if="selectedStatus === 'pending'">
-                                {{ bus.number_passenger }}
+                            <td>
+                                {{ user.user.name }}
                             </td>
-                            <td v-if="selectedStatus === 'pending'">
-                                {{ bus.status }}
+                            <td>
+                                {{ user.user.email }}
                             </td>
-                        </tr>
-                        <tr v-for="(bus, index) in bus1" :key="index">
-                            <td v-if="selectedStatus === 'avalibal'">
-                                {{ bus.number_bus }}
+                            <td>
+                                {{ user.status }}
                             </td>
-                            <td v-if="selectedStatus === 'avalibal'">
-                                {{ bus.number_passenger }}
+                            <td>
+                                <select @change="SelectDriver($event, user.id)">
+                                    <option
+                                        v-for="(bus, index) in Bus"
+                                        :key="index"
+                                        :value="bus.id"
+                                    >
+                                        {{ bus.number_bus }}
+                                    </option>
+                                </select>
                             </td>
-                            <td v-if="selectedStatus === 'avalibal'">
-                                {{ bus.status }}
-                            </td>
-                        </tr>
-                        <tr v-for="(bus, index) in bus2" :key="index">
-                            <td v-if="selectedStatus === 'finished'">
-                                {{ bus.number_bus }}
-                            </td>
-                            <td v-if="selectedStatus === 'finished'">
-                                {{ bus.number_passenger }}
-                            </td>
-                            <td v-if="selectedStatus === 'finished'">
-                                {{ bus.status }}
+                            <td>
+                                <button @click="DeleteDriver(user.id)">
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -71,10 +68,13 @@ export default {
     data() {
         return {
             editingIndex: null,
+            Driver: [],
+            Bus: [],
         };
     },
     mounted() {
         this.AllDriver();
+        this.fetchBus();
     },
     methods: {
         AllDriver() {
@@ -85,44 +85,74 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    console.log(response);
+                    this.Driver = response.data;
+                    console.log(this.Driver);
                 })
                 .catch(function (error) {
                     window.alert("Error get paths");
                     console.error(error);
                 });
         },
-        fetchavalibal() {
+        DeleteDriver(x) {
             const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=avalibal",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    console.log(response);
-                    this.bus1 = response.data;
-                })
-                .catch(function (error) {
-                    window.alert("Error get paths");
-                    console.error(error);
-                });
-        },
-        fetchfinished() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=finished",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.bus2 = response.data;
 
-                    console.log(response);
+            axios({
+                method: "delete",
+                url: "http://127.0.0.1:8000/api/company/delete_driver/" + x,
+
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then(() => {
+                    window.alert("Deleted Complate");
+
+                    window.location.reload();
+                })
+                .catch(function (error) {
+                    window.alert("Error get Driver");
+                    console.error(x);
+                    console.error(error);
+                });
+        },
+        fetchBus() {
+            const access_token = window.localStorage.getItem("access_token");
+
+            axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/company/all_bus",
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.Bus = response.data;
+                    console.log(this.Bus);
                 })
                 .catch(function (error) {
                     window.alert("Error get paths");
                     console.error(error);
+                });
+        },
+        SelectDriver(event, userId) {
+            const busId = event.target.value;
+            const access_token = window.localStorage.getItem("access_token");
+            console.log("Selected Bus ID:", busId);
+
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
+                data: {
+                    driver_id: userId,
+                },
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then(() => {
+                    console.log("Selection Complete for Bus ID:", busId);
+                    window.alert("Selected Complete");
+                    window.location.reload();
+                })
+                .catch(function (error) {
+                    console.log(busId);
+
+                    window.alert("Error getting Bus");
+                    console.error("Error for Bus ID:", busId, error);
                 });
         },
     },

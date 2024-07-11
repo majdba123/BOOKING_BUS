@@ -10,12 +10,24 @@ import AddBus from "../views/AddBus.vue";
 import EditeBus from "../views/EditeBus.vue";
 import BusStatus from "../views/BusStatus.vue";
 import AllDriver from "../views/AllDriver.vue";
+import DriverStatus from "../views/DriverStatus.vue";
+import CancelDriver from "../views/CancelDriver.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/CancelDriver",
+        name: "CancelDriver",
+        component: CancelDriver,
+    },
+    {
+        path: "/DriverStatus",
+        name: "DriverStatus",
+        component: DriverStatus,
     },
     {
         path: "/AllDriver",

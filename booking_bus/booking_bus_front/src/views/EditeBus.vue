@@ -81,8 +81,6 @@ export default {
             })
                 .then((response) => {
                     this.Bus = response.data;
-                    console.log(this.path);
-                    console.log(this.path);
                 })
                 .catch(function (error) {
                     window.alert("Error get paths");
