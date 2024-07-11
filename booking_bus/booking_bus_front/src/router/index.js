@@ -15,7 +15,6 @@ import CancelDriver from "../views/CancelDriver.vue";
 import DriverActive from "../views/DriverActive.vue";
 import AllBus from "../views/AllBus.vue";
 
-
 const routes = [
     {
         path: "/",

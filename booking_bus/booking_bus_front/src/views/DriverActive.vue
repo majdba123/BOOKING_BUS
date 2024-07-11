@@ -41,7 +41,7 @@ import NavBarCompany from "@/components/NavBarCompany.vue";
 import axios from "axios";
 
 export default {
-    name: "Driver Active",
+    name: "DriverActive",
     components: { NavBarCompany },
     data() {
         return {
