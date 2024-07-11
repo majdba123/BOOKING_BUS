@@ -5,7 +5,7 @@
         <div class="content">
             <div class="continer">
                 <div class="title">
-                    <p>Cancel Driver</p>
+                    <p>Driver Active</p>
                 </div>
 
                 <table class="table">
@@ -15,18 +15,18 @@
 
                             <th>Driver Name</th>
                             <!-- New column for state -->
-                            <th>State</th>
-                            <th>Cancel</th>
+                            <th>Bus ID</th>
+                            <th>Company Name</th>
+                            <th>Bus Plate Number</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(driver, index) in Driver" :key="index">
                             <td>{{ driver.id }}</td>
-                            <td>{{ driver.user.name }}</td>
-                            <td>{{ driver.status }}</td>
-                            <button @click="CancelDriver(driver.id)">
-                                Cancel
-                            </button>
+                            <td>{{ driver.driver_name }}</td>
+                            <td>{{ driver.bus_id }}</td>
+                            <td>{{ driver.company_name }}</td>
+                            <td>{{ driver.bus_plate_number }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -41,7 +41,7 @@ import NavBarCompany from "@/components/NavBarCompany.vue";
 import axios from "axios";
 
 export default {
-    name: "CancelDriver",
+    name: "Driver Active",
     components: { NavBarCompany },
     data() {
         return {
@@ -77,7 +77,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_driver",
+                url: "http://127.0.0.1:8000/api/company/all_driver_with_bus",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {

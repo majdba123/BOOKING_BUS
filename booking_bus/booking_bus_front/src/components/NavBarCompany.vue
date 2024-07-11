@@ -57,6 +57,9 @@
                         <router-link to="/CancelDriver"
                             >Cancel Driver</router-link
                         >
+                        <router-link to="/DriverActive"
+                            >Driver Active</router-link
+                        >
                     </ul>
                 </li>
 
@@ -88,6 +91,7 @@
                         <router-link to="/AddBus">Add Bus</router-link>
                         <router-link to="/EditeBus">Edit Bus</router-link>
                         <router-link to="/BusStatus">Bus Status</router-link>
+                        <router-link to="/AllBus">Get All Bus</router-link>
                     </ul>
                 </li>
 

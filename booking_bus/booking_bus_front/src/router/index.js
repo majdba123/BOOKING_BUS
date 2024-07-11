@@ -12,6 +12,9 @@ import BusStatus from "../views/BusStatus.vue";
 import AllDriver from "../views/AllDriver.vue";
 import DriverStatus from "../views/DriverStatus.vue";
 import CancelDriver from "../views/CancelDriver.vue";
+import DriverActive from "../views/DriverActive.vue";
+import AllBus from "../views/AllBus.vue";
+
 
 const routes = [
     {
@@ -23,6 +26,16 @@ const routes = [
         path: "/CancelDriver",
         name: "CancelDriver",
         component: CancelDriver,
+    },
+    {
+        path: "/AllBus",
+        name: "AllBus",
+        component: AllBus,
+    },
+    {
+        path: "/DriverActive",
+        name: "DriverActive",
+        component: DriverActive,
     },
     {
         path: "/DriverStatus",
