@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Api_Services/Company/Driver.dart';
 import 'package:mobile_app/Data_Models/Driver.dart';
 import 'package:mobile_app/Data_Models/DriverBusActive.dart';
+import 'package:mobile_app/Data_Models/Driver_Status.dart';
 
 
 
 class DriverProvider with ChangeNotifier {
    String _message = '';
   List<Driver> _Drivers = [];
+    List<DriverStauts> _DriversStauts = [];
   List<DriverBusActive> _DriversBusActive = [];
   bool _isLoading = false;
-
+List<DriverStauts> get DriversStauts => _DriversStauts;
   String get message => _message;
   List<Driver> get Drivers => _Drivers;
     List<DriverBusActive> get DriversBusActive => _DriversBusActive;
@@ -48,7 +50,7 @@ void fetchDriverByStatus(String accessToken,String Status) async {
     notifyListeners();
 
     try {
-      _Drivers = await DriverApiService().fetchDriverByStatus(accessToken,Status);
+      _DriversStauts = await DriverApiService().fetchDriverByStatus(accessToken,Status);
     } catch (e) {
       print('Failed to fetch Drivers: $e');
     } finally {

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mobile_app/Data_Models/Driver.dart';
 import 'package:mobile_app/Data_Models/DriverBusActive.dart';
+import 'package:mobile_app/Data_Models/Driver_Status.dart';
 import 'package:mobile_app/constants.dart';
 
 
@@ -133,7 +134,7 @@ Future<String> CancelAssignDriver(String accessToken,var driver_id ) async {
     );
 print(url);
 print(response.statusCode);
-// print(response.body);
+print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
       
@@ -142,7 +143,7 @@ print(response.statusCode);
       throw Exception('Failed to load Driver');
     }
   }
-   Future<List<Driver>> fetchDriverByStatus(String accessToken,String Status) async {
+   Future<List<DriverStauts>> fetchDriverByStatus(String accessToken,String Status) async {
     String url = name_domain_server+"company/get_driver_by_status?status=$Status";
     print(url);
     final response = await http.get(
@@ -154,7 +155,7 @@ print(response.statusCode);
   print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
-      return jsonList.map((json) => Driver.fromJson(json)).toList();
+      return jsonList.map((json) => DriverStauts.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load Driver');
     }

@@ -10,7 +10,7 @@ class BreakAreaProvider with ChangeNotifier {
   List<BreakArea> get BreakAreas => _BreakAreas;
   bool get isLoading => _isLoading;
 
-  void fetchBreakAreas(String accessToken,var breakId) async {
+   Future<void> fetchBreakAreas(String accessToken,var breakId) async {
     _isLoading = true;
     notifyListeners();
 

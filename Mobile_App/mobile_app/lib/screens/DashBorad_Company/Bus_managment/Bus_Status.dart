@@ -52,7 +52,7 @@ class _BusStatusPageState extends State<BusStatusPage> {
                 });
                 _fetchBusesByStatus(_selectedStatus);
               },
-              items: <String>['pending', 'available', 'finished']
+              items: <String>['pending', 'available', 'completed']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,

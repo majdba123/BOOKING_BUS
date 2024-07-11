@@ -3,14 +3,17 @@ import 'package:mobile_app/Api_Services/Company/Bus.dart';
 import 'package:mobile_app/Api_Services/Company/Driver.dart';
 import 'package:mobile_app/Data_Models/Bus.dart';
 import 'package:mobile_app/Data_Models/Driver.dart';
+import 'package:mobile_app/Data_Models/Driver_Status.dart';
 
 
 
 class AssingBusProvider with ChangeNotifier {
  List<Driver> _Drivers = [];
+  List<DriverStauts> _DriversStauts = [];
   bool _isLoading = false;
 String message='';
   List<Driver> get Drivers => _Drivers;
+  List<DriverStauts> get DriversStauts => _DriversStauts;
   bool get isLoading => _isLoading;
 
   List<Bus> _Buss = [];
@@ -39,7 +42,7 @@ String message='';
     notifyListeners();
 
     try {
-      _Drivers = await DriverApiService().fetchDriverByStatus(accessToken,Status);
+      _DriversStauts = await DriverApiService().fetchDriverByStatus(accessToken,Status);
     } catch (e) {
       print('Failed to fetch Drivers: $e');
     } finally {

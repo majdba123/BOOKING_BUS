@@ -19,6 +19,7 @@ class _CancelDriverPageState extends State<CancelDriverPage> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final driverProvider = Provider.of<AssingBusProvider>(context, listen: false);
      driverProvider.fetchDriverByStatus(authProvider.accessToken,'available');
+    print( driverProvider.DriversStauts);
   }
   void _filterDrivers(String query) {
    
@@ -57,17 +58,18 @@ final authProvider = Provider.of<AuthProvider>(context, listen: false);
                   if (driverProvider.isLoading) {
                     return Center(child: CircularProgressIndicator());
                   }
-                  if (driverProvider.Drivers.isEmpty) {
+                  if (driverProvider.DriversStauts.isEmpty) {
                     return Center(child: Text('No drivers found'));
                   }
                   return ListView.builder(
-                itemCount:  driverProvider.Drivers.length,
+                itemCount:  driverProvider.DriversStauts.length,
                 itemBuilder: (context, index) {
-                  final driver =  driverProvider.Drivers[index];
+                  final driver =  driverProvider.DriversStauts[index];
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 8),
                     child: ListTile(
-                      title: Text('${driver.id}'),
+                      title: Text('${index+1}) ${driver.name}'),
+                      subtitle: Text('${driver.status}'),
                       trailing: ElevatedButton(
                         onPressed: () {
                           _cancelDriver(driver.id.toString());

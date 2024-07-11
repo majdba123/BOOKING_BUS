@@ -30,6 +30,7 @@ Future<String> addTrip(String accessToken,Trip trip) async {
        Uri.parse('$url'),
       headers: <String, String>{
          'Authorization': 'Bearer $accessToken',
+         'Content-Type': 'application/json'
       },
       body: jsonEncode(data),
     );

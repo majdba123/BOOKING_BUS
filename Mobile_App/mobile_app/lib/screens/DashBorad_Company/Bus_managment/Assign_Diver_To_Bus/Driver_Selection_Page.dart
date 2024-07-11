@@ -28,6 +28,7 @@ class _DriverSelectionPageState extends State<DriverSelectionPage> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final driverProvider = Provider.of<AssingBusProvider>(context, listen: false);
      driverProvider.fetchDriverByStatus(authProvider.accessToken,'pending');
+     print(driverProvider.DriversStauts);
   }
 
   void _filterDrivers(String query) {
@@ -68,28 +69,29 @@ class _DriverSelectionPageState extends State<DriverSelectionPage> {
             Expanded(
               child: Consumer<AssingBusProvider>(
                 builder: (context, driverProvider, _) {
+                  print(driverProvider.DriversStauts);
                   if (driverProvider.isLoading) {
                     return Center(child: CircularProgressIndicator());
                   }
-                  if (driverProvider.Drivers.isEmpty) {
+                  if (driverProvider.DriversStauts.isEmpty) {
                     return Center(child: Text('No drivers found'));
                   }
                   return ListView.builder(
-                    itemCount: driverProvider.Drivers.length,
+                    itemCount: driverProvider.DriversStauts.length,
                     itemBuilder: (context, index) {
-                      final driver = driverProvider.Drivers[index];
+                      final driver = driverProvider.DriversStauts[index];
                     
                       return Card(
                         margin: EdgeInsets.symmetric(vertical: 8),
                         child: ListTile(
-                          title: Text('Name : ${driver.user!.name}'),
+                          title: Text('Name : ${driver.name}'),
                           subtitle:Text('Status :${driver.status}') ,
                           trailing: ElevatedButton(
                             onPressed: () {
                               print('the driver id is ');
                               print(driver.id);
                               _assignDriver(driver.id,busId);
-                              Navigator.of(context).pop();
+                           Navigator.of(context).pop();
                             },
                             child: Text('Assign'),
                             style: ElevatedButton.styleFrom(

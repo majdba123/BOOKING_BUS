@@ -45,7 +45,7 @@ class _ActiveDriversPageState extends State<ActiveDriversPage> {
 
     // Filter the drivers based on the search query
     final List<DriverBusActive> filteredDrivers = drivers.where((driver) {
-      final String driverId = driver.driverUserId.toString();
+      final String driverId = driver.driver_name.toString();
       final String busId = driver.busId.toString();
       return driverId.contains(_searchQuery) || busId.contains(_searchQuery);
     }).toList();
@@ -61,7 +61,7 @@ class _ActiveDriversPageState extends State<ActiveDriversPage> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'Search by Driver ID or Bus ID',
+                labelText: 'Search by Driver name or Bus ID',
                 border: OutlineInputBorder(),
               ),
               onChanged: (query) {
@@ -94,14 +94,14 @@ class _ActiveDriversPageState extends State<ActiveDriversPage> {
                                   ),
                                   radius: 30,
                                 ),
-                                title: Text('Driver ID: ${driver.driverUserId}'),
+                                title: Text('Driver name: ${driver.driver_name}'),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Bus ID: ${driver.busId}'),
-                                    Text('Driver User ID: ${driver.driverUserId}'),
-                                    Text('Bus status: ${driver.status}'),
-                                    Text('Driver status: ${driver.driverStatus}'),
+                                    Text('company_name  ${driver.company_name}'),
+                                    Text('bus_plate_number: ${driver.bus_plate_number}'),
+                                  
                                   ],
                                 ),
                               ),

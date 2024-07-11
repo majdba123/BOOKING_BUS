@@ -10,6 +10,7 @@ import 'package:mobile_app/Provider/Company/Seat_Provider.dart';
 import 'package:mobile_app/Provider/Company/Trip_Provider.dart';
 import 'package:mobile_app/Provider/Company/path_provider.dart';
 import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
@@ -42,7 +43,10 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp(routes: {
+    '/BusDash': (context) => Bus_management_Page(),
+    // Other routes...
+  },
       debugShowCheckedModeBanner: false,
       title: 'Flutter Sign In Sign Up Ui',
       // theme: ThemeData(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Driver.dart';
+import 'package:mobile_app/Data_Models/Driver_Status.dart';
 import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
 import 'package:mobile_app/Provider/Login_Provider.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ class _GetDriversByStatusPageState extends State<GetDriversByStatusPage> {
   @override
   Widget build(BuildContext context) {
     final driverProvider = Provider.of<DriverProvider>(context);
-    final List<Driver> drivers = driverProvider.Drivers;
+    final List<DriverStauts> drivers = driverProvider.DriversStauts;
     final bool isLoading = driverProvider.isLoading;
 
     return Scaffold(
@@ -68,7 +69,7 @@ class _GetDriversByStatusPageState extends State<GetDriversByStatusPage> {
                       final driver = drivers[index];
                       return Card(
                         child: ListTile(
-                          title: Text(driver.id.toString()),
+                          title: Text(driver.name),
                           subtitle: Text(driver.status),
                           trailing: Text(driver.status.toUpperCase()),
                         ),

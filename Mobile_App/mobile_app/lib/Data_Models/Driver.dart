@@ -6,8 +6,8 @@ class Driver {
   final int userId;
   final int companyId;
   final String status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime ?updatedAt;
   final User? user;
   final Company? company;
 
@@ -28,8 +28,8 @@ class Driver {
       userId: json['user_id'],
       companyId: json['company_id'],
       status: json['status'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt:json['created_at']!= null ?DateTime.parse(json['created_at']): null,
+      updatedAt:json['updated_at']!= null ?DateTime.parse(json['updated_at']): null,
       user: json['user'] != null ? User.fromJson(json['user']) : null,
       company: json['company'] != null ? Company.fromJson(json['company']) : null,
     );
@@ -41,8 +41,8 @@ class Driver {
       'user_id': userId,
       'company_id': companyId,
       'status': status,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
       'user': user?.toJson(),
       'company': company?.toJson(),
     };
