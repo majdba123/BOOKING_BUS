@@ -18,7 +18,7 @@ class _CancelDriverPageState extends State<CancelDriverPage> {
  Future<void> _fetchDrivers() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final driverProvider = Provider.of<AssingBusProvider>(context, listen: false);
-     driverProvider.fetchDrivers(authProvider.accessToken);
+     driverProvider.fetchDriverByStatus(authProvider.accessToken,'available');
   }
   void _filterDrivers(String query) {
    

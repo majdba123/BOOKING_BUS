@@ -51,14 +51,14 @@ Future<String> Addpath(String accessToken,var From, var To, ) async {
     print(id);
     print(from);
     print(to);
-    print('${name_domain_server}company/path_update/$id?from=$from&to=$to');
+    // print('${name_domain_server}company/path_update/$id?from=$from&to=$to');
     final response = await http.put(
-      Uri.parse('${name_domain_server}company/path_update/$id'),
+      Uri.parse('${name_domain_server}company/path_update/$id?from=$from&to=$to'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         // 'Content-Type': 'application/json',
       },
-      // body: json.encode({'from': from, 'to': to}),
+      body: json.encode({'from': from, 'to': to}),
     );
     print(response.statusCode);
     print(response.body);

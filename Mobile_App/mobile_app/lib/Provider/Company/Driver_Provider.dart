@@ -6,10 +6,12 @@ import 'package:mobile_app/Data_Models/DriverBusActive.dart';
 
 
 class DriverProvider with ChangeNotifier {
+   String _message = '';
   List<Driver> _Drivers = [];
   List<DriverBusActive> _DriversBusActive = [];
   bool _isLoading = false;
-String message='';
+
+  String get message => _message;
   List<Driver> get Drivers => _Drivers;
     List<DriverBusActive> get DriversBusActive => _DriversBusActive;
   bool get isLoading => _isLoading;
@@ -54,14 +56,20 @@ void fetchDriverByStatus(String accessToken,String Status) async {
       notifyListeners();
     }
   }
-Future<String> addDriver(String accessToken,String  name, String  email,String password) async {
-     _isLoading = true;
+ Future<void> addDriver(String token, String name, String email, String password) async {
+    _isLoading = true;
     notifyListeners();
-     message = await DriverApiService().AddDriver(accessToken,name, email,password);
-   _isLoading = false;
+
+    try {
+      _message = await DriverApiService().addDriver(token, name, email, password);
+    } catch (error) {
+      _message = error.toString();
+    }
+
+    _isLoading = false;
     notifyListeners();
-    return message;
   }
+
 
  
 

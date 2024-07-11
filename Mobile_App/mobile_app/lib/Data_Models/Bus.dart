@@ -21,7 +21,9 @@ class Bus {
       id: json['id'],
       companyId: json['company_id'],
       number_bus: json['number_bus'],
-      number_passenger: json['number_passenger'],
+      number_passenger: json['number_passenger'] is int 
+          ? json['number_passenger']
+          : int.tryParse(json['number_passenger']),
        status: json['status'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),

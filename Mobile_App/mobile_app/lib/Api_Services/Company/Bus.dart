@@ -92,9 +92,9 @@ print(response.statusCode);
   Future<Bus> updateBus(String accessToken,var number_bus ,int id, var number_passenger ) async {
    print(number_bus);
    print(number_passenger);
-    print('${name_domain_server}company/update_bus/$id');
+    print('${name_domain_server}company/update_bus/$id?number_bus=$number_bus&&number_passenger=$number_passenger');
     final response = await http.put(
-      Uri.parse('${name_domain_server}company/update_bus/$id'),
+      Uri.parse('${name_domain_server}company/update_bus/$id?number_bus=$number_bus&&number_passenger=$number_passenger'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         

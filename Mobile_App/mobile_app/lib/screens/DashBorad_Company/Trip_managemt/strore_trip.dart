@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_app/Data_Models/Break_area.dart';
+import 'package:mobile_app/Data_Models/Bus.dart';
 import 'package:mobile_app/Data_Models/BusInfoTrip.dart';
 import 'package:mobile_app/Data_Models/Trip.dart';
 import 'package:mobile_app/Provider/Admin/Break_Area_Provider.dart';
@@ -9,7 +11,6 @@ import 'package:mobile_app/Provider/Company/Trip_Provider.dart';
 import 'package:mobile_app/Provider/Login_Provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Trip_managemt/BusInfoCard.dart';
 import 'package:provider/provider.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
 
 class TripForm extends StatefulWidget {
@@ -48,7 +49,8 @@ class _TripFormState extends State<TripForm> {
         busProvider.Buss.isNotEmpty ? busProvider.Buss.first.id : 0;
     setState(() {
       _busInfoList.add(
-          BusInfo(busId: firstBusId, type: 'all', startTime: '', endTime: ''));
+        BusInfo(busId: firstBusId, type: 'all', startTime: '', endTime: '', date: ''),
+      );
     });
   }
 
@@ -68,7 +70,7 @@ class _TripFormState extends State<TripForm> {
           key: _formKey,
           child: ListView(
             children: [
-              DropdownButtonFormField2<int>(
+              DropdownButtonFormField<int>(
                 decoration: InputDecoration(
                   labelText: 'Select Path',
                   border: OutlineInputBorder(),
@@ -112,7 +114,7 @@ class _TripFormState extends State<TripForm> {
                 },
               ),
               SizedBox(height: 16),
-              DropdownButtonFormField2<int>(
+              DropdownButtonFormField<int>(
                 decoration: InputDecoration(
                   labelText: 'Select Area',
                   border: OutlineInputBorder(),
@@ -208,7 +210,8 @@ class _TripFormState extends State<TripForm> {
                       });
                     },
                     showSelectAllButton: false,
-                    maximumShowItemsHeight: 200,  pickedItemBuilder: (breakArea) {
+                    maximumShowItemsHeight: 200,
+                    pickedItemBuilder: (breakArea) {
                       return Container(
                         decoration: BoxDecoration(
                           color: Colors.blueAccent.withOpacity(0.1),
@@ -233,7 +236,6 @@ class _TripFormState extends State<TripForm> {
                               onPressed: () {
                                 setState(() {
                                   _selectedBreaksIds.remove(breakArea.id);
-                                
                                 });
                               },
                             ),
@@ -285,21 +287,22 @@ class _TripFormState extends State<TripForm> {
                       breaksIds: _selectedBreaksIds,
                       busIds: _busInfoList,
                     );
-  // print(newTrip.pathId);
-  // print(newTrip.price);
-  // print(newTrip.breaksIds);
-  // print(newTrip.busIds);
-  // for (var element in newTrip.busIds) {
-  //   print(element.busId);
-  //   print(element.type);
-  //   print(element.startTime);
-  //   print(element.endTime);
-  // }
+ print(newTrip.pathId);
+  print(newTrip.price);
+  print(newTrip.breaksIds);
+  print(newTrip.busIds);
+  for (var element in newTrip.busIds) {
+    print(element.busId);
+    print(element.type);
+    print(element.startTime);
+    print(element.endTime);
+     print(element.date);}
                     final tripBusProvider =
                         Provider.of<TripBusProvider>(context, listen: false);
-                        final authprovider =
+                    final authprovider =
                         Provider.of<AuthProvider>(context, listen: false);
-                    tripBusProvider.addTrip(authprovider.accessToken, newTrip);
+                    tripBusProvider.addTrip(
+                        authprovider.accessToken, newTrip);
                   }
                 },
                 child: Text('Add Trip'),
@@ -312,4 +315,3 @@ class _TripFormState extends State<TripForm> {
     );
   }
 }
-

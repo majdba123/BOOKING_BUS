@@ -52,6 +52,7 @@ class _PathListPageState extends State<PathListPage> {
               final pathProvider = Provider.of<PathProvider>(context, listen: false);
                final authProvider = Provider.of<AuthProvider>(context, listen: false);
               await pathProvider.updatepath(authProvider.accessToken, path.id, _fromController.text, _toController.text);
+             print(pathProvider.paths[1].to);
               Navigator.of(context).pop();
             },
             child: Text('Update'),

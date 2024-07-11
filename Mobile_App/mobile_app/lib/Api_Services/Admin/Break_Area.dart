@@ -30,6 +30,24 @@ Future<String> AddBreakArea(String accessToken,var areaId,var name ) async {
   }
 
   Future<List<BreakArea>> fetchBreakArea(String accessToken,var areaId ) async {
+    String url = name_domain_server+"admin/all_breaks/$areaId";
+    final response = await http.get(
+      Uri.parse('$url'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+     print(response.body);
+  print(response.statusCode);
+  // print(response.body);
+    if (response.statusCode == 200) {
+      List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.map((json) => BreakArea.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load BreakAreas');
+    }
+  }
+   Future<List<BreakArea>> fetchBreakAreaascompany(String accessToken,var areaId ) async {
     String url = name_domain_server+"company/all_breaks/$areaId";
     final response = await http.get(
       Uri.parse('$url'),
@@ -37,6 +55,7 @@ Future<String> AddBreakArea(String accessToken,var areaId,var name ) async {
         'Authorization': 'Bearer $accessToken',
       },
     );
+     print(response.body);
   print(response.statusCode);
   // print(response.body);
     if (response.statusCode == 200) {

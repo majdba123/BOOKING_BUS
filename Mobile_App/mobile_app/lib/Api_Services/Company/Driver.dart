@@ -7,24 +7,24 @@ import 'package:mobile_app/constants.dart';
 
 class DriverApiService {
   // final String apiUrl = ;
-Future<String> AddDriver(String accessToken,var name , var email,var password  ) async {
-    // String url = name_domain_server+"company/register/driver";
- final url = Uri.parse(name_domain_server+"company/register/driver");
-   final headers = {
-      'Authorization': 'Bearer $accessToken',
-      'Content-Type': 'application/json',
-    };
-    final body = jsonEncode({
-      'email': email,
-      'name': name,
-      'password': password,
-    });
+Future<String> addDriver(String accessToken, String name, String email, String password) async {
+  final url = Uri.parse(name_domain_server + "company/register/driver");
+  final headers = {
+    'Authorization': 'Bearer $accessToken',
+    'Content-Type': 'application/json',
+  };
+  final body = jsonEncode({
+    'email': email,
+    'name': name,
+    'password': password,
+  });
 
-    // Logging the request details
-    print('Request URL: $url');
-    print('Request headers: $headers');
-    print('Request body: $body');
+  // Logging the request details
+  print('Request URL: $url');
+  print('Request headers: $headers');
+  print('Request body: $body');
 
+  try {
     final response = await http.post(
       url,
       headers: headers,
@@ -52,8 +52,11 @@ Future<String> AddDriver(String accessToken,var name , var email,var password  )
     } else {
       return 'Failed to register driver';
     }
-  
+  } catch (e) {
+    print('Exception: $e');
+    return 'Network error: Failed to connect to the server';
   }
+}
 Future<String> AssignDriverToBus(String accessToken,var bus_id ,var driver_id ) async {
     String url = name_domain_server+"company/select_driver_to_bus/$bus_id";
   print(bus_id);

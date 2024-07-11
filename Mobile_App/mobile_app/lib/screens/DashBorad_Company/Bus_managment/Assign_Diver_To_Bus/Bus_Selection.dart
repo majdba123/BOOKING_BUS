@@ -20,7 +20,7 @@ class _BusSelectionPageState extends State<BusSelectionPage> {
   Future<void> _fetchBuses() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final busProvider = Provider.of<AssingBusProvider>(context, listen: false);
-     busProvider.fetchBuss(authProvider.accessToken);
+     busProvider.fetchBusByStatus(authProvider.accessToken,'pending');
   }
 
   void _filterBuses(String query) {
@@ -65,8 +65,8 @@ class _BusSelectionPageState extends State<BusSelectionPage> {
                       return Card(
                         margin: EdgeInsets.symmetric(vertical: 8),
                         child: ListTile(
-                          title: Text('number bus :${bus.number_bus}'),
-                           subtitle: Text('number passenger : ${bus.number_passenger}'),
+                          title: Text(' ${index+1}) Bus number:${bus.number_bus}'),
+                           subtitle: Text('number of passenger : ${bus.number_passenger} /          Status :${bus.status.toUpperCase()} '),
                           onTap: () {
                             Navigator.push(
                               context,

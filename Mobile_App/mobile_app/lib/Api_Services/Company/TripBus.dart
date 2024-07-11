@@ -9,8 +9,10 @@ import 'package:http/http.dart' as http;
 class TripBusApi {
 
 Future<String> addTrip(String accessToken,Trip trip) async {
+  print(accessToken);
+  
 
-    final url = '$name_domain_server+company/store_trip'; 
+    String url = name_domain_server+"company/store_trip";
     final Map<String, dynamic> data = {
       'path_id': trip.pathId,
       'price': trip.price,
@@ -20,17 +22,19 @@ Future<String> addTrip(String accessToken,Trip trip) async {
         'type': bus.type,
         'start_time': bus.startTime,
         'end_time': bus.endTime,
+        'date': bus.date,
       }).toList(),
     };
   print(jsonEncode(data));
     final response = await http.post(
-      Uri.parse(url),
+       Uri.parse('$url'),
       headers: <String, String>{
          'Authorization': 'Bearer $accessToken',
       },
       body: jsonEncode(data),
     );
   print(response.statusCode);
+  print(response.body);
     if (response.statusCode == 200) {
       Map<String, dynamic> parsedJson = json.decode(response.body);
       String message = parsedJson['message'];

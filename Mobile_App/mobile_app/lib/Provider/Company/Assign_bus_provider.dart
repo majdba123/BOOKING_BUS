@@ -19,12 +19,13 @@ String message='';
   List<Bus> get Buss => _Buss;
 
 
-  void fetchBuss(String accessToken) async {
+  Future<void> fetchBusByStatus(String accessToken, String status) async {
     _isLoading = true;
     notifyListeners();
-
+    // print(status);
     try {
-      _Buss = await BusApiService().fetchBus(accessToken);
+      _Buss = await BusApiService().fetchBusByStatus(accessToken, status);
+      // print(_Buss);
     } catch (e) {
       print('Failed to fetch Buss: $e');
     } finally {
@@ -33,12 +34,12 @@ String message='';
     }
   }
 
-   void fetchDrivers(String accessToken) async {
+ void fetchDriverByStatus(String accessToken,String Status) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _Drivers = await DriverApiService().fetchDrivers(accessToken);
+      _Drivers = await DriverApiService().fetchDriverByStatus(accessToken,Status);
     } catch (e) {
       print('Failed to fetch Drivers: $e');
     } finally {

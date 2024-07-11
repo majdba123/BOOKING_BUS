@@ -88,7 +88,7 @@ List<area> _areas = [];
     notifyListeners();
 
     try {
-      _BreakAreas = await BreakAreaApiService().fetchBreakArea(accessToken,breakId);
+      _BreakAreas = await BreakAreaApiService().fetchBreakAreaascompany(accessToken,breakId);
     } catch (e) {
       print('Failed to fetch BreakAreas: $e');
     } finally {

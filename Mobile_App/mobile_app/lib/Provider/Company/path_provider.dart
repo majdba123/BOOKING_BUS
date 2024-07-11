@@ -33,10 +33,11 @@ Future<String> addpath(String accessToken,String from, String to) async {
 
   Future<void> updatepath(String token, int id, String from, String to) async {
     try {
-      final updatedTrip = await PathApiService().updatepath(token, id, from, to);
-      final index = _paths.indexWhere((trip) => trip.id == id);
+      final updatedPath = await PathApiService().updatepath(token, id, from, to);
+      print(updatedPath.to);
+      final index = _paths.indexWhere((Path) => Path.id == id);
       if (index != -1) {
-        _paths[index] = updatedTrip;
+        _paths[index] = updatedPath;
         notifyListeners();
       }
     } catch (error) {
@@ -46,7 +47,7 @@ Future<String> addpath(String accessToken,String from, String to) async {
   Future<void> deletepath(String token, int id) async {
     try {
       await PathApiService().deletepath(token, id);
-      _paths.removeWhere((trip) => trip.id == id);
+      _paths.removeWhere((Path) => Path.id == id);
       notifyListeners();
     } catch (error) {
       print(error);

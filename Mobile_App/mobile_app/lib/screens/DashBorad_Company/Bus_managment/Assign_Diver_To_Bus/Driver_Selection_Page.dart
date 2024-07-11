@@ -27,7 +27,7 @@ class _DriverSelectionPageState extends State<DriverSelectionPage> {
   Future<void> _fetchDrivers() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final driverProvider = Provider.of<AssingBusProvider>(context, listen: false);
-     driverProvider.fetchDrivers(authProvider.accessToken);
+     driverProvider.fetchDriverByStatus(authProvider.accessToken,'pending');
   }
 
   void _filterDrivers(String query) {
@@ -89,6 +89,7 @@ class _DriverSelectionPageState extends State<DriverSelectionPage> {
                               print('the driver id is ');
                               print(driver.id);
                               _assignDriver(driver.id,busId);
+                              Navigator.of(context).pop();
                             },
                             child: Text('Assign'),
                             style: ElevatedButton.styleFrom(
