@@ -19,6 +19,9 @@ return new class extends Migration
         DB::table('areas')->insert([
 
             'name' => 'Nothing',
+            'created_at' => now(),
+            'updated_at' => now(),
+
 
         ]);
     }
