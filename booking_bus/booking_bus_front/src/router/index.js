@@ -14,6 +14,9 @@ import DriverStatus from "../views/DriverStatus.vue";
 import CancelDriver from "../views/CancelDriver.vue";
 import DriverActive from "../views/DriverActive.vue";
 import AllBus from "../views/AllBus.vue";
+import AddBreak from "../views/AddBreak.vue";
+import EditBreak from "../views/EditBreak.vue";
+
 
 const routes = [
     {
@@ -22,10 +25,21 @@ const routes = [
         component: HomeView,
     },
     {
+        path: "/EditBreak",
+        name: "EditBreak",
+        component: EditBreak,
+    },
+    {
         path: "/CancelDriver",
         name: "CancelDriver",
         component: CancelDriver,
     },
+    {
+        path: "/AddBreak",
+        name: "AddBreak",
+        component: AddBreak,
+    },
+
     {
         path: "/AllBus",
         name: "AllBus",
