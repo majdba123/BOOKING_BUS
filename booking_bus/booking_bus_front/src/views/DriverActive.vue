@@ -1,4 +1,3 @@
-@ -1,141 +0,0 @@
 <template>
     <div class="main-content">
         <NavBarCompany />

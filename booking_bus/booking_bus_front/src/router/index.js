@@ -16,13 +16,24 @@ import DriverActive from "../views/DriverActive.vue";
 import AllBus from "../views/AllBus.vue";
 import AddBreak from "../views/AddBreak.vue";
 import EditBreak from "../views/EditBreak.vue";
-
+import AddGovernment from "../views/AddGovernment.vue";
+import EditGovernment from "../views/EditGovernment.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/AddGovernment",
+        name: "AddGovernment",
+        component: AddGovernment,
+    },
+    {
+        path: "/EditGovernment",
+        name: "EditGovernment",
+        component: EditGovernment,
     },
     {
         path: "/EditBreak",
