@@ -24,23 +24,26 @@
                                 {{ bus.number_passenger }}
                             </td>
                             <td>
-                                <button @click="editPath(index)">View</button>
+                                <button @click="editPath(bus.id)">View</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <div v-if="editingIndex !== null" class="edit-form">
-                    <form @submit.prevent="saveChanges">
-                        <label for="start">Start Path:</label>
-                        <input type="text" id="start" v-model="start" />
-                        <br />
-                        <label for="end">End Path:</label>
-                        <input type="text" id="end" v-model="editedPath.end" />
-                        <br />
-                        <button type="submit">Save Changes</button>
-                        <button @click="cancelEdit">Cancel</button>
-                    </form>
+                <div v-if="editingIndex !== null" class="modal">
+                    <div class="seat-booking-container">
+                        <h1>All Seat</h1>
+                        <div class="seat-grid">
+                            <div
+                                v-for="(seat, index) in seats"
+                                :key="index"
+                                :class="{ seat: true, reserved: seat.reserved }"
+                                @click="toggleReservation(index)"
+                            >
+                                {{ seat.id }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,18 +56,27 @@ import axios from "axios";
 
 export default {
     name: "AllBus",
-    component: { NavBarCompany },
+    components: { NavBarCompany },
     data() {
         return {
             editingIndex: null,
             Bus: "",
             id: "",
+            seats: [],
         };
     },
     mounted() {
         this.fetchBus();
     },
     methods: {
+        editPath(busId) {
+            this.editingIndex = busId;
+            this.fetchSeats(busId);
+        },
+        toggleReservation(seatIndex) {
+            const seat = this.seats[seatIndex];
+            seat.reserved = !seat.reserved;
+        },
         fetchBus() {
             const access_token = window.localStorage.getItem("access_token");
 
@@ -76,8 +88,25 @@ export default {
                 .then((response) => {
                     this.Bus = response.data;
                 })
-                .catch(function (error) {
+                .catch((error) => {
                     window.alert("Error get paths");
+                    console.error(error);
+                });
+        },
+        fetchSeats(busId) {
+            const access_token = window.localStorage.getItem("access_token");
+
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/company/all_seat_of_bus/${busId}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.seats = response.data;
+                })
+                .catch((error) => {
+                    console.log(busId);
+                    window.alert("Error fetching seats");
                     console.error(error);
                 });
         },
@@ -86,17 +115,15 @@ export default {
 
             axios({
                 method: "delete",
-                url: "http://127.0.0.1:8000/api/company/delete_bus/" + x,
-
+                url: `http://127.0.0.1:8000/api/company/delete_bus/${x}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
-                    window.alert("Deleted Complate");
-
+                    window.alert("Deleted Complete");
                     window.location.reload();
                 })
-                .catch(function (error) {
-                    window.alert("Error get Bus");
+                .catch((error) => {
+                    window.alert("Error deleting bus");
                     console.error(x);
                     console.error(error);
                 });
@@ -106,6 +133,69 @@ export default {
 </script>
 
 <style scoped>
+/* Modal styles */
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    max-width: 500px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.seat-booking-container {
+    max-width: 500px;
+    margin: auto;
+    width: 80%;
+    border-radius: 10px;
+    text-align: center;
+
+    text-align: center;
+    background-color: #176b87;
+    padding: 20px;
+    border: 1px solid #888;
+}
+.seat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+.seat {
+    padding: 10px;
+    background-color: #204e5e;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.seat:hover {
+    transform: scale(1.1);
+}
+.reserved {
+    background-color: #204e5e;
+}
 .main-content {
     display: flex;
     width: 100%;
