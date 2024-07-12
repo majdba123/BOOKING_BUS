@@ -62,11 +62,19 @@
                     </a>
                 </li>
 
-                <li>
-                    <a href="">
-                        <i class="fas fa-pen"></i>
-                        <p>Private Trips</p>
+                <li
+                    class="dropdown"
+                    @mouseenter="showDropdown"
+                    @mouseleave="hideDropdown"
+                >
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-table"></i>
+                        <p>Breaks</p>
                     </a>
+                    <ul v-show="dropdownVisible" class="dropdown-content">
+                        <router-link to="/AddBreak">Add Break</router-link>
+                        <router-link to="/EditBreak">Edit Break</router-link>
+                    </ul>
                 </li>
 
                 <li class="log-out">
