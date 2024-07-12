@@ -51,7 +51,12 @@
                         <p>Government</p>
                     </a>
                     <ul v-show="dropdownVisible1" class="dropdown-content">
-                        <router-link to="/AddBus">Add Government</router-link>
+                        <router-link to="/AddGovernment"
+                            >Add Government</router-link
+                        >
+                        <router-link to="/EditGovernment"
+                            >Edit Government</router-link
+                        >
                     </ul>
                 </li>
 
