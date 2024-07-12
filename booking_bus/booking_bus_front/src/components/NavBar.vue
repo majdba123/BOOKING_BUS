@@ -41,11 +41,18 @@
                         <p>Add Company</p>
                     </router-link>
                 </li>
-                <li>
-                    <router-link to="/about" class="nav-link">
-                        <i class="fas fa-table"></i>
-                        <p>Trips</p>
-                    </router-link>
+                <li
+                    class="dropdown"
+                    @mouseenter="showDropdown1"
+                    @mouseleave="hideDropdown1"
+                >
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-pie"></i>
+                        <p>Government</p>
+                    </a>
+                    <ul v-show="dropdownVisible1" class="dropdown-content">
+                        <router-link to="/AddBus">Add Government</router-link>
+                    </ul>
                 </li>
 
                 <li>
@@ -76,7 +83,13 @@ import axios from "axios";
 import router from "@/router";
 export default {
     name: "NavBar",
-
+    data() {
+        return {
+            dropdownVisible: false,
+            dropdownVisible1: false,
+            dropdownVisible2: false,
+        };
+    },
     methods: {
         logout() {
             const token = window.localStorage.getItem("access_token");
@@ -95,6 +108,24 @@ export default {
                     router.push("/");
                 }
             });
+        },
+        showDropdown() {
+            this.dropdownVisible = true;
+        },
+        hideDropdown() {
+            this.dropdownVisible = false;
+        },
+        showDropdown2() {
+            this.dropdownVisible2 = true;
+        },
+        hideDropdown2() {
+            this.dropdownVisible2 = false;
+        },
+        showDropdown1() {
+            this.dropdownVisible1 = true;
+        },
+        hideDropdown1() {
+            this.dropdownVisible1 = false;
         },
     },
 };
