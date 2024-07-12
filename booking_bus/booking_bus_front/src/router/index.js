@@ -17,17 +17,11 @@ import AllBus from "../views/AllBus.vue";
 import AddBreak from "../views/AddBreak.vue";
 import EditBreak from "../views/EditBreak.vue";
 
-
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
-    },
-    {
-        path: "/EditBreak",
-        name: "EditBreak",
-        component: EditBreak,
     },
     {
         path: "/CancelDriver",
@@ -39,7 +33,11 @@ const routes = [
         name: "AddBreak",
         component: AddBreak,
     },
-
+    {
+        path: "/EditBreak",
+        name: "EditBreak",
+        component: EditBreak,
+    },
     {
         path: "/AllBus",
         name: "AllBus",

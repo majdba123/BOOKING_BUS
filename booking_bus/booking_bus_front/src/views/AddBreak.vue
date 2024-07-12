@@ -1,33 +1,21 @@
 <template>
     <div class="main-content">
-        <NavBarCompany />
+        <NavBar />
         <div class="content">
-            <div class="title">ADD Bus</div>
+            <div class="title">ADD BREAK</div>
             <div class="contentt2">
                 <div class="box">
                     <div class="email">
-                        <span>Number Bus</span
-                        ><input
-                            type="text"
-                            placeholder="Enter Number Bus"
-                            class="input"
-                            v-model="number_bus"
-                        />
-                    </div>
-
-                    <div class="password">
-                        <span>Number Passenger</span>
+                        <span>Name Break</span>
                         <input
                             type="text"
+                            placeholder="Enter Name Break"
                             class="input"
-                            placeholder="Enter Number Passenger"
-                            v-model="number_passenger"
-                            style="text-align: "
-                        />
+                            v-model="name"
                         />
                     </div>
                 </div>
-                <button class="Button" @click="AddPath">ADD</button>
+                <button class="Button" @click="AddBreak">ADD</button>
             </div>
         </div>
     </div>
@@ -35,29 +23,26 @@
 
 <script>
 import axios from "axios";
-import NavBarCompany from "@/components/NavBarCompany.vue";
+import NavBar from "@/components/NavBar.vue";
 
 export default {
-    components: { NavBarCompany },
+    components: { NavBar },
 
-    name: "AddBreack",
+    name: "AddBreak",
     data() {
         return {
-            number_bus: "",
-            number_passenger: "",
+            name: "",
         };
     },
     methods: {
-        AddPath() {
+        AddBreak() {
             const token = window.localStorage.getItem("access_token");
 
             axios({
                 method: "post",
-                url: "http://127.0.0.1:8000/api/company/store_bus",
+                url: "127.0.0.1:8000/api/admin/store_breaks/" + "5",
                 data: {
-                    number_bus: this.number_bus,
-
-                    number_passenger: this.number_passenger,
+                    name: this.name,
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
@@ -67,12 +52,13 @@ export default {
                 })
                 .catch((error) => {
                     window.alert("ERROR ADD");
-                    console.log(error);
+                    console.error(error);
                 });
         },
     },
 };
 </script>
+
 <style scoped lang="scss">
 .main-content {
     display: flex;
@@ -101,26 +87,17 @@ export default {
     border-radius: 15px;
     text-align: center;
     font-size: 20px;
-    justify-content: space-between;
+    justify-content: center;
 }
-.email span,
-.password span,
-.username span {
+.email span {
     color: black;
     display: block;
     margin: 15px;
 }
-.username span p {
-    color: #176b87;
-    margin-top: 19px;
-}
-.password .input::placeholder,
-.email .input::placeholder {
+.input::placeholder {
     text-align: center;
 }
-input[type="text"],
-input[type="password"],
-input[type="email"] {
+input[type="text"] {
     width: 100%;
     color: black;
     height: 30%;
@@ -136,7 +113,7 @@ input:focus {
     text-align: center;
     align-items: center;
     background-color: #176b87;
-    padding: 10px 40px 10px 40px;
+    padding: 10px 40px;
     border-radius: 15px;
     border: 1px solid gray;
 }

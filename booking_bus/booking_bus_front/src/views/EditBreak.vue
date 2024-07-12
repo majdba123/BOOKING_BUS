@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <NavBarCompany />
+        <NavBar />
         <div class="content">
             <div class="continer">
                 <div class="title">
@@ -9,8 +9,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Number Bus</th>
-                            <th>Number Passenger</th>
+                            <th>Nmae Break</th>
                             <th>Edit</th>
                             <th>Delete</th>
                         </tr>
@@ -18,7 +17,6 @@
                     <tbody>
                         <tr v-for="(bus, index) in buses" :key="index">
                             <td>{{ bus.number_bus }}</td>
-                            <td>{{ bus.number_passenger }}</td>
                             <td>
                                 <button @click="editBus(index)">Edit</button>
                             </td>
@@ -64,12 +62,12 @@
 </template>
 
 <script>
-import NavBarCompany from "@/components/NavBarCompany.vue";
+import NavBar from "@/components/NavBar.vue";
 import axios from "axios";
 
 export default {
     name: "EditBreack",
-    components: { NavBarCompany },
+    components: { NavBar },
     data() {
         return {
             editingIndex: null,
