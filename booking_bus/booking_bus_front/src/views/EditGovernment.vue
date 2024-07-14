@@ -82,8 +82,11 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.Government = response.data;
-                    console.log(this.Government);
+                    this.governments = response.data;
+                    if (this.governments.length > 0) {
+                        this.selectedGovernmentId = this.governments[0].id;
+                        this.fetchBreaks();
+                    }
                 })
                 .catch((error) => {
                     window.alert("Error getting Government");
