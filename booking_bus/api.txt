@@ -88,7 +88,7 @@ update bus :
  put
  token as company
  http://127.0.0.1:8000/api/company/update_bus/{id}
- {
+ {d
     number_bus : 212
     number_passenger : 3
  }
