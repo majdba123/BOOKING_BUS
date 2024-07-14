@@ -70,7 +70,7 @@
                 >
                     <a href="#" class="nav-link">
                         <i class="fas fa-table"></i>
-                        <p>Trips</p>
+                        <p>Path</p>
                     </a>
                     <ul v-show="dropdownVisible" class="dropdown-content">
                         <router-link to="/AddPath">Add Path</router-link>
@@ -95,11 +95,19 @@
                     </ul>
                 </li>
 
-                <li>
-                    <a href="">
-                        <i class="fas fa-pen"></i>
-                        <p>Private Trips</p>
+                <li
+                    class="dropdown"
+                    @mouseenter="showDropdown3"
+                    @mouseleave="hideDropdown3"
+                >
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-table"></i>
+                        <p>Trip</p>
                     </a>
+                    <ul v-show="dropdownVisible3" class="dropdown-content">
+                        <router-link to="/AddTrip">Add Trip</router-link>
+                        <router-link to="/EditTrip">Edit Trip</router-link>
+                    </ul>
                 </li>
 
                 <li class="log-out">
@@ -118,6 +126,8 @@ export default {
     name: "NavBarCompany",
     data() {
         return {
+            dropdownVisible3: false,
+
             dropdownVisible: false,
             dropdownVisible1: false,
             dropdownVisible2: false,
@@ -159,6 +169,12 @@ export default {
         },
         hideDropdown1() {
             this.dropdownVisible1 = false;
+        },
+        showDropdown3() {
+            this.dropdownVisible3 = true;
+        },
+        hideDropdown3() {
+            this.dropdownVisible3 = false;
         },
     },
 };
