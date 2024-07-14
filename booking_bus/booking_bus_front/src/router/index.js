@@ -57,7 +57,11 @@ const routes = [
         name: "AddBreak",
         component: AddBreak,
     },
-
+    {
+        path: "/EditBreak",
+        name: "EditBreak",
+        component: EditBreak,
+    },
     {
         path: "/AllBus",
         name: "AllBus",

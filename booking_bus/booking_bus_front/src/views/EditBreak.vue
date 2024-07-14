@@ -1,29 +1,42 @@
 <template>
     <div class="main-content">
-        <NavBarCompany />
+        <NavBar />
         <div class="content">
             <div class="continer">
                 <div class="title">
-                    <p>Bus List</p>
+                    <p>Break List</p>
                 </div>
+                <select v-model="selectedGovernmentId" @change="fetchBreaks">
+                    <option
+                        v-for="government in governments"
+                        :key="government.id"
+                        :value="government.id"
+                    >
+                        {{ government.name }}
+                    </option>
+                </select>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Number Bus</th>
-                            <th>Number Passenger</th>
+                            <th>Break ID</th>
+                            <th>Break Name</th>
+                            <th>Government Name</th>
                             <th>Edit</th>
                             <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(bus, index) in buses" :key="index">
-                            <td>{{ bus.number_bus }}</td>
-                            <td>{{ bus.number_passenger }}</td>
+                        <tr v-for="(breakItem, index) in breaks" :key="index">
+                            <td>{{ breakItem.id }}</td>
+                            <td>{{ breakItem.name }}</td>
                             <td>
-                                <button @click="editBus(index)">Edit</button>
+                                {{ getGovernmentName(breakItem.government_id) }}
                             </td>
                             <td>
-                                <button @click="deleteBus(bus.id)">
+                                <button @click="editBreak(index)">Edit</button>
+                            </td>
+                            <td>
+                                <button @click="deleteBreak(breakItem.id)">
                                     Delete
                                 </button>
                             </td>
@@ -35,21 +48,8 @@
                     <div class="modal-content">
                         <span class="close" @click="cancelEdit">&times;</span>
                         <form @submit.prevent="saveChanges">
-                            <label for="number_bus">Number Bus:</label>
-                            <input
-                                type="text"
-                                id="number_bus"
-                                v-model="number_bus"
-                            />
-                            <br />
-                            <label for="number_passenger"
-                                >Number Passenger:</label
-                            >
-                            <input
-                                type="text"
-                                id="number_passenger"
-                                v-model="number_passenger"
-                            />
+                            <label for="break_name">Break Name:</label>
+                            <input type="text" id="break_name" v-model="name" />
                             <br />
                             <button type="submit">Save Changes</button>
                             <button type="button" @click="cancelEdit">
@@ -64,88 +64,64 @@
 </template>
 
 <script>
-import NavBarCompany from "@/components/NavBarCompany.vue";
+import NavBar from "@/components/NavBar.vue";
 import axios from "axios";
 
 export default {
-    name: "EditBreack",
-    components: { NavBarCompany },
+    name: "EditBreaks",
+    components: { NavBar },
     data() {
         return {
             editingIndex: null,
-            buses: [],
-
-            number_bus: "",
-            number_passenger: "",
+            breaks: [],
+            name: "",
+            governments: [],
         };
     },
     mounted() {
-        this.fetchBuses();
+        this.fetchGovernments();
     },
     methods: {
-        fetchBuses() {
+        fetchGovernments() {
             const access_token = window.localStorage.getItem("access_token");
 
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
+                url: "http://127.0.0.1:8000/api/admin/all_government",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.buses = response.data;
-                    console.log(this.buses);
+                    this.governments = response.data;
+                    console.log(this.governments);
                 })
                 .catch((error) => {
-                    window.alert("Error getting buses");
+                    window.alert("Error getting Government");
                     console.error(error);
                 });
         },
-        deleteBus(id) {
+        fetchBreaks() {
             const access_token = window.localStorage.getItem("access_token");
 
             axios({
-                method: "delete",
-                url: `http://127.0.0.1:8000/api/company/delete_bus/${id}`,
+                method: "get",
+                url: `http://127.0.0.1:8000/api/admin/all_breaks/${this.selectedGovernmentId}`,
                 headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Deleted Complete");
-                    window.location.reload();
-                })
-                .catch((error) => {
-                    window.alert("Error deleting bus");
-                    console.error(error);
-                });
-        },
-        editBus(index) {
-            this.editingIndex = index;
-            this.editedBus = { ...this.buses[index] };
-        },
-        saveChanges() {
-            const access_token = window.localStorage.getItem("access_token");
-            const busId = this.buses[this.editingIndex].id;
-
-            axios({
-                method: "put",
-                url: `http://127.0.0.1:8000/api/company/update_bus/${busId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-                data: {
-                    number_bus: this.number_bus,
-                    number_passenger: this.number_passenger,
-                },
             })
                 .then((response) => {
-                    console.log(response);
-                    window.alert("Bus updated successfully");
+                    this.breaks = response.data;
                 })
                 .catch((error) => {
-                    window.alert("Error updating bus");
+                    window.alert("Error getting Breaks");
                     console.error(error);
                 });
+        },
+        getGovernmentName(id) {
+            const government = this.governments.find((gov) => gov.id === id);
+            return government ? government.name : "Unknown";
         },
         cancelEdit() {
             this.editingIndex = null;
-            this.editedBus = { number_bus: null, number_passenger: null };
+            this.name = "";
         },
     },
 };

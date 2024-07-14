@@ -1,33 +1,46 @@
 <template>
     <div class="main-content">
-        <NavBarCompany />
+        <NavBar />
         <div class="content">
-            <div class="title">ADD Bus</div>
+            <div class="title">ADD BREAK</div>
             <div class="contentt2">
                 <div class="box">
                     <div class="email">
-                        <span>Number Bus</span
-                        ><input
-                            type="text"
-                            placeholder="Enter Number Bus"
-                            class="input"
-                            v-model="number_bus"
-                        />
-                    </div>
-
-                    <div class="password">
-                        <span>Number Passenger</span>
+                        <span>Name Break</span>
                         <input
                             type="text"
+                            placeholder="Enter Name Break"
                             class="input"
-                            placeholder="Enter Number Passenger"
-                            v-model="number_passenger"
-                            style="text-align: "
-                        />
+                            v-model="name"
                         />
                     </div>
+                    <div class="dropdown">
+                        <button @click="toggleDropdown" class="dropbtn">
+                            Select Government
+                        </button>
+                        <div
+                            :class="{
+                                'dropdown-content': true,
+                                show: dropdownOpen,
+                            }"
+                        >
+                            <input
+                                type="text"
+                                placeholder="Search.."
+                                @keyup="filterFunction"
+                                ref="myInput"
+                            />
+                            <a
+                                v-for="(link, index) in filteredList"
+                                :key="index"
+                                @click="selectGovernment(link)"
+                            >
+                                {{ link.name }}
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <button class="Button" @click="AddPath">ADD</button>
+                <button class="Button" @click="AddBreak">ADD</button>
             </div>
         </div>
     </div>
@@ -35,29 +48,66 @@
 
 <script>
 import axios from "axios";
-import NavBarCompany from "@/components/NavBarCompany.vue";
+import NavBar from "@/components/NavBar.vue";
 
 export default {
-    components: { NavBarCompany },
+    components: { NavBar },
 
-    name: "AddBreack",
+    name: "AddBreak",
     data() {
         return {
-            number_bus: "",
-            number_passenger: "",
+            name: "",
+            dropdownOpen: false,
+            links: [],
+            filteredList: [],
+            selectedGovernment: null,
         };
     },
+
     methods: {
-        AddPath() {
+        toggleDropdown() {
+            this.dropdownOpen = !this.dropdownOpen;
+            this.filteredList = this.links;
+        },
+        filterFunction() {
+            const input = this.$refs.myInput.value.toUpperCase();
+            this.filteredList = this.links.filter((link) =>
+                link.name.toUpperCase().includes(input)
+            );
+        },
+        selectGovernment(link) {
+            this.selectedGovernment = link.id;
+            this.dropdownOpen = false;
+        },
+        fetchGovernment() {
+            const access_token = window.localStorage.getItem("access_token");
+
+            axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/admin/all_government",
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.links = response.data;
+                    console.log(this.links);
+                })
+                .catch((error) => {
+                    window.alert("Error getting Government");
+                    console.error(error);
+                });
+        },
+        AddBreak() {
+            if (!this.selectedGovernment) {
+                window.alert("Please select a government.");
+                return;
+            }
             const token = window.localStorage.getItem("access_token");
 
             axios({
                 method: "post",
-                url: "http://127.0.0.1:8000/api/company/store_bus",
+                url: `http://127.0.0.1:8000/api/admin/store_breaks/${this.selectedGovernment}`,
                 data: {
-                    number_bus: this.number_bus,
-
-                    number_passenger: this.number_passenger,
+                    name: this.name,
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
@@ -67,13 +117,17 @@ export default {
                 })
                 .catch((error) => {
                     window.alert("ERROR ADD");
-                    console.log(error);
+                    console.error(error);
                 });
         },
     },
+    mounted() {
+        this.fetchGovernment();
+    },
 };
 </script>
-<style scoped lang="scss">
+
+<style scoped>
 .main-content {
     display: flex;
     width: 100%;
@@ -95,32 +149,24 @@ export default {
 }
 .box {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     margin: 30px;
     padding: 20px;
     background-color: white;
     border-radius: 15px;
     text-align: center;
     font-size: 20px;
-    justify-content: space-between;
 }
-.email span,
-.password span,
-.username span {
+.email span {
     color: black;
     display: block;
     margin: 15px;
 }
-.username span p {
-    color: #176b87;
-    margin-top: 19px;
-}
-.password .input::placeholder,
-.email .input::placeholder {
+.input::placeholder {
     text-align: center;
 }
-input[type="text"],
-input[type="password"],
-input[type="email"] {
+input[type="text"] {
     width: 100%;
     color: black;
     height: 30%;
@@ -136,8 +182,54 @@ input:focus {
     text-align: center;
     align-items: center;
     background-color: #176b87;
-    padding: 10px 40px 10px 40px;
+    padding: 10px 40px;
     border-radius: 15px;
     border: 1px solid gray;
+}
+
+.dropbtn {
+    background-color: #04aa6d;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+.dropbtn:hover,
+.dropbtn:focus {
+    background-color: #3e8e41;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-top: 15px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f6f6f6;
+    min-width: 230px;
+    overflow: auto;
+    border: 1px solid #ddd;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.show {
+    display: block;
 }
 </style>
