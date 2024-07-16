@@ -31,9 +31,9 @@ class _SignInPageState extends State<SignInPage> {
   bool isPasswordVisible = true;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: const Color.fromARGB(255, 13, 29, 37),
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: const Color.fromARGB(255, 13, 29, 37),
         elevation: 0,
         leading: IconButton(
           onPressed: () {
@@ -41,7 +41,7 @@ class _SignInPageState extends State<SignInPage> {
           },
           icon: Image(
             width: 24,
-            color: Colors.white,
+            color: const Color.fromARGB(255, 221, 215, 215),
             image: Svg('assets/images/back_arrow.svg'),
           ),
         ),
@@ -138,12 +138,14 @@ class _SignInPageState extends State<SignInPage> {
                         Navigator.of(context).pop(); // Close the progress indicator
 
                         if (authProvider.accessToken.isNotEmpty) {
+                          print(authProvider.accessToken);
                           // Determine which dashboard to navigate to based on user type
                           Widget destinationPage;
                           if (authProvider.userType == "company") {
                             destinationPage = Dashbord();
                           } else if (authProvider.userType == "user") {
-                            destinationPage =DashbordUser();
+                            destinationPage =DashboardUser();
+
                           } else if (authProvider.userType == "driver") {
                             destinationPage = DashbordDriver();
                           } else if (authProvider.userType == "admin") {

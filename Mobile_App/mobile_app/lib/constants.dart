@@ -20,7 +20,9 @@ const kButtonText = TextStyle(
   fontSize: 16,
   fontWeight: FontWeight.bold,
 );
-
+final Color veppoLightGrey = Color(0xFF999999);
+final Color veppoGrey = Color(0xFF4C4C4C);
+final Color veppoBlue = Color(0xFF1363FF);
 const kBodyText2 =
     TextStyle(fontSize: 28, fontWeight: FontWeight.w500, color: Colors.white);
 

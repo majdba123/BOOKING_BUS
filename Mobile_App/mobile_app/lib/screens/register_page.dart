@@ -43,9 +43,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: const Color.fromARGB(255, 13, 29, 37),
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: const Color.fromARGB(255, 13, 29, 37),
         elevation: 0,
         leading: IconButton(
           onPressed: () {
