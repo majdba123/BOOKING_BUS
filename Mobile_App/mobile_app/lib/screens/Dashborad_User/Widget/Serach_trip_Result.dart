@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
-import 'package:mobile_app/Data_Models/flight_model.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Seat_Selection_Screen.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/bottom_nav_bar.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/horizontal_list.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/route_card.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/search_Trip_form.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/section_title.dart';
-import 'package:mobile_app/widgets/my_text_button.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:intl/intl.dart';
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Bus Search',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: BusSearchScreen(searchFuture: Future.value()), // Example future
+    );
+  }
+}
 
 class BusSearchScreen extends StatelessWidget {
   final Future<void> searchFuture;
@@ -22,141 +31,228 @@ class BusSearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: FutureBuilder<void>(
-          future: searchFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              return Consumer<TripuserProvider>(
-                builder: (context, tripProvider, child) {
-                  if (tripProvider.trips.isEmpty) {
-                    return Center(child: Text('No trips found.'));
-                  }
-        
-                  final trip = tripProvider.trips.first;
-        
-                  return SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        FractionallySizedBox(
-                          widthFactor: 1.0,
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * 0.26,
-                            color: AppColors.primaryColor,
-                            padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).padding.top + 23.0,
-                              bottom: 20.0,
-                              left: 16.0,
-                              right: 16.0,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.all(8.0),
-                                  child: IconButton(
-                                    icon: Icon(Icons.arrow_back,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
+      body: Stack(
+        children: [
+          FutureBuilder<void>(
+            future: searchFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                return Consumer<TripuserProvider>(
+                  builder: (context, tripProvider, child) {
+                    if (tripProvider.trips.isEmpty) {
+                      return Center(child: Text('No trips found.'));
+                    }
+
+                    return SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FractionallySizedBox(
+                            widthFactor: 1.0,
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.26,
+                              color: AppColors.primaryColor,
+                              padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).padding.top + 23.0,
+                                bottom: 20.0,
+                                left: 16.0,
+                                right: 16.0,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.all(8.0),
+                                    child: IconButton(
+                                      icon: Icon(Icons.arrow_back,
+                                          color: Colors.white),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 8.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'FROM',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'TO',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 16.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      trip.from,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      ' .......... ',
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14),
-                                    ),
-                                    Icon(Icons.directions_bus,
-                                        color: Colors.grey),
-                                    Text(
-                                      ' .......... ',
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 18),
-                                    ),
-                                    Text(
-                                      trip.to,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  SizedBox(height: 8.0),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'FROM',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        'TO',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 16.0),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        tripProvider.trips.first.from,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        ' .......... ',
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14),
+                                      ),
+                                      Icon(Icons.directions_bus,
+                                          color: Colors.grey),
+                                      Text(
+                                        ' .......... ',
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 18),
+                                      ),
+                                      Text(
+                                        tripProvider.trips.first.to,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Column(
-                            children: tripProvider.trips.map((trip) {
-                              return BusCard(
-                                trip: trip,
-                                onTap: () {
-                                  // Navigate to Seat Selection
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SeatsGridPage()));
-                                },
-                              );
-                            }).toList(),
+                          Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(
+                              children: tripProvider.trips.expand((trip) {
+                                return trip.busTrips.map((busTrip) {
+                                  return BusCard(
+                                    trip: trip,
+                                    busTrip: busTrip,
+                                    onTap: () {
+                                      // Navigate to Seat Selection
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) => SeatsGridPage( companyName: trip.companyId,
+    from: trip.from,
+    to: trip.to,
+    fromTime: busTrip.fromTime,
+    toTime: busTrip.toTime,
+    seats: busTrip.seats,)));
+                                    },
+                                  );
+                                }).toList();
+                              }).toList(),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            }
-          },
-        ),
-  
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }
+            },
+          ),
+          Positioned(
+            bottom: 20.0,
+            left: MediaQuery.of(context).size.width * 0.1,
+            right: MediaQuery.of(context).size.width * 0.1,
+            child: FilterBar(),
+          ),
+        ],
+      ),
     );
   }
 }
 
+class FilterBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor,
+        borderRadius: BorderRadius.circular(30.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 6,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          FilterOption(icon: Icons.west_outlined, label: 'one way'),
+          FilterOption(icon: Icons.assignment_return_rounded, label: 'Round Trip'),
+          FilterOption(icon: Icons.money_outlined, label: 'Chpiset'),
+          FilterOption(icon: Icons.star, label: 'fast'),
+          FilterIcon(icon: Icons.filter_list),
+        ],
+      ),
+    );
+  }
+}
+
+class FilterOption extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const FilterOption({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white),
+        SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(color: Colors.white, fontSize: 8),
+        ),
+      ],
+    );
+  }
+}
+
+class FilterIcon extends StatelessWidget {
+  final IconData icon;
+
+  const FilterIcon({required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white),
+        SizedBox(height: 4),
+        Text(
+          'Filter',
+          style: TextStyle(color: Colors.white, fontSize: 12),
+        ),
+      ],
+    );
+  }
+}
 
 class BusCard extends StatelessWidget {
   final TripByPath trip;
+  final BusTrip busTrip;
   final VoidCallback onTap;
 
-  BusCard({required this.trip, required this.onTap});
+  BusCard({required this.trip, required this.busTrip, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -195,17 +291,42 @@ class BusCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: cardPadding),
-                      Text(trip.companyId,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: textFontSize)),
-                      Spacer(),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(trip.companyId,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: textFontSize)),
+                            SizedBox(height: 4.0),
+                            Text(
+                              'Bus Type: ${busTrip.type}',
+                              style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: smallTextFontSize),
+                            ),
+                             SizedBox(height: 4.0),
+                            Text(
+                              'Bus Event: ${busTrip.event}',
+                              style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: smallTextFontSize),
+                            ),
+                          ],
+                        ),
+                      ),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
                         decoration: BoxDecoration(
                           color: Colors.green[100],
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        child: Text('N.Bus :${trip.busTrips[0].busId}', style: TextStyle(color: Colors.green)),
+                        child: Text('N.Bus :${busTrip.busId}',
+                            style: TextStyle(color: Colors.green)),
                       ),
                     ],
                   ),
@@ -216,29 +337,41 @@ class BusCard extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${trip.busTrips[0].fromTime} Am',
+                          Text('${busTrip.fromTime} Am',
                               style: TextStyle(
-                                  fontSize: textFontSize, color: AppColors.primaryColor)),
+                                  fontSize: textFontSize,
+                                  color: AppColors.primaryColor)),
                           SizedBox(height: 4.0),
-                          Text(trip.from, style: TextStyle(color: Colors.grey, fontSize: smallTextFontSize)),
+                          Text(trip.from,
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: smallTextFontSize)),
                         ],
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Duration', style: TextStyle(color: Colors.grey, fontSize: smallTextFontSize)),
+                          Text('${busTrip.duration}hrs',
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: smallTextFontSize)),
                           Padding(
                             padding: const EdgeInsets.only(top: 12.0),
                             child: Row(
                               children: [
                                 Text(
                                   ' ------------ ',
-                                  style: TextStyle(color: Colors.grey, fontSize: smallTextFontSize),
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: smallTextFontSize),
                                 ),
-                                Icon(Icons.directions_bus, color: Colors.grey, size: iconSize),
+                                Icon(Icons.directions_bus,
+                                    color: Colors.grey, size: iconSize),
                                 Text(
                                   ' ------------- ',
-                                  style: TextStyle(color: Colors.grey, fontSize: smallTextFontSize),
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: smallTextFontSize),
                                 ),
                               ],
                             ),
@@ -248,11 +381,15 @@ class BusCard extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${trip.busTrips[0].toTime} Am ',
+                          Text('${busTrip.toTime} Am',
                               style: TextStyle(
-                                  fontSize: textFontSize, color: AppColors.primaryColor)),
+                                  fontSize: textFontSize,
+                                  color: AppColors.primaryColor)),
                           SizedBox(height: 4.0),
-                          Text(trip.to, style: TextStyle(color: Colors.grey, fontSize: smallTextFontSize)),
+                          Text(trip.to,
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: smallTextFontSize)),
                         ],
                       ),
                     ],
@@ -265,21 +402,84 @@ class BusCard extends StatelessWidget {
                     children: [
                       Icon(Icons.star, color: Colors.yellow, size: iconSize),
                       SizedBox(width: 4.0),
-                      Text('Rating', style: TextStyle(color: Colors.grey, fontSize: smallTextFontSize)),
+                      Text('Rating',
+                          style: TextStyle(
+                              color: Colors.grey, fontSize: smallTextFontSize)),
                       Spacer(),
-                      Container(margin: EdgeInsets.only(right: 38.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.person, size: iconSize),
-                             Text('${trip.busTrips[0].seatCount}', style: TextStyle(color: Colors.grey, fontSize: smallTextFontSize)),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          Icon(Icons.person, size: iconSize),
+                          SizedBox(width: 4.0),
+                          Text('${busTrip.seatCount}',
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: smallTextFontSize)),
+                        ],
                       ),
-                     
                       Spacer(),
                       Text('${trip.price} \$',
                           style: TextStyle(
-                              fontSize: textFontSize, fontWeight: FontWeight.bold)),
+                              fontSize: textFontSize,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  SizedBox(height: cardPadding),
+                  Divider(height: 25.0, thickness: 1.5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Break Places',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: textFontSize)),
+                      ...busTrip.breaks.map((breakPlace) {
+                        String government = breakPlace.government;
+                        if (breakPlace.nameBreak == "start" &&
+                            breakPlace.government == "Nothing") {
+                          government = trip.from;
+                        } else if (breakPlace.nameBreak == "end" &&
+                            breakPlace.government == "Nothing") {
+                          government = trip.to;
+                        }
+                        Color statusColor;
+                        String statusText;
+                        switch (breakPlace.status) {
+                          case "done 1":
+                            statusColor = Colors.yellow;
+                            statusText = "Return Only";
+                            break;
+                          case "done 2":
+                            statusColor = Colors.red;
+                            statusText = "Finish Trip";
+                            break;
+                          default:
+                            statusColor = Colors.green;
+                            statusText = "Pending";
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.place, color: AppColors.primaryColor),
+                              SizedBox(width: 8.0),
+                              Expanded(
+                                child: Text(
+                                    '${breakPlace.nameBreak}, $government',
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: smallTextFontSize)),
+                              ),
+                              Text(
+                                statusText,
+                                style: TextStyle(
+                                    color: statusColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: smallTextFontSize),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     ],
                   ),
                 ],
@@ -291,212 +491,3 @@ class BusCard extends StatelessWidget {
     );
   }
 }
-final flightsAvailableJson = [
-  {
-    "id": "1",
-    "logo": "assets/images/companies_logo/gol_logo.png",
-    "price": 190.90,
-    "title": "Brazil to England",
-    "seats": [
-      {
-        "available": false,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-    ],
-  },
-  {
-    "id": "2",
-    "logo": "assets/images/companies_logo/latam_logo.png",
-    "price": 190.90,
-    "title": "Brazil to England",
-    "seats": [
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-    ],
-  },
-  {
-    "id": "3",
-    "logo": "assets/images/companies_logo/gol_logo.png",
-    "price": 190.90,
-    "title": "Brazil to England",
-    "seats": [
-      {
-        "available": true,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-    ],
-  },
-  {
-    "id": "4",
-    "logo": "assets/images/companies_logo/gol_logo.png",
-    "price": 190.90,
-    "title": "Brazil to England",
-    "seats": [
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-    ],
-  },
-  {
-    "id": "5",
-    "logo": "assets/images/companies_logo/latam_logo.png",
-    "price": 190.90,
-    "title": "Brazil to England",
-    "seats": [
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-    ],
-  },
-  {
-    "id": "6",
-    "logo": "assets/images/companies_logo/latam_logo.png",
-    "price": 190.90,
-    "title": "Brazil to England",
-    "seats": [
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": false,
-      },
-      {
-        "available": true,
-      },
-    ],
-  },
-];
