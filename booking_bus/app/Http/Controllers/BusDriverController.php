@@ -138,4 +138,14 @@ class BusDriverController extends Controller
             'message' => 'Assignment canceled successfully',
         ]);
     }
+
+
+    public function bus_driveer()
+    {
+        $driver=Auth::user()->Driver;
+        $busDriver = Bus_Driver::where('driver_id', $driver->id)->all();
+        if (!$busDriver) {
+            return response()->json(['error' => 'Assignment not found'], 404);
+        }
+    }
 }

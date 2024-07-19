@@ -2,20 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Models\Profile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\RedirectResponse;
-
-class ProfileController extends Controller
+class DriverProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $user = auth()->user()->load(['profile', 'address']);
@@ -23,17 +18,6 @@ class ProfileController extends Controller
         return response()->json($user);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -77,32 +61,13 @@ class ProfileController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Profile $profile)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Profile $profile)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
-            'image' => 'nullable|image',
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|max:255',
-            'phone' => 'required',
+            'image' => 'required|image',
+            'phone' => 'sometimes|required',
         ]);
 
         if ($validator->fails()) {
@@ -111,49 +76,43 @@ class ProfileController extends Controller
         }
 
         try {
-            $user = auth()->user();
+            $user =auth()->user();
             $profile = $user->profile;
 
-            if (!$profile) {
-                return response()->json(['error' => 'Profile not found'], 404);
-            }
-
             if ($request->hasFile('image')) {
-                // Delete old image
-                if ($profile->image) {
-                    Storage::delete('public/profile_image/'. $profile->image);
+                $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
+                $imageUrl = asset('storage/profile_image/' . $imageName);
+
+                // Delete existing image
+                if ($profile->image && file_exists(public_path($profile->image))) {
+                    unlink(public_path($profile->image));
                 }
 
-                $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
-                $imageUrl = asset('storage/profile_image/'. $imageName);
-                $request->image->storeAs('public/profile_image', $imageName);
-                $profile->image = $imageUrl;
+                // Create Profile
+                $profile->update([
+                    'image' => $imageUrl,
+                    'phone' => $request->phone
+                ]);
+
+                // Store Image in public/profile_image directory
+                $request->image->move(public_path('profile_image'), $imageName);
+            } else {
+                $profile->update([
+                    'phone' => $request->phone
+                ]);
             }
 
-            if ($request->filled('name')) {
-                $user->name = $request->input('name');
-            }
-            if ($request->filled('email')) {
-                $user->email = $request->input('email');
-            }
-            if ($request->filled('phone')) {
-                $profile->phone = $request->input('phone');
-            }
-
-            $user->save();
-            $profile->save();
-
+            // Return Json Response
             return response()->json([
                 'message' => "Profile successfully updated."
             ], 200);
         } catch (\Exception $e) {
+            // Return Json Response
             return response()->json([
                 'message' => "Something went really wrong!"
             ], 500);
         }
     }
-
-
     public function update_password(Request $request)
     {
         $user = Auth::user();
@@ -177,11 +136,5 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Profile $profile)
-    {
-        //
-    }
+
 }
