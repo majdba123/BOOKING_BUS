@@ -1,6 +1,7 @@
 import 'package:flutter/src/material/radio_list_tile.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_app/Data_Models/BUS_Trip.dart';
+
 class TripByPath {
   final int tripId;
   final String companyId;
@@ -33,7 +34,6 @@ class TripByPath {
     );
   }
 }
-
 
 class BusTrip {
   final int busId;
@@ -96,7 +96,6 @@ class BusTrip {
   }
 }
 
-
 class BreakPlace {
   final int breakId;
   final String government;
@@ -124,14 +123,16 @@ class BreakPlace {
 
 class SeatModel {
   final int status;
-
+  final int id;
   SeatModel({
     required this.status,
+    required this.id,
   });
 
   factory SeatModel.fromJson(Map<String, dynamic> json) {
     return SeatModel(
       status: json['status'],
+      id: json['id'],
     );
   }
 }

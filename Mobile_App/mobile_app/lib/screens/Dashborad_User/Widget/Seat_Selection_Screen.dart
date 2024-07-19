@@ -272,15 +272,15 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
         ),
         itemBuilder: (context, index) {
           SeatModel seat = seats[index];
-          bool isSelected = selectedSeats.contains(index);
+          bool isSelected = selectedSeats.contains(seat.id);
 
           return InkWell(
             onTap: () {
               setState(() {
                 if (isSelected) {
-                  selectedSeats.remove(index);
+                  selectedSeats.remove(seat.id);
                 } else {
-                  selectedSeats.add(index);
+                  selectedSeats.add(seat.id);
                 }
               });
             },

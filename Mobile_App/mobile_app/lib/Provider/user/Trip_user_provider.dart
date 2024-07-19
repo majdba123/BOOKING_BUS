@@ -123,7 +123,10 @@ class TripuserProvider with ChangeNotifier {
       int breakId, int bus_trip_id) async {
     final url =
         Uri.parse(name_domain_server + 'user/store_reservation/${bus_trip_id}');
-    final headers = {'Authorization': 'Bearer $accessToken'};
+    final headers = {
+      'Authorization': 'Bearer $accessToken',
+      'Content-Type': 'application/json',
+    };
     final body = jsonEncode({
       "type": type,
       "seat": seat,

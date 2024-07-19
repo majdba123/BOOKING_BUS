@@ -134,9 +134,9 @@ class BusSearchScreen extends StatelessWidget {
                                               listen: false)
                                           .selectTripType(
                                               (busTrip.type == 'all')
-                                                  ? 1
+                                                  ? 2
                                                   : (busTrip.type == 'going')
-                                                      ? 0
+                                                      ? 1
                                                       : -1);
                                       Provider.of<TripuserProvider>(context,
                                               listen: false)
