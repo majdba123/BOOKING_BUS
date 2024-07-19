@@ -159,13 +159,25 @@ class DriverController extends Controller
     {
         $driver = Auth::user()->Driver;
 
+        if (!$driver) {
+            return response()->json(['error' => 'Driver not found'], 404);
+        }
+
         $bus = Bus_Driver::where('status', 'pending')
                         ->where('driver_id', $driver->id)
                         ->first();
 
+        if (!$bus) {
+            return response()->json(['error' => 'No pending bus found for the driver'], 404);
+        }
+
         $trip = Bus_Trip::where('status', 'pending')
-                        ->where('bus_id', $bus->id)
+                        ->where('bus_id', $bus->bus_id)
                         ->first();
+
+        if (!$trip) {
+            return response()->json(['error' => 'No pending trip found for the bus'], 404);
+        }
 
         $pivotData = [];
         foreach ($trip->Pivoit as $pivoit) {
@@ -178,7 +190,6 @@ class DriverController extends Controller
         }
 
         $response = [
-
             'bus_trip_id' => $trip->id,
             'bus_id' => $trip->bus_id,
             'from_time' => $trip->from_time,
@@ -202,7 +213,7 @@ class DriverController extends Controller
                         ->first();
 
         $bus_trip = Bus_Trip::where('status', 'pending')
-                        ->where('bus_id', $bus->id)
+                        ->where('bus_id', $bus->bus_id)
                         ->first();
 
         $name_breaks = $bus_trip->Pivoit->where('status', 'pending')->pluck('break_trip.break.name');
@@ -244,10 +255,15 @@ class DriverController extends Controller
                         ->where('driver_id', $driver->id)
                         ->first();
 
-        $bus_trip = Bus_Trip::where('bus_id', $bus->id)
+        $bus_trip = Bus_Trip::where('bus_id', $bus->bus_id)
                         ->whereIn('status', ['pending', 'finished_going'])
                         ->first();
-
+        if(!$bus_trip)
+        {
+            return response()->json([
+                'massage' => 'already done'
+            ]);
+        }
         $pivoit =Pivoit::where('bus__trip_id' , $bus_trip->id)
                         ->find($pivoit_id);
 
@@ -260,92 +276,629 @@ class DriverController extends Controller
                         ->where('id', $pivoit_id + 1)
                         ->first();
 
-        if($pivoit->status == 'pending')
-        {
-            if($pivoit->break_trip->break->name == "start")
+        try{
+            if($pivoit->status == 'pending')
             {
-                $pivoit->status = 'done1';
-                $pivoit->save();
-                $bus_trip->event ='running';
-                $bus_trip->save();
-                return response()->json([
-                    'massage' => '1'
-                ]);
-            }
-            if($previous_pivoit->status == 'pending')
-            {
-
-                return response()->json([
-                    'massage' => 'there is before breaks first '
-                ]);
-            }
-            elseif($pivoit->break_trip->break->name == "end")
-            {
-                $pivoit->status = 'done2';
-                $pivoit->save();
-
-                $bus_trip->event ='running';
-                $bus_trip->save();
-
-                $bus_trip->status ='finished_going';
-                $bus_trip->save();
-                return response()->json([
-                    'massage' => '2'
-                ]);
-            }
-            else{
-                if($previous_pivoit->status == 'done1' && $next_pivoit->status == 'pending')
+                if($pivoit->break_trip->break->name == "start" && $next_pivoit->status == "pending" )
                 {
                     $pivoit->status = 'done1';
                     $pivoit->save();
                     $bus_trip->event ='running';
                     $bus_trip->save();
+                    if($bus_trip->status == 'pending')
+                    {
+                        $type_reservation = 1 ;
+                    }else{
+                        $type_reservation = 2 ;
+                    }
+                    $reservations = Reservation::where('pivoit_id', $pivoit_id)
+                        ->where('status', 'padding')
+                        ->where('type', $type_reservation)
+                        ->get();
+
+                    foreach ($reservations as $reservation) {
+                        $reservation->status = 'out';
+                        $reservation->save();
+                        foreach ($reservation->seat_reservation as $seat_reservation) {
+                            $seat_reservation->status = 'out';
+                            $seat_reservation->save();
+                            if($seat_reservation->seat->status == 3)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 2 ;
+                                }elseif($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 1 ;
+                                }
+                            }elseif($seat_reservation->seat->status == 2)
+                            {
+                                if($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }elseif($seat_reservation->seat->status == 1)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }
+                            $seat_reservation->seat->save(); // Save the seat object
+                        }
+                    }
                     return response()->json([
-                        'massage' => '3'
+                        'massage' => 'break_done1'
+                    ]);
+                }elseif($pivoit->break_trip->break->name == "end" && $previous_pivoit->status == "done1" )
+                {
+                    $pivoit->status = 'done2';
+                    $pivoit->save();
+                    $bus_trip->event ='running';
+                    $bus_trip->save();
+                    if($bus_trip->status == 'pending')
+                    {
+                        $type_reservation = 1 ;
+                    }else{
+                        $type_reservation = 2 ;
+                    }
+                    $reservations = Reservation::where('pivoit_id', $pivoit_id)
+                        ->where('status', 'padding')
+                        ->where('type', $type_reservation)
+                        ->get();
+
+                    foreach ($reservations as $reservation) {
+                        $reservation->status = 'out';
+                        $reservation->save();
+                        foreach ($reservation->seat_reservation as $seat_reservation) {
+                            $seat_reservation->status = 'out';
+                            $seat_reservation->save();
+                            if($seat_reservation->seat->status == 3)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 2 ;
+                                }elseif($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 1 ;
+                                }
+                            }elseif($seat_reservation->seat->status == 2)
+                            {
+                                if($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }elseif($seat_reservation->seat->status == 1)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }
+                            $seat_reservation->seat->save(); // Save the seat object
+                        }
+                    }
+                    return response()->json([
+                        'massage' => 'break_done2'
+                    ]);
+
+                }elseif($previous_pivoit->status == "done1" && $next_pivoit->status == "pending")
+                {
+                    $pivoit->status = 'done1';
+                    $pivoit->save();
+                    $bus_trip->event ='running';
+                    $bus_trip->save();
+                    if($bus_trip->status == 'pending')
+                    {
+                        $type_reservation = 1 ;
+                    }else{
+                        $type_reservation = 2 ;
+                    }
+                    $reservations = Reservation::where('pivoit_id', $pivoit_id)
+                        ->where('status', 'padding')
+                        ->where('type', $type_reservation)
+                        ->get();
+
+                    foreach ($reservations as $reservation) {
+                        $reservation->status = 'out';
+                        $reservation->save();
+                        foreach ($reservation->seat_reservation as $seat_reservation) {
+                            $seat_reservation->status = 'out';
+                            $seat_reservation->save();
+                            if($seat_reservation->seat->status == 3)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 2 ;
+                                }elseif($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 1 ;
+                                }
+                            }elseif($seat_reservation->seat->status == 2)
+                            {
+                                if($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }elseif($seat_reservation->seat->status == 1)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }
+                            $seat_reservation->seat->save(); // Save the seat object
+                        }
+                    }
+                    return response()->json([
+                        'massage' => 'break_done3'
                     ]);
                 }
-            }
-        }elseif($pivoit->status == 'done1')
-        {
-
-            if($pivoit->break_trip->break->name == "start" && $next_pivoit->status == 'done2')
+            }elseif($pivoit->status == 'done1')
             {
-                $pivoit->status = 'done2';
-                $pivoit->save();
+                if($pivoit->break_trip->break->name == "start" && $next_pivoit->status == "done2" )
+                {
+                    $pivoit->status = 'done2';
+                    $pivoit->save();
+                    $bus_trip->event ='finished_trip';
+                    $bus_trip->status ='finished';
+                    $bus_trip->save();
+                    if($bus_trip->status == 'pending')
+                    {
+                        $type_reservation = 1 ;
+                    }else{
+                        $type_reservation = 2 ;
+                    }
+                    $reservations = Reservation::where('pivoit_id', $pivoit_id)
+                        ->where('status', 'padding')
+                        ->where('type', $type_reservation)
+                        ->get();
 
-                $bus_trip->event ='finished';
-                $bus_trip->save();
+                    foreach ($reservations as $reservation) {
+                        $reservation->status = 'out';
+                        $reservation->save();
+                        foreach ($reservation->seat_reservation as $seat_reservation) {
+                            $seat_reservation->status = 'out';
+                            $seat_reservation->save();
+                            if($seat_reservation->seat->status == 3)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 2 ;
+                                }elseif($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 1 ;
+                                }
+                            }elseif($seat_reservation->seat->status == 2)
+                            {
+                                if($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }elseif($seat_reservation->seat->status == 1)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }
+                            $seat_reservation->seat->save(); // Save the seat object
+                        }
+                    }
+                    return response()->json($next_pivoit);
+                }elseif($previous_pivoit->status == "done1" && $next_pivoit->status == "done2")
+                {
+                    $pivoit->status = 'done2';
+                    $pivoit->save();
+                    $bus_trip->event ='runing';
+                    $bus_trip->save();
+                    if($bus_trip->status == 'pending')
+                    {
+                        $type_reservation = 1 ;
+                    }else{
+                        $type_reservation = 2 ;
+                    }
+                    $reservations = Reservation::where('pivoit_id', $pivoit_id)
+                        ->where('status', 'padding')
+                        ->where('type', $type_reservation)
+                        ->get();
 
-                $bus_trip->status ='finished';
-                $bus_trip->save();
+                    foreach ($reservations as $reservation) {
+                        $reservation->status = 'out';
+                        $reservation->save();
+                        foreach ($reservation->seat_reservation as $seat_reservation) {
+                            $seat_reservation->status = 'out';
+                            $seat_reservation->save();
+                            if($seat_reservation->seat->status == 3)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 2 ;
+                                }elseif($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 1 ;
+                                }
+                            }elseif($seat_reservation->seat->status == 2)
+                            {
+                                if($reservation->type == 2)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }elseif($seat_reservation->seat->status == 1)
+                            {
+                                if($reservation->type == 1)
+                                {
+                                    $seat_reservation->seat->status = 0 ;
+                                }else
+                                {
+                                    return response()->json([
+                                        'massage' => 'there is wrong'
+                                    ]);
+                                }
+                            }
+                            $seat_reservation->seat->save(); // Save the seat object
+                        }
+                    }
+                    return response()->json([
+                        'massage' => 'break_done'
+                    ]);
+                }
+            }elseif($pivoit->status == 'done2')
+            {
                 return response()->json([
-                    'massage' => 'finished_going'
+                    'massage' => 'break already finished going and trip '
+                ]);
+            }else
+            {
+                return response()->json([
+                    'massage' => 'something get wrong'
                 ]);
             }
-            if($pivoit->break_trip->break->name == "start" && $next_pivoit->status == 'dan1')
-            {
-                return response()->json([
-                    'massage' => 'there is before breaks first'
-                ]);
-            }
-
-            if($previous_pivoit->status == 'done1' && $next_pivoit->status == 'done2')
-            {
-                $pivoit->status = 'done2';
-                $pivoit->save();
-                $bus_trip->event ='running';
-                $bus_trip->save();
-                return response()->json([
-                    'massage' => 'done'
-                ]);
-            }
-        }
-        elseif($pivoit->status == 'done2')
-        {
+        }catch (Exception $e) {
             return response()->json([
-                'massage' => 'can not this break alredy finished going and returned'
-            ]);
+                'error' => $e->getMessage()
+            ], 500);
         }
 
     }
+
+
+
+
+    public function access_break($pivoit_id)
+    {
+        try {
+            $driver = Auth::user()->Driver;
+
+            $bus = Bus_Driver::where('status', 'pending')
+                            ->where('driver_id', $driver->id)
+                            ->first();
+
+            $bus_trip = Bus_Trip::where('bus_id', $bus->bus_id)
+                            ->whereIn('status', ['pending', 'finished_going'])
+                            ->first();
+
+            $pivoit =Pivoit::where('bus__trip_id' , $bus_trip->id)
+                            ->find($pivoit_id);
+
+
+            $previous_pivoit = Pivoit::where('bus__trip_id', $bus_trip->id)
+                            ->where('id', $pivoit_id - 1)
+                            ->first();
+
+            $next_pivoit = Pivoit::where('bus__trip_id', $bus_trip->id)
+                            ->where('id', $pivoit_id + 1)
+                            ->first();
+
+            if($pivoit->status == 'pending')
+            {
+                if($pivoit->break_trip->break->name == "end" && $previous_pivoit->status == "done1")
+                {
+                    $bus_trip->event = $pivoit->break_trip->break->name;
+                    $bus_trip->status = "finished_going";
+                    $bus_trip->save();
+                    $atLeastOneFinishedGoing = $bus_trip->trip->bus_trip()
+                    ->where('status', 'finished_going')
+                    ->first();
+                    $allFinished = $bus_trip->trip->bus_trip->whereIn('status', ['finished_going', 'finished'])->count() === $bus_trip->trip->bus_trip->count();
+                    if ($atLeastOneFinishedGoing && $allFinished) {
+                        $bus_trip->trip->status = "finished_going";
+                        $bus_trip->trip->save(); // <--- Add this line
+                    }
+                    $reservations = Reservation::where('status', 'padding')
+                    ->where('pivoit_id', $pivoit_id)
+                    ->where('type', 2)
+                    ->get()
+                    ->map(function ($reservation) {
+                        return [
+                            'id' => $reservation->id,
+                            'user_name' => $reservation->user->name,
+                            'price' => $reservation->price,
+                            'bus_trip_id' => $reservation->bus_trip_id,
+                            'type' => $reservation->type,
+                            'bus_trip_id' => $reservation->bus__trip_id,
+                            'status' => $reservation->status,
+                            'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
+                        ];
+                    });
+                    return response()->json($reservations);
+                }elseif($previous_pivoit->status == "done1" && $next_pivoit->status == "pending" )
+                {
+                    $bus_trip->event = $pivoit->break_trip->break->name;
+                    $bus_trip->save();
+                    $reservations = Reservation::where('status', 'padding')
+                    ->where('pivoit_id', $pivoit_id)
+                    ->where('type', 1)
+                    ->get()
+                    ->map(function ($reservation) {
+                        return [
+                            'id' => $reservation->id,
+                            'user_name' => $reservation->user->name,
+                            'price' => $reservation->price,
+                            'bus_trip_id' => $reservation->bus_trip_id,
+                            'type' => $reservation->type,
+                            'bus_trip_id' => $reservation->bus__trip_id,
+                            'status' => $reservation->status,
+                            'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
+                        ];
+                    });
+                    return response()->json($reservations);
+                }
+            }elseif($pivoit->status == 'done1')
+            {
+                if($pivoit->break_trip->break->name == "start" && $next_pivoit->status == "done2" )
+                {
+                    $bus_trip->event = $pivoit->break_trip->break->name;
+                    $bus_trip->status = "finished";
+                    $pivoit->status == 'done2';
+                    $pivoit->save();
+                    $bus_trip->bus->status = "available" ;
+                    $driver->status = "available" ;
+                    $driver->save();
+                    $bus->bus->status = "available" ;
+                    $bus->bus->save();
+                    $bus_trip->save();
+                    $seats = $bus->bus->seat; // assuming you have a 'eats' relationship in your Bus model
+                    foreach ($seats as $seat) {
+                        $seat->status = 0;
+                        $seat->save();
+                    }
+                    $allFinished = $bus_trip->trip->bus_trip->where('status', 'finished')->count() === $bus_trip->trip->bus_trip->count();
+                    if ($allFinished) {
+                        $bus_trip->trip->status = "finished";
+                        $bus_trip->trip->save();
+                    }
+                    return response()->json([
+                        'massage' => 'trip_finished going and trip'
+                    ]);
+                }elseif($next_pivoit->status == "done2" && $previous_pivoit->status == "done1")
+                {
+                    $bus_trip->event = $pivoit->break_trip->break->name;
+                    $bus_trip->save();
+                    $reservations = Reservation::where('status', 'padding')
+                    ->where('pivoit_id', $pivoit_id)
+                    ->where('type', 2)
+                    ->get()
+                    ->map(function ($reservation) {
+                        return [
+                            'id' => $reservation->id,
+                            'user_name' => $reservation->user->name,
+                            'price' => $reservation->price,
+                            'bus_trip_id' => $reservation->bus_trip_id,
+                            'type' => $reservation->type,
+                            'bus_trip_id' => $reservation->bus__trip_id,
+                            'status' => $reservation->status,
+                            'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
+                        ];
+                    });
+                    return response()->json($reservations);
+                }
+            }elseif($pivoit->status == 'done2')
+            {
+                return response()->json([
+                    'massage' => 'break already finished going and trip '
+                ]);
+            }else
+            {
+                return response()->json([
+                    'massage' => 'something get wrong'
+                ]);
+            }
+        }catch (Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function check_reservation($reservation_id)
+    {
+        $driver = Auth::user()->Driver;
+
+        $bus = Bus_Driver::where('status', 'pending')
+                        ->where('driver_id', $driver->id)
+                        ->first();
+
+        if (!$bus) {
+            return response()->json(['error' => 'No pending bus found for the driver'], 404);
+        }
+
+        $bus_trip = Bus_Trip::where('bus_id', $bus->bus_id)
+                        ->first();
+
+        if (!$bus_trip) {
+            return response()->json(['error' => 'No bus trip found for the bus'], 404);
+        }
+
+        $reservation = Reservation::find($reservation_id);
+
+        if (!$reservation) {
+            return response()->json(['error' => 'Reservation not found'], 404);
+        }
+
+        if ($reservation->bus__trip_id == $bus_trip->id) {
+            $reservation->status = 'completed';
+            $reservation->seat_reservation()->update(['status' => 'completed']);
+            $reservation->save();
+
+
+
+            return response()->json(['message' => 'Reservation status updated to completed']);
+        } else {
+            return response()->json(['error' => 'Reservation is not for this bus trip'], 400);
+        }
+    }
+
+    public function my_finished_going_trip()
+    {
+        $driver = Auth::user()->Driver;
+
+        if (!$driver) {
+            return response()->json(['error' => 'Driver not found'], 404);
+        }
+
+        $bus = Bus_Driver::where('status', 'finished_going')
+                        ->where('driver_id', $driver->id)
+                        ->first();
+
+        if (!$bus) {
+            return response()->json(['error' => 'No pending bus found for the driver'], 404);
+        }
+
+        $trips = Bus_Trip::where('status', 'finished_going')
+                        ->where('bus_id', $bus->bus_id)
+                        ->get();
+
+        if ($trips->isEmpty()) {
+            return response()->json(['error' => 'No pending trip found for the bus'], 404);
+        }
+
+        $response = [];
+        foreach ($trips as $trip) {
+            $pivotData = [];
+            foreach ($trip->Pivoit as $pivoit) {
+                $pivotData[] = [
+                    'id' => $pivoit->id,
+                    'bus_trip_id' => $pivoit->bus__trip_id,
+                    'break_name' => $pivoit->break_trip->break->name,
+                    'status' => $pivoit->status,
+                ];
+            }
+
+            $response[] = [
+                'bus_trip_id' => $trip->id,
+                'bus_id' => $trip->bus_id,
+                'from_time' => $trip->from_time,
+                'to_time' => $trip->to_time,
+                'date' => $trip->date,
+                'type' => $trip->type,
+                'event' => $trip->event,
+                'status' => $trip->status,
+                'breaks_data' => $pivotData,
+            ];
+        }
+
+        return response()->json($response);
+    }
+
+    public function my_finished_trip()
+    {
+        $driver = Auth::user()->Driver;
+
+        if (!$driver) {
+            return response()->json(['error' => 'Driver not found'], 404);
+        }
+
+        $bus = Bus_Driver::where('status', 'finished')
+                        ->where('driver_id', $driver->id)
+                        ->first();
+
+        if (!$bus) {
+            return response()->json(['error' => 'No pending bus found for the driver'], 404);
+        }
+
+        $trips = Bus_Trip::where('status', 'finished_going')
+                        ->where('bus_id', $bus->bus_id)
+                        ->get();
+
+        if ($trips->isEmpty()) {
+            return response()->json(['error' => 'No pending trip found for the bus'], 404);
+        }
+
+        $response = [];
+        foreach ($trips as $trip) {
+            $pivotData = [];
+            foreach ($trip->Pivoit as $pivoit) {
+                $pivotData[] = [
+                    'id' => $pivoit->id,
+                    'bus_trip_id' => $pivoit->bus__trip_id,
+                    'break_name' => $pivoit->break_trip->break->name,
+                    'status' => $pivoit->status,
+                ];
+            }
+
+            $response[] = [
+                'bus_trip_id' => $trip->id,
+                'bus_id' => $trip->bus_id,
+                'from_time' => $trip->from_time,
+                'to_time' => $trip->to_time,
+                'date' => $trip->date,
+                'type' => $trip->type,
+                'event' => $trip->event,
+                'status' => $trip->status,
+                'breaks_data' => $pivotData,
+            ];
+        }
+
+        return response()->json($response);
+    }
+
+
+
 }

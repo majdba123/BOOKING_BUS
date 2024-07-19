@@ -75,9 +75,14 @@ class RateDriverController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Rate_Driver $rate_Driver)
+    public function all_my_rate()
     {
-        //
+        $driver =Auth::user()->Driver;
+
+        $rating = Rate_Driver::where('driver_id',  $driver->id)
+                        ->all();
+
+        return response()->json($rating);
     }
 
     /**
