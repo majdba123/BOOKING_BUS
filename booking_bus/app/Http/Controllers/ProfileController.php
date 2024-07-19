@@ -32,23 +32,85 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $reservations = Reservation::where('user_id', $user->id)
-        ->get();
+            ->get();
         $data = [];
 
         foreach ($reservations as $reservation) {
-            return response()->json($reservation->bus_trip);
-            $data[] = [
-                'id' => $reservation->id,
-                'price' => $reservation->price,
-                'type' => $reservation->type,
-                'status' => $reservation->status,
-                'break' => $reservation->pivoit->break_trip->break->name,
-                'from' => $reservation->bus_trip->trip->path->from
-            ];
+            $busTrip = $reservation->pivoit->bus_trip; // Try to load the bus_trip relationship
+            if ($busTrip) { // Check if the relationship is loaded successfully
+                $seats = [];
+                foreach ($reservation->seat_reservation as $seatReservation) {
+                    $seats[] = [
+                        'id' => $seatReservation->seat->id,
+                        'status' => $seatReservation->seat->status
+                    ];
+                }
+                $data[] = [
+                    'id' => $reservation->id,
+                    'price' => $reservation->price,
+                    'type' => $reservation->type,
+                    'status' => $reservation->status,
+                    'break' => $reservation->pivoit->break_trip->break->name,
+                    'from' =>$busTrip->trip->path->from,
+                    'to' => $busTrip->trip->path->to,
+                    'seats' => $seats // array of seat names or properties
+                ];
+            } else {
+                return response()->json([
+                    'message' => 'bus_trip not found'
+                ]);
+            }
         }
 
         return response()->json($data);
     }
+
+    public function my_reserva_by_status(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+          'status' => 'required|in:padding,finished,out',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
+        }
+        $user = Auth::user();
+        $reservations = Reservation::where('user_id', $user->id)
+            ->where('status' ,$request->input('status'))
+            ->get();
+        $data = [];
+
+        foreach ($reservations as $reservation) {
+            $busTrip = $reservation->pivoit->bus_trip; // Try to load the bus_trip relationship
+            if ($busTrip) { // Check if the relationship is loaded successfully
+                $seats = [];
+                foreach ($reservation->seat_reservation as $seatReservation) {
+                    $seats[] = [
+                        'id' => $seatReservation->seat->id,
+                        'status' => $seatReservation->seat->status
+                    ];
+                }
+                $data[] = [
+                    'id' => $reservation->id,
+                    'price' => $reservation->price,
+                    'type' => $reservation->type,
+                    'status' => $reservation->status,
+                    'break' => $reservation->pivoit->break_trip->break->name,
+                    'from' =>$busTrip->trip->path->from,
+                    'to' => $busTrip->trip->path->to,
+                    'seats' => $seats // array of seat names or properties
+                ];
+            } else {
+                return response()->json([
+                    'message' => 'bus_trip not found'
+                ]);
+            }
+        }
+
+        return response()->json($data);
+    }
+
 
     /**
      * Store a newly created resource in storage.

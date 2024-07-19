@@ -122,9 +122,38 @@ class ChargeBalanceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Charge_Balance $charge_Balance)
+    public function all_my_charge_balance()
     {
-        //
+        $user = Auth::user();
+
+        $chargeBalance = Charge_Balance::where('user_id' , $user->id)->get();
+        if (!$chargeBalance) {
+            return response()->json(['error' => 'Not found'], 404);
+        }
+
+        return response()->json($chargeBalance);
+    }
+
+    public function all_my_charge_balance_by_status(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:padding,completed',
+          ]);
+
+        if ($validator->fails()) {
+              $errors = $validator->errors()->first();
+              return response()->json(['error' => $errors], 422);
+          }
+        $user = Auth::user();
+
+        $chargeBalance = Charge_Balance::where('user_id' , $user->id)
+                                        ->where('status' , $request->input('status'))
+                                        ->get();
+        if (!$chargeBalance) {
+            return response()->json(['error' => 'Not found'], 404);
+        }
+
+        return response()->json($chargeBalance);
     }
 
     /**
@@ -132,7 +161,7 @@ class ChargeBalanceController extends Controller
      */
     public function update(Request $request, Charge_Balance $charge_Balance)
     {
-        //
+
     }
 
     /**
