@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -20,15 +21,33 @@ class ProfileController extends Controller
     {
         $user = auth()->user()->load(['profile', 'address']);
 
+
         return response()->json($user);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function my_reserva()
     {
-        //
+        $user = Auth::user();
+        $reservations = Reservation::where('user_id', $user->id)
+        ->get();
+        $data = [];
+
+        foreach ($reservations as $reservation) {
+            return response()->json($reservation->bus_trip);
+            $data[] = [
+                'id' => $reservation->id,
+                'price' => $reservation->price,
+                'type' => $reservation->type,
+                'status' => $reservation->status,
+                'break' => $reservation->pivoit->break_trip->break->name,
+                'from' => $reservation->bus_trip->trip->path->from
+            ];
+        }
+
+        return response()->json($data);
     }
 
     /**
@@ -131,6 +150,10 @@ class ProfileController extends Controller
             }
 
             if ($request->filled('name')) {
+                if($user->Company)
+                {
+                    $user->Company->name_company = $request->input('name');
+                }
                 $user->name = $request->input('name');
             }
             if ($request->filled('email')) {

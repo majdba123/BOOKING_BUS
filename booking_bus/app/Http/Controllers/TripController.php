@@ -369,7 +369,7 @@ class TripController extends Controller
                 $customPivotData = [];
                 foreach ($pivotData as $pivot) {
                     $customPivotData[] = [
-                        'pivoit_id'  => $pivot->id,
+                        'break_id'  => $pivot->id,
                         'government'  => $pivot->break_trip->break->area->name,
                         'name_break' => $pivot->break_trip->break->name,
                         'status' => $pivot->status,
