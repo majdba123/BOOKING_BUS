@@ -5,6 +5,7 @@ import 'package:mobile_app/Data_Models/BUS_Trip.dart';
 import 'package:mobile_app/Data_Models/Specfic_Trip.dart';
 import 'package:mobile_app/Data_Models/Trip.dart';
 import 'package:mobile_app/Data_Models/path.dart';
+import 'package:mobile_app/Data_Models/show_buss_spsecifc_trip.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/constants.dart';
 import 'package:http/http.dart' as http;
@@ -69,6 +70,27 @@ Future<String> addTrip(String accessToken,Trip trip) async {
     }
   }
 
+
+Future<List<BusResponse>> fetch_buss_of_spsecifc_trip(String accessToken,int trip_id) async {
+  print(accessToken);
+      String url = name_domain_server+"user/get_bus_trip/$trip_id";
+    final response = await http.post( 
+      Uri.parse('$url'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        
+      },
+    );
+  print('this status code ${response.statusCode}');
+  // print(response.body);
+    if (response.statusCode == 200) {
+         List<dynamic> jsonList = json.decode(response.body);
+          return jsonList.map((json) => BusResponse.fromJson(json)).toList();
+
+    } else {
+      throw Exception('Failed to load bus trip details');
+    }
+  }
 
    Future<void> deleteTrip(String accessToken, int tripId) async {
     final url = Uri.parse(name_domain_server+"company/delete_trip/$tripId"); // Adjust endpoint as per your API

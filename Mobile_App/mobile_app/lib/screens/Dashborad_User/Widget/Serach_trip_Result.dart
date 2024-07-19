@@ -5,22 +5,6 @@ import 'package:mobile_app/Colors.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:intl/intl.dart';
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Bus Search',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: BusSearchScreen(searchFuture: Future.value()), // Example future
-    );
-  }
-}
 
 class BusSearchScreen extends StatelessWidget {
   final Future<void> searchFuture;
@@ -77,7 +61,8 @@ class BusSearchScreen extends StatelessWidget {
                                   ),
                                   SizedBox(height: 8.0),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         'FROM',
@@ -97,7 +82,8 @@ class BusSearchScreen extends StatelessWidget {
                                   ),
                                   SizedBox(height: 16.0),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         tripProvider.trips.first.from,
@@ -140,14 +126,39 @@ class BusSearchScreen extends StatelessWidget {
                                     trip: trip,
                                     busTrip: busTrip,
                                     onTap: () {
-                                      // Navigate to Seat Selection
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) => SeatsGridPage( companyName: trip.companyId,
-    from: trip.from,
-    to: trip.to,
-    fromTime: busTrip.fromTime,
-    toTime: busTrip.toTime,
-    seats: busTrip.seats,)));
+                                      Provider.of<TripuserProvider>(context,
+                                              listen: false)
+                                          .selectBus(busTrip);
+
+                                      Provider.of<TripuserProvider>(context,
+                                              listen: false)
+                                          .selectTripType(
+                                              (busTrip.type == 'all')
+                                                  ? 1
+                                                  : (busTrip.type == 'going')
+                                                      ? 0
+                                                      : -1);
+                                      Provider.of<TripuserProvider>(context,
+                                              listen: false)
+                                          .select_from_name(trip.from);
+                                      Provider.of<TripuserProvider>(context,
+                                              listen: false)
+                                          .select_to_name(trip.to);
+                                      Provider.of<TripuserProvider>(context,
+                                              listen: false)
+                                          .select_price_tikect(
+                                              int.parse(trip.price));
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SeatsGridPage(
+                                                    companyName: trip.companyId,
+                                                    from: trip.from,
+                                                    to: trip.to,
+                                                    fromTime: busTrip.fromTime,
+                                                    toTime: busTrip.toTime,
+                                                    seats: busTrip.seats,
+                                                  )));
                                     },
                                   );
                                 }).toList();
@@ -196,7 +207,8 @@ class FilterBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           FilterOption(icon: Icons.west_outlined, label: 'one way'),
-          FilterOption(icon: Icons.assignment_return_rounded, label: 'Round Trip'),
+          FilterOption(
+              icon: Icons.assignment_return_rounded, label: 'Round Trip'),
           FilterOption(icon: Icons.money_outlined, label: 'Chpiset'),
           FilterOption(icon: Icons.star, label: 'fast'),
           FilterIcon(icon: Icons.filter_list),
@@ -307,7 +319,7 @@ class BusCard extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                   fontSize: smallTextFontSize),
                             ),
-                             SizedBox(height: 4.0),
+                            SizedBox(height: 4.0),
                             Text(
                               'Bus Event: ${busTrip.event}',
                               style: TextStyle(

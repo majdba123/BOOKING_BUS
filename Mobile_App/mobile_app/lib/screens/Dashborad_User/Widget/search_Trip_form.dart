@@ -138,7 +138,7 @@ class _SearchBusFormState extends State<SearchBusForm> {
                     );
                   }
                 : _showDialog,
-            child: Text('Search Trip', style: TextStyle(color: Colors.white)),
+            child: Text('Search By Path', style: TextStyle(color: Colors.white)),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
               padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 15.0),

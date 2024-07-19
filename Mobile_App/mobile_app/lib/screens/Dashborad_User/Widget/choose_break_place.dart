@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Payment_page.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/break_point.dart';
+import 'package:provider/provider.dart';
 
 class PassengerDetailsPage extends StatefulWidget {
   @override
@@ -13,9 +16,19 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   String _gender = 'Male';
+  @override
+  // void initState() {
+  //   final busProvider = Provider.of<TripuserProvider>(context);
+  //   busProvider.calculatePrice(
+  //       busProvider.selectedSeat!.length, busProvider.price_tiket);
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final busProvider = Provider.of<TripuserProvider>(context);
+    print(busProvider.selectedBus?.breaks);
+    print(busProvider.selectedSeat);
     return Scaffold(
       backgroundColor: Color(0xFFE0E0E0),
       body: LayoutBuilder(
@@ -78,13 +91,15 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '🚌 Chennai CMBT @ 5:50am',
+                                    '🚌 ${busProvider.from}',
                                     style: TextStyle(
                                         color: AppColors.primaryColor),
                                   ),
-                                  SizedBox(height: 8.0,),
+                                  SizedBox(
+                                    height: 8.0,
+                                  ),
                                   Text(
-                                    '🚌 Bangalore BS @ 11:15am',
+                                    '🚌 ${busProvider.to}',
                                     style: TextStyle(
                                         color: AppColors.primaryColor),
                                   ),
@@ -99,7 +114,8 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                                   );
                                 },
                                 child: Text('Change'),
-                                style: TextButton.styleFrom(backgroundColor: Colors.grey[300],
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.grey[300],
                                   foregroundColor: AppColors.primaryColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25),
@@ -188,7 +204,8 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                               Expanded(
                                 child: Row(
                                   children: [
-                                    Radio<String>(activeColor: AppColors.primaryColor,
+                                    Radio<String>(
+                                      activeColor: AppColors.primaryColor,
                                       value: 'Male',
                                       groupValue: _gender,
                                       onChanged: (value) {
@@ -200,7 +217,8 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                                     Text('Male',
                                         style: TextStyle(
                                             color: AppColors.primaryColor)),
-                                    Radio<String>(activeColor: AppColors.primaryColor,
+                                    Radio<String>(
+                                      activeColor: AppColors.primaryColor,
                                       value: 'Female',
                                       groupValue: _gender,
                                       onChanged: (value) {
@@ -311,7 +329,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(
-                      'Total\n£86',
+                      'Total\n£${busProvider.totoal_price}',
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -319,7 +337,11 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Handle continue to pay action
+                      Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => PaymentPage()),
+                                  );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[400],
@@ -333,7 +355,10 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                         width: 150, // Set the width you want
                         height: 50, // Set the height you want
                         alignment: Alignment.center, // Center the text
-                        child: Text('Continue to pay',style: TextStyle(color: Colors.white),),
+                        child: Text(
+                          'Continue to pay',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],

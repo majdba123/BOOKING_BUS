@@ -1,3 +1,4 @@
+import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/Data_Models/seat_model.dart';
 
 class FlightModel {
@@ -20,6 +21,6 @@ class FlightModel {
     logo = map['logo'] as String?;
     title = map['title'] as String?;
     price = map['price'] as double?;
-    seats = map['seats'].map((seats) => SeatModel.fromMap(seats)).toList();
+    seats = map['seats'].map((seats) => SeatModl.fromMap(seats)).toList();
   }
 }

@@ -11,6 +11,7 @@ import 'package:mobile_app/Provider/Company/Trip_Provider.dart';
 import 'package:mobile_app/Provider/Company/Trip_Status.dart';
 import 'package:mobile_app/Provider/Company/path_provider.dart';
 import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
@@ -24,6 +25,7 @@ import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_serach_selection.da
 import 'package:mobile_app/screens/welcome_page.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
+
 void main() {
   runApp(
     MultiProvider(
@@ -38,8 +40,9 @@ void main() {
         ChangeNotifierProvider(create: (_) => BusStatusProvider()),
         ChangeNotifierProvider(create: (_) => AssingBusProvider()),
         ChangeNotifierProvider(create: (_) => TripBusProvider()),
-          ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
-           ChangeNotifierProvider(create: (_) => TripuserProvider())
+        ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
+        ChangeNotifierProvider(create: (_) => TripuserProvider()),
+        ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),
       ],
       child: MyApp(),
     ),
@@ -49,22 +52,22 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(routes: {
-    '/BusDash': (context) => Bus_management_Page(),
-    // Other routes...
-  },
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Sign In Sign Up Ui',
-      theme: ThemeData(
-       fontFamily: 'Inter'
-        // scaffoldBackgroundColor:  AppColors.primaryColor,
-        //  appBarTheme: AppBarTheme(
-        //     // color: Color.fromARGB(255, 116, 136, 146),
-        //   ),
-      ),
-      home:WelcomePage()
-      
-      //  ,
-    );
+    return MaterialApp(
+        routes: {
+          '/BusDash': (context) => Bus_management_Page(),
+          // Other routes...
+        },
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Sign In Sign Up Ui',
+        theme: ThemeData(fontFamily: 'Inter'
+            // scaffoldBackgroundColor:  AppColors.primaryColor,
+            //  appBarTheme: AppBarTheme(
+            //     // color: Color.fromARGB(255, 116, 136, 146),
+            //   ),
+            ),
+        home: WelcomePage()
+
+        //  ,
+        );
   }
 }

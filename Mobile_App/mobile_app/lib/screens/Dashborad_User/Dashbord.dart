@@ -20,13 +20,14 @@ class _DashboardUserState extends State<DashboardUser> {
   void initState() {
     super.initState();
     // Fetch all trips when the screen is initialized
-    Provider.of<TripuserProvider>(context, listen: false).getallTrips(Provider.of<AuthProvider>(context, listen: false).accessToken);
+    Provider.of<TripuserProvider>(context, listen: false).getallTrips(
+        Provider.of<AuthProvider>(context, listen: false).accessToken);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,13 +35,15 @@ class _DashboardUserState extends State<DashboardUser> {
             Container(
               color: AppColors.primaryColor,
               padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).padding.top + 25.0,
-                  ),
+                top: MediaQuery.of(context).padding.top + 25.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Container(margin: EdgeInsets.only(right: 160.0),
-                    child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                  Container(
+                    margin: EdgeInsets.only(right: 160.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           'NameApp',
@@ -48,9 +51,8 @@ class _DashboardUserState extends State<DashboardUser> {
                         ),
                         Text(
                           'Book your bus',
-                          style: TextStyle(color: Colors.green, fontSize:10.0),
+                          style: TextStyle(color: Colors.green, fontSize: 10.0),
                         ),
-                        
                       ],
                     ),
                   ),
@@ -68,8 +70,10 @@ class _DashboardUserState extends State<DashboardUser> {
                   height: 150.0, // here is the height of the top container !!!!
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
-                  margin: EdgeInsets.only(top: 10.0), //here control the marign of the box serach 
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+                  margin: EdgeInsets.only(
+                      top: 10.0), //here control the marign of the box serach
                   child: SearchBusForm(),
                 ),
               ],
@@ -90,6 +94,8 @@ class _DashboardUserState extends State<DashboardUser> {
                       HorizontalList(
                         items: tripProvider.trips
                             .map((trip) => RouteCard(
+                                  company_name: trip.companyId,
+                                  tripId: trip.tripId,
                                   from: trip.from,
                                   to: trip.to,
                                   price: trip.price,
@@ -99,11 +105,30 @@ class _DashboardUserState extends State<DashboardUser> {
                       SizedBox(height: 16.0),
                       SectionTitle(title: 'Recent Searches'),
                       SizedBox(height: 8.0),
-                      SingleChildScrollView(scrollDirection:Axis.horizontal ,
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
                         child: HorizontalList(items: [
-                          RouteCard(from: 'Bangalore', to: 'Chennai', price: '£44'),
-                          RouteCard(from: 'Mumbai', to: 'Pune', price: '£30'),
-                          RouteCard(from: 'Mumbai', to: 'Pune', price: '£30'),
+                          RouteCard(
+                            company_name: 'dsa',
+                            from: 'Bangalore',
+                            to: 'Chennai',
+                            price: '£44',
+                            tripId: 0,
+                          ),
+                          RouteCard(
+                            company_name: 'asd',
+                            from: 'Mumbai',
+                            to: 'Pune',
+                            price: '£30',
+                            tripId: 0,
+                          ),
+                          RouteCard(
+                            company_name: 'sad',
+                            from: 'Mumbai',
+                            to: 'Pune',
+                            price: '£30',
+                            tripId: 0,
+                          ),
                         ]),
                       ),
                     ],

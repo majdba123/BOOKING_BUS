@@ -1,4 +1,6 @@
+import 'package:flutter/src/material/radio_list_tile.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_app/Data_Models/BUS_Trip.dart';
 class TripByPath {
   final int tripId;
   final String companyId;
@@ -116,6 +118,8 @@ class BreakPlace {
       status: json['status'],
     );
   }
+
+  map(RadioListTile<Break> Function(dynamic point) param0) {}
 }
 
 class SeatModel {
