@@ -2,25 +2,31 @@
     <div class="main-content">
         <NavBar />
         <div class="content">
-            <div class="continer">
+            <div class="container">
                 <div class="title">
                     <p>Break List</p>
                 </div>
-                <select v-model="selectedGovernmentId" @change="fetchBreaks">
-                    <option
-                        v-for="government in governments"
-                        :key="government.id"
-                        :value="government.id"
-                    >
-                        {{ government.name }}
-                    </option>
-                </select>
+
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Break ID</th>
                             <th>Break Name</th>
-                            <th>Government Name</th>
+                            <th>
+                                <select
+                                    v-model="selectedGovernmentId"
+                                    @change="fetchBreaks"
+                                    class="select"
+                                >
+                                    <option
+                                        v-for="government in governments"
+                                        :key="government.id"
+                                        :value="government.id"
+                                    >
+                                        {{ government.name }}
+                                    </option>
+                                </select>
+                            </th>
                             <th>Edit</th>
                             <th>Delete</th>
                         </tr>
@@ -76,15 +82,18 @@ export default {
             breaks: [],
             name: "",
             governments: [],
+            selectedGovernmentId: null,
         };
     },
     mounted() {
-        this.fetchGovernments();
+        this.fetchData(); // Initial fetch of data
     },
     methods: {
+        fetchData() {
+            this.fetchGovernments();
+        },
         fetchGovernments() {
             const access_token = window.localStorage.getItem("access_token");
-
             axios({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/admin/all_government",
@@ -92,16 +101,17 @@ export default {
             })
                 .then((response) => {
                     this.governments = response.data;
-                    console.log(this.governments);
+                    if (this.governments.length > 0) {
+                        this.selectedGovernmentId = this.governments[0].id;
+                        this.fetchBreaks();
+                    }
                 })
                 .catch((error) => {
-                    window.alert("Error getting Government");
-                    console.error(error);
+                    this.handleError("Error getting Governments", error);
                 });
         },
         fetchBreaks() {
             const access_token = window.localStorage.getItem("access_token");
-
             axios({
                 method: "get",
                 url: `http://127.0.0.1:8000/api/admin/all_breaks/${this.selectedGovernmentId}`,
@@ -111,30 +121,69 @@ export default {
                     this.breaks = response.data;
                 })
                 .catch((error) => {
-                    window.alert("Error getting Breaks");
-                    console.error(error);
+                    this.handleError("Error getting Breaks", error);
                 });
         },
-        getGovernmentName(id) {
-            const government = this.governments.find((gov) => gov.id === id);
+        getGovernmentName(governmentId) {
+            const government = this.governments.find(
+                (gov) => gov.id === governmentId
+            );
             return government ? government.name : "Unknown";
         },
+        editBreak(index) {
+            this.editingIndex = index;
+            this.name = this.breaks[index].name;
+        },
+        saveChanges() {
+            const access_token = window.localStorage.getItem("access_token");
+            const breakId = this.breaks[this.editingIndex].id;
+            axios({
+                method: "put",
+                url: `http://127.0.0.1:8000/api/admin/update_breaks/${breakId}`, // Corrected URL
+                headers: { Authorization: `Bearer ${access_token}` },
+                data: {
+                    name: this.name,
+                },
+            })
+                .then((response) => {
+                    console.log(response);
+                    window.alert("Break updated successfully");
+                    window.location.reload();
+                    this.cancelEdit();
+                })
+                .catch((error) => {
+                    this.handleError("Error updating Break", error);
+                });
+        },
+        deleteBreak(id) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "delete",
+                url: `http://127.0.0.1:8000/api/admin/delete_breaks/${id}`, // Corrected URL
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then(() => {
+                    window.alert("Break deleted successfully");
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    this.handleError("Error deleting Break", error);
+                });
+        },
+
         cancelEdit() {
             this.editingIndex = null;
             this.name = "";
+        },
+        handleError(message, error) {
+            console.error(error);
+            window.alert(message);
         },
     },
 };
 </script>
 
 <style scoped>
-.main-content {
-    display: flex;
-    width: 100%;
-}
-.content {
-    flex: 1600%;
-}
 * {
     margin: 0;
     padding: 0;
@@ -144,11 +193,28 @@ export default {
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
 }
-.continer {
+.content {
+    flex: 1600%;
+}
+.main-content {
+    display: flex;
+    width: 100%;
+}
+
+.container {
     width: 90%;
     margin: 20px auto;
     text-align: center;
 }
+.container select {
+    color: #000000;
+    margin-top: 10px;
+    font-size: 15px;
+}
+.container select option {
+    color: #000000;
+}
+
 .title p {
     padding: 15px;
     background-color: #176b87;
