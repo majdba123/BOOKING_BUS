@@ -4,12 +4,15 @@
         <div class="content">
             <div class="continer">
                 <div class="title">
-                    <p>Bus Status</p>
+                    <p>Trip Status</p>
                 </div>
                 <div>
                     <label class="xx" for="stateFilter">Filter by State:</label>
-                    <select v-model="selectedStatus">
-                        <option value="pending">pending</option>
+                    <select
+                        v-model="selectedStatus"
+                        @change="fetchTripsByStatus"
+                    >
+                        <option value="padding">pending</option>
                         <option value="available">available</option>
                         <option value="finished">finished</option>
                     </select>
@@ -17,49 +20,50 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Bus Number</th>
-                            <th>Number of Passenger</th>
-                            <!-- New column for state -->
-                            <th>State</th>
+                            <th>Trip ID</th>
+                            <th>Price</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(bus, index) in bus" :key="index">
-                            <td v-if="selectedStatus === 'pending'">
-                                {{ bus.number_bus }}
+                        <tr v-for="(trip, index) in trips" :key="index">
+                            <td v-if="selectedStatus === 'padding'">
+                                {{ trip.id }}
                             </td>
-                            <td v-if="selectedStatus === 'pending'">
-                                {{ bus.number_passenger }}
+
+                            <td v-if="selectedStatus === 'padding'">
+                                {{ trip.price }}
                             </td>
-                            <td v-if="selectedStatus === 'pending'">
-                                {{ bus.status }}
-                            </td>
-                        </tr>
-                        <tr v-for="(bus, index) in bus1" :key="index">
-                            <td v-if="selectedStatus === 'available'">
-                                {{ bus.number_bus }}
-                            </td>
-                            <td v-if="selectedStatus === 'available'">
-                                {{ bus.number_passenger }}
-                            </td>
-                            <td v-if="selectedStatus === 'available'">
-                                {{ bus.status }}
+                            <td v-if="selectedStatus === 'padding'">
+                                {{ trip.status }}
                             </td>
                         </tr>
-                        <tr v-for="(bus, index) in bus2" :key="index">
+                        <tr v-for="(trip1, index) in trip1" :key="index">
+                            <td v-if="selectedStatus === 'available'">
+                                {{ trip1.id }}
+                            </td>
+
+                            <td v-if="selectedStatus === 'available'">
+                                {{ trip1.price }}
+                            </td>
+                            <td v-if="selectedStatus === 'available'">
+                                {{ trip1.status }}
+                            </td>
+                        </tr>
+                        <tr v-for="(trip2, index) in trip2" :key="index">
                             <td v-if="selectedStatus === 'finished'">
-                                {{ bus.number_bus }}
+                                {{ trip2.id }}
+                            </td>
+
+                            <td v-if="selectedStatus === 'finished'">
+                                {{ trip2.price }}
                             </td>
                             <td v-if="selectedStatus === 'finished'">
-                                {{ bus.number_passenger }}
-                            </td>
-                            <td v-if="selectedStatus === 'finished'">
-                                {{ bus.status }}
+                                {{ trip2.status }}
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <!-- Existing code for editing form -->
             </div>
         </div>
     </div>
@@ -70,77 +74,75 @@ import NavBarCompany from "@/components/NavBarCompany.vue";
 import axios from "axios";
 
 export default {
-    name: "BusStatus",
+    name: "TripStatus",
     components: { NavBarCompany },
     data() {
         return {
+            trips: [],
             editingIndex: null,
             selectedState: "",
             selectedStatus: "",
             filteredPaths: [],
-            bus: [],
-            bus1: [],
-            bus2: [],
+            trips1: [],
+            trips2: [],
         };
     },
     mounted() {
-        this.fetchpending();
-        this.fetchavalibal();
-        this.fetchfinished();
+        this.fetchTripsByStatus();
+        this.fetchTripsByStatus1();
+        this.fetchTripsByStatus2();
     },
     methods: {
-        fetchpending() {
+        fetchTripsByStatus() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=pending",
+                url: `http://127.0.0.1:8000/api/company/all_trips_by_status?status=padding`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    console.log(response);
-                    this.bus = response.data;
+                    this.trips = response.data;
+                    console.log(response.data);
                 })
-                .catch(function (error) {
-                    window.alert("Error get paths");
+                .catch((error) => {
+                    window.alert("Error fetching trips");
                     console.error(error);
                 });
         },
-        fetchavalibal() {
+        fetchTripsByStatus1() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=available",
+                url: `http://127.0.0.1:8000/api/company/all_trips_by_status?status=available`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    console.log(response);
-                    this.bus1 = response.data;
+                    this.trips1 = response.data;
                 })
-                .catch(function (error) {
-                    window.alert("Error get paths");
+                .catch((error) => {
+                    window.alert("Error fetching trips");
                     console.error(error);
                 });
         },
-        fetchfinished() {
+        fetchTripsByStatus2() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=finished",
+                url: `http://127.0.0.1:8000/api/company/all_trips_by_status?status=finished`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.bus2 = response.data;
-
-                    console.log(response);
+                    this.trips2 = response.data;
                 })
-                .catch(function (error) {
-                    window.alert("Error get paths");
+                .catch((error) => {
+                    window.alert("Error fetching trips");
                     console.error(error);
                 });
         },
     },
 };
 </script>
+
 <style scoped>
 /* تنسيقات عامة */
 * {

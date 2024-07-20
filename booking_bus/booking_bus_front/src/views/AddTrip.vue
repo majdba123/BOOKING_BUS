@@ -13,11 +13,8 @@
                                 :key="index"
                                 :value="pathItem.id"
                             >
-                                {{ pathItem.from }} >>
-                                {{ pathItem.to }}
+                                {{ pathItem.from }} >> {{ pathItem.to }}
                             </option>
-                            <option value="path2">Path 2</option>
-                            <!-- Add more paths as needed -->
                         </select>
                     </div>
                     <div class="field">
@@ -31,22 +28,25 @@
                     </div>
                     <div class="field">
                         <span>Area</span>
-                        <select v-model="area" class="input">
+                        <select
+                            v-model="area"
+                            class="input"
+                            @change="fetchBreak"
+                        >
                             <option
-                                v-for="(area, index) in Government"
+                                v-for="(areaItem, index) in Government"
                                 :key="index"
-                                :value="area.id"
+                                :value="areaItem.id"
                             >
-                                {{ area.name }}
+                                {{ areaItem.name }}
                             </option>
-                            <!-- Add more areas as needed -->
                         </select>
                     </div>
                     <div class="field">
                         <span>Search Break Areas</span>
                         <select
                             v-model="search_break_areas"
-                            class="input"
+                            class="input multi-select"
                             multiple
                         >
                             <option
@@ -60,47 +60,54 @@
                     </div>
                     <div class="field">
                         <span>Bus</span>
-                        <select v-model="bus" class="input">
-                            <option
-                                v-for="(bus, index) in buses"
-                                :key="index"
-                                value="bus1"
+                        <div
+                            v-for="(bus, index) in buses"
+                            :key="index"
+                            class="bus-field"
+                        >
+                            <select v-model="bus.bus_id" class="input">
+                                <option
+                                    v-for="(busItem, i) in availableBuses"
+                                    :key="i"
+                                    :value="busItem.id"
+                                >
+                                    {{ busItem.number_bus }}
+                                </option>
+                            </select>
+                            <span>Type</span>
+
+                            <select v-model="bus.type" class="input">
+                                <option value="all">All</option>
+                                <option value="going">Going</option>
+                            </select>
+                            <span>Start Time</span>
+
+                            <input
+                                v-model="bus.start_time"
+                                type="time"
+                                class="input"
+                            />
+                            <span>End Time</span>
+
+                            <input
+                                v-model="bus.end_time"
+                                type="time"
+                                class="input"
+                            />
+                            <button
+                                @click="removeBus(index)"
+                                class="Button remove-bus-button"
                             >
-                                {{ bus.number_bus }}
-                            </option>
-                            <!-- Add more buses as needed -->
-                        </select>
-                    </div>
-                    <div class="field">
-                        <span>Type</span>
-                        <div class="radio-group">
-                            <input
-                                type="radio"
-                                id="all"
-                                value="all"
-                                v-model="type"
-                            />
-                            <label for="all">All</label>
-                            <input
-                                type="radio"
-                                id="going"
-                                value="going"
-                                v-model="type"
-                            />
-                            <label for="going">Going</label>
+                                Remove Bus
+                            </button>
                         </div>
+                        <button @click="addBus" class="Button add-bus-button">
+                            Add Another Bus
+                        </button>
                     </div>
                     <div class="field">
                         <span>Date</span>
                         <input type="date" class="input" v-model="date" />
-                    </div>
-                    <div class="field">
-                        <span>Start Time</span>
-                        <input type="time" class="input" v-model="start_time" />
-                    </div>
-                    <div class="field">
-                        <span>End Time</span>
-                        <input type="time" class="input" v-model="end_time" />
                     </div>
                 </div>
                 <button class="Button" @click="AddTrip">ADD</button>
@@ -119,16 +126,24 @@ export default {
     name: "AddTrip",
     data() {
         return {
+            date: "",
             paths: [],
             Government: [],
-            buses: [],
+            availableBuses: [], // Added for fetching available buses
+            breaks: [],
             path: "",
             price: "",
             area: "",
-            search_break_areas: "",
-            bus: "",
-            type: "",
-            date: "",
+            search_break_areas: [],
+            buses: [
+                {
+                    bus_id: "",
+                    type: "all",
+                    start_time: "",
+                    end_time: "",
+                    date: "",
+                },
+            ], // Initialize with one empty bus
             start_time: "",
             end_time: "",
         };
@@ -136,38 +151,33 @@ export default {
     mounted() {
         this.fetchPaths();
         this.fetchGovernment();
-        this.fetchBuses();
-        this.fetchBreak();
+        this.fetchAvailableBuses(); // Fetch available buses
     },
     methods: {
         fetchBreak() {
             const access_token = window.localStorage.getItem("access_token");
-
             axios({
                 method: "get",
-                url: "127.0.0.1:8000/api/admin/all_breaks/+",
+                url: `http://127.0.0.1:8000/api/company/all_breaks/${this.area}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.buses = response.data;
-                    console.log(this.buses);
+                    this.breaks = response.data;
                 })
                 .catch((error) => {
-                    window.alert("Error getting buses");
+                    window.alert("Error getting breaks");
                     console.error(error);
                 });
         },
-        fetchBuses() {
+        fetchAvailableBuses() {
             const access_token = window.localStorage.getItem("access_token");
-
             axios({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/company/all_bus",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.buses = response.data;
-                    console.log(this.buses);
+                    this.availableBuses = response.data;
                 })
                 .catch((error) => {
                     window.alert("Error getting buses");
@@ -176,7 +186,6 @@ export default {
         },
         fetchGovernment() {
             const access_token = window.localStorage.getItem("access_token");
-
             axios({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/company/all_government",
@@ -184,7 +193,6 @@ export default {
             })
                 .then((response) => {
                     this.Government = response.data;
-                    console.log(this.Government);
                 })
                 .catch((error) => {
                     window.alert("Error getting Government");
@@ -193,7 +201,6 @@ export default {
         },
         fetchPaths() {
             const access_token = window.localStorage.getItem("access_token");
-
             axios({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/company/all_path",
@@ -201,15 +208,35 @@ export default {
             })
                 .then((response) => {
                     this.paths = response.data;
-                    console.log(this.path);
                 })
                 .catch((error) => {
                     window.alert("Error getting paths");
                     console.error(error);
                 });
         },
+        addBus() {
+            this.buses.push({
+                bus_id: "",
+                type: "",
+                start_time: "",
+                end_time: "",
+                date: "",
+            });
+        },
+        removeBus(index) {
+            this.buses.splice(index, 1);
+        },
         AddTrip() {
             const token = window.localStorage.getItem("access_token");
+
+            // تحويل البيانات إلى الصيغة المطلوبة للـ API
+            const busIds = this.buses.map((bus) => ({
+                bus_id: bus.bus_id,
+                type: bus.type,
+                start_time: bus.start_time,
+                end_time: bus.end_time,
+                date: this.date, // إضافة التاريخ هنا
+            }));
 
             axios({
                 method: "post",
@@ -218,12 +245,8 @@ export default {
                     path_id: this.path,
                     price: this.price,
                     area: this.area,
-                    search_break_areas: this.search_break_areas,
-                    bus: this.bus,
-                    type: this.type,
-                    date: this.date,
-                    start_time: this.start_time,
-                    end_time: this.end_time,
+                    breaks_ids: this.search_break_areas,
+                    bus_ids: busIds,
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
@@ -233,8 +256,8 @@ export default {
                 })
                 .catch((error) => {
                     window.alert("ERROR ADD");
-                    console.log(error);
-                    console.log(this.area);
+                    console.error(error);
+                    console.log(this.date);
                 });
         },
     },
@@ -244,68 +267,130 @@ export default {
 <style scoped lang="scss">
 .main-content {
     display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
+    min-height: 100vh;
+    background-color: #f0f4f8;
 }
+
 .content {
     display: block;
+    width: 100%;
+    max-width: 800px; /* عرض النموذج بحد أقصى */
+    padding: 20px;
 }
+
 .contentt2 {
     display: block;
     text-align: center;
+    padding: 20px;
 }
+
 .title {
-    margin: 30px;
+    margin: 30px 0;
     padding: 20px;
     background-color: #176b87;
     border-radius: 15px;
-    text-align: center;
+    color: white;
     font-size: 26px;
+    font-weight: bold;
 }
+
 .box {
     display: flex;
     flex-direction: column;
-    margin: 30px;
+    margin: 0 auto; /* توسيط النموذج أفقيًا */
     padding: 20px;
     background-color: white;
     border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
-    font-size: 20px;
+    font-size: 18px;
     gap: 20px;
+    max-width: 100%; /* يضمن عدم تجاوز النموذج للحاوية */
 }
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .field span {
-    color: black;
-    display: block;
-    margin: 5px 0;
+    color: #333;
+    font-weight: 500;
+    font-size: 16px;
 }
+
 .input {
     width: 100%;
-    color: black;
-    height: 30px;
+    height: 40px;
     border-radius: 5px;
-    border: 1px solid gray;
+    border: 1px solid #ddd;
+    padding: 0 12px;
     font-size: 16px;
-    text-align: center;
+    background-color: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
 }
+
 .input::placeholder {
-    text-align: center;
+    color: #bbb;
 }
-input:focus {
-    box-shadow: 0 0 5px red;
+
+.input:focus {
+    border-color: #007bff;
+    outline: none;
 }
+
+.multi-select {
+    height: auto;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
 .Button {
-    text-align: center;
-    align-items: center;
-    background-color: #176b87;
-    padding: 10px 40px;
-    border-radius: 15px;
-    border: 1px solid gray;
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px; /* إضافة مسافة بين الأزرار */
 }
-.radio-group {
+
+.Button:hover {
+    background-color: #0056b3;
+}
+
+.Button:focus {
+    outline: none;
+}
+
+.remove-bus-button {
+    background-color: #dc3545;
+}
+
+.remove-bus-button:hover {
+    background-color: #c82333;
+}
+
+.add-bus-button {
+    margin-top: 10px;
+    background-color: #28a745;
+}
+
+.add-bus-button:hover {
+    background-color: #218838;
+}
+
+.bus-field {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-.radio-group input {
-    margin-right: 5px;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 </style>

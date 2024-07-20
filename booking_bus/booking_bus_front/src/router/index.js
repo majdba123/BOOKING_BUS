@@ -19,13 +19,24 @@ import EditBreak from "../views/EditBreak.vue";
 import AddGovernment from "../views/AddGovernment.vue";
 import EditGovernment from "../views/EditGovernment.vue";
 import AddTrip from "../views/AddTrip.vue";
-
+import AllTrip from "../views/AllTrip.vue";
+import TripStatus from "../views/TripStatus.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/TripStatus",
+        name: "TripStatus",
+        component: TripStatus,
+    },
+    {
+        path: "/AllTrip",
+        name: "AllTrip",
+        component: AllTrip,
     },
     {
         path: "/AddTrip",

@@ -107,6 +107,8 @@
                     <ul v-show="dropdownVisible3" class="dropdown-content">
                         <router-link to="/AddTrip">Add Trip</router-link>
                         <router-link to="/EditTrip">Edit Trip</router-link>
+                        <router-link to="/AllTrip">All Trip</router-link>
+                        <router-link to="/TripStatus">Trip Status</router-link>
                     </ul>
                 </li>
 
