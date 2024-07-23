@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart'
     as http; // Assuming you're using the http package for API calls
+import 'package:mobile_app/Data_Models/Reservation_Success_model.dart';
 import 'dart:convert';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/constants.dart'; // To decode JSON responses
@@ -24,6 +25,8 @@ class TripuserProvider with ChangeNotifier {
   int totoal_price = 0;
   BreakPlace? get selectedBoardingPoint => _selectedBoardingPoint;
   BreakPlace? get selectedDeboardingPoint => _selectedDeboardingPoint;
+  Reservation? _reservation;
+  Reservation? get reservation => _reservation;
 
   void selectBoardingPoint(BreakPlace point) {
     _selectedBoardingPoint = point;
@@ -119,7 +122,7 @@ class TripuserProvider with ChangeNotifier {
     }
   }
 
-  Future<String> make_reservation(String accessToken, int type, List<int> seat,
+  Future<void> make_reservation(String accessToken, int type, List<int> seat,
       int breakId, int bus_trip_id) async {
     final url =
         Uri.parse(name_domain_server + 'user/store_reservation/${bus_trip_id}');
@@ -139,11 +142,17 @@ class TripuserProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       Map<String, dynamic> parsedJson = json.decode(response.body);
       String message = parsedJson['message'];
-      return message;
+
+      if (message == 'Reservation created successfully') {
+        _reservation = Reservation.fromJson(parsedJson);
+        notifyListeners();
+      } else {
+        throw Exception(message);
+      }
     } else {
       Map<String, dynamic> parsedJson = json.decode(response.body);
       String error = parsedJson['error'];
-      return error;
+      throw Exception(error);
     }
   }
 }

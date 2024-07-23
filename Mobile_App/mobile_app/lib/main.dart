@@ -10,7 +10,7 @@ import 'package:mobile_app/Provider/Company/Seat_Provider.dart';
 import 'package:mobile_app/Provider/Company/Trip_Provider.dart';
 import 'package:mobile_app/Provider/Company/Trip_Status.dart';
 import 'package:mobile_app/Provider/Company/path_provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Company/Assign_bus_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/Company/bus_provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'Driver_Selection_Page.dart';
 
 class BusSelectionPage extends StatefulWidget {

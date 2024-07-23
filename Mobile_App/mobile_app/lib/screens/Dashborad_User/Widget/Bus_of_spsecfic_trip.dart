@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';

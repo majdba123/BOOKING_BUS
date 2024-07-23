@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Book_Card_Resvartion_spsecfication.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 
@@ -226,24 +228,79 @@ class PayButton extends StatelessWidget {
         return SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               var accessToken =
                   Provider.of<AuthProvider>(context, listen: false).accessToken;
               var userprovider =
                   Provider.of<TripuserProvider>(context, listen: false);
-  print('-------------');
+              print('-------------');
               print(accessToken);
               print(provider.trip_type);
               print(provider.selectedSeat);
               print(provider.selectedBoardingPoint!.breakId);
               print(provider.selectedBus.busId);
 
-              provider.make_reservation(
-                  accessToken,
-                  provider.trip_type,
-                  provider.selectedSeat,
-                  provider.selectedBoardingPoint!.breakId,
-                  provider.selectedBus.busId);
+              try {
+                await provider.make_reservation(
+                    accessToken,
+                    provider.trip_type,
+                    provider.selectedSeat,
+                    provider.selectedBoardingPoint!.breakId,
+                    provider.selectedBus.busId);
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TripTicketPage(),
+                  ),
+                );
+              } catch (e) {
+                if (e.toString().contains('Seat already booking')) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Seat already booking'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        DashboardUser()), // Navigate to login page
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text(e.toString()),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        DashboardUser()), // Navigate to login page
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              }
             },
             child: Text('Pay £89'),
           ),

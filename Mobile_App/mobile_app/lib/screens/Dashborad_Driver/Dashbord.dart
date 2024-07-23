@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 
-
-
+import 'package:mobile_app/screens/signin_page.dart';
 import 'package:mobile_app/widgets/my_text_button.dart';
+import 'package:provider/provider.dart';
 
 class DashbordDriver extends StatefulWidget {
- 
   @override
-  State<DashbordDriver> createState() => _DashbordDriverdState();
+  State<DashbordDriver> createState() => _DashbordDriverState();
 }
 
-class _DashbordDriverdState extends State<DashbordDriver> {
+class _DashbordDriverState extends State<DashbordDriver> {
+  void _logout(BuildContext context) {
+    Provider.of<AuthProvider>(context, listen: false)
+        .logout(); // Call logout method
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+          builder: (context) => SignInPage()), // Navigate to login page
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,25 +43,19 @@ class _DashbordDriverdState extends State<DashbordDriver> {
               title: Text('ادارة مسار الرحلات'),
               onTap: () {
                 // Handle Home button tap
-
                 // Navigator.push(context,
                 //     MaterialPageRoute(builder: (context) => Trip_managment()));
               },
             ),
-        
-            
-            // ListTile(
-            //   leading: Icon(Icons.info),
-            //   title: Text('About'),
-            //   onTap: () {
-            //     // Handle About button tap
-            //     Navigator.pop(context);
-            //   },
-            // ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('تسجيل خروج'),
+              onTap: () => _logout(context), // Logout functionality
+            ),
           ],
         ),
       ),
-      appBar: AppBar(title: Text('واجهة السائق'),centerTitle: true,),
+      appBar: AppBar(title: Text('واجهة السائق'), centerTitle: true),
       backgroundColor: Colors.white,
       body: Center(
         child: Text('this is DashbordDriverd of the driver account '),

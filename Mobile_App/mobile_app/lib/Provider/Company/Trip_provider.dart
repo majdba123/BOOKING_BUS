@@ -15,7 +15,7 @@ import 'package:mobile_app/Data_Models/area.dart';
 import 'dart:convert';
 import 'package:mobile_app/Data_Models/path.dart';
 import 'package:mobile_app/Data_Models/Trip.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:provider/provider.dart';
 
 

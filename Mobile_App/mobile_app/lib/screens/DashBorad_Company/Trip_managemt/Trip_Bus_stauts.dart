@@ -5,7 +5,7 @@ import 'package:mobile_app/Data_Models/Specfic_Trip.dart';
 import 'package:mobile_app/Data_Models/Trips_Status.dart';
 import 'package:mobile_app/Provider/Company/Trip_Provider.dart';
 import 'package:mobile_app/Provider/Company/Trip_Status.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Trip_managemt/show_spsecfic_trip.dart';
 import 'package:provider/provider.dart';
 

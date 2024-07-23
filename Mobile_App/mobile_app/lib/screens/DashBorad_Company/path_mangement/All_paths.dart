@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/path.dart';
 import 'package:mobile_app/Provider/Company/path_provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:provider/provider.dart';
 
 class PathListPage extends StatefulWidget {

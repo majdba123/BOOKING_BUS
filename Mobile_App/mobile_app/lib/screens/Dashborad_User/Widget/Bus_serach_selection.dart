@@ -10,7 +10,7 @@ import 'package:mobile_app/screens/Dashborad_User/Widget/section_title.dart';
 import 'package:mobile_app/widgets/my_text_button.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 
 class BusSearchScreen extends StatelessWidget {
   final Future<void> searchFuture;

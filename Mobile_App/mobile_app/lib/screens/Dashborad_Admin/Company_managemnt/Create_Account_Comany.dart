@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:mobile_app/constants.dart';
 
-
 import 'package:mobile_app/screens/signin_page.dart';
 
 import 'package:http/http.dart' as http;
@@ -15,8 +14,6 @@ import 'dart:convert';
 import 'package:mobile_app/widgets/my_text_field.dart';
 
 class RegisterPageCompany extends StatefulWidget {
-
-
   @override
   _RegisterPageCompany createState() => _RegisterPageCompany();
 }
@@ -28,7 +25,7 @@ class _RegisterPageCompany extends State<RegisterPageCompany> {
   TextEditingController nameController = TextEditingController();
 
   Future<String> RegisterCompany(var email, var name, var password) async {
-    String url = name_domain_server+"register/company";
+    String url = name_domain_server + "register/company";
     print(email);
     print(password);
     print(name);
@@ -52,7 +49,8 @@ class _RegisterPageCompany extends State<RegisterPageCompany> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
+        // backgroundColor: Colors.blueGrey,
+        backgroundColor: const Color.fromARGB(255, 13, 29, 37),
         elevation: 0,
         leading: IconButton(
           onPressed: () {
@@ -60,7 +58,7 @@ class _RegisterPageCompany extends State<RegisterPageCompany> {
           },
           icon: Image(
             width: 24,
-            color: Colors.white,
+            // color: Colors.white,
             image: Svg('assets/images/back_arrow.svg'),
           ),
         ),
@@ -113,8 +111,6 @@ class _RegisterPageCompany extends State<RegisterPageCompany> {
                         ],
                       ),
                     ),
-                    
-                    
                     MyTextButton(
                       buttonName: 'Register',
                       onTap: () async {
@@ -123,12 +119,12 @@ class _RegisterPageCompany extends State<RegisterPageCompany> {
                             builder: (context) => Center(
                                   child: CircularProgressIndicator(),
                                 ));
-                        var message = await RegisterCompany(emailController.text,
-                            nameController.text, passwordController.text);
+                        var message = await RegisterCompany(
+                            emailController.text,
+                            nameController.text,
+                            passwordController.text);
                         print('the res is $message');
                         if (message == "company Created ") {
-                         
-
                           showAlertDialog(context, message as String);
                           // Navigator.of(context).pop();
                         } else {
@@ -137,8 +133,8 @@ class _RegisterPageCompany extends State<RegisterPageCompany> {
                           // Navigator.of(context).pop();
                         }
                       },
-                      bgColor: Colors.white,
-                      textColor: Colors.black87,
+                      bgColor: const Color.fromARGB(255, 13, 29, 37),
+                      textColor: Colors.white,
                     )
                   ],
                 ),
@@ -150,4 +146,3 @@ class _RegisterPageCompany extends State<RegisterPageCompany> {
     );
   }
 }
-

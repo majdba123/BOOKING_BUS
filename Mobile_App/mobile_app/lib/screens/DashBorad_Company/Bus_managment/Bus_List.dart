@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
 import 'package:mobile_app/Provider/Company/Seat_Provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/screens/Bus_Seats/seats.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Data_Models/Bus.dart';

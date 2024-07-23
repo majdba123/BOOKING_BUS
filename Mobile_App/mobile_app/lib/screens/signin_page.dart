@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';

@@ -1,9 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
+import 'package:provider/provider.dart';
+
 import 'package:mobile_app/constants.dart';
+
+import 'package:intl/intl.dart';
 
 class TripTicketPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final reservation = Provider.of<TripuserProvider>(context).reservation;
+    final fromLocation = Provider.of<TripuserProvider>(context).from;
+    final toLocation = Provider.of<TripuserProvider>(context).to;
+    final currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    if (reservation == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: veppoBlue,
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        body: Center(
+          child: Text('No reservation found.'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: veppoBlue,
@@ -36,7 +67,7 @@ class TripTicketPage extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Total \$49,00',
+                      'Total \$${reservation.price}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -79,12 +110,12 @@ class TripTicketPage extends StatelessWidget {
                       children: [
                         Center(
                           child: Image.asset(
-                            'assets/images/companies_logo/gol_logo.png',
+                            'assets/images/logo_bus.jpg', // Change to your bus logo
                           ),
                         ),
-                        SizedBox(height: 28),
+                        SizedBox(height: 14),
                         Text(
-                          '29 OTC',
+                          'Bus Trip ID: ${reservation.busTripId}',
                           style: TextStyle(
                             fontSize: 32,
                           ),
@@ -96,16 +127,16 @@ class TripTicketPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'From',
+                                  'Start P',
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
-                                Text('Porto Alegre'),
+                                Text(reservation.breakName),
                                 SizedBox(height: 28),
                                 Text(
-                                  'To',
+                                  'Price',
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
-                                Text('Florianópolis'),
+                                Text('\$${reservation.price}'),
                               ],
                             ),
                             Spacer(),
@@ -113,16 +144,18 @@ class TripTicketPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Depart',
+                                  'Seats',
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
-                                Text('6:30'),
+                                ...reservation.seats.map<Widget>((seat) {
+                                  return Text('Seat ID: ${seat.seatId}');
+                                }).toList(),
                                 SizedBox(height: 28),
                                 Text(
-                                  'Arrive',
+                                  'Date',
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
-                                Text('11:30'),
+                                Text(currentDate),
                               ],
                             )
                           ],
@@ -144,7 +177,7 @@ class TripTicketPage extends StatelessWidget {
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
                                 Text(
-                                  'Jane Doe',
+                                  reservation.userName,
                                   style: TextStyle(
                                     fontSize: 18,
                                   ),
@@ -154,37 +187,32 @@ class TripTicketPage extends StatelessWidget {
                             Spacer(),
                           ],
                         ),
-                        SizedBox(height: 28),
-                        Row(
+                      ],
+                    ),
+                    // SizedBox(height: 28),
+                    // Divider(),
+                    SizedBox(height: 28),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Gate',
-                                  style: TextStyle(color: veppoLightGrey),
-                                ),
-                                Text(
-                                  '2H',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ],
+                            Text(
+                              'From',
+                              style: TextStyle(color: veppoLightGrey),
                             ),
-                            Spacer(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Seat',
-                                  style: TextStyle(color: veppoLightGrey),
-                                ),
-                                Text(
-                                  '11B',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ],
+                            Text(fromLocation ?? 'N/A'),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'To',
+                              style: TextStyle(color: veppoLightGrey),
                             ),
-                            Spacer(flex: 2),
+                            Text(toLocation ?? 'N/A'),
                           ],
                         ),
                       ],
@@ -197,7 +225,7 @@ class TripTicketPage extends StatelessWidget {
                       child: FittedBox(
                         fit: BoxFit.fitWidth,
                         child: Text(
-                          'barccodebarcodeb',
+                          'barcodeplaceholder', // Replace with actual barcode generation logic if available
                           style: TextStyle(
                             fontFamily: 'Barcode',
                           ),
@@ -208,7 +236,7 @@ class TripTicketPage extends StatelessWidget {
                 ),
               ),
               Text(
-                'ticket ID: 18128239487912',
+                'Reservation ID: ${reservation.reservationId}',
                 style: TextStyle(
                   color: veppoLightGrey,
                   fontSize: 10,

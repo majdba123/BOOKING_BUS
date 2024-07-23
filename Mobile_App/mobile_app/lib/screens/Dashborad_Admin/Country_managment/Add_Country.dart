@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Admin/Area_Provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Country_managment/All_Country.dart';
 

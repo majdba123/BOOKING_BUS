@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
 import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Data_Models/Driver.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Driver_managment/Update_Driver_Page.dart';
 import 'package:provider/provider.dart';

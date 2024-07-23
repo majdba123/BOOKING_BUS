@@ -18,9 +18,15 @@ class AuthProvider with ChangeNotifier {
       _userType = res!.typeUser;
     } catch (e) {
       print('Failed to log in: $e');
-    
     } finally {
       notifyListeners();
     }
+  }
+
+  void logout() {
+    _accessToken = '';
+    _userType = '';
+    // Clear other user data if necessary
+    notifyListeners();
   }
 }

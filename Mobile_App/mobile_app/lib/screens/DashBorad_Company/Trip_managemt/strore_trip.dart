@@ -8,7 +8,7 @@ import 'package:mobile_app/Provider/Admin/Break_Area_Provider.dart';
 import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
 import 'package:mobile_app/Provider/Company/Path_Provider.dart';
 import 'package:mobile_app/Provider/Company/Trip_Provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Trip_managemt/BusInfoCard.dart';
 import 'package:provider/provider.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/DriverBusActive.dart';
 import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
-import 'package:mobile_app/Provider/Login_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:provider/provider.dart';
 
 class ActiveDriversPage extends StatefulWidget {
