@@ -1,12 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
+import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:provider/provider.dart';
-
+import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/constants.dart';
-
 import 'package:intl/intl.dart';
+import 'package:barcode/barcode.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class TripTicketPage extends StatelessWidget {
+class TripTicketPage extends StatefulWidget {
+  @override
+  _TripTicketPageState createState() => _TripTicketPageState();
+}
+
+class _TripTicketPageState extends State<TripTicketPage> {
+  BarcodePainter? barCodePainter;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateBarcode();
+  }
+
+  void _generateBarcode() {
+    final reservation =
+        Provider.of<TripuserProvider>(context, listen: false).reservation;
+    if (reservation != null) {
+      final fromLocation =
+          Provider.of<TripuserProvider>(context, listen: false).from;
+      final toLocation =
+          Provider.of<TripuserProvider>(context, listen: false).to;
+      final currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+      final barcodeData =
+          'ReservationID:${reservation.reservationId}|User:${reservation.userName}|Seats:${reservation.seats.map((seat) => seat.seatId).join(",")}|From:${fromLocation ?? "N/A"}|To:${toLocation ?? "N/A"}|Date:$currentDate';
+      final Barcode code128 = Barcode.code128();
+
+      setState(() {
+        barCodePainter = BarcodePainter(code128, barcodeData, drawText: false);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final reservation = Provider.of<TripuserProvider>(context).reservation;
@@ -17,7 +52,7 @@ class TripTicketPage extends StatelessWidget {
     if (reservation == null) {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: veppoBlue,
+          backgroundColor: AppColors.primaryColor,
           elevation: 0,
           leading: IconButton(
             onPressed: () {
@@ -37,43 +72,22 @@ class TripTicketPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: veppoBlue,
+        backgroundColor: AppColors.primaryColor,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.arrow_back_ios_rounded,
-            color: Colors.white,
-          ),
-        ),
+        leading: Text(''),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(52),
+          preferredSize: const Size.fromHeight(15),
           child: Container(
             padding: EdgeInsets.fromLTRB(0, 0, 32, 16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Booking details',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Total \$${reservation.price}',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                Text(
+                  'Booking details',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),
@@ -127,7 +141,7 @@ class TripTicketPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Start P',
+                                  'Start Point',
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
                                 Text(reservation.breakName),
@@ -165,32 +179,43 @@ class TripTicketPage extends StatelessWidget {
                     SizedBox(height: 28),
                     Divider(),
                     SizedBox(height: 28),
-                    Column(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Passenger',
-                                  style: TextStyle(color: veppoLightGrey),
-                                ),
-                                Text(
-                                  reservation.userName,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              'Passenger',
+                              style: TextStyle(color: veppoLightGrey),
                             ),
-                            Spacer(),
+                            Text(
+                              reservation.userName,
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Total',
+                              style: TextStyle(color: veppoLightGrey),
+                            ),
+                            Text(
+                              '\$${reservation.price}',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
-                    // SizedBox(height: 28),
-                    // Divider(),
+                    SizedBox(height: 28),
+                    Divider(),
                     SizedBox(height: 28),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -220,18 +245,15 @@ class TripTicketPage extends StatelessWidget {
                     SizedBox(height: 28),
                     Divider(),
                     SizedBox(height: 28),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Text(
-                          'barcodeplaceholder', // Replace with actual barcode generation logic if available
-                          style: TextStyle(
-                            fontFamily: 'Barcode',
-                          ),
-                        ),
-                      ),
-                    ),
+                    barCodePainter != null
+                        ? SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: CustomPaint(
+                              size: Size(300, 100),
+                              painter: barCodePainter,
+                            ),
+                          )
+                        : CircularProgressIndicator(),
                   ],
                 ),
               ),
@@ -242,10 +264,71 @@ class TripTicketPage extends StatelessWidget {
                   fontSize: 10,
                 ),
               ),
+              SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => DashboardUser()),
+                      (Route<dynamic> route) => false,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF083B4C),
+                    padding: EdgeInsets.all(8.0),
+                    textStyle: TextStyle(fontSize: 16, color: Colors.white),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Container(
+                    width: 160,
+                    height: 50,
+                    alignment: Alignment.center,
+                    child: Text('Exit', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+class BarcodePainter extends CustomPainter {
+  final Barcode barcode;
+  final String data;
+  final bool drawText;
+  DrawableRoot? svgRoot;
+
+  BarcodePainter(this.barcode, this.data, {this.drawText = false}) {
+    _generateSvgRoot();
+  }
+
+  Future<void> _generateSvgRoot() async {
+    final barcodeSvg = barcode.toSvg(
+      data,
+      width: 300,
+      height: 100,
+      drawText: drawText,
+    );
+
+    svgRoot = await svg.fromSvgString(barcodeSvg, barcodeSvg);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (svgRoot != null) {
+      svgRoot!.scaleCanvasToViewBox(canvas, size);
+      svgRoot!.clipCanvasToViewBox(canvas);
+      svgRoot!.draw(canvas, Rect.fromLTWH(0, 0, size.width, size.height));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

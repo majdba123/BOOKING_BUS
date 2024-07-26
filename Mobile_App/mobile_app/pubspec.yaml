@@ -44,6 +44,8 @@ dependencies:
   card_swiper: ^3.0.1
   delayed_display: ^2.0.0
   barcode: ^2.1.0
+  flutter_svg: any
+  image_picker: ^1.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

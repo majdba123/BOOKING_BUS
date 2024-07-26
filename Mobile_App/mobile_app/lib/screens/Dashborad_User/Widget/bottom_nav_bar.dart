@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Api_Services/User/Private_trip.dart';
+import 'package:mobile_app/screens/Dashborad_User/Main_Ui_private_Trip.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Private_trip_user.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Profile_User.dart';
 
 class BottomNavBar extends StatelessWidget {
   @override
@@ -10,11 +14,32 @@ class BottomNavBar extends StatelessWidget {
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard, color: Color(0xFF003144)),
-          label: 'Menu',
+          icon: IconButton(
+            icon: Icon(Icons.directions_bus_rounded),
+            color: Color(0xFF003144),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MainUiPrivateTripPage(),
+                ),
+              );
+            },
+          ),
+          label: 'Private Trip',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person, color: Color(0xFF003144)),
+          icon: IconButton(
+            icon: Icon(Icons.person, color: Color(0xFF003144)),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(),
+                ),
+              );
+            },
+          ),
           label: 'Profile',
         ),
       ],

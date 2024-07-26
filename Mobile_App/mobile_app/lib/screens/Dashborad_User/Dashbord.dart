@@ -70,8 +70,9 @@ class _DashboardUserState extends State<DashboardUser> {
                     icon: Icon(Icons.notifications_sharp, color: Colors.white),
                     onPressed: () {},
                   ),
-                   IconButton(
-                    icon: Icon(Icons.logout, color: Colors.white), // Logout icon
+                  IconButton(
+                    icon:
+                        Icon(Icons.logout, color: Colors.white), // Logout icon
                     onPressed: () => _logout(context), // Logout functionality
                   ),
                 ],

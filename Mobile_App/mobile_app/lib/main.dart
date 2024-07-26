@@ -13,6 +13,8 @@ import 'package:mobile_app/Provider/Company/path_provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
+import 'package:mobile_app/Provider/user/Wallet_provider.dart';
+import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
 // import 'package:google_fonts/google_fonts.dart';
@@ -21,6 +23,7 @@ import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
 import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Book_Card_Resvartion_spsecfication.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_serach_selection.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Charage_blance.dart';
 
 import 'package:mobile_app/screens/welcome_page.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +45,9 @@ void main() {
         ChangeNotifierProvider(create: (_) => TripBusProvider()),
         ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
         ChangeNotifierProvider(create: (_) => TripuserProvider()),
+        ChangeNotifierProvider(create: (_) => PrivateTripuserProvider()),
         ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),
+        ChangeNotifierProvider(create: (_) => WalletProvider()),
       ],
       child: MyApp(),
     ),
@@ -65,7 +70,7 @@ class MyApp extends StatelessWidget {
             //     // color: Color.fromARGB(255, 116, 136, 146),
             //   ),
             ),
-        home: WelcomePage()
+        home: AddFundsPage()
 
         //  ,
         );
