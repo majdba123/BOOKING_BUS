@@ -22,8 +22,21 @@ class DriverController extends Controller
     {
         $company=Auth::user()->Company->id;
 
-        $driver = Driver::where('company_id', $company )->with(['company.user','user'])->get();
-        return response()->json($driver, 200);
+        $drivers = Driver::where('company_id', $company )->get();
+        $info = [];
+        foreach($drivers as $driver)
+        {
+            $data=[
+                'name' => $driver->user->name,
+                'user_id' => $driver->user->id,
+                'driver_id' => $driver->id,
+                'company_id' => $driver->company->id,
+                'status' =>  $driver->status,
+                'email_driver' => $driver->user->email,
+            ];
+            $info[] =$data;
+        }
+        return response()->json($info , 200);
     }
 
     /**
@@ -81,11 +94,12 @@ class DriverController extends Controller
 
         $customData = $drivers->map(function ($driver) {
             return [
-                'id' => $driver->id,
                 'name' => $driver->user->name,
-                'email' => $driver->user->email,
-                'status' => $driver->status,
-                // Add or remove fields as needed
+                'user_id' => $driver->user->id,
+                'driver_id' => $driver->id,
+                'company_id' => $driver->company->id,
+                'status' =>  $driver->status,
+                'email_driver' => $driver->user->email,
             ];
         });
 
