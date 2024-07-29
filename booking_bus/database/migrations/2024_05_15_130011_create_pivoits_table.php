@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Bus_Trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Breaks_trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->enum('status', ['pending', 'active', 'completed'])->default('pending');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

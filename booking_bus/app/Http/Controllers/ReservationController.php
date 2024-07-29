@@ -39,18 +39,20 @@ class ReservationController extends Controller
      */
     public function store(Request $request , $bus_trip_id)
     {
+        $bus_trip= Bus_Trip::findOrfail($bus_trip_id);
+        $pivoit =$bus_trip->Pivoit->where('status', 'pending')->pluck('id');
         $validator = Validator::make($request->all(), [
             'type' => 'required|in:1,2',
             'seat' => 'nullable|array',
             'seat.*' => 'integer|exists:seats,id',
-            'break_id' => 'nullable|integer|exists:pivoits,id'
+            'break_id' => 'nullable|integer|exists:pivoits,id|in:'. implode(',', $pivoit->all())
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->first();
             return response()->json(['error' => $errors], 422);
         }
         $user_id=Auth::user()->id;
-        $bus_trip= Bus_Trip::findOrfail($bus_trip_id);
+
         $number_seattt=$bus_trip->bus->seat->count();
 
         $number_seat_complete = $bus_trip->bus->seat->where('status' , 3)->count();
@@ -61,6 +63,36 @@ class ReservationController extends Controller
                 'message' => "trip has completed can not",
             ]);
 
+        }
+
+        if($bus_trip->status == 'finished_going' && $request->input('type') == 1)
+        {
+            return response()->json([
+                'massage' => 'trip finished going trips'
+            ]);
+        }
+
+        $pivoit1 = Pivoit::where('bus__trip_id', $bus_trip->id)
+        ->where('id', $request->input('break_id'))
+        ->first();
+
+        if($pivoit1->break_trip->break->name == "start" &&  $request->input('type') == 2 )
+        {
+            return response()->json([
+                'massage' => 'can not this is the las breake_start'
+            ]);
+        }
+        if($pivoit1->break_trip->break->name == 'end' &&  $request->input('type')== 1)
+        {
+            return response()->json([
+                'massage' => 'can not this is the last breake_end'
+            ]);
+        }
+        if($pivoit1->break_trip->break->name == $bus_trip->event)
+        {
+            return response()->json([
+                'massage' => 'the bus already in this break and it will leave '
+            ]);
         }
         $seatInput = $request->input('seat');
         if (is_array($seatInput)) {
@@ -168,12 +200,13 @@ class ReservationController extends Controller
         $responseData = [
             'message' => 'Reservation created successfully',
             'reservation_id' => $bookink->id,
-            'break' => $bookink->pivoit->break_trip->name,
+            'break' => $bookink->pivoit->break_trip->break->name,
             'bus_trip_id' => $bus_trip_id,
-           'seats' => $bookink->seat_reservation->where('status', 'padding')->all(),
+            'seats' => $bookink->seat_reservation->where('status', 'padding')->all(),
             'price' => $bookink->price,
             'user_name' => $bookink->user->name,
         ];
+
         return response()->json($responseData);
     }
 

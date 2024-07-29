@@ -12,7 +12,7 @@ class Reservation extends Model
     protected $fillable = [
         'user_id',
         'pivoit_id',
-        'bus_trip_id',
+        'bus__trip_id',
         'price',
         'type',
         'status',
