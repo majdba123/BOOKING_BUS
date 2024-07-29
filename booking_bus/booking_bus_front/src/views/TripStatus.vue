@@ -11,6 +11,7 @@
                     <select
                         v-model="selectedStatus"
                         @change="fetchTripsByStatus"
+                        class="colorselect"
                     >
                         <option value="padding">pending</option>
                         <option value="available">available</option>
@@ -144,7 +145,6 @@ export default {
 </script>
 
 <style scoped>
-/* تنسيقات عامة */
 * {
     font-family: "Poppins", sans-serif;
 }
@@ -160,10 +160,15 @@ export default {
     margin: 20px auto;
     text-align: center;
 }
+.colorselect option {
+    color: black;
+}
+.colorselect {
+    color: black;
+}
 .xx {
     color: #176b87;
 }
-/* تنسيق العنوان */
 .title p {
     padding: 15px;
     background-color: #176b87;
@@ -173,12 +178,11 @@ export default {
     color: white;
 }
 
-/* تنسيق الجدول */
 .table {
     border-collapse: collapse;
     width: 100%;
     margin: 11px auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* إضافة ظل للجدول */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 .table thead tr {
     background: #176b87;
@@ -187,13 +191,12 @@ export default {
 .table th,
 .table td {
     padding: 12px 15px;
-    border-bottom: 1px solid #176b87; /* إضافة حد فاصل */
+    border-bottom: 1px solid #176b87;
 }
 .table tr td {
     color: #176b87;
 }
 
-/* تنسيق عنصر select */
 #stateFilter {
     padding: 10px;
     margin-bottom: 20px;
@@ -202,13 +205,12 @@ export default {
     background-color: white;
 }
 
-/* تنسيق الأزرار */
 button {
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    border: 1px solid #176b87; /* إضافة حد للزر */
+    border: 1px solid #176b87;
 }
 button:hover {
     background-color: #144f63;

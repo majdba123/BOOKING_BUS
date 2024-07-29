@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <NavBarCompany />
+        <NavBarUser />
         <div class="content">
             <div class="container">
                 <div class="title">
@@ -10,35 +10,20 @@
                     <thead>
                         <tr>
                             <th>Trip ID</th>
-                            <th>Status</th>
+                            <th>Name Of Company</th>
                             <th>From</th>
                             <th>To</th>
                             <th>Price</th>
-                            <th>Details</th>
-                            <th>Delete</th>
-                            <th>Edit</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(trip, index) in Trip" :key="index">
-                            <td>{{ trip.id }}</td>
-                            <td>{{ trip.status }}</td>
-                            <td>{{ trip.path?.from }}</td>
-                            <td>{{ trip.path?.to }}</td>
+                            <td>{{ trip.trip_id }}</td>
+
+                            <td>{{ trip.company_id }}</td>
+                            <td>{{ trip.from }}</td>
+                            <td>{{ trip.to }}</td>
                             <td>{{ trip.price }}</td>
-                            <td>
-                                <button @click="fetchTripDetails(trip.id)">
-                                    Details
-                                </button>
-                            </td>
-                            <td>
-                                <button @click="DeleteTrip(trip.id)">
-                                    Delete
-                                </button>
-                            </td>
-                            <td>
-                                <button @click="editPath(index)">Edit</button>
-                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -241,12 +226,12 @@
 </template>
 
 <script>
-import NavBarCompany from "@/components/NavBarCompany.vue";
+import NavBarUser from "@/components/NavBarUser.vue";
 import axios from "axios";
 
 export default {
-    name: "AllTrip",
-    components: { NavBarCompany },
+    name: "AllTripUser",
+    components: { NavBarUser },
     data() {
         return {
             start_time: "",
@@ -293,11 +278,12 @@ export default {
 
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_trips",
+                url: "http://127.0.0.1:8000/api/user/trips",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     this.Trip = response.data;
+                    console.log(this.Trip);
                 })
                 .catch((error) => {
                     window.alert("Error fetching trips");
