@@ -26,12 +26,18 @@ import AllTripUser from "../views/User/AllTripUser.vue";
 import AddPrivateTrip from "../views/User/AddPrivateTrip.vue";
 import PrivateStatus from "../views/User/PrivateStatus.vue";
 import BookingLogin from "../views/BookingLogin.vue";
+import AllDriver2 from "../views/Company/Driver/AllDriver.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/AllDriver2",
+        name: "AllDriver2",
+        component: AllDriver2,
     },
     {
         path: "/PrivateStatus",
