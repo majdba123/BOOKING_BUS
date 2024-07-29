@@ -25,6 +25,7 @@ import UserPage from "../views/User/UserPage.vue";
 import AllTripUser from "../views/User/AllTripUser.vue";
 import AddPrivateTrip from "../views/User/AddPrivateTrip.vue";
 import PrivateStatus from "../views/User/PrivateStatus.vue";
+import BookingLogin from "../views/BookingLogin.vue";
 
 const routes = [
     {
@@ -66,6 +67,9 @@ const routes = [
         path: "/AddTrip",
         name: "AddTrip",
         component: AddTrip,
+        path: "/BookingLogin",
+        name: "BookingLogin",
+        component: BookingLogin,
     },
     {
         path: "/AddGovernment",

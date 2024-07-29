@@ -78,7 +78,7 @@ export default {
     },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .main-content {
     display: flex;
     width: 100%;
