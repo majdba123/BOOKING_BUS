@@ -67,6 +67,8 @@ const routes = [
         path: "/AddTrip",
         name: "AddTrip",
         component: AddTrip,
+    },
+    {
         path: "/BookingLogin",
         name: "BookingLogin",
         component: BookingLogin,

@@ -1,100 +1,60 @@
 <template>
-    <body>
-        <div class="container">
-            <!-- Aside section start -->
-            <aside ref="sideMenu">
-                <!-- Start top -->
-                <div class="top">
-                    <div class="logo">
-                        <h2>T<span class="danger">RAVEL</span></h2>
-                    </div>
-                    <div class="close" @click="closeMenu">
-                        <span class="material-icons" aria-label="Close"
-                            >close</span
-                        >
-                    </div>
-                </div>
-                <!-- End top -->
+    <div class="sidebar">
+        <a href="#">
+            <span class="material-icons" aria-label="Dashboard">grid_view</span>
+            <h3>Dashboard</h3>
+        </a>
+        <a href="#" class="active">
+            <span class="material-icons" aria-label="Customers"
+                >person_outline</span
+            >
+            <h3>Driver</h3>
+        </a>
+        <a href="#">
+            <span class="material-icons" aria-label="Analytics">insights</span>
+            <h3>Trip</h3>
+        </a>
+        <a href="#">
+            <span class="material-icons" aria-label="Analytics">insights</span>
+            <h3>Path</h3>
+        </a>
+        <a href="#">
+            <span class="material-icons" aria-label="Products"
+                >receipt_long</span
+            >
+            <h3>Bus</h3>
+        </a>
+        <a href="#">
+            <span class="material-icons" aria-label="Messages"
+                >mail_outline</span
+            >
+            <h3>Messages</h3>
+            <span class="msg_count">14</span>
+        </a>
 
-                <!-- Start sidebar -->
-                <SidebarCompany />
-                <!-- End sidebar -->
-            </aside>
-
-            <!-- Main section start -->
-            <MainCompany />
-            <!-- Main section end -->
-
-            <!-- Right section start -->
-            <div class="right">
-                <!--start top-->
-                <div class="top">
-                    <button id="menu_bar" @click="openMenu">
-                        <span class="material-icons">menu</span>
-                    </button>
-                    <div
-                        class="theme-toggler"
-                        ref="themeToggler"
-                        @click="toggleTheme"
-                    >
-                        <span class="material-icons active">light_mode</span>
-                        <span class="material-icons">dark_mode</span>
-                    </div>
-                    <div class="profile">
-                        <div class="info">
-                            <p><b>Babar</b></p>
-                            <p>Admin</p>
-                        </div>
-                        <div class="profile-photo">
-                            <img src="@/assets/busss.png" alt="Profile" />
-                        </div>
-                    </div>
-                </div>
-                <!--end top-->
-
-                <!--start recent_updates-->
-
-                <div class="recent_updates">
-                    <h2>Name Companys</h2>
-                    <div class="updates">
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--end recent_updates-->
-            </div>
-            <!-- Right section end -->
-        </div>
-    </body>
+        <a href="#">
+            <span class="material-icons" aria-label="Reports"
+                >report_gmailerrorred</span
+            >
+            <h3>Reports</h3>
+        </a>
+        <a href="#">
+            <span class="material-icons" aria-label="Settings">settings</span>
+            <h3>Settings</h3>
+        </a>
+        <a href="#">
+            <span class="material-icons" aria-label="Add Product">add</span>
+            <h3>Add Product</h3>
+        </a>
+        <a href="#">
+            <span class="material-icons" aria-label="Logout">logout</span>
+            <h3>Logout</h3>
+        </a>
+    </div>
 </template>
-
 <script>
-import SidebarCompany from "@/components/SidebarCompany.vue";
-import MainCompany from "@/components/MainCompany.vue";
-
 export default {
+    name: "SideBarCompany",
     methods: {
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -120,11 +80,9 @@ export default {
             }
         },
     },
-    components: { SidebarCompany, MainCompany },
 };
 </script>
-
-<style scoped>
+<style>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 :root {
@@ -244,8 +202,6 @@ small {
 .warning {
     color: #ffbb55;
 }
-
-/* aside */
 aside {
     height: 100vh;
     background-color: #fff;
@@ -265,101 +221,72 @@ aside .logo {
     display: flex;
     gap: 1rem;
 }
-
-/* Main section styles */
-/*
-        start right side
-***************************** */
-.right {
-    margin-top: 1.4rem;
-    padding: 1rem;
-    background-color: #f6f6f9;
-}
-
-.right .top {
+/* .sidebar */
+aside .sidebar {
+    background-color: #fff;
     display: flex;
-    justify-content: space-between;
-    gap: 2rem;
+    flex-direction: column;
+    height: calc(100vh - 5rem);
+    position: relative;
 }
 
-.right .top button {
+aside h3 {
+    font-weight: 400;
+}
+
+aside .sidebar a {
+    display: flex;
+    align-items: center;
+    margin-left: 2rem;
+    color: #7d8da1;
+    height: 3.2rem;
+    text-decoration: none;
+    gap: 1rem;
+    transition: all 0.1s ease-in;
+}
+
+aside .sidebar a span {
+    font-size: 1.6rem;
+    transition: all 0.1s ease-in;
+}
+
+aside .sidebar a:last-child {
+    position: absolute;
+    bottom: 1rem;
+    width: 100%;
+}
+
+aside .sidebar a.active {
+    background: rgba(132, 139, 200, 0.18);
+    color: #7380ec;
+    margin-left: 0;
+}
+
+aside .sidebar a.active::before {
+    content: "";
+    width: 6px;
+    height: 100%;
+    background-color: #7380ec;
+}
+
+aside .sidebar a:hover {
+    color: #7380ec;
+}
+aside .top .close span {
     display: none;
 }
-
-.right .theme-toggler {
-    background-color: #fff;
-    display: flex;
-    justify-content: space-between;
-    height: 1.6rem;
-    width: 4.2rem;
-    cursor: pointer;
-    border-radius: 10px;
+aside .sidebar a:hover span {
+    margin-left: 1rem;
+    transition: 0.4s ease;
 }
 
-.right .theme-toggler span {
-    font-size: 1.2rem;
-    width: 50%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.right .theme-toggler span.active {
-    background-color: #7380ec;
+aside .sidebar a span.msg_count {
+    background: #ff7782;
     color: #fff;
-    border-radius: 10px;
+    padding: 2px 5px;
+    font-size: 11px;
+    border-radius: 0.4rem;
 }
-
-.right .profile {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.right .profile .info p {
-    margin: 0;
-}
-
-.right .profile .profile-photo img {
-    width: 2.8rem;
-    height: 2.8rem;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-/***recent update */
-.right .recent_updates {
-    margin-top: 1rem;
-    margin-left: -20px;
-}
-.right .recent_updates h2 {
-    color: #363949;
-    margin-bottom: 14px;
-}
-
-.right .recent_updates .updates {
-    background-color: #fff;
-    padding: 1.8rem;
-    border-radius: 2rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    transition: all 0.3s ease;
-}
-
-.right .recent_updates .updates:hover {
-    box-shadow: none;
-}
-
-.right .recent_updates .update {
-    display: grid;
-    grid-template-columns: 2.6rem auto;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-/**********
-media query
-********** */
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;

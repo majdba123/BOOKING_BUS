@@ -95,6 +95,7 @@ export default {
                             response.data.access_token
                         );
                     }
+
                     if (response.data.type_user == "admin") {
                         router.push("/AdminPage");
                     } else if (response.data.type_user == "company") {
@@ -102,6 +103,7 @@ export default {
                     } else if (response.data.type_user == "user") {
                         router.push("/UserPage");
                     } else router.push("/");
+                    console.log(response.data.type_user);
                 })
                 .catch((error) => {
                     window.alert("البريد الإلكتروني أو كلمة المرور غير صحيحة");
