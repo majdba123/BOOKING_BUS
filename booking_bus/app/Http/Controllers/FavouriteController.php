@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Favourite;
+use App\Models\Company;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -13,9 +14,31 @@ class FavouriteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function all_company()
     {
-        //
+        $companies = Company::with([
+            'user.profile' => function ($query) {
+                $query->select('profiles.*');
+            },
+            'user.address' => function ($query) {
+                $query->select('addresses.*');
+            },
+        ])->get();
+
+        if (!$companies) {
+            return response()->json([
+                'message' => 'company not found'
+            ]);
+        }
+
+        $companies = $companies->map(function ($company) {
+            $company->profile = $company->user->profile;
+            $company->address = $company->user->address;
+            unset($company->user);
+            return $company;
+        });
+
+        return response()->json($companies);
     }
 
     /**
@@ -85,17 +108,49 @@ class FavouriteController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Favourite $favourite)
+    public function index_user()
     {
-        //
+        $user = Auth::user();
+        $favourites = Favourite::where('user_id', $user->id)->get();
+        $data = [];
+
+        foreach ($favourites as $favourite) {
+            $data[] = [
+                'id' => $favourite->id,
+                'user_name' => $user->name,
+                'user_id' => $favourite->user->id,
+                'company_id' => $favourite->company->id,
+                'company_name' => $favourite->company->name,
+            ];
+        }
+
+        return response()->json($data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Favourite $favourite)
+    public function info_about_company($company_id)
     {
-        //
+        $company = Company::with([
+            'user.profile' => function ($query) {
+                $query->select('profiles.*');
+            },
+            'user.address' => function ($query) {
+                $query->select('addresses.*');
+            },
+        ])->find($company_id);
+
+        if (!$company) {
+            return response()->json([
+                'message' => 'company not found'
+            ]);
+        }
+
+        // Hide the user data from the response
+        $company->user->makeHidden(['id', 'name', 'type', 'email', 'lang', 'lat', 'point', 'email_verified_at', 'created_at', 'updated_at']);
+
+        return response()->json($company);
     }
 
     /**

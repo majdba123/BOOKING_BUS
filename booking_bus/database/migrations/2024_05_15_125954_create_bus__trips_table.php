@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('from_time');
             $table->string('date');
             $table->string('to_time');
-            $table->enum('status', ['pending', 'active', 'completed'])->default('pending');
+            $table->string('status')->default('pending');
             $table->enum('type', ['all', 'going'])->default('all');
-            $table->enum('event', ['stopped', 'started', 'arrived', 'departed'])->default('stopped');
+            $table->string('event')->default('stopped');
             $table->timestamps();
         });
     }

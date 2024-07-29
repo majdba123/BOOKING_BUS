@@ -93,10 +93,6 @@ class TripController extends Controller
         $breakTripStart->breaks_id = 1; // start break
         $breakTripStart->save();
 
-        $breakTripEnd = new Breaks_trip();
-        $breakTripEnd->trip_id = $trip->id;
-        $breakTripEnd->breaks_id = 2; // end break
-        $breakTripEnd->save();
 
         $breakIds = $request->input('breaks_ids');
 
@@ -108,11 +104,18 @@ class TripController extends Controller
                     'message' => 'break not found',
                 ]);
             }
+
             $breakTrip = new Breaks_trip();
             $breakTrip->trip_id = $trip->id;
             $breakTrip->breaks_id = $breakId;
             $breakTrip->save();
         }
+
+        $breakTripEnd = new Breaks_trip();
+        $breakTripEnd->trip_id = $trip->id;
+        $breakTripEnd->breaks_id = 2; // end break
+        $breakTripEnd->save();
+
 
 
         $busIds = $request->input('bus_ids');
@@ -245,10 +248,6 @@ class TripController extends Controller
                 $breakTripStart->breaks_id = 1; // start break
                 $breakTripStart->save();
 
-                $breakTripEnd = new Breaks_trip();
-                $breakTripEnd->trip_id = $trip->id;
-                $breakTripEnd->breaks_id = 2; // end break
-                $breakTripEnd->save();
 
                 $breakIds = $request->input('breaks_ids');
                 foreach ($breakIds as $breakId) {
@@ -263,7 +262,11 @@ class TripController extends Controller
                         $breakTrip->trip_id = $trip->id;
                         $breakTrip->breaks_id = $breakId;
                         $breakTrip->save();
-                    }
+                        }
+                    $breakTripEnd = new Breaks_trip();
+                    $breakTripEnd->trip_id = $trip->id;
+                    $breakTripEnd->breaks_id = 2; // end break
+                    $breakTripEnd->save();
                     $busIds = $request->input('bus_ids');
 
                     foreach ($busIds as $busId) {
@@ -354,7 +357,7 @@ class TripController extends Controller
             $busTripsData = [];
             foreach ($busTrips as $busTrip) {
                 $busTripData = [
-
+                    'bus_trip_id' => $busTrip->id,
                     'bus_id' => $busTrip->bus_id,
                     'from_time' => $busTrip->from_time,
                     'to_time' => $busTrip->to_time,
@@ -379,6 +382,7 @@ class TripController extends Controller
                 $seatsData = [];
                 foreach ($seats as $seat) {
                     $seatsData[] = [
+                        'id' => $seat->id,
                         'status' => $seat->status,
                         // Add any other columns you want to include from the seats table
                     ];
@@ -467,6 +471,7 @@ class TripController extends Controller
                     $seatsData = [];
                     foreach ($seats as $seat) {
                         $seatsData[] = [
+                            'id' => $seat->id,
                             'status' => $seat->status,
                             // Add any other columns you want to include from the seats table
                         ];
@@ -489,5 +494,6 @@ class TripController extends Controller
             }
             return response()->json($data);
     }
+
 
 }

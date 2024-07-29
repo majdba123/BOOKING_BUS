@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -20,16 +21,96 @@ class ProfileController extends Controller
     {
         $user = auth()->user()->load(['profile', 'address']);
 
+
         return response()->json($user);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function my_reserva()
     {
-        //
+        $user = Auth::user();
+        $reservations = Reservation::where('user_id', $user->id)
+            ->get();
+        $data = [];
+
+        foreach ($reservations as $reservation) {
+            $busTrip = $reservation->pivoit->bus_trip; // Try to load the bus_trip relationship
+            if ($busTrip) { // Check if the relationship is loaded successfully
+                $seats = [];
+                foreach ($reservation->seat_reservation as $seatReservation) {
+                    $seats[] = [
+                        'id' => $seatReservation->seat->id,
+                        'status' => $seatReservation->seat->status
+                    ];
+                }
+                $data[] = [
+                    'id' => $reservation->id,
+                    'price' => $reservation->price,
+                    'type' => $reservation->type,
+                    'status' => $reservation->status,
+                    'break' => $reservation->pivoit->break_trip->break->name,
+                    'from' =>$busTrip->trip->path->from,
+                    'to' => $busTrip->trip->path->to,
+                    'seats' => $seats // array of seat names or properties
+                ];
+            } else {
+                return response()->json([
+                    'message' => 'bus_trip not found'
+                ]);
+            }
+        }
+
+        return response()->json($data);
     }
+
+    public function my_reserva_by_status(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+          'status' => 'required|in:padding,finished,out',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
+        }
+        $user = Auth::user();
+        $reservations = Reservation::where('user_id', $user->id)
+            ->where('status' ,$request->input('status'))
+            ->get();
+        $data = [];
+
+        foreach ($reservations as $reservation) {
+            $busTrip = $reservation->pivoit->bus_trip; // Try to load the bus_trip relationship
+            if ($busTrip) { // Check if the relationship is loaded successfully
+                $seats = [];
+                foreach ($reservation->seat_reservation as $seatReservation) {
+                    $seats[] = [
+                        'id' => $seatReservation->seat->id,
+                        'status' => $seatReservation->seat->status
+                    ];
+                }
+                $data[] = [
+                    'id' => $reservation->id,
+                    'price' => $reservation->price,
+                    'type' => $reservation->type,
+                    'status' => $reservation->status,
+                    'break' => $reservation->pivoit->break_trip->break->name,
+                    'from' =>$busTrip->trip->path->from,
+                    'to' => $busTrip->trip->path->to,
+                    'seats' => $seats // array of seat names or properties
+                ];
+            } else {
+                return response()->json([
+                    'message' => 'bus_trip not found'
+                ]);
+            }
+        }
+
+        return response()->json($data);
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -49,6 +130,11 @@ class ProfileController extends Controller
         try {
             $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
             $user = auth()->user();
+            if ($user->profile) {
+                return response()->json([
+                    'message' => "Sorry, you already have a profile."
+                ], 403);
+            }
             $imageUrl = asset('storage/profile_image/' . $imageName);
             // Create Profile
             $profile = Profile::create([
@@ -94,7 +180,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'image' => 'required|image',
+            'image' => 'nullable|image',
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|max:255',
             'phone' => 'required',
@@ -120,16 +206,22 @@ class ProfileController extends Controller
                 }
 
                 $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
+                $imageUrl = asset('storage/profile_image/'. $imageName);
                 $request->image->storeAs('public/profile_image', $imageName);
-                $profile->image = $imageName; // Store the filename instead of the URL
+                $profile->image = $imageUrl;
             }
-            if ($request->input('name')) {
+
+            if ($request->filled('name')) {
+                if($user->Company)
+                {
+                    $user->Company->name_company = $request->input('name');
+                }
                 $user->name = $request->input('name');
             }
-            if ($request->input('email')) {
+            if ($request->filled('email')) {
                 $user->email = $request->input('email');
             }
-            if ($request->input('phone')) {
+            if ($request->filled('phone')) {
                 $profile->phone = $request->input('phone');
             }
 
