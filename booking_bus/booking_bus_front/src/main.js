@@ -1,8 +1,9 @@
 import { createApp } from "vue";
-import BookingLogin from "./views/BookingLogin.vue";
+//import BookingLogin from "./views/BookingLogin.vue"; // Adjusted import path
 import router from "./router";
 import store from "./store";
+import App from "./App.vue";
 
-const app = createApp(BookingLogin);
+const app = createApp(App);
 
 app.use(store).use(router).mount("#app");

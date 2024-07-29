@@ -1,59 +1,60 @@
 <template>
     <div class="main-content">
-        <NavBarCompany />
+        <NavBarUser />
         <div class="content">
             <div class="continer">
                 <div class="title">
-                    <p>Bus Status</p>
+                    <p>Private Status</p>
                 </div>
                 <div>
                     <label class="xx" for="stateFilter">Filter by State:</label>
                     <select v-model="selectedStatus">
-                        <option value="pending">pending</option>
-                        <option value="available">available</option>
-                        <option value="finished">finished</option>
+                        <option value="padding">pending</option>
+                        <option value="complated">complated</option>
                     </select>
                 </div>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Bus Number</th>
-                            <th>Number of Passenger</th>
+                            <th>ID</th>
+                            <th>From</th>
+                            <th>to</th>
+                            <th>Start Time</th>
+                            <th>Date</th>
+
                             <!-- New column for state -->
                             <th>State</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(bus, index) in bus" :key="index">
-                            <td v-if="selectedStatus === 'pending'">
-                                {{ bus.number_bus }}
+                            <td v-if="selectedStatus === 'padding'">
+                                {{ bus.id }}
                             </td>
-                            <td v-if="selectedStatus === 'pending'">
-                                {{ bus.number_passenger }}
+                            <td v-if="selectedStatus === 'padding'">
+                                {{ bus.from }}
                             </td>
-                            <td v-if="selectedStatus === 'pending'">
+                            <td v-if="selectedStatus === 'padding'">
+                                {{ bus.to }}
+                            </td>
+                            <td v-if="selectedStatus === 'padding'">
+                                {{ bus.start_time }}
+                            </td>
+                            <td v-if="selectedStatus === 'padding'">
+                                {{ bus.date }}
+                            </td>
+                            <td v-if="selectedStatus === 'padding'">
                                 {{ bus.status }}
                             </td>
                         </tr>
                         <tr v-for="(bus, index) in bus1" :key="index">
-                            <td v-if="selectedStatus === 'available'">
+                            <td v-if="selectedStatus === 'complated'">
                                 {{ bus.number_bus }}
                             </td>
-                            <td v-if="selectedStatus === 'available'">
+                            <td v-if="selectedStatus === 'complated'">
                                 {{ bus.number_passenger }}
                             </td>
-                            <td v-if="selectedStatus === 'available'">
-                                {{ bus.status }}
-                            </td>
-                        </tr>
-                        <tr v-for="(bus, index) in bus2" :key="index">
-                            <td v-if="selectedStatus === 'finished'">
-                                {{ bus.number_bus }}
-                            </td>
-                            <td v-if="selectedStatus === 'finished'">
-                                {{ bus.number_passenger }}
-                            </td>
-                            <td v-if="selectedStatus === 'finished'">
+                            <td v-if="selectedStatus === 'complated'">
                                 {{ bus.status }}
                             </td>
                         </tr>
@@ -66,12 +67,12 @@
 </template>
 
 <script>
-import NavBarCompany from "@/components/NavBarCompany.vue";
+import NavBarUser from "@/components/NavBarUser.vue";
 import axios from "axios";
 
 export default {
     name: "BusStatus",
-    components: { NavBarCompany },
+    components: { NavBarUser },
     data() {
         return {
             editingIndex: null,
@@ -80,20 +81,18 @@ export default {
             filteredPaths: [],
             bus: [],
             bus1: [],
-            bus2: [],
         };
     },
     mounted() {
         this.fetchpending();
-        this.fetchavalibal();
-        this.fetchfinished();
+        this.fetchcomplated();
     },
     methods: {
         fetchpending() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=pending",
+                url: "http://127.0.0.1:8000/api/user/get_my_private_order_by_status?status=padding",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -105,33 +104,16 @@ export default {
                     console.error(error);
                 });
         },
-        fetchavalibal() {
+        fetchcomplated() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=available",
+                url: "http://127.0.0.1:8000/api/user/get_my_private_order_by_status?status=complated",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     console.log(response);
                     this.bus1 = response.data;
-                })
-                .catch(function (error) {
-                    window.alert("Error get paths");
-                    console.error(error);
-                });
-        },
-        fetchfinished() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=finished",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.bus2 = response.data;
-
-                    console.log(response);
                 })
                 .catch(function (error) {
                     window.alert("Error get paths");

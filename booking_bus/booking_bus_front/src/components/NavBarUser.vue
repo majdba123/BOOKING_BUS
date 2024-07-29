@@ -1,4 +1,9 @@
 <template>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
     <div class="main-content">
         <div class="menu">
             <ul>
@@ -9,7 +14,7 @@
                     <div class="img-box">
                         <img src="تنزيل.webp" alt="" />
                     </div>
-                    <h2>Company</h2>
+                    <h2>User</h2>
                 </li>
 
                 <li>
@@ -80,12 +85,16 @@
                 >
                     <a href="#" class="nav-link">
                         <i class="fas fa-chart-pie"></i>
-                        <p>Bus</p>
+                        <p>Private Trip</p>
                     </a>
                     <ul v-show="dropdownVisible1" class="dropdown-content">
-                        <router-link to="/AddBus">Add Bus</router-link>
+                        <router-link to="/AddPrivateTrip"
+                            >Add Private Trips</router-link
+                        >
                         <router-link to="/EditeBus">Edit Bus</router-link>
-                        <router-link to="/BusStatus">Bus Status</router-link>
+                        <router-link to="/PrivateStatus"
+                            >Private Status</router-link
+                        >
                         <router-link to="/AllBus">Get All Bus</router-link>
                     </ul>
                 </li>
@@ -102,7 +111,7 @@
                     <ul v-show="dropdownVisible3" class="dropdown-content">
                         <router-link to="/AddTrip">Add Trip</router-link>
                         <router-link to="/EditTrip">Edit Trip</router-link>
-                        <router-link to="/AllTrip">All Trip</router-link>
+                        <router-link to="/AllTripUser">All Trip</router-link>
                         <router-link to="/TripStatus">Trip Status</router-link>
                     </ul>
                 </li>
@@ -120,7 +129,7 @@
 import axios from "axios";
 import router from "@/router";
 export default {
-    name: "NavBarCompany",
+    name: "NavBarUser",
     data() {
         return {
             dropdownVisible3: false,

@@ -18,6 +18,13 @@ import AddBreak from "../views/AddBreak.vue";
 import EditBreak from "../views/EditBreak.vue";
 import AddGovernment from "../views/AddGovernment.vue";
 import EditGovernment from "../views/EditGovernment.vue";
+import AddTrip from "../views/AddTrip.vue";
+import AllTrip from "../views/AllTrip.vue";
+import TripStatus from "../views/TripStatus.vue";
+import UserPage from "../views/User/UserPage.vue";
+import AllTripUser from "../views/User/AllTripUser.vue";
+import AddPrivateTrip from "../views/User/AddPrivateTrip.vue";
+import PrivateStatus from "../views/User/PrivateStatus.vue";
 import BookingLogin from "../views/BookingLogin.vue";
 
 const routes = [
@@ -25,6 +32,41 @@ const routes = [
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/PrivateStatus",
+        name: "PrivateStatus",
+        component: PrivateStatus,
+    },
+    {
+        path: "/AddPrivateTrip",
+        name: "AddPrivateTrip",
+        component: AddPrivateTrip,
+    },
+    {
+        path: "/AllTripUser",
+        name: "AllTripUser",
+        component: AllTripUser,
+    },
+    {
+        path: "/UserPage",
+        name: "UserPage",
+        component: UserPage,
+    },
+    {
+        path: "/TripStatus",
+        name: "TripStatus",
+        component: TripStatus,
+    },
+    {
+        path: "/AllTrip",
+        name: "AllTrip",
+        component: AllTrip,
+    },
+    {
+        path: "/AddTrip",
+        name: "AddTrip",
+        component: AddTrip,
     },
     {
         path: "/BookingLogin",
