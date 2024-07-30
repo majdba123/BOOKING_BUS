@@ -1,60 +1,71 @@
 <template>
     <div class="sidebar">
-        <a href="#">
+        <RouterLink to="BookingLogin" @click="selectOption('Dashboard')">
             <span class="material-icons" aria-label="Dashboard">grid_view</span>
             <h3>Dashboard</h3>
-        </a>
-        <a href="#" class="active">
+        </RouterLink>
+
+        <RouterLink
+            to="AllDriver2"
+            class="active"
+            @click="selectOption('Driver')"
+        >
             <span class="material-icons" aria-label="Customers"
                 >person_outline</span
             >
             <h3>Driver</h3>
-        </a>
-        <a href="#">
+        </RouterLink>
+        <a @click="selectOption('Trip')">
             <span class="material-icons" aria-label="Analytics">insights</span>
             <h3>Trip</h3>
         </a>
-        <a href="#">
+        <a @click="selectOption('Path')">
             <span class="material-icons" aria-label="Analytics">insights</span>
             <h3>Path</h3>
         </a>
-        <a href="#">
+        <a @click="selectOption('Bus')">
             <span class="material-icons" aria-label="Products"
                 >receipt_long</span
             >
             <h3>Bus</h3>
         </a>
-        <a href="#">
+        <a @click="selectOption('Messages')">
             <span class="material-icons" aria-label="Messages"
                 >mail_outline</span
             >
             <h3>Messages</h3>
             <span class="msg_count">14</span>
         </a>
-
-        <a href="#">
+        <a @click="selectOption('Reports')">
             <span class="material-icons" aria-label="Reports"
                 >report_gmailerrorred</span
             >
             <h3>Reports</h3>
         </a>
-        <a href="#">
+        <a @click="selectOption('Settings')">
             <span class="material-icons" aria-label="Settings">settings</span>
             <h3>Settings</h3>
         </a>
-        <a href="#">
+        <a @click="selectOption('Add Product')">
             <span class="material-icons" aria-label="Add Product">add</span>
             <h3>Add Product</h3>
         </a>
-        <a href="#">
+        <a @click="selectOption('Logout')">
             <span class="material-icons" aria-label="Logout">logout</span>
             <h3>Logout</h3>
         </a>
     </div>
 </template>
+
 <script>
+import store from "@/store";
 export default {
     name: "SideBarCompany",
+    data() {
+        return {
+            selectedOption: null,
+        };
+    },
     methods: {
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -79,9 +90,15 @@ export default {
                     .classList.toggle("active");
             }
         },
+        selectOption(option) {
+            this.selectedOption = option;
+            console.log("Selected Option:", this.selectedOption);
+            store.state.x = this.selectedOption;
+        },
     },
 };
 </script>
+
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -271,7 +288,9 @@ aside .sidebar a.active::before {
 
 aside .sidebar a:hover {
     color: #7380ec;
+    cursor: pointer;
 }
+
 aside .top .close span {
     display: none;
 }

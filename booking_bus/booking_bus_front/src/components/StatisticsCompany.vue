@@ -1,79 +1,103 @@
 <template>
-    <main>
-        <h1>{{ x }}</h1>
-        <div class="top-bar">
-            <div class="date">
-                <input
-                    type="text"
-                    placeholder="Search In..."
-                    aria-label="Search"
-                />
-                <button>Search</button>
+    <div class="insights">
+        <!-- Start selling -->
+        <div class="sales">
+            <span class="material-icons" aria-label="Sales">trending_up</span>
+            <div class="middle">
+                <div class="left">
+                    <h3>Total Sales</h3>
+                    <h1>$25,024</h1>
+                </div>
+                <div class="progress">
+                    <svg>
+                        <circle
+                            class="background-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                        ></circle>
+                        <circle
+                            class="sales-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                        ></circle>
+                    </svg>
+                    <div class="number">80%</div>
+                </div>
             </div>
+            <small>Last 24 Hours</small>
         </div>
-        <StatisticsCompany />
-        <!-- End insights -->
+        <!-- End selling -->
 
-        <!-- Start recent orders -->
-        <div class="recent_orders">
-            <h1>Name Companys</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Company Name</th>
-                        <th>Count User</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <!-- Repeat similar rows for demonstration -->
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Start expenses -->
+        <div class="expenses">
+            <span class="material-icons" aria-label="Expenses">local_mall</span>
+            <div class="middle">
+                <div class="left">
+                    <h3>Expenses</h3>
+                    <h1>$25,024</h1>
+                </div>
+                <div class="progress">
+                    <svg>
+                        <circle
+                            class="background-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                        ></circle>
+                        <circle
+                            class="expenses-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                        ></circle>
+                    </svg>
+                    <div class="number">80%</div>
+                </div>
+            </div>
+            <small>Last 24 Hours</small>
         </div>
-        <!-- End recent orders -->
-    </main>
+        <!-- End expenses -->
+
+        <!-- Start income -->
+        <div class="income">
+            <span class="material-icons" aria-label="Income"
+                >stacked_line_chart</span
+            >
+            <div class="middle">
+                <div class="left">
+                    <h3>Income</h3>
+                    <h1>$25,024</h1>
+                </div>
+                <div class="progress">
+                    <svg>
+                        <circle
+                            class="background-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                        ></circle>
+                        <circle
+                            class="income-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                        ></circle>
+                    </svg>
+                    <div class="number">80%</div>
+                </div>
+            </div>
+            <small>Last 24 Hours</small>
+        </div>
+        <!-- End income -->
+    </div>
+    <!-- End insights -->
 </template>
 <script>
 import store from "@/store";
-import StatisticsCompany from "./StatisticsCompany.vue";
 export default {
-    name: "MainCompany",
+    name: "StatisticsCompany",
     data() {
         return {
             x: store.state.x,
@@ -105,7 +129,6 @@ export default {
         },
     },
     mounted() {},
-    components: { StatisticsCompany },
 };
 </script>
 <style>
@@ -228,73 +251,14 @@ small {
 .warning {
     color: #ffbb55;
 }
-aside {
-    height: 100vh;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-}
 
-aside .top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-aside .logo {
-    display: flex;
-    gap: 1rem;
-}
-main {
-    margin-top: 1.4rem;
-    width: 100%;
-}
-
-main input {
-    background-color: transparent;
-    border: 0;
-    outline: 0;
-    color: #363949;
-}
-
-main .top-bar {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-main .date {
-    display: inline-block;
-    background-color: #fff;
-    border-radius: 0.9rem;
-    padding: 9px;
-    margin-top: 9px;
-}
-
-main .date button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: #007bff;
-    color: #fff;
-    border-radius: 1rem;
-    cursor: pointer;
-    margin-left: 5px;
-}
-
-main .date button:hover {
-    background-color: #0056b3;
-    transition: 0.4s ease-in;
-}
-
-main .insights {
+.insights {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.6rem;
 }
 
-main .insights > div {
+.insights > div {
     background-color: #fff;
     padding: 1.8rem;
     border-radius: 2rem;
@@ -303,11 +267,11 @@ main .insights > div {
     transition: all 0.3s ease;
 }
 
-main .insights > div:hover {
+.insights > div:hover {
     box-shadow: none;
 }
 
-main .insights > div span {
+.insights > div span {
     background: coral;
     padding: 0.5rem;
     border-radius: 50%;
@@ -315,48 +279,48 @@ main .insights > div span {
     font-size: 2rem;
 }
 
-main .insights > div.expenses span {
+.insights > div.expenses span {
     background: #ff7782;
 }
 
-main .insights > div.income span {
+.insights > div.income span {
     background: #41f1b6;
 }
 
-main .insights > div .middle {
+.insights > div .middle {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-main .insights > div .middle h1 {
+.insights > div .middle h1 {
     font-size: 1.6rem;
 }
 
-main h1 {
+h1 {
     color: #363949;
 }
 
-main .insights h1 {
+.insights h1 {
     color: #363949;
 }
 
-main .insights h3 {
+.insights h3 {
     color: #363949;
 }
 
-main .insights p {
+.insights p {
     color: #363949;
 }
 
-main .insights .progress {
+.insights .progress {
     position: relative;
     height: 68px;
     width: 68px;
     border-radius: 50px;
 }
 
-main .insights svg {
+.insights svg {
     height: 100%;
     width: 100%;
     position: absolute;
@@ -364,13 +328,13 @@ main .insights svg {
     left: 0;
 }
 
-main .insights svg circle.background-circle {
+.insights svg circle.background-circle {
     fill: none;
     stroke: #e4e9f7;
     stroke-width: 6;
 }
 
-main .insights svg circle.sales-circle {
+.insights svg circle.sales-circle {
     fill: none;
     stroke: #7380ec;
     stroke-width: 5;
@@ -380,7 +344,7 @@ main .insights svg circle.sales-circle {
     transform-origin: 34.5px 40px;
 }
 
-main .insights svg circle.expenses-circle {
+.insights svg circle.expenses-circle {
     fill: none;
     stroke: #ff7782;
     stroke-width: 5;
@@ -390,7 +354,7 @@ main .insights svg circle.expenses-circle {
     transform-origin: 34.5px 40px;
 }
 
-main .insights svg circle.income-circle {
+.insights svg circle.income-circle {
     fill: none;
     stroke: #41f1b6;
     stroke-width: 5;
@@ -400,7 +364,7 @@ main .insights svg circle.income-circle {
     transform-origin: 34.5px 40px;
 }
 
-main .insights .progress .number {
+.insights .progress .number {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -409,51 +373,6 @@ main .insights .progress .number {
     color: #363949;
 }
 
-main .recent_orders h1 {
-    margin: 18px;
-    color: #363949;
-}
-
-main .recent_orders table {
-    background-color: #fff;
-    width: 100%;
-    border-radius: 2rem;
-    padding: 1.8rem;
-    text-align: center;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    transition: all 0.3s ease;
-    color: #363949;
-}
-
-main .recent_orders table:hover {
-    box-shadow: none;
-}
-
-main table thead tr th {
-    padding: 15px;
-}
-
-main table tbody tr {
-    height: 3.8rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
-}
-
-main table tbody td {
-    height: 3.8rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
-}
-
-main table tbody tr:last-child td {
-    border: none;
-}
-
-main .recent_orders a {
-    text-align: center;
-    display: block;
-    margin: 1rem;
-}
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
@@ -478,7 +397,7 @@ main .recent_orders a {
         margin-top: 1.8rem;
     }
 
-    main .insights {
+    .insights {
         display: grid;
         grid-template-columns: repeat(1, 1fr);
         gap: 1.6rem;
@@ -545,7 +464,7 @@ main .recent_orders a {
         margin: 0;
     }
 
-    main .insights {
+    .insights {
         display: grid;
         grid-template-columns: repeat(1, 1fr);
         gap: 1.6rem;

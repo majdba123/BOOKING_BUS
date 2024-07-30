@@ -1,84 +1,102 @@
 <template>
-    <main>
-        <h1>{{ x }}</h1>
-        <div class="top-bar">
-            <div class="date">
-                <input
-                    type="text"
-                    placeholder="Search In..."
-                    aria-label="Search"
-                />
-                <button>Search</button>
-            </div>
-        </div>
-        <StatisticsCompany />
-        <!-- End insights -->
+    <body>
+        <div class="container">
+            <!-- Aside section start -->
+            <aside ref="sideMenu">
+                <!-- Start top -->
+                <div class="top">
+                    <div class="logo">
+                        <h2>T<span class="danger">RAVEL</span></h2>
+                    </div>
+                    <div class="close" @click="closeMenu">
+                        <span class="material-icons" aria-label="Close"
+                            >close</span
+                        >
+                    </div>
+                </div>
+                <!-- End top -->
 
-        <!-- Start recent orders -->
-        <div class="recent_orders">
-            <h1>Name Companys</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Company Name</th>
-                        <th>Count User</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <!-- Repeat similar rows for demonstration -->
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                </tbody>
-            </table>
+                <!-- Start sidebar -->
+                <SidebarCompany />
+                <!-- End sidebar -->
+            </aside>
+
+            <!-- Main section start -->
+            <AddDriver />
+            <!-- Main section end -->
+
+            <!-- Right section start -->
+            <div class="right">
+                <!--start top-->
+                <div class="top">
+                    <button id="menu_bar" @click="openMenu">
+                        <span class="material-icons">menu</span>
+                    </button>
+                    <div
+                        class="theme-toggler"
+                        ref="themeToggler"
+                        @click="toggleTheme"
+                    >
+                        <span class="material-icons active">light_mode</span>
+                        <span class="material-icons">dark_mode</span>
+                    </div>
+                    <div class="profile">
+                        <div class="info">
+                            <p><b>Babar</b></p>
+                            <p>Admin</p>
+                        </div>
+                        <div class="profile-photo">
+                            <img src="@/assets/busss.png" alt="Profile" />
+                        </div>
+                    </div>
+                </div>
+                <!--end top-->
+
+                <!--start recent_updates-->
+
+                <div class="recent_updates">
+                    <h2>Name Companys</h2>
+                    <div class="updates">
+                        <div class="update">
+                            <div class="profile-photo">
+                                <img src="@/assets/busss.png" alt="Profile" />
+                            </div>
+                            <div class="message">
+                                <p><b>Babar</b> Received his order</p>
+                            </div>
+                        </div>
+                        <div class="update">
+                            <div class="profile-photo">
+                                <img src="@/assets/busss.png" alt="Profile" />
+                            </div>
+                            <div class="message">
+                                <p><b>Babar</b> Received his order</p>
+                            </div>
+                        </div>
+                        <div class="update">
+                            <div class="profile-photo">
+                                <img src="@/assets/busss.png" alt="Profile" />
+                            </div>
+                            <div class="message">
+                                <p><b>Babar</b> Received his order</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end recent_updates-->
+            </div>
+            <!-- Right section end -->
         </div>
-        <!-- End recent orders -->
-    </main>
+    </body>
 </template>
+
 <script>
-import store from "@/store";
-import StatisticsCompany from "./StatisticsCompany.vue";
+import SidebarCompany from "@/components/SidebarCompany.vue";
+import AddDriver from "@/components/AddDriver.vue";
+
 export default {
-    name: "MainCompany",
-    data() {
-        return {
-            x: store.state.x,
-        };
-    },
+    name: "AllDriver",
+
     methods: {
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -104,11 +122,12 @@ export default {
             }
         },
     },
-    mounted() {},
-    components: { StatisticsCompany },
+
+    components: { SidebarCompany, AddDriver },
 };
 </script>
-<style>
+
+<style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 :root {
@@ -228,6 +247,8 @@ small {
 .warning {
     color: #ffbb55;
 }
+
+/* aside */
 aside {
     height: 100vh;
     background-color: #fff;
@@ -247,213 +268,101 @@ aside .logo {
     display: flex;
     gap: 1rem;
 }
-main {
+
+/* Main section styles */
+/*
+        start right side
+***************************** */
+.right {
     margin-top: 1.4rem;
-    width: 100%;
+    padding: 1rem;
+    background-color: #f6f6f9;
 }
 
-main input {
-    background-color: transparent;
-    border: 0;
-    outline: 0;
-    color: #363949;
+.right .top {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
 }
 
-main .top-bar {
+.right .top button {
+    display: none;
+}
+
+.right .theme-toggler {
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    height: 1.6rem;
+    width: 4.2rem;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.right .theme-toggler span {
+    font-size: 1.2rem;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.right .theme-toggler span.active {
+    background-color: #7380ec;
+    color: #fff;
+    border-radius: 10px;
+}
+
+.right .profile {
     display: flex;
     gap: 1rem;
     align-items: center;
 }
 
-main .date {
-    display: inline-block;
-    background-color: #fff;
-    border-radius: 0.9rem;
-    padding: 9px;
-    margin-top: 9px;
+.right .profile .info p {
+    margin: 0;
 }
 
-main .date button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: #007bff;
-    color: #fff;
-    border-radius: 1rem;
-    cursor: pointer;
-    margin-left: 5px;
-}
-
-main .date button:hover {
-    background-color: #0056b3;
-    transition: 0.4s ease-in;
-}
-
-main .insights {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.6rem;
-}
-
-main .insights > div {
-    background-color: #fff;
-    padding: 1.8rem;
-    border-radius: 2rem;
-    margin-top: 1rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    transition: all 0.3s ease;
-}
-
-main .insights > div:hover {
-    box-shadow: none;
-}
-
-main .insights > div span {
-    background: coral;
-    padding: 0.5rem;
+.right .profile .profile-photo img {
+    width: 2.8rem;
+    height: 2.8rem;
     border-radius: 50%;
-    color: #fff;
-    font-size: 2rem;
+    overflow: hidden;
 }
 
-main .insights > div.expenses span {
-    background: #ff7782;
+/***recent update */
+.right .recent_updates {
+    margin-top: 1rem;
+    margin-left: -20px;
 }
-
-main .insights > div.income span {
-    background: #41f1b6;
-}
-
-main .insights > div .middle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-main .insights > div .middle h1 {
-    font-size: 1.6rem;
-}
-
-main h1 {
+.right .recent_updates h2 {
     color: #363949;
+    margin-bottom: 14px;
 }
 
-main .insights h1 {
-    color: #363949;
-}
-
-main .insights h3 {
-    color: #363949;
-}
-
-main .insights p {
-    color: #363949;
-}
-
-main .insights .progress {
-    position: relative;
-    height: 68px;
-    width: 68px;
-    border-radius: 50px;
-}
-
-main .insights svg {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-main .insights svg circle.background-circle {
-    fill: none;
-    stroke: #e4e9f7;
-    stroke-width: 6;
-}
-
-main .insights svg circle.sales-circle {
-    fill: none;
-    stroke: #7380ec;
-    stroke-width: 5;
-    stroke-dasharray: 188.4;
-    stroke-dashoffset: 37.68;
-    transform: rotate(-90deg);
-    transform-origin: 34.5px 40px;
-}
-
-main .insights svg circle.expenses-circle {
-    fill: none;
-    stroke: #ff7782;
-    stroke-width: 5;
-    stroke-dasharray: 188.4;
-    stroke-dashoffset: 37.68;
-    transform: rotate(-90deg);
-    transform-origin: 34.5px 40px;
-}
-
-main .insights svg circle.income-circle {
-    fill: none;
-    stroke: #41f1b6;
-    stroke-width: 5;
-    stroke-dasharray: 188.4;
-    stroke-dashoffset: 37.68;
-    transform: rotate(-90deg);
-    transform-origin: 34.5px 40px;
-}
-
-main .insights .progress .number {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.2rem;
-    color: #363949;
-}
-
-main .recent_orders h1 {
-    margin: 18px;
-    color: #363949;
-}
-
-main .recent_orders table {
+.right .recent_updates .updates {
     background-color: #fff;
-    width: 100%;
-    border-radius: 2rem;
     padding: 1.8rem;
-    text-align: center;
+    border-radius: 2rem;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     transition: all 0.3s ease;
-    color: #363949;
 }
 
-main .recent_orders table:hover {
+.right .recent_updates .updates:hover {
     box-shadow: none;
 }
 
-main table thead tr th {
-    padding: 15px;
+.right .recent_updates .update {
+    display: grid;
+    grid-template-columns: 2.6rem auto;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
-main table tbody tr {
-    height: 3.8rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
-}
-
-main table tbody td {
-    height: 3.8rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
-}
-
-main table tbody tr:last-child td {
-    border: none;
-}
-
-main .recent_orders a {
-    text-align: center;
-    display: block;
-    margin: 1rem;
-}
+/**********
+media query
+********** */
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
