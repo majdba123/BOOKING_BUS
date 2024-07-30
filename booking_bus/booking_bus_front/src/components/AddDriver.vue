@@ -1,15 +1,16 @@
 <template>
     <div class="containerd">
-        <div class="navd">
+        <!-- Header with buttons -->
+        <header class="navd">
             <button class="nav-btnd">Add Driver</button>
             <button class="nav-btnd">Edit Driver</button>
             <button class="nav-btnd">Button 3</button>
             <button class="nav-btnd">Button 4</button>
-        </div>
+        </header>
 
         <div class="form-containerd">
             <form @submit.prevent="handleSubmit">
-                <div class="form-group">
+                <div class="form-groupd">
                     <label for="driverName">Driver Name</label>
                     <input
                         type="text"
@@ -28,7 +29,7 @@
                     />
                 </div>
                 <div class="form-groupd">
-                    <label for="driverLicense">Driver Nmber</label>
+                    <label for="driverLicense">Driver Number</label>
                     <input
                         type="text"
                         id="driverLicense"
@@ -80,7 +81,7 @@ html {
 
 .containerd {
     width: 100%;
-    margin: 0 auto;
+    margin-left: 20px;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -94,7 +95,11 @@ html {
     justify-content: space-between;
     margin-bottom: 20px;
     width: 100%;
-    margin-top: 20pxs;
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
 }
 
 .nav-btnd {
@@ -124,7 +129,7 @@ html {
 
 .nav-btnd:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 15px#7d8da1;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transition: 0.3s ease;
 }
 
@@ -165,10 +170,12 @@ input {
 input:focus {
     border-color: #007bff;
 }
+
 .submit-btnnd {
     display: flex;
     justify-content: center;
 }
+
 .submit-btnd {
     padding: 10px 20px;
     border: none;

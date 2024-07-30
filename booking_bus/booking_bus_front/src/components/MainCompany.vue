@@ -1,16 +1,6 @@
 <template>
     <main>
-        <h1>{{ x }}</h1>
-        <div class="top-bar">
-            <div class="date">
-                <input
-                    type="text"
-                    placeholder="Search In..."
-                    aria-label="Search"
-                />
-                <button>Search</button>
-            </div>
-        </div>
+        <HeaderCompany />
         <StatisticsCompany />
         <!-- End insights -->
 
@@ -72,6 +62,8 @@
 <script>
 import store from "@/store";
 import StatisticsCompany from "./StatisticsCompany.vue";
+import HeaderCompany from "./HeaderCompany.vue";
+
 export default {
     name: "MainCompany",
     data() {
@@ -105,7 +97,7 @@ export default {
         },
     },
     mounted() {},
-    components: { StatisticsCompany },
+    components: { StatisticsCompany, HeaderCompany },
 };
 </script>
 <style>
