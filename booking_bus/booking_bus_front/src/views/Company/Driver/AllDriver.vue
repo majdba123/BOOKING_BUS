@@ -20,11 +20,11 @@
                 <SidebarCompany />
                 <!-- End sidebar -->
             </aside>
-
+            <div>
+                <HeaderCompany />
+                <AddDriver />
+            </div>
             <!-- Main section start -->
-            <AddDriver />
-            <!-- Main section end -->
-
             <!-- Right section start -->
             <div class="right">
                 <!--start top-->
@@ -92,6 +92,7 @@
 
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
+import HeaderCompany from "@/components/HeaderCompany.vue";
 import AddDriver from "@/components/AddDriver.vue";
 
 export default {
@@ -123,7 +124,7 @@ export default {
         },
     },
 
-    components: { SidebarCompany, AddDriver },
+    components: { SidebarCompany, HeaderCompany, AddDriver },
 };
 </script>
 
