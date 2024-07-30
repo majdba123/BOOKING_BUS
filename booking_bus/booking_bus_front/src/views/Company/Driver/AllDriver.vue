@@ -1,93 +1,30 @@
 <template>
-    <body>
-        <div class="container">
-            <!-- Aside section start -->
-            <aside ref="sideMenu">
-                <!-- Start top -->
-                <div class="top">
-                    <div class="logo">
-                        <h2>T<span class="danger">RAVEL</span></h2>
-                    </div>
-                    <div class="close" @click="closeMenu">
-                        <span class="material-icons" aria-label="Close"
-                            >close</span
-                        >
-                    </div>
+    <div class="container">
+        <!-- Aside section start -->
+        <aside ref="sideMenu">
+            <!-- Start top -->
+            <div class="top">
+                <div class="logo">
+                    <h2>T<span class="danger">RAVEL</span></h2>
                 </div>
-                <!-- End top -->
-
-                <!-- Start sidebar -->
-                <SidebarCompany />
-                <!-- End sidebar -->
-            </aside>
-
-            <!-- Main section start -->
-            <AddDriver />
-            <!-- Main section end -->
-
-            <!-- Right section start -->
-            <div class="right">
-                <!--start top-->
-                <div class="top">
-                    <button id="menu_bar" @click="openMenu">
-                        <span class="material-icons">menu</span>
-                    </button>
-                    <div
-                        class="theme-toggler"
-                        ref="themeToggler"
-                        @click="toggleTheme"
-                    >
-                        <span class="material-icons active">light_mode</span>
-                        <span class="material-icons">dark_mode</span>
-                    </div>
-                    <div class="profile">
-                        <div class="info">
-                            <p><b>Babar</b></p>
-                            <p>Admin</p>
-                        </div>
-                        <div class="profile-photo">
-                            <img src="@/assets/busss.png" alt="Profile" />
-                        </div>
-                    </div>
+                <div class="close" @click="closeMenu">
+                    <span class="material-icons" aria-label="Close">close</span>
                 </div>
-                <!--end top-->
-
-                <!--start recent_updates-->
-
-                <div class="recent_updates">
-                    <h2>Name Companys</h2>
-                    <div class="updates">
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--end recent_updates-->
             </div>
-            <!-- Right section end -->
+            <!-- End top -->
+            <!-- Start sidebar -->
+            <SidebarCompany />
+            <!-- End sidebar -->
+        </aside>
+        <!-- Main section start -->
+        <div class="main-content">
+            <AddDriver />
         </div>
-    </body>
+        <!-- Main section end -->
+        <!-- Right section start -->
+
+        <!-- Right section end -->
+    </div>
 </template>
 
 <script>
@@ -96,7 +33,7 @@ import AddDriver from "@/components/AddDriver.vue";
 
 export default {
     name: "AllDriver",
-
+    components: { SidebarCompany, AddDriver },
     methods: {
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -122,8 +59,6 @@ export default {
             }
         },
     },
-
-    components: { SidebarCompany, AddDriver },
 };
 </script>
 
@@ -190,6 +125,8 @@ body {
     gap: 1.8rem;
     grid-template-columns: 14rem auto 14rem;
     margin-left: 0;
+    background: url("@/assets/driver.jpg") no-repeat center center;
+    background-size: cover;
 }
 
 a {
@@ -273,92 +210,8 @@ aside .logo {
 /*
         start right side
 ***************************** */
-.right {
-    margin-top: 1.4rem;
-    padding: 1rem;
-    background-color: #f6f6f9;
-}
-
-.right .top {
-    display: flex;
-    justify-content: space-between;
-    gap: 2rem;
-}
-
-.right .top button {
-    display: none;
-}
-
-.right .theme-toggler {
-    background-color: #fff;
-    display: flex;
-    justify-content: space-between;
-    height: 1.6rem;
-    width: 4.2rem;
-    cursor: pointer;
-    border-radius: 10px;
-}
-
-.right .theme-toggler span {
-    font-size: 1.2rem;
-    width: 50%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.right .theme-toggler span.active {
-    background-color: #7380ec;
-    color: #fff;
-    border-radius: 10px;
-}
-
-.right .profile {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.right .profile .info p {
-    margin: 0;
-}
-
-.right .profile .profile-photo img {
-    width: 2.8rem;
-    height: 2.8rem;
-    border-radius: 50%;
-    overflow: hidden;
-}
 
 /***recent update */
-.right .recent_updates {
-    margin-top: 1rem;
-    margin-left: -20px;
-}
-.right .recent_updates h2 {
-    color: #363949;
-    margin-bottom: 14px;
-}
-
-.right .recent_updates .updates {
-    background-color: #fff;
-    padding: 1.8rem;
-    border-radius: 2rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    transition: all 0.3s ease;
-}
-
-.right .recent_updates .updates:hover {
-    box-shadow: none;
-}
-
-.right .recent_updates .update {
-    display: grid;
-    grid-template-columns: 2.6rem auto;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
 
 /**********
 media query
