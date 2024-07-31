@@ -12,6 +12,7 @@
     "animejs": "^3.2.2",
     "axios": "^1.6.8",
     "bootstrap-vue": "^2.23.1",
+    "chart.js": "^4.4.3",
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",

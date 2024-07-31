@@ -372,15 +372,13 @@ small {
 .recent_orders table {
     background-color: #fff;
     width: 100%;
-    border-radius: 2rem;
-    padding: 1.8rem;
+    border-radius: 1rem;
+    padding: 1rem;
     text-align: center;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    transition: all 0.3s ease;
+    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
     color: #363949;
-    max-width: 100%;
-    margin: auto;
-    min-width: 800px;
+    max-width: none;
+    font-size: 0.85rem;
 }
 
 .recent_orders table:hover {
@@ -388,17 +386,18 @@ small {
 }
 
 table thead tr th {
-    padding: 15px;
+    padding: 10px;
+    font-size: 0.9rem;
 }
 
 table tbody tr {
-    height: 3.8rem;
+    height: 3rem;
     border-bottom: 1px solid #fff;
     color: #677483;
 }
 
 table tbody td {
-    height: 3.8rem;
+    height: 3rem;
     border-bottom: 1px solid #363949;
     color: #677483;
 }
@@ -411,22 +410,24 @@ table tbody tr:last-child td {
     text-align: center;
     display: block;
     margin: 1rem;
+    font-size: 0.85rem;
 }
 
 /* Select styling */
 select {
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #7380ec;
-    border-radius: 5px;
+    border-radius: 4px;
     background-color: #fff;
     color: #363949;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     outline: none;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 select:focus {
     border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 /* Delete button styling */

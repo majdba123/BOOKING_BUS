@@ -61,6 +61,12 @@
             </div>
             <!--end top-->
 
+            <!--start driver_chart-->
+            <div class="driver_chart">
+                <h2>Driver Workload Status</h2>
+                <DriverChart :chartData="chartData" />
+            </div>
+
             <!--start driver_status-->
             <div class="driver_status">
                 <h2>Driver Status</h2>
@@ -87,22 +93,40 @@
 import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddDriver from "@/components/AddDriver.vue";
+import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 
 export default {
     name: "AllDriver",
-    components: { SidebarCompany, AddDriver },
+    components: { SidebarCompany, AddDriver, DriverChart },
     data() {
         return {
             x: store.state.x,
             searchQuery: "",
             Driver: [],
             Bus: [],
+            chartData: {
+                labels: ["Under Pressure", "Not Working"],
+                datasets: [
+                    {
+                        label: "Driver Workload Status",
+                        data: [60, 40],
+                        backgroundColor: [
+                            "rgba(255, 99, 132, 0.2)",
+                            "rgba(75, 192, 192, 0.2)",
+                        ],
+                        borderColor: [
+                            "rgba(255, 99, 132, 1)",
+                            "rgba(75, 192, 192, 1)",
+                        ],
+                        borderWidth: 1,
+                    },
+                ],
+            },
         };
     },
     watch: {
         searchQuery(newQuery) {
-            store.state.searchQuery == newQuery;
             store.commit("updateSearchQuery", newQuery);
             console.log(store.state.searchQuery);
         },
@@ -138,7 +162,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "delete",
-                url: "http://127.0.0.1:8000/api/company/delete_driver/" + x,
+                url: `http://127.0.0.1:8000/api/company/delete_driver/${x}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
@@ -242,7 +266,7 @@ body {
     font-size: 0.88rem;
     user-select: none;
     background: #f6f6f9;
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
+    overflow-y: auto;
 }
 
 .container {
@@ -251,8 +275,8 @@ body {
     gap: 1.8rem;
     grid-template-columns: 14rem auto 19rem;
     margin-left: 0;
-    height: 100vh; /* تأكد من أن الحاوية تأخذ كامل ارتفاع النافذة */
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
+    height: 100vh;
+    overflow-y: auto;
 }
 
 a {
@@ -319,7 +343,6 @@ aside {
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 aside .top {
@@ -336,14 +359,13 @@ aside .logo {
 
 /* Main section styles */
 /*
-        start right side
-***************************** */
+          start right side
+  ***************************** */
 .right {
     margin-top: 1.4rem;
     padding: 1rem;
     background-color: #f6f6f9;
     grid-column: span 1;
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 .right .top {
@@ -405,7 +427,6 @@ aside .logo {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح إذا لزم الأمر */
 }
 
 .right .driver_status h2 {
@@ -427,16 +448,31 @@ aside .logo {
 
 .right .driver_status .status .info {
     margin-left: 10px;
-    align-items: ;
+    align-items: center;
 }
 
 .right .driver_status .status .info p {
     margin: 10px;
 }
+
 .p {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.driver_chart {
+    margin-top: 3rem;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.driver_chart h2 {
+    color: #363949;
+    margin-bottom: 14px;
+    margin-left: 42px;
 }
 
 .table-container {
@@ -447,15 +483,14 @@ aside .logo {
 .recent_orders table {
     background-color: #fff;
     width: 100%;
-    border-radius: 2rem;
-    padding: 1.8rem;
+    border-radius: 1rem; /* Reduced border-radius */
+    padding: 1rem; /* Reduced padding */
     text-align: center;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18); /* Reduced shadow */
     transition: all 0.3s ease;
     color: #363949;
-    max-width: 100%;
-    margin: auto;
-    min-width: 800px;
+    max-width: none; /* Adjusted to fit the container */
+    font-size: 0.85rem; /* Reduced font size */
 }
 
 .recent_orders table:hover {
@@ -463,17 +498,18 @@ aside .logo {
 }
 
 table thead tr th {
-    padding: 15px;
+    padding: 10px; /* Reduced padding */
+    font-size: 0.9rem; /* Adjusted font size */
 }
 
 table tbody tr {
-    height: 3.8rem;
+    height: 3rem; /* Reduced row height */
     border-bottom: 1px solid #fff;
     color: #677483;
 }
 
 table tbody td {
-    height: 3.8rem;
+    height: 3rem; /* Reduced cell height */
     border-bottom: 1px solid #363949;
     color: #677483;
 }
@@ -485,7 +521,8 @@ table tbody tr:last-child td {
 .recent_orders a {
     text-align: center;
     display: block;
-    margin: 1rem;
+    margin: 1rem; /* Adjusted margin */
+    font-size: 0.85rem; /* Reduced font size */
 }
 
 /* Select styling */
@@ -521,8 +558,8 @@ select:focus {
 }
 
 /**********
-media query
-********** */
+  media query
+  ********** */
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
