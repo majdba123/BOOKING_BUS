@@ -242,7 +242,7 @@ body {
     font-size: 0.88rem;
     user-select: none;
     background: #f6f6f9;
-    overflow: scroll;
+    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 .container {
@@ -251,6 +251,8 @@ body {
     gap: 1.8rem;
     grid-template-columns: 14rem auto 19rem;
     margin-left: 0;
+    height: 100vh; /* تأكد من أن الحاوية تأخذ كامل ارتفاع النافذة */
+    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 a {
@@ -317,6 +319,7 @@ aside {
     display: flex;
     flex-direction: column;
     padding: 1rem;
+    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 aside .top {
@@ -340,12 +343,14 @@ aside .logo {
     padding: 1rem;
     background-color: #f6f6f9;
     grid-column: span 1;
+    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 .right .top {
     display: flex;
     justify-content: space-between;
     gap: 2rem;
+    margin-left: 15px;
 }
 
 .right .top button {
@@ -400,6 +405,7 @@ aside .logo {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح إذا لزم الأمر */
 }
 
 .right .driver_status h2 {

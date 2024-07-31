@@ -174,19 +174,20 @@ body {
     font-family: "Poppins", sans-serif;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     font-size: 0.88rem;
     user-select: none;
-    overflow-x: hidden;
     background: #f6f6f9;
+    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 .container {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 14rem;
+    grid-template-columns: 14rem auto 19rem;
     margin-left: 0;
+    height: 100vh; /* تأكد من أن الحاوية تأخذ كامل ارتفاع النافذة */
+    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 a {
@@ -274,6 +275,8 @@ aside .logo {
     margin-top: 1.4rem;
     padding: 1rem;
     background-color: #f6f6f9;
+    grid-column: span 1;
+    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 .right .top {
