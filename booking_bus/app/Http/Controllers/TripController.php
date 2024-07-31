@@ -349,7 +349,7 @@ class TripController extends Controller
 
     public function index_user()
     {
-        $trips = Trip::where('status', 'padding')->with('bus_trip')->get();
+        $trips = Trip::where('status', ['padding' ,'finished_going'])->with('bus_trip')->get();
 
         $data = [];
         foreach ($trips as $trip) {
