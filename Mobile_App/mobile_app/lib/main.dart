@@ -47,7 +47,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => TripuserProvider()),
         ChangeNotifierProvider(create: (_) => PrivateTripuserProvider()),
         ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),
-        ChangeNotifierProvider(create: (_) => WalletProvider()),
+        ChangeNotifierProvider(create: (_) => WalletUserProvider()),
       ],
       child: MyApp(),
     ),
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
             //     // color: Color.fromARGB(255, 116, 136, 146),
             //   ),
             ),
-        home: AddFundsPage()
+        home: WelcomePage()
 
         //  ,
         );

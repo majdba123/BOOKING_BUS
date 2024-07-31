@@ -8,17 +8,19 @@ class UserProfile {
   Future<void> chargeBalance(String accessToken, File image, int points) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('$baseUrl/charge_balance'),
+      Uri.parse('$baseUrl/charge_blance'),
     );
     request.headers['Authorization'] = 'Bearer $accessToken';
     request.fields['point'] = points.toString();
     request.files.add(await http.MultipartFile.fromPath('image', image.path));
 
     var response = await request.send();
-
+    print(response.statusCode);
+    // print(response.body);
     if (response.statusCode == 200) {
       var responseBody = await response.stream.bytesToString();
       var jsonResponse = jsonDecode(responseBody);
+      print(jsonResponse);
       return jsonResponse;
     } else {
       throw Exception('Failed to charge balance');

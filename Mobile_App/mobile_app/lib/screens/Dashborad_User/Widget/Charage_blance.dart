@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile_app/Provider/user/Wallet_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
-import 'package:mobile_app/Provider/user/wallet_provider.dart';
+import 'package:mobile_app/Provider/user/Wallet_provider.dart';
 import 'package:mobile_app/colors.dart';
 
 class AddFundsPage extends StatefulWidget {
@@ -20,7 +21,6 @@ class _AddFundsPageState extends State<AddFundsPage> {
     try {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
-
       setState(() {
         if (pickedFile != null) {
           _selectedImage = File(pickedFile.path);
@@ -39,7 +39,7 @@ class _AddFundsPageState extends State<AddFundsPage> {
       final accessToken =
           Provider.of<AuthProvider>(context, listen: false).accessToken;
       try {
-        await Provider.of<WalletProvider>(context, listen: false)
+        await Provider.of<WalletUserProvider>(context, listen: false)
             .chargeBalance(accessToken, _selectedImage!, points);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Balance charged successfully')),
@@ -115,9 +115,11 @@ class _AddFundsPageState extends State<AddFundsPage> {
                   },
                 ),
                 SizedBox(height: 20),
-                Consumer<WalletProvider>(
-                  builder: (context, walletProvider, child) {
-                    return walletProvider.isLoading
+                Selector<WalletUserProvider, bool>(
+                  selector: (_, WalletUserProvider) =>
+                      WalletUserProvider.isSLoading,
+                  builder: (context, isLoading, child) {
+                    return isLoading
                         ? CircularProgressIndicator()
                         : ElevatedButton(
                             style: ElevatedButton.styleFrom(
