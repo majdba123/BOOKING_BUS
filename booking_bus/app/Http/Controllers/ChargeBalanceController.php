@@ -173,9 +173,17 @@ class ChargeBalanceController extends Controller
         if (!$chargeBalance) {
             return response()->json(['error' => 'Not found'], 404);
         }
+
         $chargeBalance->status = 'completed';
         $chargeBalance->save();
-        return response()->json(['message' => 'Charge balance status updated to completed'], 200);
+
+        $user = $chargeBalance->user; // assuming you have a user relationship in Charge_Balance model
+        $points = $chargeBalance->point; // assuming you have a points attribute in Charge_Balance model
+
+        $user->point += $points; // add the points to the user's points
+        $user->save();
+
+        return response()->json(['message' => 'Charge balance status updated to completed and points added to user'], 200);
     }
 
     public function cancelled($id)
