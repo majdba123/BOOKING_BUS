@@ -13,6 +13,7 @@
         </div>
     </main>
 </template>
+
 <script>
 import store from "@/store";
 export default {
@@ -51,6 +52,7 @@ export default {
     components: {},
 };
 </script>
+
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -145,14 +147,6 @@ small {
     font-size: 0.75rem;
 }
 
-input {
-    background-color: transparent;
-    border: 0;
-    outline: 0;
-    color: #363949;
-    width: 930px !important;
-}
-
 .top-bar {
     display: flex;
     gap: 1rem;
@@ -160,11 +154,22 @@ input {
 }
 
 .date {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     background-color: #fff;
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 9px;
+}
+
+.date input {
+    flex-grow: 1;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: #363949;
+    padding: 0 10px;
+    max-width: 400px; /* Adjust the max-width as needed */
 }
 
 .date button {

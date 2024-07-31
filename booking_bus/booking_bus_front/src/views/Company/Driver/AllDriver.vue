@@ -61,21 +61,23 @@
             </div>
             <!--end top-->
 
-            <!--start recent_updates-->
-            <div class="recent_updates">
-                <h2>Name Companys</h2>
-                <div class="updates">
-                    <div class="update">
-                        <div class="profile-photo">
-                            <img src="@/assets/busss.png" alt="Profile" />
+            <!--start driver_status-->
+            <div class="driver_status">
+                <h2>Driver Status</h2>
+                <div class="statuses">
+                    <div class="status">
+                        <div class="info">
+                            <p><b>Name:</b></p>
+                            <p class="p">ali mohamad</p>
                         </div>
-                        <div class="message">
-                            <p><b>Babar</b> Received his order</p>
+                        <div class="info">
+                            <p><b>Status:</b></p>
+                            <p class="p">موجود</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--end recent_updates-->
+            <!--end driver_status-->
         </div>
         <!-- Right section end -->
     </div>
@@ -237,18 +239,17 @@ body {
     font-family: "Poppins", sans-serif;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     font-size: 0.88rem;
     user-select: none;
-    overflow-x: hidden;
     background: #f6f6f9;
+    overflow: scroll;
 }
 
 .container {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 14rem;
+    grid-template-columns: 14rem auto 19rem;
     margin-left: 0;
 }
 
@@ -259,6 +260,7 @@ a {
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
+    margin-top: 20px;
 }
 
 h2 {
@@ -337,6 +339,7 @@ aside .logo {
     margin-top: 1.4rem;
     padding: 1rem;
     background-color: #f6f6f9;
+    grid-column: span 1;
 }
 
 .right .top {
@@ -391,40 +394,43 @@ aside .logo {
     overflow: hidden;
 }
 
-/***recent update */
-.right .recent_updates {
-    margin-top: 1rem;
-    margin-left: -20px;
+.right .driver_status {
+    margin-top: 4rem;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
-.right .recent_updates h2 {
+
+.right .driver_status h2 {
     color: #363949;
     margin-bottom: 14px;
+    margin-left: 42px;
 }
 
-.right .recent_updates .updates {
-    background-color: #fff;
-    padding: 1.8rem;
-    border-radius: 2rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    transition: all 0.3s ease;
+.right .driver_status .statuses {
+    padding: 1rem;
 }
 
-.right .recent_updates .updates:hover {
-    box-shadow: none;
+.right .driver_status .status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.right .recent_updates .update {
-    display: grid;
-    grid-template-columns: 2.6rem auto;
-    gap: 1rem;
-    margin-bottom: 1rem;
+.right .driver_status .status .info {
+    margin-left: 10px;
+    align-items: ;
 }
 
-/* تنسيق الجدول */
-.recent_orders {
-    width: 100%;
-    overflow-x: auto;
-    margin-top: 20px;
+.right .driver_status .status .info p {
+    margin: 10px;
+}
+.p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .table-container {
@@ -514,7 +520,7 @@ media query
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
-        grid-template-columns: 7rem auto 14rem;
+        grid-template-columns: 7rem auto 18rem;
     }
     aside .sidebar h3 {
         display: none;
@@ -661,18 +667,11 @@ media query
     }
 }
 
-input {
-    background-color: transparent;
-    border: 0;
-    outline: 0;
-    color: #363949;
-    width: 930px !important;
-}
-
 .top-bar {
     display: flex;
     gap: 1rem;
     align-items: center;
+    margin-top: 10px;
 }
 
 .date {
@@ -681,6 +680,10 @@ input {
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 9px;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+.date:hover {
+    box-shadow: none;
 }
 
 .date button {
@@ -700,7 +703,18 @@ input {
 
 /* Responsive Design */
 @media screen and (max-width: 1200px) {
-    input {
+    .date {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 5px;
+    }
+
+    .date input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .date button {
         width: 100%;
     }
 }
@@ -710,22 +724,21 @@ input {
         width: 100%;
         grid-template-columns: repeat(1, 1fr);
     }
-
-    input {
-        width: auto !important;
-        max-width: 100%;
-        min-width: 200px;
+    .date {
+        flex-direction: row;
+        align-items: center;
+        padding: 5px;
+        gap: 5px;
     }
 
-    .date {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
+    .date input {
+        width: 100%;
+        font-size: 0.88rem;
     }
 
     .date button {
-        margin-top: 10px;
-        width: 100%;
+        font-size: 0.88rem;
+        padding: 0.5rem 1rem;
     }
 }
 

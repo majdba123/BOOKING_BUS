@@ -303,10 +303,8 @@ body {
     font-family: "Poppins", sans-serif;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     font-size: 0.88rem;
     user-select: none;
-    overflow-x: hidden;
     background: #f6f6f9;
 }
 
@@ -534,21 +532,23 @@ select:focus {
 
 .navd {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
     margin-top: 20px;
     background-color: #fff;
-    padding: 10px 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+    width: 100%;
+    max-width: 490px;
 }
 
 .nav-btnd {
     padding: 10px 20px;
+    margin: 10px;
     border: none;
     border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #111e88 100%);
+    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
     color: white;
     cursor: pointer;
     font-size: 12px;
@@ -582,11 +582,14 @@ select:focus {
     flex-direction: column;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
     margin-top: 50px;
+}
+.form-containerd:hover {
+    box-shadow: none;
 }
 
 .form-groupd {
