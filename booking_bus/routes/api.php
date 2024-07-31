@@ -284,6 +284,8 @@ Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function (
     Route::post('/store_quastion', [InquiresController::class, 'store']);
     Route::delete('/delete_inquires/{inquires_id}', [InquiresController::class, 'destroy']);
 
+    Route::get('/get_all_company', [UserApiController::class, 'get_all_company']);
+    Route::get('/get_all_driver', [UserApiController::class, 'get_all_driver']);
 
 
 
