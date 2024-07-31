@@ -1,9 +1,13 @@
 import { createStore } from "vuex";
 
 export default createStore({
-    state: { x: "Dashboard" },
+    state: { x: "Dashboard", Driver: {}, searchQuery: "" },
     getters: {},
-    mutations: {},
+    mutations: {
+        updateSearchQuery(state, newQuery) {
+            state.searchQuery = newQuery;
+        },
+    },
     actions: {},
     modules: {},
 });

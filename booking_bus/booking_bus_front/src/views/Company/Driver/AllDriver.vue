@@ -1,103 +1,110 @@
 <template>
-    <body>
-        <div class="container">
-            <!-- Aside section start -->
-            <aside ref="sideMenu">
-                <!-- Start top -->
-                <div class="top">
-                    <div class="logo">
-                        <h2>T<span class="danger">RAVEL</span></h2>
-                    </div>
-                    <div class="close" @click="closeMenu">
-                        <span class="material-icons" aria-label="Close"
-                            >close</span
-                        >
+    <div class="container">
+        <!-- Aside section start -->
+        <aside ref="sideMenu">
+            <!-- Start top -->
+            <div class="top">
+                <div class="logo">
+                    <h2>T<span class="danger">RAVEL</span></h2>
+                </div>
+                <div class="close" @click="closeMenu">
+                    <span class="material-icons" aria-label="Close">close</span>
+                </div>
+            </div>
+            <!-- End top -->
+
+            <!-- Start sidebar -->
+            <SidebarCompany />
+            <!-- End sidebar -->
+        </aside>
+        <div class="main-content">
+            <main>
+                <h1>{{ x }}</h1>
+                <div class="top-bar">
+                    <div class="date">
+                        <input
+                            type="text"
+                            placeholder="Search In..."
+                            aria-label="Search"
+                            v-model="searchQuery"
+                        />
+                        <button @click="search">Search</button>
                     </div>
                 </div>
-                <!-- End top -->
-
-                <!-- Start sidebar -->
-                <SidebarCompany />
-                <!-- End sidebar -->
-            </aside>
-            <div>
-                <HeaderCompany />
-                <AddDriver />
-            </div>
-            <!-- Main section start -->
-            <!-- Right section start -->
-            <div class="right">
-                <!--start top-->
-                <div class="top">
-                    <button id="menu_bar" @click="openMenu">
-                        <span class="material-icons">menu</span>
-                    </button>
-                    <div
-                        class="theme-toggler"
-                        ref="themeToggler"
-                        @click="toggleTheme"
-                    >
-                        <span class="material-icons active">light_mode</span>
-                        <span class="material-icons">dark_mode</span>
+                <AddDriver ref="addDriver" />
+            </main>
+        </div>
+        <!-- Right section start -->
+        <div class="right">
+            <!--start top-->
+            <div class="top">
+                <button id="menu_bar" @click="openMenu">
+                    <span class="material-icons">menu</span>
+                </button>
+                <div
+                    class="theme-toggler"
+                    ref="themeToggler"
+                    @click="toggleTheme"
+                >
+                    <span class="material-icons active">light_mode</span>
+                    <span class="material-icons">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p><b>Babar</b></p>
+                        <p>Admin</p>
                     </div>
-                    <div class="profile">
-                        <div class="info">
-                            <p><b>Babar</b></p>
-                            <p>Admin</p>
-                        </div>
+                    <div class="profile-photo">
+                        <img src="@/assets/busss.png" alt="Profile" />
+                    </div>
+                </div>
+            </div>
+            <!--end top-->
+
+            <!--start recent_updates-->
+            <div class="recent_updates">
+                <h2>Name Companys</h2>
+                <div class="updates">
+                    <div class="update">
                         <div class="profile-photo">
                             <img src="@/assets/busss.png" alt="Profile" />
                         </div>
-                    </div>
-                </div>
-                <!--end top-->
-
-                <!--start recent_updates-->
-
-                <div class="recent_updates">
-                    <h2>Name Companys</h2>
-                    <div class="updates">
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
+                        <div class="message">
+                            <p><b>Babar</b> Received his order</p>
                         </div>
                     </div>
                 </div>
-                <!--end recent_updates-->
             </div>
-            <!-- Right section end -->
+            <!--end recent_updates-->
         </div>
-    </body>
+        <!-- Right section end -->
+    </div>
 </template>
 
 <script>
+import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import HeaderCompany from "@/components/HeaderCompany.vue";
 import AddDriver from "@/components/AddDriver.vue";
+import store from "@/store";
 
 export default {
     name: "AllDriver",
-
+    components: { SidebarCompany, AddDriver },
+    data() {
+        return {
+            x: store.state.x,
+            searchQuery: "",
+            Driver: [],
+            Bus: [],
+        };
+    },
+    watch: {
+        searchQuery(newQuery) {
+            store.state.searchQuery == newQuery;
+            store.commit("updateSearchQuery", newQuery);
+            console.log(store.state.searchQuery);
+        },
+    },
     methods: {
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -122,9 +129,61 @@ export default {
                     .classList.toggle("active");
             }
         },
-    },
+        search() {
+            // Search functionality can be handled here
+        },
+        DeleteDriver(x) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "delete",
+                url: "http://127.0.0.1:8000/api/company/delete_driver/" + x,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then(() => {
+                    window.alert("Deleted Complete");
+                    this.AllDriver();
+                })
+                .catch(function (error) {
+                    window.alert("Error get Driver");
+                    console.error(x);
+                    console.error(error);
+                });
+        },
+        fetchBus() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/company/all_bus",
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.Bus = response.data;
+                })
+                .catch(function (error) {
+                    window.alert("Error get paths");
+                    console.error(error);
+                });
+        },
+        SelectDriver(event, userId) {
+            const busId = event.target.value;
+            const access_token = window.localStorage.getItem("access_token");
 
-    components: { SidebarCompany, HeaderCompany, AddDriver },
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
+                data: { driver_id: userId },
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then(() => {
+                    window.alert("Selected Complete");
+                    this.AllDriver();
+                })
+                .catch(function (error) {
+                    window.alert("Error getting Bus");
+                    console.error(error);
+                });
+        },
+    },
 };
 </script>
 
@@ -361,6 +420,94 @@ aside .logo {
     margin-bottom: 1rem;
 }
 
+/* تنسيق الجدول */
+.recent_orders {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.recent_orders table {
+    background-color: #fff;
+    width: 100%;
+    border-radius: 2rem;
+    padding: 1.8rem;
+    text-align: center;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    transition: all 0.3s ease;
+    color: #363949;
+    max-width: 100%;
+    margin: auto;
+    min-width: 800px;
+}
+
+.recent_orders table:hover {
+    box-shadow: none;
+}
+
+table thead tr th {
+    padding: 15px;
+}
+
+table tbody tr {
+    height: 3.8rem;
+    border-bottom: 1px solid #fff;
+    color: #677483;
+}
+
+table tbody td {
+    height: 3.8rem;
+    border-bottom: 1px solid #363949;
+    color: #677483;
+}
+
+table tbody tr:last-child td {
+    border: none;
+}
+
+.recent_orders a {
+    text-align: center;
+    display: block;
+    margin: 1rem;
+}
+
+/* Select styling */
+select {
+    padding: 10px;
+    border: 1px solid #7380ec;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #363949;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+select:focus {
+    border-color: #007bff;
+}
+
+/* Delete button styling */
+.delete-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid #ff7782;
+    background-color: #fff;
+    color: #ff7782;
+}
+
+.delete-btn:hover {
+    background-color: #ff7782;
+    color: #fff;
+}
+
 /**********
 media query
 ********** */
@@ -511,6 +658,90 @@ media query
         background-color: #7380ec;
         color: #fff;
         border-radius: 10px;
+    }
+}
+
+input {
+    background-color: transparent;
+    border: 0;
+    outline: 0;
+    color: #363949;
+    width: 930px !important;
+}
+
+.top-bar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.date {
+    display: inline-block;
+    background-color: #fff;
+    border-radius: 0.9rem;
+    padding: 9px;
+    margin-top: 9px;
+}
+
+.date button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 1rem;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.date button:hover {
+    background-color: #0056b3;
+    transition: 0.4s ease-in;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    input {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        width: 100%;
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    input {
+        width: auto !important;
+        max-width: 100%;
+        min-width: 200px;
+    }
+
+    .date {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date button {
+        margin-top: 10px;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    input {
+        width: 100%;
+        font-size: 0.75rem;
+    }
+
+    .date {
+        padding: 5px;
+    }
+
+    .date button {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
     }
 }
 </style>

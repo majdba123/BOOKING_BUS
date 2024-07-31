@@ -1,56 +1,92 @@
 <template>
     <div class="sidebar">
-        <RouterLink to="BookingLogin" @click="selectOption('Dashboard')">
+        <RouterLink
+            to="BookingLogin"
+            @click="selectOption('Dashboard')"
+            :class="{ active: selectedOption === 'Dashboard' }"
+        >
             <span class="material-icons" aria-label="Dashboard">grid_view</span>
             <h3>Dashboard</h3>
         </RouterLink>
 
         <RouterLink
             to="AllDriver2"
-            class="active"
             @click="selectOption('Driver')"
+            :class="{ active: selectedOption === 'Driver' }"
         >
             <span class="material-icons" aria-label="Customers"
                 >person_outline</span
             >
             <h3>Driver</h3>
         </RouterLink>
-        <a @click="selectOption('Trip')">
+
+        <a
+            @click="selectOption('Trip')"
+            :class="{ active: selectedOption === 'Trip' }"
+        >
             <span class="material-icons" aria-label="Analytics">insights</span>
             <h3>Trip</h3>
         </a>
-        <a @click="selectOption('Path')">
+
+        <a
+            @click="selectOption('Path')"
+            :class="{ active: selectedOption === 'Path' }"
+        >
             <span class="material-icons" aria-label="Analytics">insights</span>
             <h3>Path</h3>
         </a>
-        <a @click="selectOption('Bus')">
+
+        <a
+            @click="selectOption('Bus')"
+            :class="{ active: selectedOption === 'Bus' }"
+        >
             <span class="material-icons" aria-label="Products"
                 >receipt_long</span
             >
             <h3>Bus</h3>
         </a>
-        <a @click="selectOption('Messages')">
+
+        <a
+            @click="selectOption('Messages')"
+            :class="{ active: selectedOption === 'Messages' }"
+        >
             <span class="material-icons" aria-label="Messages"
                 >mail_outline</span
             >
             <h3>Messages</h3>
             <span class="msg_count">14</span>
         </a>
-        <a @click="selectOption('Reports')">
+
+        <a
+            @click="selectOption('Reports')"
+            :class="{ active: selectedOption === 'Reports' }"
+        >
             <span class="material-icons" aria-label="Reports"
                 >report_gmailerrorred</span
             >
             <h3>Reports</h3>
         </a>
-        <a @click="selectOption('Settings')">
+
+        <a
+            @click="selectOption('Settings')"
+            :class="{ active: selectedOption === 'Settings' }"
+        >
             <span class="material-icons" aria-label="Settings">settings</span>
             <h3>Settings</h3>
         </a>
-        <a @click="selectOption('Add Product')">
+
+        <a
+            @click="selectOption('Add Product')"
+            :class="{ active: selectedOption === 'Add Product' }"
+        >
             <span class="material-icons" aria-label="Add Product">add</span>
             <h3>Add Product</h3>
         </a>
-        <a @click="selectOption('Logout')">
+
+        <a
+            @click="selectOption('Logout')"
+            :class="{ active: selectedOption === 'Logout' }"
+        >
             <span class="material-icons" aria-label="Logout">logout</span>
             <h3>Logout</h3>
         </a>
@@ -63,33 +99,10 @@ export default {
     name: "SideBarCompany",
     data() {
         return {
-            selectedOption: null,
+            selectedOption: "Driver", // Set default selected option if needed
         };
     },
     methods: {
-        openMenu() {
-            const sideMenu = this.$refs.sideMenu;
-            if (sideMenu) {
-                sideMenu.style.display = "block";
-            }
-        },
-        closeMenu() {
-            const sideMenu = this.$refs.sideMenu;
-            if (sideMenu) {
-                sideMenu.style.display = "none";
-            }
-        },
-        toggleTheme() {
-            const themeToggler = this.$refs.themeToggler;
-            if (themeToggler) {
-                themeToggler
-                    .querySelector("span:nth-child(1)")
-                    .classList.toggle("active");
-                themeToggler
-                    .querySelector("span:nth-child(2)")
-                    .classList.toggle("active");
-            }
-        },
         selectOption(option) {
             this.selectedOption = option;
             console.log("Selected Option:", this.selectedOption);
@@ -238,9 +251,8 @@ aside .logo {
     display: flex;
     gap: 1rem;
 }
-/* .sidebar */
+
 aside .sidebar {
-    background-color: #fff;
     display: flex;
     flex-direction: column;
     height: calc(100vh - 5rem);
@@ -294,6 +306,7 @@ aside .sidebar a:hover {
 aside .top .close span {
     display: none;
 }
+
 aside .sidebar a:hover span {
     margin-left: 1rem;
     transition: 0.4s ease;

@@ -22,13 +22,13 @@
                     <tbody>
                         <tr v-for="(user, index) in Driver" :key="index">
                             <td>
-                                {{ user.id }}
+                                {{ user.driver_id }}
                             </td>
                             <td>
-                                {{ user.user.name }}
+                                {{ user.name }}
                             </td>
                             <td>
-                                {{ user.user.email }}
+                                {{ user.email_driver }}
                             </td>
                             <td>
                                 {{ user.status }}
@@ -86,7 +86,7 @@ export default {
             })
                 .then((response) => {
                     this.Driver = response.data;
-                    console.log(this.Driver);
+                    console.log(response.data);
                 })
                 .catch(function (error) {
                     window.alert("Error get paths");

@@ -51,7 +51,7 @@ export default {
     components: {},
 };
 </script>
-<style>
+<style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 :root {
@@ -150,7 +150,7 @@ input {
     border: 0;
     outline: 0;
     color: #363949;
-    width: 930px;
+    width: 930px !important;
 }
 
 .top-bar {
@@ -182,121 +182,50 @@ input {
     transition: 0.4s ease-in;
 }
 
-/* Mobile Responsive */
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    input {
+        width: 100%;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .container {
         width: 100%;
         grid-template-columns: repeat(1, 1fr);
     }
 
-    aside {
-        position: fixed;
-        width: 18rem;
-        z-index: 3;
-        background-color: #fff;
-        display: none;
-        left: -100px;
-        animation: menuAni 1s forwards;
-    }
-    @keyframes menuAni {
-        to {
-            left: 0;
-        }
+    input {
+        width: auto !important;
+        max-width: 100%;
+        min-width: 200px;
     }
 
-    aside .logo {
-        display: inline;
+    .date {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    aside .sidebar h3 {
-        display: inline;
-    }
-
-    aside .sidebar a {
+    .date button {
+        margin-top: 10px;
         width: 100%;
-        height: 3.4rem;
     }
+}
 
-    aside .top .close span {
-        display: inline;
-        position: absolute;
-        right: 0;
-        font-size: 35px;
-        margin-right: 30px;
-    }
-
-    .right .top {
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0 0.8rem;
-        background-color: #fff;
+@media screen and (max-width: 500px) {
+    input {
         width: 100%;
-        height: 4.6rem;
-        z-index: 2;
-        box-shadow: 0 1rem 1rem 0 2rem 3rem rgba(132, 139, 200, 0.18);
-        margin: 0;
+        font-size: 0.75rem;
     }
 
-    main .insights {
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
-        gap: 1.6rem;
-        padding: 40px;
+    .date {
+        padding: 5px;
     }
 
-    main .recent_orders {
-        padding: 30px;
-        margin: 0 auto;
-    }
-    main .date {
-        margin-top: 40px;
-        margin-left: 44px;
-    }
-
-    .right .profile {
-        position: absolute;
-        left: 70%;
-    }
-
-    .right .recent_updates {
-        padding: 30px;
-    }
-
-    .right .top button {
-        display: inline-block;
-        background: transparent;
-        cursor: pointer;
-        color: #363949;
-        position: absolute;
-        left: 1rem;
-    }
-
-    .theme-toggler {
-        display: flex;
-        justify-content: space-between;
-        height: 1.6rem;
-        width: 4.2rem;
-        cursor: pointer;
-        border-radius: 10px;
-    }
-
-    .theme-toggler span {
-        font-size: 1.2rem;
-        width: 50%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .theme-toggler span.active {
-        background-color: #7380ec;
-        color: #fff;
-        border-radius: 10px;
+    .date button {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
     }
 }
 </style>
