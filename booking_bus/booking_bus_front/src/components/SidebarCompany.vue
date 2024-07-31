@@ -232,6 +232,7 @@ small {
 .warning {
     color: #ffbb55;
 }
+
 aside {
     height: 100vh;
     background-color: #fff;
