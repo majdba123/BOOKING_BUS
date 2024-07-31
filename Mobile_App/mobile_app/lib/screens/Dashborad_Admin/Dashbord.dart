@@ -6,6 +6,7 @@ import 'package:mobile_app/screens/DashBorad_Company/path_mangement/path_managem
 import 'package:mobile_app/screens/Dashborad_Admin/Break_Places_Mnagement/Breack_Place_mangemt.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Company_managemnt/Create_Account_Comany.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Country_managment/Country_Mnagament.dart';
+import 'package:mobile_app/screens/Dashborad_Admin/E_Wallet_Managment/Wallet_Page_Fauters.dart';
 
 import 'package:mobile_app/screens/signin_page.dart';
 import 'package:mobile_app/widgets/my_text_button.dart';
@@ -61,6 +62,16 @@ class _DashbordAdminState extends State<DashbordAdmin> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => RegisterPageCompany()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text('ادارة المحفظة الالكترونية'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ChargeRequestsScreen()));
               },
             ),
             ListTile(

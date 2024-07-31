@@ -3,6 +3,7 @@ import 'package:mobile_app/Api_Services/Company/Bus_sataus.dart';
 import 'package:mobile_app/Api_Services/Login_Api.dart';
 import 'package:mobile_app/Provider/Admin/Area_Provider.dart';
 import 'package:mobile_app/Provider/Admin/Break_Area_Provider.dart';
+import 'package:mobile_app/Provider/Admin/charge_blanace_requsert_provider.dart';
 import 'package:mobile_app/Provider/Company/Assign_bus_provider.dart';
 import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
 import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
@@ -48,6 +49,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => PrivateTripuserProvider()),
         ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),
         ChangeNotifierProvider(create: (_) => WalletUserProvider()),
+        ChangeNotifierProvider(create: (_) => ChargeRequestProvider()),
       ],
       child: MyApp(),
     ),
