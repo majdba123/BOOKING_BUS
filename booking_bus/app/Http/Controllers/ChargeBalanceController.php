@@ -23,12 +23,11 @@ class ChargeBalanceController extends Controller
 
         $data = [];
         foreach ($chargeBalances as $chargeBalance) {
-            $imagePath = Storage::disk('public')->url($chargeBalance->image);
             $data[] = [
                 'id' => $chargeBalance->id,
                 'user_id' => $chargeBalance->user_id,
                 'point' => $chargeBalance->point,
-                'image' => $imagePath,
+                'image' => $chargeBalance->image,
                 'status' => $chargeBalance->status,
             ];
         }
@@ -45,12 +44,11 @@ class ChargeBalanceController extends Controller
         $chargeBalances = Charge_Balance::where('status', $status)->get();
         $data = [];
         foreach ($chargeBalances as $chargeBalance) {
-            $imagePath = Storage::disk('public')->url($chargeBalance->image);
             $data[] = [
                 'id' => $chargeBalance->id,
                 'user_id' => $chargeBalance->user_id,
                 'point' => $chargeBalance->point,
-                'image' => $imagePath,
+                'image' => $chargeBalance->image,
                 'status' => $chargeBalance->status,
             ];
         }
@@ -72,7 +70,7 @@ class ChargeBalanceController extends Controller
         }
         try {
             $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
-            $imageUrl = asset('storage/order_balance' . $imageName);
+            $imageUrl = asset('storage/order_balance/' . $imageName);
             $user = auth()->user();
             // Create Post
             Charge_Balance::create([
@@ -106,13 +104,11 @@ class ChargeBalanceController extends Controller
             return response()->json(['error' => 'Not found'], 404);
         }
 
-        $imagePath = Storage::disk('public')->url($chargeBalance->image);
-
         $data = [
             'id' => $chargeBalance->id,
             'user_id' => $chargeBalance->user_id,
             'point' => $chargeBalance->point,
-            'image' => $imagePath,
+            'image' => $chargeBalance->image,
             'status' => $chargeBalance->status,
         ];
 
