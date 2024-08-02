@@ -177,17 +177,17 @@ body {
     font-size: 0.88rem;
     user-select: none;
     background: #f6f6f9;
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
+    overflow-y: auto;
 }
 
 .container {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 19rem;
+    grid-template-columns: 14rem auto 14rem;
     margin-left: 0;
-    height: 100vh; /* تأكد من أن الحاوية تأخذ كامل ارتفاع النافذة */
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
+    height: 100vh;
+    overflow-y: auto;
 }
 
 a {
