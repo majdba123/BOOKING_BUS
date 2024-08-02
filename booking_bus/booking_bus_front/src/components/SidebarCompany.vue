@@ -85,10 +85,7 @@
             <h3>Add Product</h3>
         </a>
 
-        <a
-            @click="selectOption('Logout')"
-            :class="{ active: selectedOption === 'Logout' }"
-        >
+        <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">
             <span class="material-icons" aria-label="Logout">logout</span>
             <h3>Logout</h3>
         </a>
@@ -96,7 +93,10 @@
 </template>
 
 <script>
+import router from "@/router";
 import store from "@/store";
+import axios from "axios";
+
 export default {
     name: "SideBarCompany",
     data() {
@@ -105,6 +105,25 @@ export default {
         };
     },
     methods: {
+        logout() {
+            const token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/logout",
+                headers: { Authorization: `Bearer ${token}` },
+            }).then(function (response) {
+                if (response.status == 200) {
+                    console.log(response);
+                    window.alert("Logout succesful");
+                    window.localStorage.setItem(
+                        "access_token",
+                        response.data.access_token
+                    );
+                    router.push("/");
+                }
+            });
+        },
+
         selectOption(option) {
             this.selectedOption = option;
             console.log("Selected Option:", this.selectedOption);
