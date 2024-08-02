@@ -20,6 +20,8 @@ import BookingLogin from "../views/BookingLogin.vue";
 import AllDriver2 from "../views/Company/Driver/AllDriver.vue";
 import AllPath2 from "../views/Company/Path/AllPath.vue";
 import AllBus2 from "../views/Company/Bus/AllBus.vue";
+import ProfileCompany from "../views/Company/ProfileCompany.vue";
+import AllBreak from "../views/Company/Break/AllBreak.vue";
 
 const routes = [
     {
@@ -31,6 +33,16 @@ const routes = [
         path: "/AllBus2",
         name: "AllBus2",
         component: AllBus2,
+    },
+    {
+        path: "/AllBreak",
+        name: "AllBreak",
+        component: AllBreak,
+    },
+    {
+        path: "/ProfileCompany",
+        name: "ProfileCompany",
+        component: ProfileCompany,
     },
     {
         path: "/AllPath2",

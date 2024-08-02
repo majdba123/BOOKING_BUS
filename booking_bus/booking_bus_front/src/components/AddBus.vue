@@ -488,7 +488,7 @@ select:focus {
     border-radius: 10px;
     width: 100%;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 20px;
     padding: 10px;
     flex-wrap: wrap;
 }

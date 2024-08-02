@@ -31,7 +31,7 @@
                         <button @click="search">Search</button>
                     </div>
                 </div>
-                <AddBus ref="addBus" />
+                <AddBreak ref="AddBreak" />
             </main>
         </div>
         <!-- Right section start -->
@@ -92,13 +92,13 @@
 <script>
 import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import AddBus from "@/components/AddBus.vue";
+import AddBreak from "@/components/AddBreak.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 
 export default {
     name: "AllBus",
-    components: { SidebarCompany, AddBus, DriverChart },
+    components: { SidebarCompany, AddBreak, DriverChart },
     data() {
         return {
             x: store.state.x,

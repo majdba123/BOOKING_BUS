@@ -59,15 +59,10 @@
             <span class="msg_count">14</span>
         </a>
 
-        <a
-            @click="selectOption('Reports')"
-            :class="{ active: selectedOption === 'Reports' }"
-        >
-            <span class="material-icons" aria-label="Reports"
-                >report_gmailerrorred</span
-            >
-            <h3>Reports</h3>
-        </a>
+        <router-link to="AllBreak">
+            <span class="material-icons" aria-label="Analytics">insights</span>
+            <h3>Break</h3>
+        </router-link>
 
         <a
             @click="selectOption('Settings')"

@@ -7,6 +7,7 @@ export default createStore({
         Driver: {},
         Paths: {},
         searchQuery: "",
+        Profile: "",
         start: null,
         end: null,
     },
