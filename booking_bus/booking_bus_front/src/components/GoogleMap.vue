@@ -56,7 +56,9 @@ export default {
 
 <style>
 #map {
-    height: 600px;
-    width: 100%;
+    height: 150px;
+    width: 60%;
+    border-radius: 20px;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 </style>

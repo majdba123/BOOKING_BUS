@@ -364,70 +364,20 @@ small {
     margin-top: 20px;
 }
 
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-}
-
-.recent_orders table {
-    background-color: #fff;
-    width: 100%;
-    border-radius: 1rem;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
-    max-width: none;
-    font-size: 0.85rem;
-}
-
-.recent_orders table:hover {
-    box-shadow: none;
-}
-
-table thead tr th {
-    padding: 10px;
-    font-size: 0.9rem;
-}
-
-table tbody tr {
-    height: 3rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
-}
-
-table tbody td {
-    height: 3rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
-}
-
-table tbody tr:last-child td {
-    border: none;
-}
-
-.recent_orders a {
-    text-align: center;
-    display: block;
-    margin: 1rem;
-    font-size: 0.85rem;
-}
-
 /* Select styling */
 select {
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #7380ec;
-    border-radius: 4px;
+    border-radius: 5px;
     background-color: #fff;
     color: #363949;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: border-color 0.3s;
 }
 
 select:focus {
     border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 /* Delete button styling */
