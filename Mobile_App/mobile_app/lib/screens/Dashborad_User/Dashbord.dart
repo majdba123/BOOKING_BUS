@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Card_for_Add_favorites_comapny.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/bottom_nav_bar.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/horizontal_list.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/route_card.dart';
@@ -22,6 +23,9 @@ class _DashboardUserState extends State<DashboardUser> {
     super.initState();
     // Fetch all trips when the screen is initialized
     Provider.of<TripuserProvider>(context, listen: false).getallTrips(
+        Provider.of<AuthProvider>(context, listen: false).accessToken);
+
+    Provider.of<TripuserProvider>(context, listen: false).getAllcompanies(
         Provider.of<AuthProvider>(context, listen: false).accessToken);
   }
 
@@ -118,34 +122,33 @@ class _DashboardUserState extends State<DashboardUser> {
                             .toList(),
                       ),
                       SizedBox(height: 16.0),
-                      SectionTitle(title: 'Recent Searches'),
+                      SectionTitle(title: 'Top Company'),
                       SizedBox(height: 8.0),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: HorizontalList(items: [
-                          RouteCard(
-                            company_name: 'dsa',
-                            from: 'Bangalore',
-                            to: 'Chennai',
-                            price: '£44',
-                            tripId: 0,
-                          ),
-                          RouteCard(
-                            company_name: 'asd',
-                            from: 'Mumbai',
-                            to: 'Pune',
-                            price: '£30',
-                            tripId: 0,
-                          ),
-                          RouteCard(
-                            company_name: 'sad',
-                            from: 'Mumbai',
-                            to: 'Pune',
-                            price: '£30',
-                            tripId: 0,
-                          ),
-                        ]),
+                      HorizontalList(
+                        items: tripProvider.compaines
+                            .map((company) => CardfavoriteCompany(
+                                  name_of_company: company.nameCompany,
+                                  image_link: 'ads',
+                                ))
+                            .toList(),
                       ),
+                      // SingleChildScrollView(
+                      //   scrollDirection: Axis.horizontal,
+                      //   child: HorizontalList(items: [
+                      //     CardfavoriteCompany(
+                      //       image_link: 'adssad',
+                      //       name_of_company: 'hamza',
+                      //     ),
+                      //     CardfavoriteCompany(
+                      //       image_link: 'qeq',
+                      //       name_of_company: 'hamza',
+                      //     ),
+                      //     CardfavoriteCompany(
+                      //       image_link: 'qq1',
+                      //       name_of_company: 'hamza',
+                      //     ),
+                      //   ]),
+                      // ),
                     ],
                   );
                 },

@@ -4,12 +4,16 @@ import 'package:http/http.dart'
 import 'package:mobile_app/Data_Models/Reservation_Success_model.dart';
 import 'dart:convert';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
+import 'package:mobile_app/Data_Models/company.dart';
 import 'package:mobile_app/constants.dart'; // To decode JSON responses
 
 class TripuserProvider with ChangeNotifier {
   List<TripByPath> _trips = [];
 
   List<TripByPath> get trips => _trips;
+  List<Company> _compaines = [];
+
+  List<Company> get compaines => _compaines;
 
   late BusTrip selectedBus;
   late List<int> selectedSeat;
@@ -102,6 +106,22 @@ class TripuserProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       final List<dynamic> tripList = json.decode(response.body);
       _trips = tripList.map((json) => TripByPath.fromJson(json)).toList();
+      notifyListeners();
+    } else {
+      throw Exception('Failed to load trips');
+    }
+  }
+
+  Future<void> getAllcompanies(
+    String accessToken,
+  ) async {
+    final response = await http.get(headers: {
+      'Authorization': 'Bearer $accessToken',
+    }, Uri.parse(name_domain_server + 'user/get_all_company'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> tripList = json.decode(response.body);
+      _compaines = tripList.map((json) => Company.fromJson(json)).toList();
       notifyListeners();
     } else {
       throw Exception('Failed to load trips');

@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Complete_info_profile.dart';
+import 'package:mobile_app/screens/Dashborad_User/user_info_profile.dart';
+import 'package:provider/provider.dart';
 import 'package:mobile_app/colors.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Address_list_page.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Charage_blance.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Update_Password.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Update_Profile.dart'; // Import the UpdateProfilePage
+import 'package:mobile_app/Provider/Auth_provider.dart';
 
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var accessToken =
+        Provider.of<AuthProvider>(context, listen: false).accessToken;
+
+    // Fetch user info when the widget is built
+    Provider.of<UserInfoProvider>(context, listen: false)
+        .fetchUserInfo(accessToken);
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
@@ -22,61 +36,116 @@ class ProfilePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('assets/images/user_avatar.jpg'),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'John Doe',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 5),
-              Text(
-                'john.doe@example.com',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              ),
-              SizedBox(height: 30),
-              ProfileOption(
-                icon: Icons.person,
-                title: 'Account Settings',
-                onTap: () {
-                  // Handle Account Settings
-                },
-              ),
-              ProfileOption(
-                icon: Icons.lock,
-                title: 'Privacy Settings',
-                onTap: () {
-                  // Handle Privacy Settings
-                },
-              ),
-              ProfileOption(
-                icon: Icons.notifications,
-                title: 'Notification Settings',
-                onTap: () {
-                  // Handle Notification Settings
-                },
-              ),
-              ProfileOption(
-                icon: Icons.help,
-                title: 'Help & Support',
-                onTap: () {
-                  // Handle Help & Support
-                },
-              ),
-              SizedBox(height: 30),
-              EWalletSection(),
-            ],
+          child: Consumer<UserInfoProvider>(
+            builder: (context, userInfoProvider, child) {
+              if (userInfoProvider.isLoading) {
+                return Center(child: CircularProgressIndicator());
+              } else if (userInfoProvider.errorMessage != null) {
+                return Center(child: Text(userInfoProvider.errorMessage!));
+              } else if (userInfoProvider.userInfo != null) {
+                final userInfo = userInfoProvider.userInfo!;
+
+                // Check if profile is incomplete
+                if (userInfo.profile == null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CompleteProfilePage()),
+                    );
+                  });
+                  return Container(); // Return empty container while navigating
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage:
+                          AssetImage('assets/images/user_avatar.jpg'),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      userInfo.name,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      userInfo.email,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      userInfo.profile['phone'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    ProfileOption(
+                      icon: Icons.location_on,
+                      title: 'My Address',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddressListPage()),
+                        );
+                      },
+                    ),
+                    ProfileOption(
+                      icon: Icons.favorite,
+                      title: 'Fav Company',
+                      onTap: () {
+                        // Handle Privacy Settings
+                      },
+                    ),
+                    ProfileOption(
+                      icon: Icons.password,
+                      title: 'Password Settings',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UpdatePasswordPage()),
+                        );
+                      },
+                    ),
+                    ProfileOption(
+                      icon: Icons.person,
+                      title: 'Update Profile',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  UpdateProfilePage()), // Navigate to UpdateProfilePage
+                        );
+                      },
+                    ),
+                    ProfileOption(
+                      icon: Icons.help,
+                      title: 'Help & Support',
+                      onTap: () {
+                        // Handle Help & Support
+                      },
+                    ),
+                    SizedBox(height: 30),
+                    EWalletSection(),
+                  ],
+                );
+              } else {
+                return Center(child: Text('No user information found.'));
+              }
+            },
           ),
         ),
       ),
@@ -120,6 +189,8 @@ class ProfileOption extends StatelessWidget {
 class EWalletSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var point =
+        Provider.of<UserInfoProvider>(context, listen: false).userInfo?.points;
     return Container(
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -160,7 +231,7 @@ class EWalletSection extends StatelessWidget {
           ),
           SizedBox(height: 5),
           Text(
-            '\$1234.56',
+            '\$ ${point}',
             style: TextStyle(
               fontSize: 24,
               color: Colors.white,

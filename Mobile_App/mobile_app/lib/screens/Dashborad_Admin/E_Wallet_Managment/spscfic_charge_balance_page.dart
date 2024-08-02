@@ -1,4 +1,6 @@
 // screens/charge_request_detail_screen.dart
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Admin/charge_blanace_requsert_provider.dart';
 import 'package:provider/provider.dart';
@@ -35,8 +37,9 @@ class ChargeRequestDetailScreen extends StatelessWidget {
                 Text('User ID: ${request.userId}',
                     style: TextStyle(fontSize: 20)),
                 SizedBox(height: 10),
-                Image.network(
-                    'http://127.0.0.1:8000/storage/app/public/order_balance/yqEK9qHi5brm6wQeeU6TtHmLJK3oFLQR.png'),
+                Image(
+                    image: FileImage(File(
+                        'http://127.0.0.1:8000/storage/app/public/order_balance/yqEK9qHi5brm6wQeeU6TtHmLJK3oFLQR.png'))),
                 SizedBox(height: 10),
                 Text('Status: ${request.status}',
                     style: TextStyle(fontSize: 16)),

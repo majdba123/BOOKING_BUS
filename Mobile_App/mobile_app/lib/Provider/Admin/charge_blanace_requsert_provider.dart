@@ -88,4 +88,37 @@ class ChargeRequestProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> fetchChargeRequestsByStatus(
+      BuildContext context, String status) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final accessToken =
+        authProvider.accessToken; // Get the access token from AuthProvider
+
+    try {
+      final response = await http.get(
+        Uri.parse(baseUrl+'admin/charge_balance_by_status?status=$status'),
+        headers: {
+          'Authorization':
+              'Bearer $accessToken', // Include the access token in the Authorization header
+        },
+      );
+      print(response.statusCode);
+      // print(response.body);
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        _requests = data.map((json) => ChargeRequest.fromJson(json)).toList();
+      } else {
+        print('Failed to load data: ${response.reasonPhrase}');
+      }
+    } catch (error) {
+      print('Error fetching charge requests by status: $error');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
