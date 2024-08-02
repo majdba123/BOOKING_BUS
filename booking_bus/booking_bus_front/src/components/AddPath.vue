@@ -105,7 +105,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="" @click="updatePath">Update</button>
+                    <button class="edit-btn" @click="updatePath">Update</button>
                     <button @click="closeEditModal" class="close-modal">
                         Cancel
                     </button>
@@ -119,6 +119,7 @@
 import axios from "axios";
 import store from "@/store";
 import MapPath from "./MapPath.vue";
+import { useToast } from "vue-toastification";
 
 export default {
     name: "AddPath",
@@ -132,6 +133,7 @@ export default {
             showEditModal: false,
             editedPath: { from: "", to: "" },
             editingIndex: null,
+            toast: useToast(),
         };
     },
     mounted() {
@@ -139,7 +141,7 @@ export default {
     },
     methods: {
         handleSubmit() {
-            console.log("Form Submitted", this.nameStart, this.nameEnd);
+            console.log("Form Submitted", this.StartPath, this.EndPath);
         },
         CreatePath() {
             const token = window.localStorage.getItem("access_token");
@@ -155,12 +157,28 @@ export default {
                 .then((response) => {
                     if (response.status === 200) {
                         console.log(response);
-                        window.alert("Path Created Successfully");
+                        this.toast.success("Path Created Successfully", {
+                            transition: "Vue-Toastification__bounce",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
                         this.AllPaths();
                     }
                 })
                 .catch((error) => {
-                    window.alert("Error Creating Path");
+                    this.toast.error("Error Creating Path", {
+                        transition: "Vue-Toastification__shake",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
                     console.log(error);
                 });
         },
@@ -177,7 +195,15 @@ export default {
                     console.log(response.data);
                 })
                 .catch((error) => {
-                    window.alert("Error Getting Paths");
+                    this.toast.error("Error Getting Paths", {
+                        transition: "Vue-Toastification__shake",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
                     console.error(error);
                 });
         },
@@ -192,9 +218,26 @@ export default {
                     this.Paths = this.Paths.filter(
                         (pathItem) => pathItem.id !== id
                     );
+                    this.toast.success("Path Deleted Successfully", {
+                        transition: "Vue-Toastification__bounce",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
                 })
                 .catch((error) => {
-                    window.alert("Error deleting path");
+                    this.toast.error("Error Deleting Path", {
+                        transition: "Vue-Toastification__shake",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
                     console.error(error);
                 });
         },
@@ -223,11 +266,27 @@ export default {
                     this.editingIndex = null;
                     this.editedPath = { from: "", to: "" };
                     console.log(response);
-                    window.alert("Complete update");
+                    this.toast.success("Path Updated Successfully", {
+                        transition: "Vue-Toastification__bounce",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
                     this.showEditModal = false;
                 })
                 .catch((error) => {
-                    window.alert("Error updating path");
+                    this.toast.error("Error Updating Path", {
+                        transition: "Vue-Toastification__shake",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
                     console.error(error);
                 });
         },

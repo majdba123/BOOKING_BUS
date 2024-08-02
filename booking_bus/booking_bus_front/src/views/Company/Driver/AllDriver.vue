@@ -31,7 +31,6 @@
                         <button @click="search">Search</button>
                     </div>
                 </div>
-                <GoogleMap />
                 <AddDriver ref="addDriver" />
             </main>
         </div>
@@ -96,11 +95,10 @@ import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddDriver from "@/components/AddDriver.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
-import GoogleMap from "@/components/GoogleMap.vue";
 
 export default {
     name: "AllDriver",
-    components: { SidebarCompany, AddDriver, DriverChart, GoogleMap },
+    components: { SidebarCompany, AddDriver, DriverChart },
     data() {
         return {
             x: store.state.x,

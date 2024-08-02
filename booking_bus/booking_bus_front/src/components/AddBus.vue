@@ -4,26 +4,27 @@
         <header class="navd">
             <button class="nav-btnd" @click="showForm = true">Add Bus</button>
             <button class="nav-btnd" @click="showForm = false">Edit Bus</button>
-            <button class="nav-btnd">Button 3</button>
-            <button class="nav-btnd">Button 4</button>
+            <button class="nav-btnd" @click="showBusStatusModal = true">
+                Bus Status
+            </button>
         </header>
 
         <div v-if="showForm" class="form-containerd">
             <form @submit.prevent="handleSubmit">
                 <div class="form-groupd">
-                    <label for="driverName">Number Bus</label>
+                    <label for="numberBus">Number Bus</label>
                     <input
                         type="number"
-                        id="driverAge"
+                        id="numberBus"
                         v-model="number_bus"
                         required
                     />
                 </div>
                 <div class="form-groupd">
-                    <label for="driverAge">Number Passenger</label>
+                    <label for="numberPassenger">Number Passenger</label>
                     <input
                         type="number"
-                        id="driverAge"
+                        id="numberPassenger"
                         v-model="number_passenger"
                         required
                     />
@@ -46,28 +47,33 @@
                             <th>Number Bus</th>
                             <th>Number Passenger</th>
                             <th>Actions</th>
+                            <th>Seats</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr
-                            v-for="(user, index) in filteredDrivers"
-                            :key="index"
-                        >
-                            <td>{{ user.number_bus }}</td>
-                            <td>{{ user.number_passenger }}</td>
-
+                        <tr v-for="(bus, index) in filteredBuses" :key="index">
+                            <td>{{ bus.number_bus }}</td>
+                            <td>{{ bus.number_passenger }}</td>
                             <td>
                                 <button
                                     class="edit-btn"
-                                    @click="openEditModal(user, index)"
+                                    @click="openEditModal(bus, index)"
                                 >
                                     Edit
                                 </button>
                                 <button
                                     class="delete-btn"
-                                    @click="DeleteBus(user.id)"
+                                    @click="DeleteBus(bus.id)"
                                 >
                                     Delete
+                                </button>
+                            </td>
+                            <td>
+                                <button
+                                    class="status-btn"
+                                    @click="showSeats(bus.id)"
+                                >
+                                    View Seats
                                 </button>
                             </td>
                         </tr>
@@ -75,30 +81,74 @@
                 </table>
             </div>
         </div>
-        <div v-if="showEditModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Edit Bus</div>
-                <div class="modal-body">
-                    <label for="editNameStart">Number Bus</label>
-                    <input
-                        type="text"
-                        id="editNameStart"
-                        v-model="editedPath.number_bus"
-                        required
-                    />
 
-                    <label for="editNameEnd">Number Passenger</label>
-                    <input
-                        type="text"
-                        id="editNameEnd"
-                        v-model="editedPath.number_passenger"
-                        required
-                    />
+        <div v-if="showBusStatusModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Bus Status</div>
+                <div class="modal-body">
+                    <button
+                        class="status-btn"
+                        @click="fetchBusStatus('pending')"
+                    >
+                        Pending
+                    </button>
+                    <button
+                        class="status-btn"
+                        @click="fetchBusStatus('available')"
+                    >
+                        Available
+                    </button>
+                    <button
+                        class="status-btn"
+                        @click="fetchBusStatus('finished')"
+                    >
+                        Finished
+                    </button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Number Bus</th>
+                                <th>Number Passenger</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(bus, index) in busStatusData"
+                                :key="index"
+                            >
+                                <td>{{ bus.number_bus }}</td>
+                                <td>{{ bus.number_passenger }}</td>
+                                <td>{{ bus.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
-                    <button class="edit-btn" @click="updateBus">Update</button>
-                    <button @click="closeEditModal" class="close-modal">
-                        Cancel
+                    <button @click="closeBusStatusModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="showSeatsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Bus Seats</div>
+                <div class="modal-body">
+                    <div class="seats-container">
+                        <div
+                            v-for="seat in seats"
+                            :key="seat.seat_id"
+                            class="seat"
+                        >
+                            {{ seat.seat_number }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeSeatsModal" class="close-modal">
+                        Close
                     </button>
                 </div>
             </div>
@@ -109,27 +159,32 @@
 <script>
 import axios from "axios";
 import store from "@/store";
+import { useToast } from "vue-toastification";
 
 export default {
     name: "AddBus",
     data() {
         return {
-            Bus: [],
-            editingIndex: null,
-            showEditModal: false,
-
             showForm: true,
+            Bus: [],
+            busStatusData: [],
+            seats: [],
             number_bus: "",
             number_passenger: "",
-            editedPath: { number_bus: "", number_passenger: "" },
+            showBusStatusModal: false,
+            showSeatsModal: false,
+            toast: useToast(),
         };
     },
     mounted() {
         this.AllBus();
     },
     methods: {
-        closeEditModal() {
-            this.showEditModal = false;
+        closeBusStatusModal() {
+            this.showBusStatusModal = false;
+        },
+        closeSeatsModal() {
+            this.showSeatsModal = false;
         },
         handleSubmit() {
             console.log(
@@ -137,7 +192,6 @@ export default {
                 this.number_bus,
                 this.number_passenger
             );
-            // Add your form submission logic here
         },
         AddBus() {
             const token = window.localStorage.getItem("access_token");
@@ -146,18 +200,18 @@ export default {
                 method: "post",
                 url: "http://127.0.0.1:8000/api/company/store_bus",
                 data: {
-                    number_bus: this.number_bus,
-
-                    number_passenger: this.number_passenger,
+                    number_bus: this.number_bus.toString(),
+                    number_passenger: this.number_passenger.toString(),
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
                 .then((response) => {
                     console.log(response);
-                    window.alert("Complete ADD");
+                    this.toast.success("Bus added successfully!");
+                    this.AllBus();
                 })
                 .catch((error) => {
-                    window.alert("ERROR ADD");
+                    this.toast.error("Error adding bus.");
                     console.log(error);
                 });
         },
@@ -178,11 +232,11 @@ export default {
                     this.editingIndex = null;
                     this.editedPath = { number_bus: "", number_passenger: "" };
                     console.log(response);
-                    window.alert("Complete update");
+                    this.toast.success("Bus updated successfully!");
                     this.showEditModal = false;
                 })
                 .catch((error) => {
-                    window.alert("Error updating path");
+                    this.toast.error("Error updating bus.");
                     console.error(error);
                 });
         },
@@ -203,6 +257,22 @@ export default {
                     console.error(error);
                 });
         },
+        fetchBusStatus(status) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "get",
+                url: `http://127.0.0.1:8000/api/company/get_bus_status?status=${status}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.busStatusData = response.data;
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching bus status");
+                    console.error(error);
+                });
+        },
         openEditModal(path, index) {
             this.editedPath = { ...path };
             this.editingIndex = index;
@@ -219,23 +289,36 @@ export default {
                     this.Bus = this.Bus.filter(
                         (pathItem) => pathItem.id !== id
                     );
+                    this.toast.success("Bus deleted successfully!");
                 })
                 .catch((error) => {
-                    window.alert("Error deleting path");
+                    this.toast.error("Error deleting bus.");
+                    console.error(error);
+                });
+        },
+        showSeats(busId) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/company/all_seat_of_bus/${busId}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.seats = response.data;
+                    this.showSeatsModal = true;
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching bus seats");
                     console.error(error);
                 });
         },
     },
-    watch: {
-        filteredDriver() {
-            console.log(store.state.searchQuery);
-        },
-    },
     computed: {
-        filteredDrivers() {
-            console.log(store.state.Bus);
-            return store.state.Bus.filter((driver) => {
-                return driver.number_bus
+        filteredBuses() {
+            return store.state.Bus.filter((bus) => {
+                return bus.number_bus
+                    .toString()
                     .toLowerCase()
                     .includes(store.state.searchQuery.toLowerCase());
             });
@@ -243,6 +326,7 @@ export default {
     },
 };
 </script>
+
 <style scoped>
 :root {
     --clr-primary: #7380ec;
@@ -254,12 +338,9 @@ export default {
     --clr-primary-variant: #111e88;
     --clr-dark-variant: #677483;
     --clr-color-background: #f6f6f9;
-
     --border-radius-1: 0.4rem;
     --border-radius-2: 0.8rem;
-
     --padding-1: 1.2rem;
-
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 
@@ -268,9 +349,6 @@ export default {
     padding: 0;
     box-sizing: border-box;
     text-decoration: none;
-    border: 0;
-    list-style: none;
-    appearance: none;
 }
 
 body {
@@ -327,6 +405,11 @@ table tbody tr {
     height: 3rem;
     border-bottom: 1px solid #fff;
     color: #677483;
+    transition: background-color 0.3s ease;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
 }
 
 table tbody td {
@@ -339,13 +422,6 @@ table tbody tr:last-child td {
     border: none;
 }
 
-.recent_orders a {
-    text-align: center;
-    display: block;
-    margin: 1rem;
-    font-size: 0.85rem;
-}
-
 /* Select styling */
 select {
     padding: 8px;
@@ -353,20 +429,24 @@ select {
     border-radius: 4px;
     background-color: #fff;
     color: #363949;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 select:focus {
     border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 /* Button styling */
 .delete-btn,
-.edit-btn {
+.edit-btn,
+.status-btn {
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
     border: none;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s;
     color: white;
     margin: 0 5px;
 }
@@ -387,6 +467,15 @@ select:focus {
     background-color: #ec971f;
 }
 
+.status-btn {
+    background-color: #007bff;
+    margin-bottom: 10px;
+}
+
+.status-btn:hover {
+    background-color: #0056b3;
+}
+
 /* Navigation styling */
 .navd {
     display: flex;
@@ -398,6 +487,10 @@ select:focus {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px;
+    flex-wrap: wrap;
 }
 
 .nav-btnd {
@@ -433,15 +526,10 @@ select:focus {
 }
 
 /* Form and Map styling */
-.form-map-container {
-    display: block;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 20px;
-}
-
 .form-containerd {
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.9);
@@ -449,10 +537,13 @@ select:focus {
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
+    margin-top: 50px;
+    margin: 40px auto;
 }
 
 .form-groupd {
     margin-bottom: 15px;
+    width: 100%;
 }
 
 label {
@@ -485,33 +576,15 @@ input:focus {
     color: white;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-btnd:hover {
     background-color: #0056b3;
+    transform: translateY(-3px);
 }
 
-.map-container {
-    flex: 1;
-    margin-left: 20px;
-    min-width: 400px;
-}
-
-@media screen and (max-width: 1200px) {
-    .form-map-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .form-containerd,
-    .map-container {
-        width: 100%;
-        margin-top: 20px;
-    }
-}
-
-/* Edit Modal Styling */
+/* Modal styling */
 .modal {
     display: flex;
     justify-content: center;
@@ -563,17 +636,81 @@ input:focus {
     background-color: #c9302c;
 }
 
-.update-btn {
-    padding: 8px 16px;
-    background-color: #5cb85c;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 10px;
+/* Seats styling */
+.seats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    justify-content: center;
 }
 
-.update-btn:hover {
-    background-color: #4cae4c;
+.seat {
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.seat:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.seat.occupied {
+    background-color: #d9534f;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .containerd {
+        padding: 10px;
+    }
+
+    .navd {
+        flex-direction: column;
+    }
+
+    .nav-btnd {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .form-containerd {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
+
+    .seats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+    }
+
+    .seat {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .seats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .seat {
+        width: 100%;
+        height: 50px;
+        font-size: 1rem;
+    }
 }
 </style>

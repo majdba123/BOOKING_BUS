@@ -4,11 +4,6 @@ import CompanyPage from "../views/CompanyPage.vue";
 import CreateCompany from "../views/CreateCompany.vue";
 import AdminPage from "../views/AdminPage.vue";
 import EditePath from "../views/EditePath.vue";
-import BusStatus from "../views/BusStatus.vue";
-import AllDriver from "../views/AllDriver.vue";
-import DriverStatus from "../views/DriverStatus.vue";
-import CancelDriver from "../views/CancelDriver.vue";
-import DriverActive from "../views/DriverActive.vue";
 import AllBus from "../views/AllBus.vue";
 import AddBreak from "../views/AddBreak.vue";
 import EditBreak from "../views/EditBreak.vue";
@@ -103,11 +98,6 @@ const routes = [
         component: EditBreak,
     },
     {
-        path: "/CancelDriver",
-        name: "CancelDriver",
-        component: CancelDriver,
-    },
-    {
         path: "/AddBreak",
         name: "AddBreak",
         component: AddBreak,
@@ -123,21 +113,6 @@ const routes = [
         component: AllBus,
     },
     {
-        path: "/DriverActive",
-        name: "DriverActive",
-        component: DriverActive,
-    },
-    {
-        path: "/DriverStatus",
-        name: "DriverStatus",
-        component: DriverStatus,
-    },
-    {
-        path: "/AllDriver",
-        name: "AllDriver",
-        component: AllDriver,
-    },
-    {
         path: "/AdminPage",
         name: "AdminPage",
         component: AdminPage,
@@ -151,11 +126,6 @@ const routes = [
         path: "/CompanyPage",
         name: "CompanyPage",
         component: CompanyPage,
-    },
-    {
-        path: "/BusStatus",
-        name: "BusStatus",
-        component: BusStatus,
     },
     { path: "/EditePath", name: "EditePath", component: EditePath },
     {
