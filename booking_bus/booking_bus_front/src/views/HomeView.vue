@@ -7,18 +7,15 @@
             <form @submit.prevent="isLogin ? login() : register()">
                 <input
                     type="text"
-                    v-model="inputText"
-                    @focus="onFocus"
-                    @blur="onBlur"
+                    v-model="username"
                     placeholder="Username"
+                    v-if="!isLogin"
                     required
                 />
                 <input
-                    v-if="!isLogin"
-                    v-model="inputText"
-                    @focus="onFocus"
-                    @blur="onBlur"
-                    placeholder="Username"
+                    type="text"
+                    v-model="email"
+                    placeholder="Email"
                     required
                 />
                 <input
@@ -52,8 +49,7 @@ export default {
         return {
             email: "",
             password: "",
-            inputText: "",
-            isMoving: false,
+            username: "",
             isLogin: true,
         };
     },
@@ -69,6 +65,9 @@ export default {
     methods: {
         toggleForm() {
             this.isLogin = !this.isLogin;
+            this.email = "";
+            this.password = "";
+            this.username = "";
             anime({
                 targets: this.$refs.loginBox,
                 translateY: [-50, 0],
@@ -77,46 +76,66 @@ export default {
                 easing: "easeOutExpo",
             });
         },
+        register() {
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/register",
+                data: {
+                    name: this.username,
+                    email: this.email,
+                    password: this.password,
+                },
+            })
+                .then((response) => {
+                    if (response.status === 200) {
+                        console.log(response);
+                        window.alert("Registration successful");
+                        window.localStorage.setItem(
+                            "access_token",
+                            response.data.access_token
+                        );
+                        this.login();
+                    }
+                })
+                .catch((error) => {
+                    alert("Error during registration");
+                    console.log(error);
+                });
+        },
         login() {
             axios({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/login",
                 data: {
-                    email: this.inputText,
+                    email: this.email,
                     password: this.password,
                 },
             })
                 .then((response) => {
-                    if (response.status == 200) {
+                    if (response.status === 200) {
                         console.log(response);
-                        window.alert("تسجيل الدخول ناجح");
+                        window.alert("Login successful");
                         window.localStorage.setItem(
                             "access_token",
                             response.data.access_token
                         );
-                    }
 
-                    if (response.data.type_user == "admin") {
-                        router.push("/AdminPage");
-                    } else if (response.data.type_user == "company") {
-                        router.push("/CompanyPage");
-                    } else if (response.data.type_user == "user") {
-                        router.push("/UserPage");
-                    } else router.push("/");
-                    console.log(response.data.type_user);
+                        const userType = response.data.type_user;
+                        if (userType === "admin") {
+                            router.push("/AdminPage");
+                        } else if (userType === "company") {
+                            router.push("/CompanyPage");
+                        } else if (userType === "user") {
+                            router.push("/UserPage");
+                        } else {
+                            router.push("/");
+                        }
+                    }
                 })
                 .catch((error) => {
-                    window.alert("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+                    window.alert("Invalid email or password");
                     console.log(error);
                 });
-        },
-        onFocus() {
-            this.isMoving = true;
-        },
-        onBlur() {
-            if (this.inputText === "") {
-                this.isMoving = false;
-            }
         },
     },
 };

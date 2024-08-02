@@ -28,15 +28,17 @@
             <h3>Trip</h3>
         </a>
 
-        <a
+        <router-link
+            to="AllPath2"
             @click="selectOption('Path')"
             :class="{ active: selectedOption === 'Path' }"
         >
             <span class="material-icons" aria-label="Analytics">insights</span>
             <h3>Path</h3>
-        </a>
+        </router-link>
 
-        <a
+        <router-link
+            to="AllBus2"
             @click="selectOption('Bus')"
             :class="{ active: selectedOption === 'Bus' }"
         >
@@ -44,7 +46,7 @@
                 >receipt_long</span
             >
             <h3>Bus</h3>
-        </a>
+        </router-link>
 
         <a
             @click="selectOption('Messages')"
