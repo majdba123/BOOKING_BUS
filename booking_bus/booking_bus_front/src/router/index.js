@@ -1,13 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CompanyPage from "../views/CompanyPage.vue";
-import CreateDriver from "../views/CreateDriver.vue";
 import CreateCompany from "../views/CreateCompany.vue";
 import AdminPage from "../views/AdminPage.vue";
-import AddPath from "../views/AddPath.vue";
 import EditePath from "../views/EditePath.vue";
-import AddBus from "../views/AddBus.vue";
-import EditeBus from "../views/EditeBus.vue";
 import BusStatus from "../views/BusStatus.vue";
 import AllDriver from "../views/AllDriver.vue";
 import DriverStatus from "../views/DriverStatus.vue";
@@ -27,12 +23,24 @@ import AddPrivateTrip from "../views/User/AddPrivateTrip.vue";
 import PrivateStatus from "../views/User/PrivateStatus.vue";
 import BookingLogin from "../views/BookingLogin.vue";
 import AllDriver2 from "../views/Company/Driver/AllDriver.vue";
+import AllPath2 from "../views/Company/Path/AllPath.vue";
+import AllBus2 from "../views/Company/Bus/AllBus.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/AllBus2",
+        name: "AllBus2",
+        component: AllBus2,
+    },
+    {
+        path: "/AllPath2",
+        name: "AllPath2",
+        component: AllPath2,
     },
     {
         path: "/AllDriver2",
@@ -145,29 +153,9 @@ const routes = [
         component: CompanyPage,
     },
     {
-        path: "/CreateDriver",
-        name: "CreateDriver",
-        component: CreateDriver,
-    },
-    {
-        path: "/AddPath",
-        name: "AddPath",
-        component: AddPath,
-    },
-    {
-        path: "/AddBus",
-        name: "AddBus",
-        component: AddBus,
-    },
-    {
         path: "/BusStatus",
         name: "BusStatus",
         component: BusStatus,
-    },
-    {
-        path: "/EditeBus",
-        name: "EditeBus",
-        component: EditeBus,
     },
     { path: "/EditePath", name: "EditePath", component: EditePath },
     {

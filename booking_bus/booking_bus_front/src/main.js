@@ -1,10 +1,17 @@
 import { createApp } from "vue";
-//import BookingLogin from "./views/BookingLogin.vue"; // Adjusted import path
-//import AboutView from "./views/AboutView.vue";
-import router from "./router";
-import store from "./store";
 import App from "./App.vue";
+import store from "./store";
+import router from "./router";
+import Toast, { POSITION } from "vue-toastification";
+import "vue-toastification/dist/index.css";
 
 const app = createApp(App);
 
-app.use(store).use(router).mount("#app");
+app.use(store);
+app.use(Toast, {
+    position: POSITION.TOP_RIGHT,
+    timeout: 3000,
+});
+app.use(router);
+
+app.mount("#app");
