@@ -63,14 +63,14 @@
             <span class="material-icons" aria-label="Analytics">insights</span>
             <h3>Break</h3>
         </router-link>
-
-        <a
-            @click="selectOption('Settings')"
-            :class="{ active: selectedOption === 'Settings' }"
+        <router-link
+            to="ProfileCompany"
+            @click="selectOption('Bus')"
+            :class="{ active: selectedOption === 'Bus' }"
         >
-            <span class="material-icons" aria-label="Settings">settings</span>
-            <h3>Settings</h3>
-        </a>
+            <span class="material-icons" aria-label="Products">settings</span>
+            <h3>Profile</h3>
+        </router-link>
 
         <a
             @click="selectOption('Add Product')"

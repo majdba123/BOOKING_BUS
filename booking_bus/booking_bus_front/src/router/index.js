@@ -20,7 +20,7 @@ import BookingLogin from "../views/BookingLogin.vue";
 import AllDriver2 from "../views/Company/Driver/AllDriver.vue";
 import AllPath2 from "../views/Company/Path/AllPath.vue";
 import AllBus2 from "../views/Company/Bus/AllBus.vue";
-import ProfileCompany from "../views/Company/ProfileCompany.vue";
+import ProfileCompany from "../views/Company/Profile/ProfilCompany.vue";
 import AllBreak from "../views/Company/Break/AllBreak.vue";
 
 const routes = [
