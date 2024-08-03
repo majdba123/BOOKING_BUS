@@ -5,7 +5,6 @@ import CreateCompany from "../views/CreateCompany.vue";
 import AdminPage from "../views/AdminPage.vue";
 import EditePath from "../views/EditePath.vue";
 import AllBus from "../views/AllBus.vue";
-import AddBreak from "../views/AddBreak.vue";
 import EditBreak from "../views/EditBreak.vue";
 import AddGovernment from "../views/AddGovernment.vue";
 import EditGovernment from "../views/EditGovernment.vue";
@@ -21,6 +20,8 @@ import AllDriver2 from "../views/Company/Driver/AllDriver.vue";
 import AllPath2 from "../views/Company/Path/AllPath.vue";
 import AllBus2 from "../views/Company/Bus/AllBus.vue";
 import AllTrip2 from "../views/Company/Trip/AllTrip.vue";
+import ProfileCompany from "../views/Company/Profile/ProfilCompany.vue";
+import AllBreak from "../views/Company/Break/AllBreak.vue";
 
 const routes = [
     {
@@ -37,6 +38,16 @@ const routes = [
         path: "/AllBus2",
         name: "AllBus2",
         component: AllBus2,
+    },
+    {
+        path: "/AllBreak",
+        name: "AllBreak",
+        component: AllBreak,
+    },
+    {
+        path: "/ProfileCompany",
+        name: "ProfileCompany",
+        component: ProfileCompany,
     },
     {
         path: "/AllPath2",
@@ -103,11 +114,7 @@ const routes = [
         name: "EditBreak",
         component: EditBreak,
     },
-    {
-        path: "/AddBreak",
-        name: "AddBreak",
-        component: AddBreak,
-    },
+
     {
         path: "/EditBreak",
         name: "EditBreak",

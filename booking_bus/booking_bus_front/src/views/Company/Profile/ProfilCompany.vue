@@ -31,7 +31,7 @@
                         <button @click="search">Search</button>
                     </div>
                 </div>
-                <AddBus ref="addBus" />
+                <ProfileCompanys ref="ProfileCompanys" />
             </main>
         </div>
         <!-- Right section start -->
@@ -63,13 +63,13 @@
 
             <!--start driver_chart-->
             <div class="driver_chart">
-                <h2>Bus Workload Status</h2>
+                <h2>Path Workload Status</h2>
                 <DriverChart :chartData="chartData" />
             </div>
 
             <!--start driver_status-->
             <div class="driver_status">
-                <h2>Bus Status</h2>
+                <h2>Driver Status</h2>
                 <div class="statuses">
                     <div class="status">
                         <div class="info">
@@ -92,13 +92,13 @@
 <script>
 import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import AddBus from "@/components/AddBus.vue";
+import ProfileCompanys from "@/components/ProfileCompanys.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 
 export default {
-    name: "AllBus",
-    components: { SidebarCompany, AddBus, DriverChart },
+    name: "ProfileCompany",
+    components: { SidebarCompany, ProfileCompanys, DriverChart },
     data() {
         return {
             x: store.state.x,
@@ -212,6 +212,7 @@ export default {
     },
 };
 </script>
+
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 

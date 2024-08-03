@@ -723,7 +723,6 @@ select:focus {
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 9px;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 .date:hover {
     box-shadow: none;
