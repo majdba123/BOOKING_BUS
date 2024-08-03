@@ -20,13 +20,14 @@
             <h3>Driver</h3>
         </RouterLink>
 
-        <a
+        <router-link
+            to="AllTrip2"
             @click="selectOption('Trip')"
             :class="{ active: selectedOption === 'Trip' }"
         >
             <span class="material-icons" aria-label="Analytics">insights</span>
             <h3>Trip</h3>
-        </a>
+        </router-link>
 
         <router-link
             to="AllPath2"

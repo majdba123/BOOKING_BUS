@@ -20,12 +20,18 @@ import BookingLogin from "../views/BookingLogin.vue";
 import AllDriver2 from "../views/Company/Driver/AllDriver.vue";
 import AllPath2 from "../views/Company/Path/AllPath.vue";
 import AllBus2 from "../views/Company/Bus/AllBus.vue";
+import AllTrip2 from "../views/Company/Trip/AllTrip.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/AllTrip2",
+        name: "AllTrip2",
+        component: AllTrip2,
     },
     {
         path: "/AllBus2",
