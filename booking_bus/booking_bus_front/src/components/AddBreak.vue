@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="containerd">
         <header class="navd">
             <button class="nav-btnd" @click="showForm = true">Add Path</button>
             <button class="nav-btnd" @click="showForm = false">
@@ -226,7 +226,7 @@ export default {
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 
-.container {
+.containerd {
     padding: 20px;
     background: #f6f6f9;
     display: flex;
