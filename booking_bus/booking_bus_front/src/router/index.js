@@ -5,7 +5,6 @@ import CreateCompany from "../views/CreateCompany.vue";
 import AdminPage from "../views/AdminPage.vue";
 import EditePath from "../views/EditePath.vue";
 import AllBus from "../views/AllBus.vue";
-import AddBreak from "../views/AddBreak.vue";
 import EditBreak from "../views/EditBreak.vue";
 import AddGovernment from "../views/AddGovernment.vue";
 import EditGovernment from "../views/EditGovernment.vue";
@@ -109,11 +108,7 @@ const routes = [
         name: "EditBreak",
         component: EditBreak,
     },
-    {
-        path: "/AddBreak",
-        name: "AddBreak",
-        component: AddBreak,
-    },
+
     {
         path: "/EditBreak",
         name: "EditBreak",
