@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:mobile_app/Data_Models/Private_Trip.dart';
+import 'package:mobile_app/Data_Models/Private_Trip_accepted_By_Comapny_.dart';
 import 'dart:convert';
 
 import 'package:mobile_app/constants.dart';
@@ -48,6 +49,46 @@ class PrivateTrip {
           .toList();
     } else {
       throw Exception('Failed to load trips');
+    }
+  }
+
+  Future<List<PrivateTripAccpetedBycompanyModel>>
+      getPrivateTripsRequsetAcceptedByCompany(
+          int privateTripId, String accessToken) async {
+    final response = await http.get(
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        Uri.parse(name_domain_server +
+            'user/OrderPrivateTripController/$privateTripId'));
+    // print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse
+          .map((trip) => PrivateTripAccpetedBycompanyModel.fromJson(trip))
+          .toList();
+    } else {
+      throw Exception('Failed to load trips');
+    }
+  }
+
+  Future<void> acceptPrivateOrder(String accessToken, int ordertripId) async {
+    final response = await http.post(
+      Uri.parse(
+          name_domain_server + 'user/accept_company_for_private/$ordertripId'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+      // body: json.encode({'price': price}),
+    );
+    print(response.statusCode);
+    print(response.body);
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Failed to accept private order +${jsonDecode(response.body)} ');
     }
   }
 }

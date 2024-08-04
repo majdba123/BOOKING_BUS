@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/screens/Dashborad_User/HorizontalList.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/CardInfoTripHorizontalList.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Card_for_Add_favorites_comapny.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/bottom_nav_bar.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/horizontal_list.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/route_card.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/search_Trip_form.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/section_title.dart';
@@ -98,7 +99,7 @@ class _DashboardUserState extends State<DashboardUser> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(25.0),
+              padding: const EdgeInsets.all(16.0),
               child: Consumer<TripuserProvider>(
                 builder: (context, tripProvider, child) {
                   if (tripProvider.trips.isEmpty) {
@@ -110,10 +111,12 @@ class _DashboardUserState extends State<DashboardUser> {
                     children: [
                       SectionTitle(title: 'All Trip'),
                       SizedBox(height: 8.0),
-                      HorizontalList(
+                      CardInfoTripHorizontalList(
                         items: tripProvider.trips
                             .map((trip) => RouteCard(
-                                  company_name: trip.companyId,
+                                  imageUrl:
+                                      'https://t3.ftcdn.net/jpg/02/51/59/46/360_F_251594672_c7xertPrElSFJ5eTd6V0CmQE1CyGC6Ke.jpg',
+                                  companyName: trip.companyId,
                                   tripId: trip.tripId,
                                   from: trip.from,
                                   to: trip.to,
@@ -121,34 +124,18 @@ class _DashboardUserState extends State<DashboardUser> {
                                 ))
                             .toList(),
                       ),
-                      SizedBox(height: 16.0),
+                      SizedBox(height: 12.0),
                       SectionTitle(title: 'Top Company'),
                       SizedBox(height: 8.0),
-                      HorizontalList(
+                      AutoScrollingHorizontalList(
                         items: tripProvider.compaines
                             .map((company) => CardfavoriteCompany(
                                   name_of_company: company.nameCompany,
                                   image_link: 'ads',
+                                  company_id: company.id,
                                 ))
                             .toList(),
                       ),
-                      // SingleChildScrollView(
-                      //   scrollDirection: Axis.horizontal,
-                      //   child: HorizontalList(items: [
-                      //     CardfavoriteCompany(
-                      //       image_link: 'adssad',
-                      //       name_of_company: 'hamza',
-                      //     ),
-                      //     CardfavoriteCompany(
-                      //       image_link: 'qeq',
-                      //       name_of_company: 'hamza',
-                      //     ),
-                      //     CardfavoriteCompany(
-                      //       image_link: 'qq1',
-                      //       name_of_company: 'hamza',
-                      //     ),
-                      //   ]),
-                      // ),
                     ],
                   );
                 },

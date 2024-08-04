@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_app/Provider/user/Profile_provider.dart';
+import 'package:mobile_app/screens/Dashborad_User/user_info_profile.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile_app/Provider/Auth_provider.dart';
@@ -54,6 +55,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    var userInfoProvider =
+        Provider.of<UserInfoProvider>(context, listen: false).userInfo;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Update Profile'),
@@ -87,6 +91,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               ),
               SizedBox(height: 20),
               TextFormField(
+                // initialValue: userInfoProvider?.profile['phone'],
                 controller: _phoneController,
                 decoration: InputDecoration(
                   labelText: 'Phone',
@@ -101,6 +106,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               ),
               SizedBox(height: 20),
               TextFormField(
+                // initialValue: userInfoProvider!.name,
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'Name',
@@ -112,6 +118,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               ),
               SizedBox(height: 20),
               TextFormField(
+                // initialValue: userInfoProvider!.email,
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',

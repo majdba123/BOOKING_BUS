@@ -7,6 +7,7 @@ import 'package:mobile_app/Provider/Admin/charge_blanace_requsert_provider.dart'
 import 'package:mobile_app/Provider/Company/Assign_bus_provider.dart';
 import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
 import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
+import 'package:mobile_app/Provider/Company/Private_Trip_provider.dart';
 import 'package:mobile_app/Provider/Company/Seat_Provider.dart';
 import 'package:mobile_app/Provider/Company/Trip_Provider.dart';
 import 'package:mobile_app/Provider/Company/Trip_Status.dart';
@@ -15,6 +16,7 @@ import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Address_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/Provider/user/Profile_provider.dart';
+import 'package:mobile_app/Provider/user/Rating_Provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/Provider/user/Update_password_provider.dart';
 import 'package:mobile_app/Provider/user/Wallet_provider.dart';
@@ -58,6 +60,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
         ChangeNotifierProvider(create: (_) => updateProfileProvider()),
         ChangeNotifierProvider(create: (_) => UserInfoProvider()),
+        ChangeNotifierProvider(create: (_) => PrivateTripProvider()),
+        ChangeNotifierProvider(create: (_) => RatingUserProvider()),
       ],
       child: MyApp(),
     ),

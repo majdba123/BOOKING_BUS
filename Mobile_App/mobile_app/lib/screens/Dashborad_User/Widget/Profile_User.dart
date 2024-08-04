@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Complete_info_profile.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Add_company_To_Fav.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Rate_Driver.dart';
 import 'package:mobile_app/screens/Dashborad_User/user_info_profile.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/colors.dart';
@@ -133,9 +136,36 @@ class ProfilePage extends StatelessWidget {
                     ),
                     ProfileOption(
                       icon: Icons.help,
-                      title: 'Help & Support',
+                      title: 'MY Private Trip',
                       onTap: () {
-                        // Handle Help & Support
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PrivateTripByStatus()),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 5),
+                    ProfileOption(
+                      icon: Icons.help,
+                      title: 'Add company to fav',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RatingUi()),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 5),
+                    ProfileOption(
+                      icon: Icons.help,
+                      title: 'Rating Driver',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RatingDriverUi()),
+                        );
                       },
                     ),
                     SizedBox(height: 30),

@@ -23,10 +23,11 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  void logout() {
-    _accessToken = '';
-    _userType = '';
-    // Clear other user data if necessary
-    notifyListeners();
+  Future<void> logout() async {
+    final result = await LoginApi().logout(_accessToken);
+    if (result['success']) {
+      _accessToken = '';
+      notifyListeners();
+    }
   }
 }

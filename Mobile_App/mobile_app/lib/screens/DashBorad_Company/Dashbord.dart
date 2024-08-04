@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Driver_managment/Driver_managment_page.dart';
+import 'package:mobile_app/screens/DashBorad_Company/Private_Trips_Requset.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Trip_managemt/trip_managemt_page.dart';
 import 'package:mobile_app/screens/DashBorad_Company/path_mangement/path_managemt_page.dart';
 
@@ -27,7 +28,6 @@ class _DashbordState extends State<Dashbord> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-  
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -79,6 +79,16 @@ class _DashbordState extends State<Dashbord> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => TripBusmanagment()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.contacts),
+              title: Text('ادارة الرحلات الخاصة'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PrivateTripByComapany()));
               },
             ),
             ListTile(

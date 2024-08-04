@@ -3,7 +3,7 @@ import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Seat_Selection_Screen.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/bottom_nav_bar.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/horizontal_list.dart';
+
 import 'package:mobile_app/screens/Dashborad_User/Widget/route_card.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/search_Trip_form.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/section_title.dart';
@@ -48,7 +48,10 @@ class BusSearchScreen extends StatelessWidget {
                           height: MediaQuery.of(context).size.height * 0.25,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [AppColors.primaryColor, Colors.blueAccent],
+                              colors: [
+                                AppColors.primaryColor,
+                                Colors.blueAccent
+                              ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
@@ -67,17 +70,20 @@ class BusSearchScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.arrow_back, color: Colors.white),
+                                icon:
+                                    Icon(Icons.arrow_back, color: Colors.white),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
                               ),
                               SizedBox(height: 8.0),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Chennai, TN',
@@ -96,7 +102,8 @@ class BusSearchScreen extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  Icon(Icons.directions_bus, color: Colors.white, size: 40),
+                                  Icon(Icons.directions_bus,
+                                      color: Colors.white, size: 40),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
@@ -273,14 +280,16 @@ class BusCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(trip.companyId, // Use company name if available
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
                       SizedBox(height: 4.0),
                       // Text(trip.type ?? 'Unknown', style: TextStyle(color: Colors.grey)), // Assuming `type` field in trip
                     ],
                   ),
                   Spacer(),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                     decoration: BoxDecoration(
                       color: Colors.green[100],
                       borderRadius: BorderRadius.circular(8.0),
@@ -325,7 +334,8 @@ class BusCard extends StatelessWidget {
                   // Text(trip.rating ?? '', style: TextStyle(color: Colors.grey)), // Assuming `rating` field
                   Spacer(),
                   Text('${trip.price} GBP', // Assuming `price` field
-                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold)),
                 ],
               ),
             ],

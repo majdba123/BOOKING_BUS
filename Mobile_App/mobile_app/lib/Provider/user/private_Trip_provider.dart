@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Api_Services/User/Private_trip.dart';
 import 'package:mobile_app/Data_Models/Private_Trip.dart';
+import 'package:mobile_app/Data_Models/Private_Trip_accepted_By_Comapny_.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Private_trip_user.dart';
 import 'package:provider/provider.dart';
 
 class PrivateTripuserProvider with ChangeNotifier {
-  String? _tripId;
+  int? _tripId;
   String? _message;
   List<PrivateTripModel> _privatetrips = [];
   List<PrivateTripModel> get privatetrips => _privatetrips;
-  String? get tripId => _tripId;
+  List<PrivateTripAccpetedBycompanyModel> _privatetripsRequset = [];
+  List<PrivateTripAccpetedBycompanyModel> get privatetripsRequest =>
+      _privatetripsRequset;
+  int? get tripId => _tripId;
   String? get message => _message;
   String _status = 'padding';
   String get status => _status;
@@ -18,6 +22,11 @@ class PrivateTripuserProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   void setStatus(String status) {
     _status = status;
+    notifyListeners();
+  }
+
+  void settripid(int tripid) {
+    _tripId = tripid;
     notifyListeners();
   }
 
@@ -38,6 +47,25 @@ class PrivateTripuserProvider with ChangeNotifier {
     notifyListeners();
     _privatetrips =
         await PrivateTrip().getPrivateTripsByStatus(_status, accessToken);
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchPrivateTripsAccepetedRequsetByComapny(
+      int privatetripId, String accessToken) async {
+    _isLoading = true;
+    notifyListeners();
+    _privatetripsRequset = await PrivateTrip()
+        .getPrivateTripsRequsetAcceptedByCompany(privatetripId, accessToken);
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> acceptPrivateTripRequsetfromuser(
+      int OrderPrivateId, String accessToken) async {
+    _isLoading = true;
+    notifyListeners();
+    await PrivateTrip().acceptPrivateOrder(accessToken, OrderPrivateId);
     _isLoading = false;
     notifyListeners();
   }

@@ -54,7 +54,7 @@ class UserProfile {
       body: json.encode({'city': city, 'area': area}),
     );
     print(response.statusCode);
-    print(response.body);
+    // print(response.body);
     if (response.statusCode != 200) {
       throw Exception('Failed to store address');
     }

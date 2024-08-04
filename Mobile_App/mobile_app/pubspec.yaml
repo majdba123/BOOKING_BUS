@@ -46,6 +46,8 @@ dependencies:
   barcode: ^2.1.0
   flutter_svg: any
   image_picker: ^1.1.2
+  shared_preferences: ^2.3.1
+  carousel_slider: ^4.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

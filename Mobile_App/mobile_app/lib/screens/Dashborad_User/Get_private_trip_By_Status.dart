@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/user/Accpeted_private_trip_By_company.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
@@ -70,7 +71,9 @@ class PrivateTripByStatus extends StatelessWidget {
                     return Center(child: CircularProgressIndicator());
                   }
                   if (tripProvider.privatetrips.isEmpty) {
-                    return Center(child: Text('No trips available'));
+                    return Center(
+                        child:
+                            Text('No Comapany Accpeted this trip until Now'));
                   }
                   return ListView.builder(
                     itemCount: tripProvider.privatetrips.length,
@@ -99,143 +102,97 @@ class TripCard extends StatelessWidget {
       builder: (context, tripProvider, child) {
         final trip = tripProvider.privatetrips[index];
 
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            double cardPadding = constraints.maxWidth * 0.04;
-            double imageWidth = constraints.maxWidth * 0.12;
-            double textFontSize = constraints.maxWidth * 0.045;
-            double smallTextFontSize = constraints.maxWidth * 0.035;
-            double iconSize = constraints.maxWidth * 0.05;
-
-            return Card(
-              margin: EdgeInsets.only(bottom: 16.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(cardPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: imageWidth,
-                          height: imageWidth,
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/logo_bus.jpg'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: cardPadding),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'From: ${trip.from}',
-                                style: TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: textFontSize,
-                                ),
-                              ),
-                              SizedBox(height: 4.0),
-                              Text(
-                                'To: ${trip.to}',
-                                style: TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: textFontSize,
-                                ),
-                              ),
-                              SizedBox(height: 4.0),
-                              Text(
-                                'Date: ${trip.date}',
-                                style: TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: smallTextFontSize,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 4.0),
-                          decoration: BoxDecoration(
-                            color: Colors.green[100],
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Text(
-                            '15 \$',
-                            style: TextStyle(color: Colors.green),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: cardPadding),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Start Time: ${trip.time}',
-                              style: TextStyle(
-                                fontSize: textFontSize,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                            SizedBox(height: 4.0),
-                          ],
-                        ),
-                        if (trip.status == 'completed')
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: Colors.green,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  // Handle accept
-                                },
-                                child: Text('Accept'),
-                              ),
-                              SizedBox(width: 10),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  // Handle reject
-                                },
-                                child: Text('Reject'),
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+        return InkWell(
+          onTap: () {
+            tripProvider.settripid(trip.id);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AccpetedPrivateTripByCompany()),
             );
           },
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              double cardPadding = constraints.maxWidth * 0.04;
+              double imageWidth = constraints.maxWidth * 0.12;
+              double textFontSize = constraints.maxWidth * 0.045;
+              double smallTextFontSize = constraints.maxWidth * 0.035;
+              double iconSize = constraints.maxWidth * 0.05;
+
+              return Card(
+                margin: EdgeInsets.only(bottom: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(cardPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: imageWidth,
+                            height: imageWidth,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/logo_bus.jpg'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: cardPadding),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'From: ${trip.from}',
+                                  style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: textFontSize,
+                                  ),
+                                ),
+                                SizedBox(height: 4.0),
+                                Text(
+                                  'To: ${trip.to}',
+                                  style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: textFontSize,
+                                  ),
+                                ),
+                                SizedBox(height: 4.0),
+                                Text(
+                                  'Date: ${trip.date}',
+                                  style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: smallTextFontSize,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: cardPadding),
+                      Text(
+                        'Start Time: ${trip.time}',
+                        style: TextStyle(
+                          fontSize: textFontSize,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         );
       },
     );
