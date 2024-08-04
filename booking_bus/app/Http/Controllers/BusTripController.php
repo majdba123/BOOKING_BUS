@@ -68,9 +68,10 @@ class BusTripController extends Controller
      */
     public function getBusTripsByTripId($tripId)
     {
-        $companyId = Auth::user()->company->id;
-        if($companyId){
-            $trip = Trip::where('company_id' , $companyId)->find($tripId);
+
+        $companyId = Auth::user();
+        if($companyId->company){
+            $trip = Trip::where('company_id' , $companyId->company->id)->find($tripId);
             if (!$trip) {
                 // Return an error or a default response if the trip is not found
                 return response()->json(['error' => 'Trip not found'], 404);
