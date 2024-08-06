@@ -24,7 +24,7 @@
             @click="selectOption('Trip')"
             :class="{ active: selectedOption === 'Trip' }"
         >
-            <span class="material-icons" aria-label="Analytics">insights</span>
+            <span class="material-icons" aria-label="Analytics">route</span>
             <h3>Trip</h3>
         </a>
 
@@ -33,7 +33,7 @@
             @click="selectOption('Path')"
             :class="{ active: selectedOption === 'Path' }"
         >
-            <span class="material-icons" aria-label="Analytics">insights</span>
+            <span class="material-icons" aria-label="Analytics">timeline</span>
             <h3>Path</h3>
         </router-link>
 
@@ -43,7 +43,7 @@
             :class="{ active: selectedOption === 'Bus' }"
         >
             <span class="material-icons" aria-label="Products"
-                >receipt_long</span
+                >directions_bus</span
             >
             <h3>Bus</h3>
         </router-link>
@@ -77,7 +77,7 @@
             @click="selectOption('Bus')"
             :class="{ active: selectedOption === 'Bus' }"
         >
-            <span class="material-icons" aria-label="Products">settings</span>
+            <span class="material-icons" aria-label="Products">person</span>
             <h3>Profile</h3>
         </router-link>
 
