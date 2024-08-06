@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart'
     as http; // Assuming you're using the http package for API calls
+import 'package:mobile_app/Api_Services/User/User_profile.dart';
+import 'package:mobile_app/Data_Models/My_Reservation.dart';
 import 'package:mobile_app/Data_Models/Reservation_Success_model.dart';
 import 'dart:convert';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
@@ -14,7 +16,9 @@ class TripuserProvider with ChangeNotifier {
   List<Company> _compaines = [];
 
   List<Company> get compaines => _compaines;
+  List<MYReservation> _Myreservations = [];
 
+  List<MYReservation> get Myreservations => _Myreservations;
   late BusTrip selectedBus;
   late List<int> selectedSeat;
   late BreakPlace breakPlaces;
@@ -31,7 +35,12 @@ class TripuserProvider with ChangeNotifier {
   BreakPlace? get selectedDeboardingPoint => _selectedDeboardingPoint;
   Reservation? _reservation;
   Reservation? get reservation => _reservation;
-
+  String _status = 'active';
+  String get status => _status;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
   void selectBoardingPoint(BreakPlace point) {
     _selectedBoardingPoint = point;
     notifyListeners();
@@ -173,6 +182,23 @@ class TripuserProvider with ChangeNotifier {
       Map<String, dynamic> parsedJson = json.decode(response.body);
       String error = parsedJson['error'];
       throw Exception(error);
+    }
+  }
+
+  Future<void> fetchReservations(String status, String accessToken) async {
+    _isLoading = true;
+    _errorMessage = null;
+    _status = status;
+    notifyListeners();
+
+    try {
+      _Myreservations =
+          await UserProfile().fetchReservations(status, accessToken);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

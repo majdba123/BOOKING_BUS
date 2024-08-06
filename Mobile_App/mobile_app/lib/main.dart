@@ -15,11 +15,13 @@ import 'package:mobile_app/Provider/Company/path_provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Address_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
+import 'package:mobile_app/Provider/user/Company_Info.dart';
 import 'package:mobile_app/Provider/user/Profile_provider.dart';
 import 'package:mobile_app/Provider/user/Rating_Provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/Provider/user/Update_password_provider.dart';
 import 'package:mobile_app/Provider/user/Wallet_provider.dart';
+import 'package:mobile_app/Provider/user/inquiry_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
@@ -62,6 +64,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => UserInfoProvider()),
         ChangeNotifierProvider(create: (_) => PrivateTripProvider()),
         ChangeNotifierProvider(create: (_) => RatingUserProvider()),
+        ChangeNotifierProvider(create: (_) => CompanyInfoProvider()),
+        ChangeNotifierProvider(create: (_) => InquiryProvider()),
       ],
       child: MyApp(),
     ),

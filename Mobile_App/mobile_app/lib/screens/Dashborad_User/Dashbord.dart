@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/screens/Dashborad_User/All_Trip_Page.dart';
+import 'package:mobile_app/screens/Dashborad_User/All_compines.dart';
+import 'package:mobile_app/screens/Dashborad_User/Auto_Scroll_list_horizental_Trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/HorizontalList.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/CardInfoTripHorizontalList.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Card_for_Add_favorites_comapny.dart';
@@ -76,9 +80,8 @@ class _DashboardUserState extends State<DashboardUser> {
                     onPressed: () {},
                   ),
                   IconButton(
-                    icon:
-                        Icon(Icons.logout, color: Colors.white), // Logout icon
-                    onPressed: () => _logout(context), // Logout functionality
+                    icon: Icon(Icons.logout, color: Colors.white),
+                    onPressed: () => _logout(context),
                   ),
                 ],
               ),
@@ -87,13 +90,12 @@ class _DashboardUserState extends State<DashboardUser> {
               children: [
                 Container(
                   color: AppColors.primaryColor,
-                  height: 150.0, // here is the height of the top container !!!!
+                  height: 150.0,
                 ),
                 Container(
                   padding:
                       EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
-                  margin: EdgeInsets.only(
-                      top: 10.0), //here control the marign of the box serach
+                  margin: EdgeInsets.only(top: 10.0),
                   child: SearchBusForm(),
                 ),
               ],
@@ -109,9 +111,12 @@ class _DashboardUserState extends State<DashboardUser> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SectionTitle(title: 'All Trip'),
+                      SectionTitle(
+                        title: 'All Trip',
+                        navigateTo: AllTripage(),
+                      ),
                       SizedBox(height: 8.0),
-                      CardInfoTripHorizontalList(
+                      AutoScrollingHorizontalList(
                         items: tripProvider.trips
                             .map((trip) => RouteCard(
                                   imageUrl:
@@ -125,7 +130,10 @@ class _DashboardUserState extends State<DashboardUser> {
                             .toList(),
                       ),
                       SizedBox(height: 12.0),
-                      SectionTitle(title: 'Top Company'),
+                      SectionTitle(
+                        title: 'Top Company',
+                        navigateTo: AllCompaniesPage(),
+                      ),
                       SizedBox(height: 8.0),
                       AutoScrollingHorizontalList(
                         items: tripProvider.compaines

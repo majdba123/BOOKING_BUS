@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/user/inquiry_by_status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/All_My_charage_Balance_By_Status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Complete_info_profile.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Add_company_To_Fav.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Help_Screen.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/InquiryForm.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/MY_Reservation.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Rate_Driver.dart';
 import 'package:mobile_app/screens/Dashborad_User/user_info_profile.dart';
 import 'package:provider/provider.dart';
@@ -63,33 +68,46 @@ class ProfilePage extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage:
-                          AssetImage('assets/images/user_avatar.jpg'),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      userInfo.name,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      userInfo.email,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      userInfo.profile['phone'],
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
+                      elevation: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundImage: AssetImage('assets/person.png'),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              userInfo.name,
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              userInfo.email,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              userInfo.profile['phone'],
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 30),
@@ -102,13 +120,6 @@ class ProfilePage extends StatelessWidget {
                           MaterialPageRoute(
                               builder: (context) => AddressListPage()),
                         );
-                      },
-                    ),
-                    ProfileOption(
-                      icon: Icons.favorite,
-                      title: 'Fav Company',
-                      onTap: () {
-                        // Handle Privacy Settings
                       },
                     ),
                     ProfileOption(
@@ -135,7 +146,7 @@ class ProfilePage extends StatelessWidget {
                       },
                     ),
                     ProfileOption(
-                      icon: Icons.help,
+                      icon: Icons.bus_alert_outlined,
                       title: 'MY Private Trip',
                       onTap: () {
                         Navigator.push(
@@ -145,26 +156,38 @@ class ProfilePage extends StatelessWidget {
                         );
                       },
                     ),
-                    SizedBox(height: 5),
                     ProfileOption(
-                      icon: Icons.help,
-                      title: 'Add company to fav',
+                      icon: Icons.calendar_month,
+                      title: 'MY Reservation',
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => RatingUi()),
+                          MaterialPageRoute(
+                              builder: (context) => BookingsScreen()),
                         );
                       },
                     ),
                     SizedBox(height: 5),
                     ProfileOption(
-                      icon: Icons.help,
+                      icon: Icons.rate_review,
                       title: 'Rating Driver',
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => RatingDriverUi()),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 5),
+                    ProfileOption(
+                      icon: Icons.question_answer,
+                      title: 'send Qustion',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HelpDeskScreen()),
                         );
                       },
                     ),
@@ -269,28 +292,57 @@ class EWalletSection extends StatelessWidget {
             ),
           ),
           SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: AppColors.primaryColor,
-              backgroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: AppColors.primaryColor,
+                  backgroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddFundsPage()),
+                  );
+                },
+                child: Text(
+                  'Add Funds',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddFundsPage()),
-              );
-            },
-            child: Text(
-              'Add Funds',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: AppColors.primaryColor,
+                  backgroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ChargeBalanceByStatusPage()),
+                  );
+                },
+                child: Text(
+                  'All-order ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_of_spsecfic_trip.dart';
 
 class RouteCard extends StatelessWidget {
   final String from;
@@ -8,7 +7,7 @@ class RouteCard extends StatelessWidget {
   final String price;
   final int tripId;
   final String companyName;
-  final String imageUrl; // Add image URL for the photo
+  final String imageUrl;
 
   const RouteCard({
     required this.tripId,
@@ -21,104 +20,69 @@ class RouteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double titleFontSize = screenWidth * 0.05;
-    double subtitleFontSize = screenWidth * 0.035;
-    double priceFontSize = screenWidth * 0.04;
-    double imageWidth = screenWidth * 0.22; // Responsive image width
-    double imageHeight =
-        screenWidth * 0.15; // Adjusted height for rectangular shape
+    double cardWidth = 280.0; // Adjusted width to match the example size
+    double cardHeight = 100.0; // Adjusted height to match the example size
+    double titleFontSize = 16.0;
+    double subtitleFontSize = 12.0;
+    double priceFontSize = 14.0;
+    double imageWidth = 80.0;
+    double imageHeight = 80.0;
 
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BusCardofSpecicTrip(
-              tripId: tripId,
+    return Container(
+      width: cardWidth,
+      height: cardHeight,
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.8), // Adding transparency
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 5.0,
+            spreadRadius: 1.0,
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: imageWidth,
+            height: imageHeight,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              image: DecorationImage(
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        );
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-        padding: EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 5.0,
-              spreadRadius: 1.0,
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: imageWidth,
-              height: imageHeight,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            SizedBox(width: 16.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$from →\n $to',
-                    style: TextStyle(
-                      color: AppColors.primaryColor,
-                      fontSize: titleFontSize,
+          SizedBox(width: 8.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$from → $to',
+                  style: TextStyle(
                       fontWeight: FontWeight.bold,
-                    ),
+                      fontSize: titleFontSize,
+                      color: AppColors.primaryColor),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4.0),
+                Text(
+                  'from $price',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: subtitleFontSize,
                   ),
-                  SizedBox(height: 8.0),
-                  // Text(
-                  //   'Company: $companyName',
-                  //   style: TextStyle(
-                  //     fontSize: subtitleFontSize,
-                  //     fontWeight: FontWeight.bold,
-                  //     color: AppColors.primaryColor,
-                  //   ),
-                  //   overflow: TextOverflow.ellipsis,
-                  // ),
-                  SizedBox(height: 5.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Text(
-                      //   'Trip ID: $tripId',
-                      //   style: TextStyle(
-                      //     fontSize: subtitleFontSize * 0.9,
-                      //     color: Colors.grey,
-                      //   ),
-                      // ),
-                      Chip(
-                        label: Text(
-                          '\$$price',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: priceFontSize,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        backgroundColor: AppColors.primaryColor,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

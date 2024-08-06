@@ -5,8 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/constants.dart';
 import 'package:intl/intl.dart';
-import 'package:barcode/barcode.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 
 class TripTicketPage extends StatefulWidget {
   @override
@@ -14,15 +13,15 @@ class TripTicketPage extends StatefulWidget {
 }
 
 class _TripTicketPageState extends State<TripTicketPage> {
-  BarcodePainter? barCodePainter;
+  String qrData = '';
 
   @override
   void initState() {
     super.initState();
-    _generateBarcode();
+    _generateQrData();
   }
 
-  void _generateBarcode() {
+  void _generateQrData() {
     final reservation =
         Provider.of<TripuserProvider>(context, listen: false).reservation;
     if (reservation != null) {
@@ -32,12 +31,11 @@ class _TripTicketPageState extends State<TripTicketPage> {
           Provider.of<TripuserProvider>(context, listen: false).to;
       final currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-      final barcodeData =
+      final data =
           'ReservationID:${reservation.reservationId}|User:${reservation.userName}|Seats:${reservation.seats.map((seat) => seat.seatId).join(",")}|From:${fromLocation ?? "N/A"}|To:${toLocation ?? "N/A"}|Date:$currentDate';
-      final Barcode code128 = Barcode.code128();
 
       setState(() {
-        barCodePainter = BarcodePainter(code128, barcodeData, drawText: false);
+        qrData = data;
       });
     }
   }
@@ -245,13 +243,12 @@ class _TripTicketPageState extends State<TripTicketPage> {
                     SizedBox(height: 28),
                     Divider(),
                     SizedBox(height: 28),
-                    barCodePainter != null
-                        ? SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: CustomPaint(
-                              size: Size(300, 100),
-                              painter: barCodePainter,
-                            ),
+                    qrData.isNotEmpty
+                        ? BarcodeWidget(
+                            barcode: Barcode.qrCode(),
+                            data: qrData,
+                            width: 200,
+                            height: 200,
                           )
                         : CircularProgressIndicator(),
                   ],
@@ -297,38 +294,4 @@ class _TripTicketPageState extends State<TripTicketPage> {
       ),
     );
   }
-}
-
-class BarcodePainter extends CustomPainter {
-  final Barcode barcode;
-  final String data;
-  final bool drawText;
-  DrawableRoot? svgRoot;
-
-  BarcodePainter(this.barcode, this.data, {this.drawText = false}) {
-    _generateSvgRoot();
-  }
-
-  Future<void> _generateSvgRoot() async {
-    final barcodeSvg = barcode.toSvg(
-      data,
-      width: 300,
-      height: 100,
-      drawText: drawText,
-    );
-
-    svgRoot = await svg.fromSvgString(barcodeSvg, barcodeSvg);
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (svgRoot != null) {
-      svgRoot!.scaleCanvasToViewBox(canvas, size);
-      svgRoot!.clipCanvasToViewBox(canvas);
-      svgRoot!.draw(canvas, Rect.fromLTWH(0, 0, size.width, size.height));
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

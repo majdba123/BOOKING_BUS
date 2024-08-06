@@ -43,7 +43,7 @@ class _RatingUiState extends State<RatingUi> {
             itemBuilder: (context, index) {
               final company = userProvider.companies[index];
               return ListTile(
-                title: Text(company.user.name),
+                // title: Text(company.user!.name),
                 trailing: IconButton(
                   icon: Icon(Icons.favorite_border),
                   onPressed: () async {

@@ -86,6 +86,7 @@ class RatingApiServices {
       },
       body: json.encode({'num': rating}),
     );
+    print(response.statusCode);
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       return responseData["message"];

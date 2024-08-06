@@ -5,6 +5,7 @@ import 'package:mobile_app/Data_Models/Driver.dart';
 import 'package:mobile_app/Data_Models/Driver_Status.dart';
 import 'package:mobile_app/Data_Models/UserFavCompany.dart';
 import 'package:mobile_app/Data_Models/company.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RatingUserProvider with ChangeNotifier {
   List<Company> _companies = [];
@@ -64,6 +65,13 @@ class RatingUserProvider with ChangeNotifier {
 
   Future<String> rateDriver(int driverId, int rating) async {
     if (_apiService == null) return "API service not initialized";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('driver_$driverId', rating);
     return await _apiService!.rateDriver(driverId, rating);
+  }
+
+  Future<int> getDriverRating(int driverId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('driver_$driverId') ?? 0;
   }
 }

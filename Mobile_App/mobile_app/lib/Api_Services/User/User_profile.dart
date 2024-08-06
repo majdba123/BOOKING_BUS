@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:mobile_app/Data_Models/Address_model.dart';
+import 'package:mobile_app/Data_Models/My_Reservation.dart';
+import 'package:mobile_app/Data_Models/charge_balance.dart';
+import 'package:mobile_app/constants.dart';
 
 class UserProfile {
   static const String baseUrl = 'http://127.0.0.1:8000/api/user';
@@ -72,6 +75,44 @@ class UserProfile {
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to update address');
+    }
+  }
+
+  Future<List<ChargeBalance>> fetchChargeBalances(
+      String status, String accessToken) async {
+    final response = await http.get(
+      Uri.parse(name_domain_server +
+          'user/all_my_charge_balance_by_status?status=$status'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      // body: json.encode({'status': status}),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((json) => ChargeBalance.fromJson(json)).toList();
+    } else {
+      throw Exception(json.decode(response.body)['error']);
+    }
+  }
+
+  Future<List<MYReservation>> fetchReservations(
+      String status, String accessToken) async {
+    final response = await http.get(
+      Uri.parse(name_domain_server +
+          'user/all_my_reservation_by_status?status=$status'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      List data = json.decode(response.body);
+      return data.map((item) => MYReservation.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load reservations: ${response.body}');
     }
   }
 }
