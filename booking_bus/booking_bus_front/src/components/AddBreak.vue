@@ -1,9 +1,9 @@
 <template>
     <div class="containerd">
         <header class="navd">
-            <button class="nav-btnd" @click="showForm = true">Add Path</button>
+            <button class="nav-btnd" @click="showForm = true">Add Break</button>
             <button class="nav-btnd" @click="showForm = false">
-                Show Path
+                Show Break
             </button>
         </header>
         <div class="content">
