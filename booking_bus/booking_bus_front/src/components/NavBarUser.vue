@@ -1,4 +1,9 @@
 <template>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
     <div class="main-content">
         <div class="menu">
             <ul>
@@ -7,14 +12,14 @@
                 </li>
                 <li class="profile">
                     <div class="img-box">
-                        <img src="تنزيل.webp" alt="Profile Image" />
+                        <img src="تنزيل.webp" alt="" />
                     </div>
-                    <h2>Admin</h2>
+                    <h2>User</h2>
                 </li>
 
                 <li>
-                    <a class="active" href="">
-                        <i>
+                    <a class="active" href=""
+                        ><i>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="35"
@@ -25,42 +30,37 @@
                             >
                                 <path
                                     d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"
-                                />
-                            </svg>
-                        </i>
-                        <p>Dashboard</p>
+                                /></svg
+                        ></i>
+                        <p>dashboard</p>
                     </a>
-                </li>
-                <li>
-                    <router-link to="/CreateCompany" class="nav-link">
-                        <i class="fas fa-user-group"></i>
-                        <p>Add Company</p>
-                    </router-link>
                 </li>
                 <li
                     class="dropdown"
-                    @mouseenter="showDropdown1"
-                    @mouseleave="hideDropdown1"
+                    @mouseenter="showDropdown2"
+                    @mouseleave="hideDropdown2"
                 >
                     <a href="#" class="nav-link">
-                        <i class="fas fa-chart-pie"></i>
-                        <p>Government</p>
+                        <i class="fas fa-user-group"></i>
+                        <p>Driver</p>
                     </a>
-                    <ul v-show="dropdownVisible1" class="dropdown-content">
-                        <router-link to="/AddGovernment"
-                            >Add Government</router-link
+                    <ul v-show="dropdownVisible2" class="dropdown-content">
+                        <router-link to="/CreateDriver" class="nav-link">
+                            <p>Add Driver</p>
+                        </router-link>
+                        <router-link to="/AllDriver" class="nav-link">
+                            <p>Get All Driver</p>
+                        </router-link>
+                        <router-link to="/DriverStatus"
+                            >Driver Status</router-link
                         >
-                        <router-link to="/EditGovernment"
-                            >Edit Government</router-link
+                        <router-link to="/CancelDriver"
+                            >Cancel Driver</router-link
+                        >
+                        <router-link to="/DriverActive"
+                            >Driver Active</router-link
                         >
                     </ul>
-                </li>
-
-                <li>
-                    <a href="">
-                        <i class="fas fa-chart-pie"></i>
-                        <p>Bookings</p>
-                    </a>
                 </li>
 
                 <li
@@ -70,11 +70,49 @@
                 >
                     <a href="#" class="nav-link">
                         <i class="fas fa-table"></i>
-                        <p>Breaks</p>
+                        <p>Path</p>
                     </a>
                     <ul v-show="dropdownVisible" class="dropdown-content">
-                        <router-link to="/AddBreak">Add Break</router-link>
-                        <router-link to="/EditBreak">Edit Break</router-link>
+                        <router-link to="/AddPath">Add Path</router-link>
+                        <router-link to="/EditePath">Edit Path</router-link>
+                    </ul>
+                </li>
+
+                <li
+                    class="dropdown"
+                    @mouseenter="showDropdown1"
+                    @mouseleave="hideDropdown1"
+                >
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-pie"></i>
+                        <p>Private Trip</p>
+                    </a>
+                    <ul v-show="dropdownVisible1" class="dropdown-content">
+                        <router-link to="/AddPrivateTrip"
+                            >Add Private Trips</router-link
+                        >
+                        <router-link to="/EditeBus">Edit Bus</router-link>
+                        <router-link to="/PrivateStatus"
+                            >Private Status</router-link
+                        >
+                        <router-link to="/AllBus">Get All Bus</router-link>
+                    </ul>
+                </li>
+
+                <li
+                    class="dropdown"
+                    @mouseenter="showDropdown3"
+                    @mouseleave="hideDropdown3"
+                >
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-table"></i>
+                        <p>Trip</p>
+                    </a>
+                    <ul v-show="dropdownVisible3" class="dropdown-content">
+                        <router-link to="/AddTrip">Add Trip</router-link>
+                        <router-link to="/EditTrip">Edit Trip</router-link>
+                        <router-link to="/AllTripUser">All Trip</router-link>
+                        <router-link to="/TripStatus">Trip Status</router-link>
                     </ul>
                 </li>
 
@@ -87,15 +125,15 @@
         </div>
     </div>
 </template>
-
 <script>
 import axios from "axios";
 import router from "@/router";
-
 export default {
-    name: "NavBar",
+    name: "NavBarUser",
     data() {
         return {
+            dropdownVisible3: false,
+
             dropdownVisible: false,
             dropdownVisible1: false,
             dropdownVisible2: false,
@@ -111,8 +149,11 @@ export default {
             }).then(function (response) {
                 if (response.status == 200) {
                     console.log(response);
-                    window.alert("Logout successful");
-                    window.localStorage.setItem("access_token", "");
+                    window.alert("Logout succesful");
+                    window.localStorage.setItem(
+                        "access_token",
+                        response.data.access_token
+                    );
                     router.push("/");
                 }
             });
@@ -135,11 +176,17 @@ export default {
         hideDropdown1() {
             this.dropdownVisible1 = false;
         },
+        showDropdown3() {
+            this.dropdownVisible3 = true;
+        },
+        hideDropdown3() {
+            this.dropdownVisible3 = false;
+        },
     },
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 * {
     padding: 0;
     margin: 0;
@@ -179,14 +226,11 @@ body {
 .menu {
     background-color: #2f3234;
     width: 45px;
-    height: 100%;
+    height: 100vh;
     padding: 20px;
     overflow: hidden;
     transition: 0.6s;
     border-radius: 6px;
-    position: fixed; /* اجعل القائمة ثابتة */
-    top: 0; /* اجعل القائمة في أعلى الشاشة */
-    left: 0; /* اجعل القائمة في الجانب الأيسر من الشاشة */
 }
 .menu:hover {
     width: 260px;
