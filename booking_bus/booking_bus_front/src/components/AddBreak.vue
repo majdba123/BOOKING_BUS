@@ -244,27 +244,7 @@ export default {
                     console.error(error);
                 });
         },
-        AddBus() {
-            const token = window.localStorage.getItem("access_token");
 
-            axios({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/company/store_bus",
-                data: {
-                    number_bus: this.number_bus.toString(),
-                    number_passenger: this.number_passenger.toString(),
-                },
-                headers: { Authorization: `Bearer ${token}` },
-            })
-                .then((response) => {
-                    console.log(response);
-                    window.alert("Bus added successfully!");
-                })
-                .catch((error) => {
-                    window.alert("Error adding bus.");
-                    console.log(error);
-                });
-        },
         openEditModal(breakItem, index) {
             this.editedBreak = { ...breakItem };
             this.editingIndex = index;
