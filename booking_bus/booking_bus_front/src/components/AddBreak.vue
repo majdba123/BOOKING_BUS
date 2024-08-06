@@ -200,7 +200,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/admin/all_government",
+                url: "127.0.0.1:8000/api/company/all_government",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -215,7 +215,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/admin/all_breaks",
+                url: "http://127.0.0.1:8000/api/company/all_breaks/{area_id}",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
