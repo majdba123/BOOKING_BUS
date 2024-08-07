@@ -78,7 +78,7 @@ import axios from "axios";
 import { useToast } from "vue-toastification";
 
 export default {
-    name: "privatetrip",
+    name: "privateTrip",
     data() {
         return {
             showForm: true,
@@ -128,7 +128,7 @@ export default {
             this.selectedTripId = tripId;
             this.showAcceptModal = true;
         },
-        submitAcceptOrder() {
+        /*    submitAcceptOrder() {
             const token = window.localStorage.getItem("access_token");
 
             axios({
@@ -139,7 +139,7 @@ export default {
                     price: this.price,
                 },
             })
-                .then((response) => {
+             .then((response) => {
                     this.toast.success("Order accepted successfully!");
                     this.showAcceptModal = false;
                     this.fetchPrivateTrips();
@@ -148,7 +148,7 @@ export default {
                     this.toast.error("Error accepting order.");
                     console.error(error);
                 });
-        },
+        },*/
         closeAcceptModal() {
             this.showAcceptModal = false;
         },
