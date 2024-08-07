@@ -22,7 +22,7 @@ import AllBus2 from "../views/Company/Bus/AllBus.vue";
 import AllTrip2 from "../views/Company/Trip/AllTrip.vue";
 import ProfileCompany from "../views/Company/Profile/ProfilCompany.vue";
 import AllBreak from "../views/Company/Break/AllBreak.vue";
-
+import PrivateTrip from "../views/Company/PrivateTrip/PrivateTrip.vue";
 const routes = [
     {
         path: "/",
@@ -38,6 +38,11 @@ const routes = [
         path: "/AllBus2",
         name: "AllBus2",
         component: AllBus2,
+    },
+    {
+        path: "/PrivateTrip",
+        name: "PrivateTrip",
+        component: PrivateTrip,
     },
     {
         path: "/AllBreak",

@@ -25,7 +25,7 @@
             @click="selectOption('Trip')"
             :class="{ active: selectedOption === 'Trip' }"
         >
-            <span class="material-icons" aria-label="Analytics">insights</span>
+            <span class="material-icons" aria-label="Analytics">route</span>
             <h3>Trip</h3>
         </router-link>
 
@@ -34,7 +34,7 @@
             @click="selectOption('Path')"
             :class="{ active: selectedOption === 'Path' }"
         >
-            <span class="material-icons" aria-label="Analytics">insights</span>
+            <span class="material-icons" aria-label="Analytics">timeline</span>
             <h3>Path</h3>
         </router-link>
 
@@ -44,7 +44,7 @@
             :class="{ active: selectedOption === 'Bus' }"
         >
             <span class="material-icons" aria-label="Products"
-                >receipt_long</span
+                >directions_bus</span
             >
             <h3>Bus</h3>
         </router-link>
@@ -61,25 +61,26 @@
         </a>
 
         <router-link to="AllBreak">
-            <span class="material-icons" aria-label="Analytics">insights</span>
+            <span class="material-icons" aria-label="Analytics">pin_drop</span>
             <h3>Break</h3>
+        </router-link>
+
+        <router-link
+            to="PrivateTrip"
+            @click="selectOption('PrivateTrip')"
+            :class="{ active: selectedOption === 'PrivateTrip' }"
+        >
+            <span class="material-icons" aria-label="Products">commute</span>
+            <h3>Private Trip</h3>
         </router-link>
         <router-link
             to="ProfileCompany"
             @click="selectOption('Bus')"
             :class="{ active: selectedOption === 'Bus' }"
         >
-            <span class="material-icons" aria-label="Products">settings</span>
+            <span class="material-icons" aria-label="Products">person</span>
             <h3>Profile</h3>
         </router-link>
-
-        <a
-            @click="selectOption('Add Product')"
-            :class="{ active: selectedOption === 'Add Product' }"
-        >
-            <span class="material-icons" aria-label="Add Product">add</span>
-            <h3>Add Product</h3>
-        </a>
 
         <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">
             <span class="material-icons" aria-label="Logout">logout</span>

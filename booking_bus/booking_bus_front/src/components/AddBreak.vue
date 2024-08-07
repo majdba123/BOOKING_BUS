@@ -1,9 +1,9 @@
 <template>
-    <div class="container">
+    <div class="containerd">
         <header class="navd">
-            <button class="nav-btnd" @click="showForm = true">Add Path</button>
+            <button class="nav-btnd" @click="showForm = true">Add Break</button>
             <button class="nav-btnd" @click="showForm = false">
-                Show Path
+                Show Break
             </button>
         </header>
         <div class="content">
@@ -58,6 +58,7 @@
                                 required
                             ></textarea>
                         </div>
+
                         <div class="submit-btn">
                             <button type="submit">ADD</button>
                         </div>
@@ -75,35 +76,93 @@
                             <tr>
                                 <th>Name Break</th>
                                 <th>Government</th>
-                                <th>Description</th>
-                                <th>Actions</th>
+
+                                <th>Edit</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr
-                                v-for="(breakItem, index) in breaks"
-                                :key="index"
-                            >
-                                <td>{{ breakItem.name }}</td>
-                                <td>{{ breakItem.government }}</td>
-                                <td>{{ breakItem.description }}</td>
+                            <tr>
+                                <td>ddddddddddddddddd</td>
+                                <td>d</td>
                                 <td>
                                     <button
                                         class="edit-btn"
                                         @click="openEditModal(breakItem, index)"
                                     >
-                                        Edit
+                                        <span class="material-icons">edit</span>
                                     </button>
+                                </td>
+                                <td>
                                     <button
                                         class="delete-btn"
                                         @click="DeleteBreak(breakItem.id)"
                                     >
-                                        Delete
+                                        <span class="material-icons"
+                                            >delete</span
+                                        >
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+        <div v-if="showEditModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Edit Break</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editBreakName">Name Break</label>
+                        <input
+                            type="text"
+                            id="editBreakName"
+                            v-model="editedBreak.name"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="editGovernment">
+                            <span class="material-icons">location_city</span>
+                            Select Government
+                        </label>
+                        <select
+                            id="editGovernment"
+                            v-model="editedBreak.government"
+                            required
+                            class="custom-select"
+                        >
+                            <option value="" disabled>Select Government</option>
+                            <option
+                                v-for="gov in governments"
+                                :key="gov.id"
+                                :value="gov.id"
+                            >
+                                {{ gov.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDescription">
+                            <span class="material-icons">description</span>
+                            Description
+                        </label>
+                        <textarea
+                            id="editDescription"
+                            v-model="editedBreak.description"
+                            rows="3"
+                            required
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="updateBreak" class="close-modal">
+                        Update
+                    </button>
+                    <button @click="closeEditModal" class="close-modal">
+                        Close
+                    </button>
                 </div>
             </div>
         </div>
@@ -120,13 +179,20 @@ export default {
     data() {
         return {
             showForm: true,
+            showEditModal: false,
             break: {
+                name: "",
+                government: "",
+                description: "",
+            },
+            editedBreak: {
                 name: "",
                 government: "",
                 description: "",
             },
             governments: [],
             breaks: [],
+            editingIndex: null,
         };
     },
     methods: {
@@ -134,7 +200,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/admin/all_government",
+                url: "127.0.0.1:8000/api/company/all_government",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -149,7 +215,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/admin/all_breaks",
+                url: "http://127.0.0.1:8000/api/company/all_breaks/{area_id}",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -171,11 +237,43 @@ export default {
                 .then(() => {
                     window.alert("Complete ADD");
                     this.fetchBreaks();
+                    this.resetForm();
                 })
                 .catch((error) => {
                     window.alert("ERROR ADD");
                     console.error(error);
                 });
+        },
+
+        openEditModal(breakItem, index) {
+            this.editedBreak = { ...breakItem };
+            this.editingIndex = index;
+            this.showEditModal = true;
+        },
+        updateBreak() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "put",
+                url: `http://127.0.0.1:8000/api/admin/update_breaks/${this.editedBreak.id}`,
+                data: this.editedBreak,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then(() => {
+                    window.alert("Updated Complete");
+                    this.fetchBreaks();
+                    this.closeEditModal();
+                })
+                .catch((error) => {
+                    window.alert("Error updating Break");
+                    console.error(error);
+                });
+        },
+        closeEditModal() {
+            this.showEditModal = false;
+            this.editedBreak = { name: "", government: "", description: "" };
+        },
+        resetForm() {
+            this.break = { name: "", government: "", description: "" };
         },
         DeleteBreak(breakId) {
             const access_token = window.localStorage.getItem("access_token");
@@ -226,7 +324,7 @@ export default {
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 
-.container {
+.containerd {
     padding: 20px;
     background: #f6f6f9;
     display: flex;
@@ -323,7 +421,7 @@ export default {
 }
 
 label {
-    margin-bottom: 10px;
+    margin: 10px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -400,75 +498,182 @@ textarea:focus {
 }
 
 /* Table styling */
+.recent_orders {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
 .table-container {
     width: 100%;
     overflow-x: auto;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+.recent_orders table {
     background-color: #fff;
-    border-radius: 10px;
-    box-shadow: var(--box-shadow);
-}
-
-table th,
-table td {
-    padding: 12px 15px;
+    width: 100%;
+    border-radius: 1rem;
+    padding: 1rem;
     text-align: center;
-    border-bottom: 1px solid #ddd;
+    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
+    color: #363949;
+    max-width: none;
+    font-size: 0.85rem;
 }
 
-table th {
-    background-color: var(--clr-primary);
-    color: #fff;
+.recent_orders table:hover {
+    box-shadow: none;
 }
 
-table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
+table thead tr th {
+    padding: 10px;
+    font-size: 0.9rem;
+}
+
+table tbody tr {
+    height: 3rem;
+    border-bottom: 1px solid #fff;
+    color: #677483;
+    transition: background-color 0.3s ease;
 }
 
 table tbody tr:hover {
     background-color: #f1f1f1;
 }
 
-.edit-btn,
-.delete-btn,
-.status-btn {
-    padding: 5px 10px;
-    margin: 5px;
+table tbody td {
+    height: 3rem;
+    border-bottom: 1px solid #363949;
+    color: #677483;
+}
+
+table tbody tr:last-child td {
     border: none;
-    border-radius: 5px;
+}
+
+.edit-btn.material-icons,
+.delete-btn.material-icons {
+    padding: 2px 6px;
+    border: none;
+    margin: 10px;
+    border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 30px;
 }
 
 .edit-btn {
-    background-color: #4caf50;
-    color: white;
+    color: #4caf50;
+    background-color: #f1f1f1;
+    border-radius: 9px;
+    padding: 3px;
 }
-
 .edit-btn:hover {
-    background-color: #45a049;
+    color: #fff;
+    background-color: #4caf50;
 }
 
 .delete-btn {
-    background-color: #f44336;
-    color: white;
+    color: #f44336;
+    background-color: #f1f1f1;
+    border-radius: 9px;
+    padding: 3px;
 }
 
 .delete-btn:hover {
-    background-color: #e53935;
+    color: #fff;
+    background-color: #f44336;
 }
 
-.status-btn {
-    background-color: #2196f3;
+/* Modal styling */
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 80%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    margin-bottom: 10px;
+}
+
+.modal-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: center;
+}
+
+.close-modal {
+    padding: 8px 16px;
+    background-color: #d9534f;
     color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+    transition: all 0.1s ease;
 }
 
-.status-btn:hover {
-    background-color: #1e88e5;
+.close-modal:hover {
+    background-color: #c9302c;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .containerd {
+        padding: 10px;
+    }
+
+    .navd {
+        flex-direction: column;
+    }
+
+    .nav-btnd {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .form-map-container {
+        flex-direction: column;
+    }
+
+    .form-container {
+        width: 100%;
+    }
+
+    .map-container {
+        width: 100%;
+        height: 300px;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
 }
 </style>

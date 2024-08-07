@@ -1,13 +1,10 @@
 <template>
-    <div class="container">
-        <header class="navd">
-            <h1>Company Profile</h1>
-        </header>
+    <div class="containers">
         <div class="content">
             <div class="form-container">
-                <form @submit.prevent="handleSubmit" class="profile-form">
+                <form class="profile-form">
                     <div class="form-group">
-                        <label for="companyName">Company Name</label>
+                        <label>Company Name</label>
                         <input
                             type="text"
                             id="companyName"
@@ -142,7 +139,7 @@ export default {
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 
-.container {
+.containers {
     padding: 20px;
     background: #f6f6f9;
     display: flex;
