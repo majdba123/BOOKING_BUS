@@ -14,5 +14,9 @@
         "sass": "^1.56.1",
         "vite": "^5.0.0",
         "vue": "^3.2.37"
+    },
+    "dependencies": {
+        "laravel-echo": "^1.16.1",
+        "pusher-js": "^8.4.0-rc2"
     }
 }

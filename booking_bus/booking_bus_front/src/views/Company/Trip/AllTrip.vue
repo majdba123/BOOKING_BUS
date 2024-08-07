@@ -31,7 +31,7 @@
                         <button @click="search">Search</button>
                     </div>
                 </div>
-                <AddBus ref="addBus" />
+                <AddTrip ref="addTrip" />
             </main>
         </div>
         <!-- Right section start -->
@@ -63,13 +63,13 @@
 
             <!--start driver_chart-->
             <div class="driver_chart">
-                <h2>Bus Workload Status</h2>
+                <h2>Path Workload Status</h2>
                 <DriverChart :chartData="chartData" />
             </div>
 
             <!--start driver_status-->
             <div class="driver_status">
-                <h2>Bus Status</h2>
+                <h2>Driver Status</h2>
                 <div class="statuses">
                     <div class="status">
                         <div class="info">
@@ -90,15 +90,15 @@
 </template>
 
 <script>
-import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import AddBus from "@/components/AddBus.vue";
 import DriverChart from "@/components/DriverChart.vue";
+import AddTrip from "@/components/AddTrip.vue";
+
 import store from "@/store";
 
 export default {
-    name: "AllBus",
-    components: { SidebarCompany, AddBus, DriverChart },
+    name: "AllPath2",
+    components: { SidebarCompany, DriverChart, AddTrip },
     data() {
         return {
             x: store.state.x,
@@ -158,60 +158,10 @@ export default {
         search() {
             // Search functionality can be handled here
         },
-        DeleteDriver(x) {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "delete",
-                url: `http://127.0.0.1:8000/api/company/delete_driver/${x}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Deleted Complete");
-                    this.AllDriver();
-                })
-                .catch(function (error) {
-                    window.alert("Error get Driver");
-                    console.error(x);
-                    console.error(error);
-                });
-        },
-        fetchBus() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.Bus = response.data;
-                })
-                .catch(function (error) {
-                    window.alert("Error get paths");
-                    console.error(error);
-                });
-        },
-        SelectDriver(event, userId) {
-            const busId = event.target.value;
-            const access_token = window.localStorage.getItem("access_token");
-
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
-                data: { driver_id: userId },
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Selected Complete");
-                    this.AllDriver();
-                })
-                .catch(function (error) {
-                    window.alert("Error getting Bus");
-                    console.error(error);
-                });
-        },
     },
 };
 </script>
+
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 

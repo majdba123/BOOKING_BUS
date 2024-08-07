@@ -23,6 +23,11 @@ use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\RateDriverController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\InquiresController;
+use App\Http\Controllers\DriverProfileController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminDashBoardController;
+
 
 
 
@@ -78,6 +83,8 @@ Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']
     Route::put('/update_bus/{id}', [BusController::class, 'update']);
     Route::delete('/delete_bus/{id}', [BusController::class, 'destroy']);
 
+    Route::post('/get_bus_trip/{id}', [BusTripController::class, 'getBusTripsByTripId']);
+    Route::get('/get_bus_trip_fillter', [BusTripController::class, 'get_fillter_bus_trip']);
 
     Route::post('/select_driver_to_bus/{id}', [BusDriverController::class, 'store']);
     Route::post('/cancelled_driver/{id}', [BusDriverController::class, 'cancelAssignment']);
@@ -117,6 +124,34 @@ Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']
     Route::post('/show_goverment/{id}', [AreaController::class, 'show']);
 
 
+    Route::get('/my_info', [ProfileController::class, 'index']);
+    Route::post('/store_profile_info', [ProfileController::class, 'store']);
+    Route::post('/update_profile_info', [ProfileController::class, 'update']);
+    Route::put('/update_password', [ProfileController::class, 'update_password']);
+
+
+    Route::get('/all_my_address', [AddressController::class, 'index']);
+    Route::post('/store_address', [AddressController::class, 'store']);
+    Route::put('/update_address/{address_id}', [AddressController::class, 'update']);
+
+
+
+    Route::get('/all_reservation', [DashboardController::class, 'all_reservation']);
+    Route::get('/all_reservation_by_status', [DashboardController::class, 'all_reservation_by_status']);
+    Route::post('/all_reservation_by_bus_trip/{bus_trip_id}', [DashboardController::class, 'all_reservation_by_bus_trip']);
+    Route::post('/all_reservation_by_pivoit_id/{pivoit_id}', [DashboardController::class, 'reser_by_break']);
+
+
+    Route::get('/dashboard_company', [DashboardController::class, 'my_dash_boad']);
+    Route::post('/get_profit_bus_trip/{bus_trip_id}', [DashboardController::class, 'get_profit_bus_trip']);
+    Route::post('/get_profit_trip/{bus_trip_id}', [DashboardController::class, 'get_profit_trip']);
+    Route::post('/user_infomation_id/{user_id}', [DashboardController::class, 'user_info']);
+
+
+
+
+
+
 });
 
 
@@ -141,6 +176,48 @@ Route::group(['prefix' => 'admin' , 'middleware' => ['checkAdmi','auth:sanctum']
     Route::post('/accepted_order_balance/{balance_id}', [ChargeBalanceController::class, 'accepted']);
     Route::post('/cancelled_order_balance/{balance_id}', [ChargeBalanceController::class, 'cancelled']);
     /**<img src="{{ asset('storage/photo.jpg') }}" alt="My Photo"> */
+
+
+    Route::get('/all_inquires', [InquiresController::class, 'admin_index']);
+    Route::get('/all_inquires_admin_by_stauts', [InquiresController::class, 'admin_by_status']);
+
+    Route::get('/all_user', [AdminDashBoardController::class, 'all_user']);
+    Route::get('/show_user_details/{user_id}', [AdminDashBoardController::class, 'user_details']);
+    Route::get('/fillter_user', [AdminDashBoardController::class, 'fillter_user']);
+    Route::post('/user_reservation_info/{user_id}', [AdminDashBoardController::class, 'user_reservation']);
+    Route::post('/user_reservation_by_status/{user_id}', [AdminDashBoardController::class, 'user_reservation_by_status']);
+    Route::post('/all_trip_history_of_user/{user_id}', [AdminDashBoardController::class, 'all_trip_history_of_user']);
+    Route::post('/all_trip_history_of_user_fillter/{user_id}', [AdminDashBoardController::class, 'all_trip_history_of_user_fillter']);
+    Route::post('/favourite_company_of_user/{user_id}', [AdminDashBoardController::class, 'favourite_company_of_user']);
+    Route::post('/private_order_of_user/{user_id}', [AdminDashBoardController::class, 'private_order_of_user']);
+    Route::post('/private_order_of_user_by_fillter/{user_id}', [AdminDashBoardController::class, 'private_order_of_user_fillter']);
+
+
+    Route::get('/all_company', [AdminDashBoardController::class, 'all_company']);
+    Route::post('/company_by_id/{company_id}', [AdminDashBoardController::class, 'company_by_id']);
+    Route::post('/fillter_by_name_email', [AdminDashBoardController::class, 'fillter_company']);
+    Route::post('/all_driver_by_company/{company_id}', [AdminDashBoardController::class, 'all_driver_by_id_company']);
+    Route::post('/all_bus_by_id_company/{company_id}', [AdminDashBoardController::class, 'all_bus_by_id_company']);
+    Route::post('/all_driver_status_by_id_company/{company_id}', [AdminDashBoardController::class, 'all_driver_status_by_id_company']);
+    Route::post('/all_bus_status_by_id_company/{company_id}', [AdminDashBoardController::class, 'all_bus_status_by_id_company']);
+    Route::post('/all_trip_of_company/{company_id}', [AdminDashBoardController::class, 'all_trip_of_company']);
+    Route::post('/trip_by_status_of_company/{company_id}', [AdminDashBoardController::class, 'trip_by_status_of_company']);
+    Route::post('/fillter_all_trip', [AdminDashBoardController::class, 'fillter_all_trip']);
+
+
+    Route::post('/get_all_BusTripsByTripId/{company_id}', [AdminDashBoardController::class, 'get_all_BusTripsByTripId']);
+    Route::post('/get_all_BusTripsByFillter', [AdminDashBoardController::class, 'get_all_BusTripsByFillter']);
+
+    Route::post('/all_reservation_of_company/{company_id}', [AdminDashBoardController::class, 'all_reservation_of_company']);
+    Route::post('/all_reservation_of_company__by_status/{company_id}', [AdminDashBoardController::class, 'all_reservation_of_company__by_status']);
+    Route::post('/all_reservation_by_bus_trip/{company_id}', [AdminDashBoardController::class, 'all_reservation_by_bus_trip']);
+    /**_____________________________________ */
+    Route::post('/get_profit_bus_trip/{bus_trip_id}', [AdminDashBoardController::class, 'get_profit_bus_trip']);
+    Route::post('/get_profit_trip/{bus_trip_id}', [AdminDashBoardController::class, 'get_profit_trip']);
+    Route::post('/user_infomation_id/{user_id}', [AdminDashBoardController::class, 'user_info']);
+    Route::post('/company_all_info/{company_id}', [AdminDashBoardController::class, 'company_all_info']);
+
+    Route::get('/dashboard_Admin', [AdminDashBoardController::class, 'statiesticle_dash']);
 
 
 });
@@ -171,10 +248,16 @@ Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function (
 
 
     Route::post('/charge_blance', [ChargeBalanceController::class, 'store']);
+    Route::get('/all_my_charge_balance', [ChargeBalanceController::class, 'all_my_charge_balance']);
+    Route::get('/all_my_charge_balance_by_status', [ChargeBalanceController::class, 'all_my_charge_balance_by_status']);
 
 
+
+    Route::get('/all_my_favourite_company', [FavouriteController::class, 'index_user']);
     Route::post('/add_company_to_favourite', [FavouriteController::class, 'store']);
     Route::delete('/remove_company_from_favourite', [FavouriteController::class, 'destroy']);
+    Route::post('/show_info_about_company/{company_id}', [FavouriteController::class, 'info_about_company']);
+    Route::get('/get_all_company', [FavouriteController::class, 'all_company']);
 
 
     Route::post('/rate_driver/{driver_id}', [RateDriverController::class, 'store']);
@@ -190,7 +273,55 @@ Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function (
 
     Route::get('/my_info', [ProfileController::class, 'index']);
     Route::post('/store_profile_info', [ProfileController::class, 'store']);
-    Route::put('/update_profile_info', [ProfileController::class, 'update']);
+    Route::post('/update_profile_info', [ProfileController::class, 'update']);
     Route::put('/update_password', [ProfileController::class, 'update_password']);
+    Route::get('/all_my_reservation', [ProfileController::class, 'my_reserva']);
+    Route::get('/all_my_reservation_by_status', [ProfileController::class, 'my_reserva_by_status']);
+
+
+    Route::get('/all_my_inquires', [InquiresController::class, 'index']);
+    Route::get('/inquires_by_status', [InquiresController::class, 'by_status']);
+    Route::post('/store_quastion', [InquiresController::class, 'store']);
+    Route::delete('/delete_inquires/{inquires_id}', [InquiresController::class, 'destroy']);
+
+    Route::get('/get_all_company', [UserApiController::class, 'get_all_company']);
+    Route::get('/get_all_driver', [UserApiController::class, 'get_all_driver']);
+
+
+
+
+
+});
+
+
+
+
+Route::group(['prefix' => 'driver' , 'middleware' => ['auth:sanctum']], function () {
+
+    Route::get('/my_bus', [DriverController::class, 'my_bus']);
+    Route::get('/my_pending_trip', [DriverController::class, 'my_pending_trip']);
+
+    Route::get('/start_trip', [DriverController::class, 'start_trip']);
+    Route::post('/finish_breaks/{id}', [DriverController::class, 'finish_breaks']);
+    Route::post('/access_to_break/{id}', [DriverController::class, 'access_break']);
+
+
+    Route::post('/Qr_for_complete/{reservation_id}', [DriverController::class, 'check_reservation']);
+
+    Route::get('/info_profile_driver', [DriverProfileController::class, 'index']);
+    Route::post('/store_profile_info', [DriverProfileController::class, 'store']);
+    Route::post('/update_profile_info', [DriverProfileController::class, 'update']);
+    Route::put('/update_password', [DriverProfileController::class, 'update_password']);
+
+    Route::get('/all_my_address', [AddressController::class, 'index']);
+    Route::post('/store_address', [AddressController::class, 'store']);
+    Route::put('/update_address/{address_id}', [AddressController::class, 'update']);
+
+    Route::get('/my_finished_going_trip', [DriverController::class, 'my_finished_going_trip']);
+    Route::get('/my_finished_trip', [DriverController::class, 'my_finished_trip']);
+
+    Route::get('/all_my_bus', [BusDriverController::class, 'bus_driveer']);
+    Route::get('/all_my_rate', [RateDriverController::class, 'all_my_rate']);
+
 
 });

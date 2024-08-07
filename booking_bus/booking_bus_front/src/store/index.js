@@ -6,6 +6,7 @@ export default createStore({
         Bus: {},
         Driver: {},
         Paths: {},
+        Trips: {},
         searchQuery: "",
         Profile: "",
         start: null,
