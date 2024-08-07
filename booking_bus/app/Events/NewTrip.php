@@ -37,21 +37,32 @@ class NewTrip
         return 'trip-created';
     }
 }
-/*// Import the Pusher JavaScript SDK
-const Pusher = require('pusher-js');
+/*/// Import Laravel Echo
+import Echo from 'laravel-echo';
 
-// Set up the Pusher client
-const pusher = new Pusher('YOUR_APP_KEY', {
-  cluster: 'YOUR_APP_CLUSTER',
-  encrypted: true,
+// Initialize Echo
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: '{{ env("PUSHER_APP_KEY") }}',
+    cluster: '{{ env("PUSHER_APP_CLUSTER") }}',
+    encrypted: true
 });
 
-// Subscribe to the my-channel channel
-const channel = pusher.subscribe('trip-channe');
-
-// Bind an event listener to the trip-created event
-channel.bind('trip-created', (data) => {
-  // Update the home page with the new trip data
-  console.log(data);
-  // ...
-});* */
+// Listen for the trip-created event on the trip-channel channel
+Echo.channel('trip-channel')
+   .listen('.trip-created', (e) => {
+        // Update your page with the new trip data
+        console.log(e.trips1); // Check the data in the console
+        // Update your HTML elements with the new data
+        document.getElementById('trip-list').innerHTML = '';
+        e.trips1.forEach((trip) => {
+            document.getElementById('trip-list').innerHTML += `
+                <li>
+                    Trip ID: ${trip.id}
+                    Path: ${trip.path.name}
+                    Price: ${trip.price}
+                    <!-- Add more fields as needed -->
+                </li>
+            `;
+        });
+    });* */
