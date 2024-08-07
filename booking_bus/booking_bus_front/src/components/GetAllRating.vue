@@ -333,7 +333,7 @@ export default {
         fetchTripRatingsByTripId(trip_id) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
-                method: "get",
+                method: "post",
                 url: `http://127.0.0.1:8000/api/company/all_trip_rating_by_trip_id/${trip_id}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
