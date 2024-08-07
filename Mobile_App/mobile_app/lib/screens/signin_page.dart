@@ -6,7 +6,6 @@ import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 
-
 import 'package:mobile_app/screens/register_page.dart';
 import 'package:mobile_app/widgets/Alert_Box.dart';
 import 'package:provider/provider.dart';
@@ -23,15 +22,14 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
- 
-
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   bool isPasswordVisible = true;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: const Color.fromARGB(255, 13, 29, 37),
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 13, 29, 37),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 13, 29, 37),
         elevation: 0,
@@ -124,7 +122,7 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     MyTextButton(
                       buttonName: 'Sign In',
-                     onTap: () async {
+                      onTap: () async {
                         showDialog(
                           context: context,
                           builder: (context) => Center(
@@ -132,10 +130,13 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         );
 
-                        AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
-                        await authProvider.setAuthData(emailController.text, passwordController.text);
+                        AuthProvider authProvider =
+                            Provider.of<AuthProvider>(context, listen: false);
+                        await authProvider.setAuthData(
+                            emailController.text, passwordController.text);
 
-                        Navigator.of(context).pop(); // Close the progress indicator
+                        Navigator.of(context)
+                            .pop(); // Close the progress indicator
 
                         if (authProvider.accessToken.isNotEmpty) {
                           print(authProvider.accessToken);
@@ -144,21 +145,22 @@ class _SignInPageState extends State<SignInPage> {
                           if (authProvider.userType == "company") {
                             destinationPage = Dashbord();
                           } else if (authProvider.userType == "user") {
-                            destinationPage =DashboardUser();
-
+                            destinationPage = DashboardUser();
                           } else if (authProvider.userType == "driver") {
-                            destinationPage = DashbordDriver();
+                            destinationPage = DashboardDriver();
                           } else if (authProvider.userType == "admin") {
                             destinationPage = DashbordAdmin();
                           } else {
                             // Handle unexpected user type
-                            showAlertDialog(context, "Unexpected user type: ${authProvider.userType}");
+                            showAlertDialog(context,
+                                "Unexpected user type: ${authProvider.userType}");
                             return;
                           }
-                          
+
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => destinationPage),
+                            MaterialPageRoute(
+                                builder: (context) => destinationPage),
                           );
                         } else {
                           showAlertDialog(context, "Invalid Credentials");
@@ -177,4 +179,3 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 }
-
