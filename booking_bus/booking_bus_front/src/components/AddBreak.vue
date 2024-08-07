@@ -369,11 +369,11 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
-    max-width: 1200px;
 }
 
 .nav-btnd {

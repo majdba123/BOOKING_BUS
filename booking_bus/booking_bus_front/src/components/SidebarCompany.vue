@@ -73,10 +73,11 @@
             <span class="material-icons" aria-label="Products">commute</span>
             <h3>Private Trip</h3>
         </router-link>
+
         <router-link
             to="ProfileCompany"
-            @click="selectOption('Bus')"
-            :class="{ active: selectedOption === 'Bus' }"
+            @click="selectOption('Profile')"
+            :class="{ active: selectedOption === 'Profile' }"
         >
             <span class="material-icons" aria-label="Products">person</span>
             <h3>Profile</h3>
@@ -98,7 +99,7 @@ export default {
     name: "SideBarCompany",
     data() {
         return {
-            selectedOption: "Driver", // Set default selected option if needed
+            selectedOption: "Dashboard", // Set default selected option to Dashboard
         };
     },
     methods: {
@@ -111,7 +112,7 @@ export default {
             }).then(function (response) {
                 if (response.status == 200) {
                     console.log(response);
-                    window.alert("Logout succesful");
+                    window.alert("Logout successful");
                     window.localStorage.setItem(
                         "access_token",
                         response.data.access_token
@@ -157,6 +158,7 @@ export default {
 
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
+
 .dark-theme-variables {
     --clr-color-background: #181a1e;
     --clr-white: #202528;
@@ -338,6 +340,7 @@ aside .sidebar a span.msg_count {
     font-size: 11px;
     border-radius: 0.4rem;
 }
+
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;

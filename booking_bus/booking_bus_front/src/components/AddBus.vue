@@ -14,7 +14,7 @@
                 <div class="form-groupd">
                     <label for="numberBus">Number Bus</label>
                     <input
-                        type="number"
+                        type="text"
                         id="numberBus"
                         v-model="number_bus"
                         required
@@ -23,7 +23,7 @@
                 <div class="form-groupd">
                     <label for="numberPassenger">Number Passenger</label>
                     <input
-                        type="number"
+                        type="text"
                         id="numberPassenger"
                         v-model="number_passenger"
                         required
@@ -153,6 +153,40 @@
                 </div>
             </div>
         </div>
+
+        <div v-if="showEditModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Edit Bus</div>
+                <div class="modal-body">
+                    <div class="form-groupd">
+                        <label for="editNumberBus">Number Bus</label>
+                        <input
+                            type="text"
+                            id="editNumberBus"
+                            v-model="editedBus.number_bus"
+                            required
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="editNumberPassenger"
+                            >Number Passenger</label
+                        >
+                        <input
+                            type="text"
+                            id="editNumberPassenger"
+                            v-model="editedBus.number_passenger"
+                            required
+                        />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="updateBus" class="update-btn">Save</button>
+                    <button @click="closeEditModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -173,6 +207,13 @@ export default {
             number_passenger: "",
             showBusStatusModal: false,
             showSeatsModal: false,
+            showEditModal: false,
+            editedBus: {
+                id: "",
+                number_bus: "",
+                number_passenger: "",
+            },
+            editingIndex: null,
             toast: useToast(),
         };
     },
@@ -185,6 +226,9 @@ export default {
         },
         closeSeatsModal() {
             this.showSeatsModal = false;
+        },
+        closeEditModal() {
+            this.showEditModal = false;
         },
         handleSubmit() {
             console.log(
@@ -217,20 +261,24 @@ export default {
         },
         updateBus() {
             const access_token = window.localStorage.getItem("access_token");
-            const busId = this.editedPath.id;
+            const busId = this.editedBus.id;
             axios({
                 method: "put",
                 url: `http://127.0.0.1:8000/api/company/update_bus/${busId}`,
                 headers: { Authorization: `Bearer ${access_token}` },
                 data: {
-                    number_bus: this.editedPath.number_bus,
-                    number_passenger: this.editedPath.number_passenger,
+                    number_bus: this.editedBus.number_bus,
+                    number_passenger: this.editedBus.number_passenger,
                 },
             })
                 .then((response) => {
-                    this.Bus.splice(this.editingIndex, 1, this.editedPath);
+                    this.Bus.splice(this.editingIndex, 1, this.editedBus);
                     this.editingIndex = null;
-                    this.editedPath = { number_bus: "", number_passenger: "" };
+                    this.editedBus = {
+                        id: "",
+                        number_bus: "",
+                        number_passenger: "",
+                    };
                     console.log(response);
                     this.toast.success("Bus updated successfully!");
                     this.showEditModal = false;
@@ -261,7 +309,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: `http://127.0.0.1:8000/api/company/get_bus_status?status=${status}`,
+                url: ` http://127.0.0.1:8000/api/company/get_bus_status?status=${status}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -273,8 +321,8 @@ export default {
                     console.error(error);
                 });
         },
-        openEditModal(path, index) {
-            this.editedPath = { ...path };
+        openEditModal(bus, index) {
+            this.editedBus = { ...bus };
             this.editingIndex = index;
             this.showEditModal = true;
         },
@@ -286,9 +334,7 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
-                    this.Bus = this.Bus.filter(
-                        (pathItem) => pathItem.id !== id
-                    );
+                    this.Bus = this.Bus.filter((busItem) => busItem.id !== id);
                     this.toast.success("Bus deleted successfully!");
                 })
                 .catch((error) => {
@@ -484,13 +530,8 @@ select:focus {
     margin-bottom: 10px;
     margin-top: 20px;
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
-    max-width: 800px;
-    margin: 20px;
-    padding: 10px;
-    flex-wrap: wrap;
 }
 
 .nav-btnd {
@@ -634,6 +675,20 @@ input:focus {
 
 .close-modal:hover {
     background-color: #c9302c;
+}
+
+.update-btn {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.update-btn:hover {
+    background-color: #4cae4c;
 }
 
 /* Seats styling */

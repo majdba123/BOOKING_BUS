@@ -78,7 +78,7 @@ import axios from "axios";
 import { useToast } from "vue-toastification";
 
 export default {
-    name: "privatetrip",
+    name: "PrivateTrip",
     data() {
         return {
             showForm: true,
@@ -139,7 +139,7 @@ export default {
                     price: this.price,
                 },
             })
-                .then((response) => {
+                .then(() => {
                     this.toast.success("Order accepted successfully!");
                     this.showAcceptModal = false;
                     this.fetchPrivateTrips();
