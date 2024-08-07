@@ -72,6 +72,14 @@
             <span class="material-icons" aria-label="Products">commute</span>
             <h3>Private Trip</h3>
         </router-link>
+        <router-link
+            to="AllFavourite"
+            @click="selectOption('Favourite')"
+            :class="{ active: selectedOption === 'Favourite' }"
+        >
+            <span class="material-icons" aria-label="Products">commute</span>
+            <h3>Favourite</h3>
+        </router-link>
 
         <router-link
             to="ProfileCompany"
