@@ -9,6 +9,7 @@ use App\Models\Bus_Trip;
 use App\Models\Breaks;
 use App\Models\Pivoit;
 use App\Models\Bus;
+use App\Events\NewTrip;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -149,12 +150,11 @@ class TripController extends Controller
                 ]);
             }
         }
-
+        $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->get();
+        event(new NewTrip($trips1));
         return response()->json([
             'message' => 'trip Created ',
         ]);
-
-
     }
 
     /**
@@ -349,7 +349,7 @@ class TripController extends Controller
 
     public function index_user()
     {
-        $trips = Trip::where('status', 'padding')->with('bus_trip')->get();
+        $trips = Trip::where('status', ['padding' ,'finished_going'])->with('bus_trip')->get();
 
         $data = [];
         foreach ($trips as $trip) {

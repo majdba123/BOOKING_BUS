@@ -23,12 +23,11 @@ class ChargeBalanceController extends Controller
 
         $data = [];
         foreach ($chargeBalances as $chargeBalance) {
-            $imagePath = Storage::disk('public')->url($chargeBalance->image);
             $data[] = [
                 'id' => $chargeBalance->id,
                 'user_id' => $chargeBalance->user_id,
                 'point' => $chargeBalance->point,
-                'image' => $imagePath,
+                'image' => $chargeBalance->image,
                 'status' => $chargeBalance->status,
             ];
         }
@@ -45,12 +44,11 @@ class ChargeBalanceController extends Controller
         $chargeBalances = Charge_Balance::where('status', $status)->get();
         $data = [];
         foreach ($chargeBalances as $chargeBalance) {
-            $imagePath = Storage::disk('public')->url($chargeBalance->image);
             $data[] = [
                 'id' => $chargeBalance->id,
                 'user_id' => $chargeBalance->user_id,
                 'point' => $chargeBalance->point,
-                'image' => $imagePath,
+                'image' => $chargeBalance->image,
                 'status' => $chargeBalance->status,
             ];
         }
@@ -72,7 +70,7 @@ class ChargeBalanceController extends Controller
         }
         try {
             $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
-            $imageUrl = asset('storage/order_balance' . $imageName);
+            $imageUrl = asset('storage/order_balance/' . $imageName);
             $user = auth()->user();
             // Create Post
             Charge_Balance::create([
@@ -106,13 +104,11 @@ class ChargeBalanceController extends Controller
             return response()->json(['error' => 'Not found'], 404);
         }
 
-        $imagePath = Storage::disk('public')->url($chargeBalance->image);
-
         $data = [
             'id' => $chargeBalance->id,
             'user_id' => $chargeBalance->user_id,
             'point' => $chargeBalance->point,
-            'image' => $imagePath,
+            'image' => $chargeBalance->image,
             'status' => $chargeBalance->status,
         ];
 
@@ -173,9 +169,17 @@ class ChargeBalanceController extends Controller
         if (!$chargeBalance) {
             return response()->json(['error' => 'Not found'], 404);
         }
+
         $chargeBalance->status = 'completed';
         $chargeBalance->save();
-        return response()->json(['message' => 'Charge balance status updated to completed'], 200);
+
+        $user = $chargeBalance->user; // assuming you have a user relationship in Charge_Balance model
+        $points = $chargeBalance->point; // assuming you have a points attribute in Charge_Balance model
+
+        $user->point += $points; // add the points to the user's points
+        $user->save();
+
+        return response()->json(['message' => 'Charge balance status updated to completed and points added to user'], 200);
     }
 
     public function cancelled($id)

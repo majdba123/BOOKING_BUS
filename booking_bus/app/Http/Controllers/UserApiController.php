@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Company;
+use App\Models\Driver;
+
 class UserApiController extends Controller
 {
     public function register(Request $request){
@@ -92,5 +95,17 @@ class UserApiController extends Controller
         return response()->json([
           "message"=>"logged out"
         ]);
+    }
+
+    public function get_all_company()
+    {
+        $companies = Company::with(['user.profile', 'user.address'])->get();
+        return response()->json($companies);
+    }
+
+    public function get_all_driver()
+    {
+        $driver = Driver::with(['company','user.profile', 'user.address'])->get();
+        return response()->json($driver);
     }
 }
