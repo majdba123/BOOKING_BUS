@@ -3,14 +3,9 @@ import HomeView from "../views/HomeView.vue";
 import CompanyPage from "../views/CompanyPage.vue";
 import CreateCompany from "../views/CreateCompany.vue";
 import AdminPage from "../views/AdminPage.vue";
-import EditePath from "../views/EditePath.vue";
-import AllBus from "../views/AllBus.vue";
 import EditBreak from "../views/EditBreak.vue";
 import AddGovernment from "../views/AddGovernment.vue";
 import EditGovernment from "../views/EditGovernment.vue";
-import AddTrip from "../views/AddTrip.vue";
-import AllTrip from "../views/AllTrip.vue";
-import TripStatus from "../views/TripStatus.vue";
 import UserPage from "../views/User/UserPage.vue";
 import AllTripUser from "../views/User/AllTripUser.vue";
 import AddPrivateTrip from "../views/User/AddPrivateTrip.vue";
@@ -23,6 +18,8 @@ import AllTrip2 from "../views/Company/Trip/AllTrip.vue";
 import ProfileCompany from "../views/Company/Profile/ProfilCompany.vue";
 import AllBreak from "../views/Company/Break/AllBreak.vue";
 import PrivateTrip from "../views/Company/PrivateTrip/PrivateTrip.vue";
+import AllRating from "../views/Company/Rating/AllRating.vue";
+
 const routes = [
     {
         path: "/",
@@ -33,6 +30,11 @@ const routes = [
         path: "/AllTrip2",
         name: "AllTrip2",
         component: AllTrip2,
+    },
+    {
+        path: "/AllRating",
+        name: "AllRating",
+        component: AllRating,
     },
     {
         path: "/AllBus2",
@@ -85,21 +87,6 @@ const routes = [
         component: UserPage,
     },
     {
-        path: "/TripStatus",
-        name: "TripStatus",
-        component: TripStatus,
-    },
-    {
-        path: "/AllTrip",
-        name: "AllTrip",
-        component: AllTrip,
-    },
-    {
-        path: "/AddTrip",
-        name: "AddTrip",
-        component: AddTrip,
-    },
-    {
         path: "/BookingLogin",
         name: "BookingLogin",
         component: BookingLogin,
@@ -126,11 +113,6 @@ const routes = [
         component: EditBreak,
     },
     {
-        path: "/AllBus",
-        name: "AllBus",
-        component: AllBus,
-    },
-    {
         path: "/AdminPage",
         name: "AdminPage",
         component: AdminPage,
@@ -145,7 +127,6 @@ const routes = [
         name: "CompanyPage",
         component: CompanyPage,
     },
-    { path: "/EditePath", name: "EditePath", component: EditePath },
     {
         path: "/about",
         name: "about",

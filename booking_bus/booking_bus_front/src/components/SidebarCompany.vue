@@ -49,16 +49,15 @@
             <h3>Bus</h3>
         </router-link>
 
-        <a
-            @click="selectOption('Messages')"
-            :class="{ active: selectedOption === 'Messages' }"
+        <router-link
+            to="AllRating"
+            @click="selectOption('Rate')"
+            :class="{ active: selectedOption === 'Rate' }"
         >
-            <span class="material-icons" aria-label="Messages"
-                >mail_outline</span
-            >
-            <h3>Messages</h3>
+            <span class="material-icons" aria-label="Rate">mail_outline</span>
+            <h3>Rate</h3>
             <span class="msg_count">14</span>
-        </a>
+        </router-link>
 
         <router-link to="AllBreak">
             <span class="material-icons" aria-label="Analytics">pin_drop</span>
