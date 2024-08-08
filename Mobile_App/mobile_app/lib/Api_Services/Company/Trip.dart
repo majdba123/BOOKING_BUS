@@ -41,8 +41,8 @@ class TripBusApi {
     print(response.statusCode);
     print(response.body);
     if (response.statusCode == 200) {
-      Map<String, dynamic> parsedJson = json.decode(response.body);
-      String message = parsedJson['message'];
+      // Map<String, dynamic> parsedJson = json.decode(response.body);
+      String message = "trip created";
       return message;
     } else {
       Map<String, dynamic> parsedJson = json.decode(response.body);

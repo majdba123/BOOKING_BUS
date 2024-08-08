@@ -31,7 +31,7 @@ class _DashboardUserState extends State<DashboardUser>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    // WidgetsBinding.instance.addObserver(this);
     // Fetch all trips when the screen is initialized
     Provider.of<TripuserProvider>(context, listen: false).getallTrips(
         Provider.of<AuthProvider>(context, listen: false).accessToken);
