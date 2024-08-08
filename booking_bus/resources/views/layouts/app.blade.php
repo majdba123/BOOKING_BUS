@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script> <script>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
 
       // Enable pusher logging - don't include this in production
@@ -34,6 +34,18 @@
       });
     </script>
 </head>
+
+
+
+
+
+
+
+
+
+
+
+
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
