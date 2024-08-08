@@ -152,9 +152,7 @@ class TripController extends Controller
         }
         $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->get();
         event(new NewTrip($trips1));
-        return response()->json([
-            'message' => 'trip Created ',
-        ]);
+        return response()->json($trips1);
     }
 
     /**
