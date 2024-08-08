@@ -5,6 +5,7 @@ import 'package:mobile_app/screens/Dashborad_User/All_Trip_Page.dart';
 import 'package:mobile_app/screens/Dashborad_User/All_compines.dart';
 import 'package:mobile_app/screens/Dashborad_User/Auto_Scroll_list_horizental_Trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/HorizontalList.dart';
+import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_SinlgeTon.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/CardInfoTripHorizontalList.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Card_for_Add_favorites_comapny.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/bottom_nav_bar.dart';
@@ -22,24 +23,29 @@ class DashboardUser extends StatefulWidget {
   State<DashboardUser> createState() => _DashboardUserState();
 }
 
-class _DashboardUserState extends State<DashboardUser> {
+class _DashboardUserState extends State<DashboardUser>
+    with WidgetsBindingObserver {
+  // late PusherClient pusher;
+  // late Channel channel;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // Fetch all trips when the screen is initialized
     Provider.of<TripuserProvider>(context, listen: false).getallTrips(
         Provider.of<AuthProvider>(context, listen: false).accessToken);
 
     Provider.of<TripuserProvider>(context, listen: false).getAllcompanies(
         Provider.of<AuthProvider>(context, listen: false).accessToken);
+
+    // PusherChannelServies.instance.onconnectProced();
   }
 
   void _logout(BuildContext context) {
-    Provider.of<AuthProvider>(context, listen: false)
-        .logout(); // Call logout method
+    Provider.of<AuthProvider>(context, listen: false).logout();
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-          builder: (context) => SignInPage()), // Navigate to login page
+      MaterialPageRoute(builder: (context) => SignInPage()),
     );
   }
 

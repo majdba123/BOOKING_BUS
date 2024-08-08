@@ -4,18 +4,16 @@ import 'package:mobile_app/Data_Models/Driver.dart';
 import 'package:mobile_app/Data_Models/DriverBusActive.dart';
 import 'package:mobile_app/Data_Models/Driver_Status.dart';
 
-
-
 class DriverProvider with ChangeNotifier {
-   String _message = '';
+  String _message = '';
   List<Driver> _Drivers = [];
-    List<DriverStauts> _DriversStauts = [];
+  List<DriverStauts> _DriversStauts = [];
   List<DriverBusActive> _DriversBusActive = [];
   bool _isLoading = false;
-List<DriverStauts> get DriversStauts => _DriversStauts;
+  List<DriverStauts> get DriversStauts => _DriversStauts;
   String get message => _message;
   List<Driver> get Drivers => _Drivers;
-    List<DriverBusActive> get DriversBusActive => _DriversBusActive;
+  List<DriverBusActive> get DriversBusActive => _DriversBusActive;
   bool get isLoading => _isLoading;
 
   void fetchDrivers(String accessToken) async {
@@ -23,20 +21,7 @@ List<DriverStauts> get DriversStauts => _DriversStauts;
     notifyListeners();
 
     try {
-      _Drivers = await DriverApiService().fetchDrivers(accessToken);
-    } catch (e) {
-      print('Failed to fetch Drivers: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
- Future<void>fetchDriversOnActiveBus(String accessToken) async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-     _DriversBusActive = await DriverApiService().fetchDriversOnActiveBus(accessToken);
+      _DriversStauts = await DriverApiService().fetchDrivers(accessToken);
     } catch (e) {
       print('Failed to fetch Drivers: $e');
     } finally {
@@ -45,12 +30,13 @@ List<DriverStauts> get DriversStauts => _DriversStauts;
     }
   }
 
-void fetchDriverByStatus(String accessToken,String Status) async {
+  Future<void> fetchDriversOnActiveBus(String accessToken) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _DriversStauts = await DriverApiService().fetchDriverByStatus(accessToken,Status);
+      _DriversBusActive =
+          await DriverApiService().fetchDriversOnActiveBus(accessToken);
     } catch (e) {
       print('Failed to fetch Drivers: $e');
     } finally {
@@ -58,12 +44,30 @@ void fetchDriverByStatus(String accessToken,String Status) async {
       notifyListeners();
     }
   }
- Future<void> addDriver(String token, String name, String email, String password) async {
+
+  void fetchDriverByStatus(String accessToken, String Status) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _message = await DriverApiService().addDriver(token, name, email, password);
+      _DriversStauts =
+          await DriverApiService().fetchDriverByStatus(accessToken, Status);
+    } catch (e) {
+      print('Failed to fetch Drivers: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> addDriver(
+      String token, String name, String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _message =
+          await DriverApiService().addDriver(token, name, email, password);
     } catch (error) {
       _message = error.toString();
     }
@@ -71,9 +75,6 @@ void fetchDriverByStatus(String accessToken,String Status) async {
     _isLoading = false;
     notifyListeners();
   }
-
-
- 
 
   // Future<void> updateDriver(String token, int id, String name, String email) async {
   //   try {
@@ -97,10 +98,8 @@ void fetchDriverByStatus(String accessToken,String Status) async {
     }
   }
 
-
-    void clearBreakAreas() {
+  void clearBreakAreas() {
     _Drivers = [];
     notifyListeners();
   }
-
 }

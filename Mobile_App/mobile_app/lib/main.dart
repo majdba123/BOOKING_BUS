@@ -29,6 +29,7 @@ import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
 
 import 'package:mobile_app/constants.dart';
+import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client_Trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Book_Card_Resvartion_spsecfication.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_serach_selection.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Charage_blance.dart';
@@ -75,6 +76,8 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    WidgetsFlutterBinding.ensureInitialized();
+
     return MaterialApp(
         routes: {
           '/BusDash': (context) => Bus_management_Page(),
@@ -88,7 +91,7 @@ class MyApp extends StatelessWidget {
             //     // color: Color.fromARGB(255, 116, 136, 146),
             //   ),
             ),
-        home: WelcomePage()
+        home: pusher2()
 
         //  ,
         );

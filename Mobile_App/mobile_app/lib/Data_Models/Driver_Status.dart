@@ -1,5 +1,5 @@
-import 'company.dart';  // Assuming you have the Company class in a separate file.
-import 'user.dart';     // Assuming you have the User class in a separate file.
+import 'company.dart'; // Assuming you have the Company class in a separate file.
+import 'user.dart'; // Assuming you have the User class in a separate file.
 
 class DriverStauts {
   final int id;
@@ -7,22 +7,19 @@ class DriverStauts {
   final String email;
   final String status;
 
-
   DriverStauts({
     required this.id,
     required this.name,
     required this.email,
     required this.status,
-  
   });
 
   factory DriverStauts.fromJson(Map<String, dynamic> json) {
     return DriverStauts(
-      id: json['id'],
+      id: json['driver_id'],
       name: json['name'],
-      email: json['email'],
+      email: json['email_driver'],
       status: json['status'],
-     
     );
   }
 
@@ -32,7 +29,6 @@ class DriverStauts {
       'name': name,
       'email': email,
       'status': status,
-     
     };
   }
 }
