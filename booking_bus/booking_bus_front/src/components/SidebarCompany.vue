@@ -261,7 +261,7 @@ small {
 
 aside {
     position: sticky;
-    top: 0; /* يظل الـ sidebar عالقًا في أعلى الشاشة عند التمرير */
+    top: 0;
     width: 14rem;
     background-color: #fff;
     padding: 1rem;
