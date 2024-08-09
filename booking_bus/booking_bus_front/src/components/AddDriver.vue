@@ -133,9 +133,9 @@
                     </button>
                     <button
                         class="status-btn"
-                        @click="fetchDriverStatus('finished')"
+                        @click="fetchDriverStatus('Completed')"
                     >
-                        Finished
+                        Completed
                     </button>
                     <table>
                         <thead>
@@ -399,6 +399,9 @@ export default {
                         .toLowerCase()
                         .includes(store.state.searchQuery.toLowerCase()) ||
                     driver.email_driver
+                        .toLowerCase()
+                        .includes(store.state.searchQuery.toLowerCase()) ||
+                    driver.status
                         .toLowerCase()
                         .includes(store.state.searchQuery.toLowerCase())
                 );
