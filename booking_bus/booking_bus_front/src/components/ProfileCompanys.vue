@@ -2,7 +2,7 @@
     <div class="containers">
         <div class="content">
             <div class="form-container">
-                <form class="profile-form">
+                <form class="profile-form" @submit.prevent="updateCompanyInfo">
                     <div class="form-group">
                         <label>Company Name</label>
                         <input
@@ -94,6 +94,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     name: "ProfileCompanys",
     data() {
@@ -110,6 +112,55 @@ export default {
                 logo: null,
             },
         };
+    },
+    mounted() {
+        this.fetchCompanyInfo();
+    },
+    methods: {
+        fetchCompanyInfo() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios
+                .get("127.0.0.1:8000/api/company/my_info", {
+                    headers: { Authorization: `Bearer ${access_token}` },
+                })
+                .then((response) => {
+                    this.company = response.data;
+                })
+                .catch((error) => {
+                    console.error(
+                        "There was an error fetching the company info:",
+                        error
+                    );
+                });
+        },
+        updateCompanyInfo() {
+            const formData = new FormData();
+            Object.keys(this.company).forEach((key) => {
+                formData.append(key, this.company[key]);
+            });
+
+            const access_token = window.localStorage.getItem("access_token");
+            axios
+                .post(
+                    "127.0.0.1:8000/api/company/update_profile_info",
+                    formData,
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
+                .then(() => {
+                    alert("Company info updated successfully!");
+                })
+                .catch((error) => {
+                    console.error(
+                        "There was an error updating the company info:",
+                        error
+                    );
+                });
+        },
+        handleLogoUpload(event) {
+            this.company.logo = event.target.files[0];
+        },
     },
 };
 </script>
