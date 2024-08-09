@@ -2,41 +2,14 @@
     <div class="containers">
         <div class="content">
             <div class="form-container">
-                <form class="profile-form" @submit.prevent="updateCompanyInfo">
+                <form class="profile-form" @submit.prevent="storeCompanyInfo">
                     <div class="form-group">
-                        <label>Company Name</label>
+                        <label for="name">Company Name</label>
                         <input
                             type="text"
-                            id="companyName"
+                            id="name"
                             placeholder="Enter Company Name"
                             v-model="company.name"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="industry">Industry</label>
-                        <input
-                            type="text"
-                            id="industry"
-                            placeholder="Enter Industry"
-                            v-model="company.industry"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Address</label>
-                        <textarea
-                            id="address"
-                            placeholder="Enter Company Address"
-                            v-model="company.address"
-                            rows="3"
-                        ></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input
-                            type="tel"
-                            id="phone"
-                            placeholder="Enter Phone Number"
-                            v-model="company.phone"
                         />
                     </div>
                     <div class="form-group">
@@ -49,30 +22,30 @@
                         />
                     </div>
                     <div class="form-group">
-                        <label for="website">Website</label>
+                        <label for="city">City</label>
                         <input
-                            type="url"
-                            id="website"
-                            placeholder="Enter Website URL"
-                            v-model="company.website"
+                            type="text"
+                            id="city"
+                            placeholder="Enter City"
+                            v-model="company.city"
                         />
                     </div>
                     <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea
-                            id="description"
-                            placeholder="Enter Company Description"
-                            v-model="company.description"
-                            rows="5"
-                        ></textarea>
+                        <label for="area">Area</label>
+                        <input
+                            type="text"
+                            id="area"
+                            placeholder="Enter Area"
+                            v-model="company.area"
+                        />
                     </div>
                     <div class="form-group">
-                        <label for="password">New Password</label>
+                        <label for="phone">Phone Number</label>
                         <input
-                            type="password"
-                            id="password"
-                            placeholder="Enter New Password"
-                            v-model="company.password"
+                            type="tel"
+                            id="phone"
+                            placeholder="Enter Phone Number"
+                            v-model="company.phone"
                         />
                     </div>
                     <div class="form-group">
@@ -86,6 +59,9 @@
                     </div>
                     <div class="submit-btn">
                         <button type="submit">Save Profile</button>
+                        <button type="button" @click="modifyCompanyInfo">
+                            Update Profile
+                        </button>
                     </div>
                 </form>
             </div>
@@ -95,6 +71,7 @@
 
 <script>
 import axios from "axios";
+import { useToast } from "vue-toastification";
 
 export default {
     name: "ProfileCompanys",
@@ -102,29 +79,31 @@ export default {
         return {
             company: {
                 name: "",
-                industry: "",
-                address: "",
-                phone: "",
                 email: "",
-                website: "",
-                description: "",
-                password: "",
+                city: "",
+                area: "",
+                phone: "",
                 logo: null,
             },
         };
     },
     mounted() {
         this.fetchCompanyInfo();
+        this.fetchCompanyAddress();
     },
     methods: {
         fetchCompanyInfo() {
             const access_token = window.localStorage.getItem("access_token");
             axios
-                .get("127.0.0.1:8000/api/company/my_info", {
+                .get("http://127.0.0.1:8000/api/company/my_info", {
                     headers: { Authorization: `Bearer ${access_token}` },
                 })
                 .then((response) => {
-                    this.company = response.data;
+                    this.company.name = response.data.name;
+                    this.company.email = response.data.email;
+                    this.company.phone = response.data.phone;
+                    // Assuming the logo URL is included in the response
+                    this.company.logo = response.data.logo;
                 })
                 .catch((error) => {
                     console.error(
@@ -133,33 +112,157 @@ export default {
                     );
                 });
         },
-        updateCompanyInfo() {
-            const formData = new FormData();
-            Object.keys(this.company).forEach((key) => {
-                formData.append(key, this.company[key]);
-            });
-
+        fetchCompanyAddress() {
             const access_token = window.localStorage.getItem("access_token");
             axios
-                .post(
-                    "127.0.0.1:8000/api/company/update_profile_info",
-                    formData,
-                    {
-                        headers: { Authorization: `Bearer ${access_token}` },
+                .get("http://127.0.0.1:8000/api/company/all_my_address", {
+                    headers: { Authorization: `Bearer ${access_token}` },
+                })
+                .then((response) => {
+                    if (response.data.length > 0) {
+                        // Assuming the response contains an array of addresses
+                        const address = response.data[0]; // Get the first address
+                        this.company.city = address.city;
+                        this.company.area = address.area;
                     }
-                )
-                .then(() => {
-                    alert("Company info updated successfully!");
                 })
                 .catch((error) => {
                     console.error(
-                        "There was an error updating the company info:",
+                        "There was an error fetching the company address:",
                         error
+                    );
+                });
+        },
+        storeCompanyInfo() {
+            const formData = this.createFormData();
+            const access_token = window.localStorage.getItem("access_token");
+            const toast = useToast();
+
+            // Update address separately
+            axios
+                .post(
+                    `http://127.0.0.1:8000/api/company/store_address?city=${this.company.city}&area=${this.company.area}`,
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${access_token}`,
+                        },
+                    }
+                )
+                .then(() => {
+                    axios
+                        .post(
+                            "http://127.0.0.1:8000/api/company/store_profile_info",
+                            formData,
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${access_token}`,
+                                    "Content-Type": "multipart/form-data",
+                                },
+                            }
+                        )
+                        .then(() => {
+                            toast.success("Company info stored successfully!");
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "There was an error storing the company info:",
+                                error.response ? error.response.data : error
+                            );
+                            toast.error(
+                                "Error storing company info: " +
+                                    (error.response
+                                        ? error.response.data.detail
+                                        : "Unknown error")
+                            );
+                        });
+                })
+                .catch((error) => {
+                    console.error(
+                        "There was an error updating the address:",
+                        error.response ? error.response.data : error
+                    );
+                    toast.error(
+                        "Error updating address: " +
+                            (error.response
+                                ? error.response.data.detail
+                                : "Unknown error")
+                    );
+                });
+        },
+        modifyCompanyInfo() {
+            const formData = this.createFormData();
+            const access_token = window.localStorage.getItem("access_token");
+            const toast = useToast();
+
+            // Update address separately
+            axios
+                .put(
+                    `http://127.0.0.1:8000/api/company/update_address/1?city=${this.company.city}&area=${this.company.area}`,
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${access_token}`,
+                        },
+                    }
+                )
+                .then(() => {
+                    axios
+                        .post(
+                            "http://127.0.0.1:8000/api/company/update_profile_info",
+                            formData,
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${access_token}`,
+                                    "Content-Type": "multipart/form-data",
+                                },
+                            }
+                        )
+                        .then(() => {
+                            toast.success(
+                                "Company info modified successfully!"
+                            );
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "There was an error modifying the company info:",
+                                error.response ? error.response.data : error
+                            );
+                            toast.error(
+                                "Error modifying company info: " +
+                                    (error.response
+                                        ? error.response.data.detail
+                                        : "Unknown error")
+                            );
+                        });
+                })
+                .catch((error) => {
+                    console.error(
+                        "There was an error updating the address:",
+                        error.response ? error.response.data : error
+                    );
+                    toast.error(
+                        "Error updating address: " +
+                            (error.response
+                                ? error.response.data.detail
+                                : "Unknown error")
                     );
                 });
         },
         handleLogoUpload(event) {
             this.company.logo = event.target.files[0];
+        },
+        createFormData() {
+            const formData = new FormData();
+            formData.append("name", this.company.name);
+            formData.append("email", this.company.email);
+            formData.append("phone", this.company.phone);
+            if (this.company.logo) {
+                formData.append("image", this.company.logo); // Ensure the key name is 'image'
+            }
+
+            console.log([...formData]); // Print formData content to console for debugging
+            return formData;
         },
     },
 };
@@ -270,6 +373,7 @@ textarea:focus {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-right: 10px;
 }
 
 .submit-btn button:hover {

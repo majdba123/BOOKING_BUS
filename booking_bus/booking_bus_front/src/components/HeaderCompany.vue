@@ -125,6 +125,7 @@ a {
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
+    margin-top: 20px;
 }
 
 h2 {

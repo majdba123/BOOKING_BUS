@@ -528,12 +528,11 @@ select:focus {
 .navd {
     display: flex;
     align-items: center;
-    justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
     background-color: #fff;
     border-radius: 10px;
-    width: 100%;
+    width: 80%;
 }
 
 .nav-btnd {

@@ -332,18 +332,18 @@
                                 {{ busItem.number_bus }}
                             </option>
                         </select>
-                        <span>Type</span>
+                        <label>Type</label>
                         <select v-model="bus.type" class="input">
                             <option value="all">All</option>
                             <option value="going">Going</option>
                         </select>
-                        <span>Start Time</span>
+                        <label>Start Time</label>
                         <input
                             v-model="bus.start_time"
                             type="time"
                             class="input"
                         />
-                        <span>End Time</span>
+                        <label>End Time</label>
                         <input
                             v-model="bus.end_time"
                             type="time"
@@ -928,15 +928,28 @@ table tbody tr:last-child td {
 
 /* Select styling */
 select {
-    padding: 8px;
-    border: 1px solid #7380ec;
-    border-radius: 4px;
-    background-color: #fff;
-    color: #363949;
+    padding: 10px;
+    border: 2px solid #007bff; /* تغيير لون الحافة */
+    border-radius: 5px; /* تغيير شكل الزوايا */
+    background-color: #f6f6f9; /* تغيير لون الخلفية */
+    color: #363949; /* تغيير لون النص */
+    font-size: 16px; /* تكبير حجم الخط */
+    width: 100%; /* جعل عرض الـselect 100% */
+    transition: border-color 0.3s ease;
 }
 
 select:focus {
-    border-color: #007bff;
+    border-color: #0056b3; /* تغيير لون الحافة عند التحديد */
+    outline: none;
+}
+
+/* توحيد حجم ولون أسماء حقول الإدخال */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600; /* زيادة سماكة الخط */
+    color: #363949; /* توحيد اللون */
+    font-size: 16px; /* توحيد حجم الخط */
 }
 
 /* Button styling */
@@ -1041,34 +1054,41 @@ select:focus {
 .form-containerd {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
-    max-width: 400px;
     width: 100%;
 }
 
 .form-groupd {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* زيادة المسافة السفلية */
 }
 
 label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
+    font-weight: 600; /* زيادة سماكة الخط */
+    color: #363949; /* توحيد اللون */
+    font-size: 16px; /* توحيد حجم الخط */
 }
 
 input {
     width: 100%;
     padding: 10px;
-    border: 2px solid #ccc;
+    border: 2px solid #ddd; /* توحيد حجم الحافة */
     border-radius: 5px;
-    transition: border-color 0.3s;
+    font-size: 16px; /* توحيد حجم الخط */
+    color: #363949; /* توحيد لون النص */
+    background-color: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
 }
 
 input:focus {
-    border-color: #007bff;
+    border-color: #007bff; /* توحيد لون الحافة عند التركيز */
+    outline: none;
 }
 
 .submit-btnnd {
@@ -1297,7 +1317,7 @@ input:focus {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 20px; /* Adding space between buttons */
+    margin-top: 20px;
 }
 
 .Button:hover {
@@ -1319,6 +1339,11 @@ input:focus {
 .add-bus-button {
     margin-top: 10px;
     background-color: #28a745;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .add-bus-button:hover {
