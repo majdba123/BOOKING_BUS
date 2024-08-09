@@ -218,10 +218,11 @@ export default {
                                 },
                             }
                         )
-                        .then(() => {
+                        .then((response) => {
                             toast.success(
                                 "Company info modified successfully!"
                             );
+                            console.log(response);
                         })
                         .catch((error) => {
                             console.error(
