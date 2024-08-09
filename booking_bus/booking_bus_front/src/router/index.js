@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import CompanyPage from "../views/CompanyPage.vue";
 import CreateCompany from "../views/CreateCompany.vue";
 import AdminPage from "../views/AdminPage.vue";
 import EditBreak from "../views/EditBreak.vue";
@@ -127,11 +126,6 @@ const routes = [
         path: "/CreateCompany",
         name: "CreateCompany",
         component: CreateCompany,
-    },
-    {
-        path: "/CompanyPage",
-        name: "CompanyPage",
-        component: CompanyPage,
     },
     {
         path: "/about",
