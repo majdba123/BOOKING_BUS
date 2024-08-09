@@ -189,7 +189,7 @@
                                     class="Button details-btn"
                                     @click="fetchTripDetails(trip.id)"
                                 >
-                                    Details
+                                    <span class="material-icons"> info </span>
                                 </button>
                             </td>
                             <td>
@@ -197,7 +197,7 @@
                                     class="Button delete-btn"
                                     @click="DeleteTrip(trip.id)"
                                 >
-                                    Delete
+                                    <span class="material-icons">delete</span>
                                 </button>
                             </td>
                             <td>
@@ -205,7 +205,7 @@
                                     class="Button edit-btn"
                                     @click="editTrip(index, trip.id)"
                                 >
-                                    Edit
+                                    <span class="material-icons">edit</span>
                                 </button>
                             </td>
                         </tr>
@@ -372,7 +372,11 @@
                     >
                         Save Changes
                     </button>
-                    <button @click="cancelEdit" class="Button" type="button">
+                    <button
+                        @click="cancelEdit"
+                        class="submit-btnd"
+                        type="button"
+                    >
                         Cancel
                     </button>
                 </div>
@@ -910,30 +914,29 @@ table tbody tr:last-child td {
 /* Select styling */
 select {
     padding: 10px;
-    border: 2px solid #007bff; /* تغيير لون الحافة */
-    border-radius: 5px; /* تغيير شكل الزوايا */
-    background-color: #f6f6f9; /* تغيير لون الخلفية */
-    color: #363949; /* تغيير لون النص */
-    font-size: 16px; /* تكبير حجم الخط */
-    width: 100%; /* جعل عرض الـselect 100% */
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    background-color: #f6f6f9;
+    color: #363949;
+    font-size: 16px;
+    width: 100%;
     transition: border-color 0.3s ease;
 }
 
 select:focus {
-    border-color: #0056b3; /* تغيير لون الحافة عند التحديد */
+    border-color: #0056b3;
     outline: none;
 }
 
-/* توحيد حجم ولون أسماء حقول الإدخال */
 label {
     display: block;
     margin-bottom: 5px;
-    font-weight: 600; /* زيادة سماكة الخط */
-    color: #363949; /* توحيد اللون */
-    font-size: 16px; /* توحيد حجم الخط */
+    font-weight: 600;
+    color: #363949;
+    font-size: 16px;
 }
 
-/* Button styling */
+/* Adjusted Button styling */
 .delete-btn,
 .edit-btn,
 .status-btn,
@@ -945,6 +948,9 @@ label {
     transition: background-color 0.3s ease;
     color: white;
     margin: 0 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centers the icon and text */
 }
 
 .delete-btn {
@@ -978,6 +984,12 @@ label {
 
 .details-btn:hover {
     background-color: #31b0d5;
+}
+
+/* Center icons and text in table-container */
+.table-container span {
+    margin-right: 15px;
+    /* Centers the span content */
 }
 
 /* Navigation styling */
@@ -1044,37 +1056,38 @@ label {
 }
 
 .form-groupd {
-    margin-bottom: 20px; /* زيادة المسافة السفلية */
+    margin-bottom: 20px;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
-    font-weight: 600; /* زيادة سماكة الخط */
-    color: #363949; /* توحيد اللون */
-    font-size: 16px; /* توحيد حجم الخط */
+    font-weight: 600;
+    color: #363949;
+    font-size: 16px;
 }
 
 input {
     width: 100%;
     padding: 10px;
-    border: 2px solid #ddd; /* توحيد حجم الحافة */
+    border: 2px solid #ddd;
     border-radius: 5px;
-    font-size: 16px; /* توحيد حجم الخط */
-    color: #363949; /* توحيد لون النص */
+    font-size: 16px;
+    color: #363949;
     background-color: #fff;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
 }
 
 input:focus {
-    border-color: #007bff; /* توحيد لون الحافة عند التركيز */
+    border-color: #007bff;
     outline: none;
 }
 
 .submit-btnnd {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .submit-btnd {
@@ -1085,6 +1098,7 @@ input:focus {
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s;
+    margin: 10px;
 }
 
 .submit-btnd:hover {
@@ -1132,7 +1146,19 @@ input:focus {
     width: 90%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     overflow-y: auto;
-    max-height: 90vh; /* Ensure the modal doesn't exceed the viewport height */
+    max-height: 90vh;
+}
+
+.modal-content h2 {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+.modal-content span {
+    font-size: 25px;
+    color: #000;
+    margin-left: 10px;
 }
 
 .modal-header,
@@ -1290,27 +1316,25 @@ input:focus {
 }
 
 .Button {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 2px 6px;
     border: none;
-    font-size: 16px;
+    margin: 10px;
+    border-radius: 3px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
-}
-
-.Button:hover {
-    background-color: #0056b3;
-}
-
-.Button:focus {
-    outline: none;
+    transition: background-color 0.3s;
+    align-items: center;
+    font-size: 11px;
+    height: 30px;
+    width: 30px;
 }
 
 .remove-bus-button {
     background-color: #dc3545;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .remove-bus-button:hover {
