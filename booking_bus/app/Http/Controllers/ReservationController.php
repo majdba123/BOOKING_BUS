@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Events\SeatEvent;
+
 
 class ReservationController extends Controller
 {
@@ -175,6 +177,7 @@ class ReservationController extends Controller
                     $seat->status = 3;
                 }
                 $seat->save();
+                event(new SeatEvent($seat));
             } elseif ($request->input('type') == 2) {
                 if ($seat->status == 1) {
                     $seat->status = 3;
@@ -182,6 +185,7 @@ class ReservationController extends Controller
                     $seat->status = 2;
                 }
                 $seat->save();
+                event(new SeatEvent($seat));
             }
         }
 

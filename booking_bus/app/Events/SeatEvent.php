@@ -10,16 +10,17 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewTrip implements shouldBroadcast
+class SeatEvent implements shouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $trips1;
+    public $seat;
     /**
      * Create a new event instance.
      */
-    public function __construct($trips1)
+    public function __construct($seat)
     {
-        $this->trips1 = $trips1;
+        $this->seat = $seat;
+
     }
 
     /**
@@ -29,7 +30,7 @@ class NewTrip implements shouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['my-channel'];
+        return ['seat-channel'];
     }
 
     public function broadcastAs()
@@ -37,4 +38,3 @@ class NewTrip implements shouldBroadcast
         return 'form-submitted';
     }
 }
-
