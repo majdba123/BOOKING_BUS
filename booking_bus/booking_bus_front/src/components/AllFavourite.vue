@@ -361,15 +361,16 @@ main .insights .progress .number {
 }
 
 main .recent_orders h1 {
-    margin: 18px;
+    margin: 15px;
     color: #363949;
 }
 
 main .recent_orders table {
     background-color: #fff;
     width: 100%;
+    max-width: 1200px;
     border-radius: 2rem;
-    padding: 1.8rem;
+    padding: 0.8rem;
     text-align: center;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     transition: all 0.3s ease;
@@ -504,7 +505,7 @@ main .recent_orders a {
     }
 
     main .recent_orders {
-        padding: 30px;
+        padding: 10px;
         margin: 0 auto;
     }
     main .date {
