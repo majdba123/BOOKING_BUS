@@ -590,7 +590,7 @@ table tbody tr:last-child td {
     background-color: #f44336;
 }
 
-/* Modal styling */
+/* ***Modal styling */
 .modal {
     display: flex;
     justify-content: center;

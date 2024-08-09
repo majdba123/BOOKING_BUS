@@ -21,15 +21,6 @@
         </RouterLink>
 
         <router-link
-            to="AllTrip2"
-            @click="selectOption('Trip')"
-            :class="{ active: selectedOption === 'Trip' }"
-        >
-            <span class="material-icons" aria-label="Analytics">route</span>
-            <h3>Trip</h3>
-        </router-link>
-
-        <router-link
             to="AllPath2"
             @click="selectOption('Path')"
             :class="{ active: selectedOption === 'Path' }"
@@ -50,11 +41,19 @@
         </router-link>
 
         <router-link
+            to="AllTrip2"
+            @click="selectOption('Trip')"
+            :class="{ active: selectedOption === 'Trip' }"
+        >
+            <span class="material-icons" aria-label="Analytics">route</span>
+            <h3>Trip</h3>
+        </router-link>
+        <router-link
             to="AllRating"
             @click="selectOption('Rate')"
             :class="{ active: selectedOption === 'Rate' }"
         >
-            <span class="material-icons" aria-label="Rate">mail_outline</span>
+            <span class="material-icons" aria-label="Rate">star</span>
             <h3>Rate</h3>
             <span class="msg_count">14</span>
         </router-link>
@@ -77,7 +76,7 @@
             @click="selectOption('Favourite')"
             :class="{ active: selectedOption === 'Favourite' }"
         >
-            <span class="material-icons" aria-label="Products">commute</span>
+            <span class="material-icons" aria-label="Products">favorite</span>
             <h3>Favourite</h3>
         </router-link>
 
@@ -261,11 +260,13 @@ small {
 }
 
 aside {
-    height: 100vh;
+    position: sticky;
+    top: 0; /* يظل الـ sidebar عالقًا في أعلى الشاشة عند التمرير */
+    width: 14rem;
     background-color: #fff;
-    display: flex;
-    flex-direction: column;
     padding: 1rem;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    margin-top: 1rem;
 }
 
 aside .top {
