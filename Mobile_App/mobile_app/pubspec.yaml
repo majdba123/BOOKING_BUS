@@ -54,6 +54,10 @@ dependencies:
   flutter_dash: ^1.0.0
   # pusher_client: ^2.0.0
   pusher_channels_flutter: ^2.2.0
+  syncfusion_flutter_gauges: ^20.4.49
+  timeline_tile: ^2.0.0
+  timelines: ^0.1.0
+
 
 dev_dependencies:
   flutter_test:

@@ -43,6 +43,7 @@ class BusApiService {
     } else {
       Map<String, dynamic> parsedJson = json.decode(res.body);
       String error = parsedJson['error'];
+      print(error);
       return error;
     }
   }

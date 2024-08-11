@@ -29,6 +29,7 @@ import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
 
 import 'package:mobile_app/constants.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyDetailsScreen.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client_Trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Book_Card_Resvartion_spsecfication.dart';

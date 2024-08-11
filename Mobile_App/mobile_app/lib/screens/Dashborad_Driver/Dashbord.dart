@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_dash/flutter_dash.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/Provider/Auth_provider.dart';
-import 'package:mobile_app/screens/signin_page.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/journeys_screen.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class DashboardDriver extends StatefulWidget {
   @override
@@ -12,423 +10,425 @@ class DashboardDriver extends StatefulWidget {
 
 class _DashboardDriverState extends State<DashboardDriver> {
   void _logout(BuildContext context) {
-    Provider.of<AuthProvider>(context, listen: false)
-        .logout(); // Call logout method
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-          builder: (context) => SignInPage()), // Navigate to login page
-    );
+    // Implement logout functionality here
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: Text('Your Name'),
-              accountEmail: Text('your.email@example.com'),
-              currentAccountPicture: CircleAvatar(
-                backgroundImage:
-                    NetworkImage('https://example.com/your_image.jpg'),
-              ),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('ادارة مسار الرحلات'),
-              onTap: () {
-                // Handle Home button tap
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => Trip_managment()));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('تسجيل خروج'),
-              onTap: () => _logout(context), // Logout functionality
-            ),
-          ],
-        ),
-      ),
       backgroundColor: Colors.grey[200],
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: AppColors.primaryColor,
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 25.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(right: 160.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'NameApp',
-                          style: TextStyle(color: Colors.white, fontSize: 20.0),
-                        ),
-                        Text(
-                          'Driver Client',
-                          style: TextStyle(color: Colors.green, fontSize: 10.0),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.notifications_sharp, color: Colors.white),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.logout, color: Colors.white),
-                    onPressed: () => _logout(context),
-                  ),
-                ],
-              ),
-            ),
-            Stack(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: MediaQuery.of(context).padding.top + 10),
+
+                // Updated Header Section
                 Container(
-                  color: AppColors.primaryColor,
-                  height: 45.0,
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // FilterBar(), // Added FilterBar here
-                  SizedBox(height: 16.0),
-                  Text(
-                    'Good Evening (Name)!',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: AppColors
+                      .primaryColor, // Assuming AppColors.primaryColor is this color
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top + 25.0,
+                    bottom: 25.0, // Add some padding at the bottom for spacing
                   ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    'Here is your upcoming journey',
-                    style: TextStyle(fontSize: 13.0, color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 16.0),
-                  Container(
-                    margin: EdgeInsets.only(left: 16.0, right: 16.0),
-                    padding: EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.0),
-                      border: Border.all(color: Colors.green[400]!),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 2,
-                          blurRadius: 6,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(
+                            right: 100.0), // Adjusted margin to match design
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Chennai - Coimbatore',
+                              'Arrowspeed',
                               style: TextStyle(
-                                fontSize: 18.0,
+                                color: Colors.white,
+                                fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              '628 kms, 8.21 hrs',
+                              'Driver Client',
                               style: TextStyle(
-                                fontSize: 12.0,
-                                color: AppColors.primaryColor,
+                                color: Colors
+                                    .green, // Assuming this is the correct color
+                                fontSize: 10.0,
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 8.0),
-                        Text('42 Passengers • 28 Stops'),
-                        SizedBox(height: 16.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: 13.0,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                    SizedBox(width: 8.0),
-                                    Text('Chennai 10:30 pm'),
-                                  ],
-                                ),
-                                SizedBox(height: 2.0),
-                                Dash(
-                                    direction: Axis.vertical,
-                                    length: 80.0,
-                                    dashLength: 3,
-                                    dashThickness: 1.5,
-                                    dashColor: Colors.grey[400]!),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: 13.0,
-                                      color: Colors.green[400],
-                                    ),
-                                    SizedBox(width: 8.0),
-                                    Text('Coimbatore 06:30 am'),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Spacer(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '4',
-                                  style: TextStyle(
-                                    fontSize: 40.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ),
-                                Text(
-                                  'hours left',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 32.0),
-                  Text(
-                    'Your Stats',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
-                  Container(
-                    padding: EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          '£ 460.86',
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.notifications_sharp,
+                                color: Colors.white),
+                            onPressed: () {},
                           ),
+                          IconButton(
+                            icon: Icon(Icons.logout, color: Colors.white),
+                            onPressed: () => _logout(context),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 20),
+                Text(
+                  'Good Evening Augustine!',
+                  style: TextStyle(
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Here is your upcoming journey',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15.0),
+                    border: Border.all(color: Color(0xFF9EDDCE)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Chennai - Coimbatore',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            '628 kms, 8.21 hrs',
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        '42 Passengers • 28 Stops',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.grey[600],
                         ),
-                        Text('Total Earnings'),
-                        SizedBox(height: 16.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  '3.8',
-                                  style: TextStyle(
-                                    fontSize: 24.0,
-                                    fontWeight: FontWeight.bold,
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.circle,
+                                    size: 12.0,
+                                    color: Color(0xFF4267B2),
                                   ),
-                                ),
-                                Text('Speed Rating'),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                  '4.2',
-                                  style: TextStyle(
-                                    fontSize: 24.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text('Driving Rating'),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                CircularProgressIndicator(
-                                  value: 0.78,
-                                  strokeWidth: 8.0,
-                                  backgroundColor: Colors.red,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.green),
-                                ),
-                                Text(
-                                  '78%',
-                                  style: TextStyle(
-                                    fontSize: 24.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(width: 16.0),
-                            Text(
-                              'Driving Score',
-                              style: TextStyle(
-                                fontSize: 20.0,
+                                  SizedBox(width: 8.0),
+                                  Text('Chennai 10:30 pm',
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.grey[800],
+                                      )),
+                                ],
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 10),
+                              Container(
+                                height: 20,
+                                child: VerticalDivider(
+                                  thickness: 2.0,
+                                  color: Colors.grey[400],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.circle,
+                                    size: 12.0,
+                                    color: Color(0xFF27AE60),
+                                  ),
+                                  SizedBox(width: 8.0),
+                                  Text('Coimbatore 06:30 am',
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.grey[800],
+                                      )),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                '4',
+                                style: TextStyle(
+                                  fontSize: 40.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF4267B2),
+                                ),
+                              ),
+                              Text(
+                                'hours left',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 40),
+                Text(
+                  'Your Stats',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '£ 460.86',
+                        style: TextStyle(
+                          fontSize: 28.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF28A745),
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Total Earnings',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                '3.8',
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                'Speed Rating',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                '4.2',
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                'Driving Rating',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 150,
+                            height: 150,
+                            child: SfRadialGauge(
+                              axes: <RadialAxis>[
+                                RadialAxis(
+                                  minimum: 0,
+                                  maximum: 100,
+                                  ranges: <GaugeRange>[
+                                    GaugeRange(
+                                      startValue: 0,
+                                      endValue: 50,
+                                      color: Colors.red,
+                                      startWidth: 10,
+                                      endWidth: 10,
+                                    ),
+                                    GaugeRange(
+                                      startValue: 50,
+                                      endValue: 75,
+                                      color: Colors.orange,
+                                      startWidth: 10,
+                                      endWidth: 10,
+                                    ),
+                                    GaugeRange(
+                                      startValue: 75,
+                                      endValue: 100,
+                                      color: Colors.green,
+                                      startWidth: 10,
+                                      endWidth: 10,
+                                    ),
+                                  ],
+                                  pointers: <GaugePointer>[
+                                    NeedlePointer(
+                                      value: 78,
+                                      needleColor: Colors.black,
+                                      needleEndWidth: 5,
+                                      lengthUnit: GaugeSizeUnit.factor,
+                                      needleLength: 0.6,
+                                    ),
+                                  ],
+                                  annotations: <GaugeAnnotation>[
+                                    GaugeAnnotation(
+                                      widget: Container(
+                                        child: Text(
+                                          '78%',
+                                          style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      angle: 90,
+                                      positionFactor: 0.5,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          Text(
+                            'Driving Score',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  Center(
-                    child: Positioned(
-                      bottom: 20.0,
-                      left: MediaQuery.of(context).size.width * 0.1,
-                      right: MediaQuery.of(context).size.width * 0.1,
-                      child: FilterBar(),
+                ),
+                SizedBox(height: screenHeight * 0.25),
+              ],
+            ),
+          ),
+
+          // Filter Bar Positioned at the Bottom
+          Positioned(
+            bottom: 30,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
+                decoration: BoxDecoration(
+                  color: Color(0xFF003366),
+                  borderRadius: BorderRadius.circular(40.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => JourneysScreen()));
+                      },
+                      icon: Icon(Icons.home, color: Colors.white, size: 30),
+                    ),
+                    SizedBox(width: 50),
+                    Icon(Icons.receipt, color: Colors.white, size: 30),
+                    SizedBox(width: 50),
+                    Icon(Icons.person, color: Colors.white, size: 30),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class FilterBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 26.0, vertical: 5.0),
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor,
-        borderRadius: BorderRadius.circular(30.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 6,
-            offset: Offset(0, 4),
           ),
         ],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          FilterOption(icon: Icons.home_outlined, label: 'Home'),
-          FilterOption(
-              icon: Icons.assignment_return_rounded, label: 'Round Trip'),
-          FilterOption(icon: Icons.person, label: 'profile'),
-        ],
-      ),
-    );
-  }
-}
-
-class FilterOption extends StatefulWidget {
-  final IconData icon;
-  final String label;
-
-  const FilterOption({required this.icon, required this.label});
-
-  @override
-  _FilterOptionState createState() => _FilterOptionState();
-}
-
-class _FilterOptionState extends State<FilterOption> {
-  bool _isLabelVisible = false;
-
-  void _toggleLabelVisibility() {
-    setState(() {
-      _isLabelVisible = !_isLabelVisible;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _toggleLabelVisibility,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        decoration: BoxDecoration(
-          color: _isLabelVisible ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Row(
-          children: [
-            Icon(widget.icon,
-                color: _isLabelVisible ? Color(0xFF003366) : Colors.white),
-            if (_isLabelVisible) ...[
-              SizedBox(width: 8.0),
-              Text(
-                widget.label,
-                style: TextStyle(color: Color(0xFF003366), fontSize: 12),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class FilterIcon extends StatelessWidget {
-  final IconData icon;
-
-  const FilterIcon({required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white),
-        SizedBox(height: 4),
-        Text(
-          'Filter',
-          style: TextStyle(color: Colors.white, fontSize: 12),
-        ),
-      ],
     );
   }
 }

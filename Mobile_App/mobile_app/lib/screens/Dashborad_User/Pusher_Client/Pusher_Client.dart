@@ -6,7 +6,8 @@ class PusherService {
   PusherChannelsFlutter pusher = PusherChannelsFlutter.getInstance();
   final String _apiKey = "7342c00647f26084d14f";
   final String _cluster = "ap2";
-  final String _channelName = "seat-channel";
+  // final String _channelName = "seat-channel";
+  Map<String, Function(PusherEvent)?> channelEventCallbacks = {};
 
   factory PusherService() {
     return _instance;
@@ -30,8 +31,23 @@ class PusherService {
       onMemberRemoved: _onMemberRemoved,
       onSubscriptionCount: _onSubscriptionCount,
     );
-    pusher.subscribe(channelName: _channelName);
+    pusher.subscribe(channelName: "my-channel");
+     pusher.subscribe(channelName: "seat-channel");
+    // pusher.subscribe(channelName: "other-channel");
     pusher.connect();
+    print("Pusher connected!");
+  }
+
+  void subscribeToChannel(
+      String channelName, Function(PusherEvent)? onEventCallback) {
+    pusher.subscribe(channelName: channelName);
+    channelEventCallbacks[channelName] = onEventCallback;
+    print('done');
+  }
+
+  void unsubscribeFromChannel(String channelName) {
+    pusher.unsubscribe(channelName: channelName);
+    channelEventCallbacks.remove(channelName);
   }
 
   void _onConnectionStateChange(dynamic currentState, dynamic previousState) {
@@ -44,7 +60,11 @@ class PusherService {
 
   void _onEvent(PusherEvent event) {
     print("Pusher Event: $event");
-    // Handle the event data as needed
+    // Dispatch event to the correct callback
+    final callback = channelEventCallbacks[event.channelName];
+    if (callback != null) {
+      callback(event);
+    }
   }
 
   void _onSubscriptionSucceeded(String channelName, dynamic data) {

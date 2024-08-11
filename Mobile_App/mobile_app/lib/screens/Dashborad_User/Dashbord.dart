@@ -5,6 +5,7 @@ import 'package:mobile_app/screens/Dashborad_User/All_Trip_Page.dart';
 import 'package:mobile_app/screens/Dashborad_User/All_compines.dart';
 import 'package:mobile_app/screens/Dashborad_User/Auto_Scroll_list_horizental_Trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/HorizontalList.dart';
+import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_SinlgeTon.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/CardInfoTripHorizontalList.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Card_for_Add_favorites_comapny.dart';
@@ -23,14 +24,22 @@ class DashboardUser extends StatefulWidget {
   State<DashboardUser> createState() => _DashboardUserState();
 }
 
-class _DashboardUserState extends State<DashboardUser>
-    with WidgetsBindingObserver {
+class _DashboardUserState extends State<DashboardUser> {
+  Map<String, String> _eventData = {};
+
   // late PusherClient pusher;
   // late Channel channel;
 
   @override
   void initState() {
     super.initState();
+    PusherService().subscribeToChannel("my-channel", (event) {
+      setState(() {
+        _eventData["form-submitted"] = event.data;
+        print('the event data from trip is!!!');
+        print(event.data);
+      });
+    });
     // WidgetsBinding.instance.addObserver(this);
     // Fetch all trips when the screen is initialized
     Provider.of<TripuserProvider>(context, listen: false).getallTrips(
