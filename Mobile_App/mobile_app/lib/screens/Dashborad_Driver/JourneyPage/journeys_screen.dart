@@ -3,8 +3,8 @@ import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/filtter_bar.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/herader_section.dart';
 import 'JourneyCard.dart';
-
 import 'toggle_button.dart';
+import 'JourneyHistoryScreen.dart'; // Import the new screen
 
 class JourneysScreen extends StatefulWidget {
   @override
@@ -44,15 +44,34 @@ class _JourneysScreenState extends State<JourneysScreen> {
           children: [
             SizedBox(height: screenHeight * 0.03),
             Center(
-              child: ToggleButton(
-                selected: true,
-                label: 'History',
-                // selected: true,
-                width: screenWidth * 0.4,
-                borderColor: AppColors.primaryColor,
+              child: ElevatedButton(
                 onPressed: () {
-                  // Add logic if you want to perform any action when "History" is clicked.
+                  // Navigate to JourneyHistoryScreen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => JourneyHistoryScreen(),
+                    ),
+                  );
                 },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.primaryColor,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.12,
+                    vertical: screenHeight * 0.015,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: Text(
+                  'History',
+                  style: TextStyle(
+                    fontSize: screenHeight * 0.025,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
@@ -78,6 +97,7 @@ class _JourneysScreenState extends State<JourneysScreen> {
                     fontSize: screenHeight * 0.02,
                     iconSize: screenHeight * 0.025,
                     dashColor: Colors.grey,
+                    showArrowIcon: true,
                   ),
                   SizedBox(height: screenHeight * 0.015),
                   JourneyCard(
@@ -93,6 +113,7 @@ class _JourneysScreenState extends State<JourneysScreen> {
                     fontSize: screenHeight * 0.02,
                     iconSize: screenHeight * 0.025,
                     dashColor: Colors.grey,
+                    showArrowIcon: true,
                   ),
                   SizedBox(height: screenHeight * 0.03),
 
@@ -115,6 +136,7 @@ class _JourneysScreenState extends State<JourneysScreen> {
                     fontSize: screenHeight * 0.02,
                     iconSize: screenHeight * 0.025,
                     dashColor: Colors.grey,
+                    showArrowIcon: true,
                   ),
                 ],
               ),

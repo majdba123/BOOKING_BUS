@@ -6,12 +6,16 @@ class JourneyMapWidget extends StatelessWidget {
   final List<LatLng> routeCoordinates;
   final Function() onOpenMapPressed;
   final Function(GoogleMapController) mapController;
+  final bool showStopDetails;
+  final bool enableOpenMapButton; // Add this property
 
   JourneyMapWidget({
     required this.initialPosition,
     required this.routeCoordinates,
     required this.onOpenMapPressed,
     required this.mapController,
+    this.showStopDetails = true, // Default value is true
+    this.enableOpenMapButton = true, // Default value is true
   });
 
   LatLngBounds _getLatLngBounds(List<LatLng> coordinates) {
@@ -65,7 +69,7 @@ class JourneyMapWidget extends StatelessWidget {
               myLocationButtonEnabled: false,
               scrollGesturesEnabled: true,
               zoomGesturesEnabled: true,
-              zoomControlsEnabled: false, // Hides the + and - controls
+              zoomControlsEnabled: false,
               onMapCreated: (GoogleMapController controller) {
                 mapController(controller);
                 controller.animateCamera(
@@ -78,36 +82,38 @@ class JourneyMapWidget extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(
-          bottom: 0,
-          right: 2,
-          child: ElevatedButton(
-            onPressed: onOpenMapPressed,
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 16,
-              ),
-              backgroundColor: Colors.blueAccent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.map, color: Colors.white),
-                SizedBox(width: 8),
-                Text(
-                  'Open in Map',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: screenHeight * 0.018,
-                  ),
+        if (showStopDetails &&
+            enableOpenMapButton) // Conditionally show the button
+          Positioned(
+            bottom: 0,
+            right: 2,
+            child: ElevatedButton(
+              onPressed: onOpenMapPressed,
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
                 ),
-              ],
+                backgroundColor: Colors.blueAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.map, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text(
+                    'Open in Map',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: screenHeight * 0.018,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
       ],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
 
 class JourneyCompletedScreen extends StatelessWidget {
   @override
@@ -66,7 +67,11 @@ class JourneyCompletedScreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.05),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context); // Go back to the previous screen
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DashboardDriver(),
+                      )); // Go back to the previous screen
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF0A3D5F), // Button color

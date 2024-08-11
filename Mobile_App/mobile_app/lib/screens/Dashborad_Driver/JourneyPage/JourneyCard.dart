@@ -15,6 +15,9 @@ class JourneyCard extends StatelessWidget {
   final double fontSize;
   final double iconSize;
   final Color dashColor;
+  final bool showArrowIcon;
+  final bool
+      showDetailsButton; // Add this property to control the visibility of the "VIEW DETAILS" button
 
   JourneyCard({
     required this.from,
@@ -29,6 +32,8 @@ class JourneyCard extends StatelessWidget {
     required this.fontSize,
     required this.iconSize,
     required this.dashColor,
+    this.showArrowIcon = false,
+    this.showDetailsButton = true, // Default value is true
   });
 
   @override
@@ -53,8 +58,10 @@ class JourneyCard extends StatelessWidget {
             children: [
               Text(
                 '$from to $to',
-                style:
-                    TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Spacer(),
               Container(
@@ -65,8 +72,10 @@ class JourneyCard extends StatelessWidget {
                 ),
                 child: Text(
                   timeLeft,
-                  style:
-                      TextStyle(fontSize: fontSize * 0.75, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: fontSize * 0.75,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -76,14 +85,18 @@ class JourneyCard extends StatelessWidget {
             children: [
               Text(
                 departureTime,
-                style:
-                    TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Spacer(),
               Text(
                 arrivalTime,
-                style:
-                    TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -93,13 +106,19 @@ class JourneyCard extends StatelessWidget {
               Icon(Icons.location_on, size: iconSize, color: Colors.grey),
               Text(
                 ' $from CMBT',
-                style: TextStyle(fontSize: fontSize * 0.75, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: fontSize * 0.75,
+                  color: Colors.grey,
+                ),
               ),
               Spacer(),
               Icon(Icons.location_on, size: iconSize, color: Colors.grey),
               Text(
                 ' $to BS',
-                style: TextStyle(fontSize: fontSize * 0.75, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: fontSize * 0.75,
+                  color: Colors.grey,
+                ),
               ),
             ],
           ),
@@ -113,28 +132,49 @@ class JourneyCard extends StatelessWidget {
                   Text(
                     passengers,
                     style: TextStyle(
-                        fontSize: fontSize * 0.75, color: Colors.grey),
+                      fontSize: fontSize * 0.75,
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),
               Spacer(),
               Text(
                 stops,
-                style: TextStyle(fontSize: fontSize * 0.75, color: Colors.grey),
-              ),
-              Spacer(),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => JourneyDetailsScreen()));
-                },
-                child: Text(
-                  'VIEW DETAILS',
-                  style: TextStyle(fontSize: fontSize * 0.75, color: tagColor),
+                style: TextStyle(
+                  fontSize: fontSize * 0.75,
+                  color: Colors.grey,
                 ),
               ),
+              Spacer(),
+              if (showDetailsButton)
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => JourneyDetailsScreen(),
+                      ),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        'VIEW DETAILS',
+                        style: TextStyle(
+                          fontSize: fontSize * 0.75,
+                          color: tagColor,
+                        ),
+                      ),
+                      if (showArrowIcon)
+                        Icon(
+                          Icons.arrow_forward,
+                          size: iconSize * 0.8,
+                          color: tagColor,
+                        ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ],

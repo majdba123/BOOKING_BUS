@@ -34,6 +34,8 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
         builder: (context) => FullMapViewScreen(
           initialPosition: _initialPosition,
           routeCoordinates: _routeCoordinates,
+          destinationPosition: _destinationPosition,
+          stopPlaces: _routeCoordinates,
         ),
       ),
     );

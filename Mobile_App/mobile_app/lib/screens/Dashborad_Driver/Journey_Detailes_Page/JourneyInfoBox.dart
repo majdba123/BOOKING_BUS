@@ -101,6 +101,7 @@ class JourneyInfoBox extends StatelessWidget {
           JourneyMapWidget(
             initialPosition: initialPosition,
             routeCoordinates: routeCoordinates,
+            enableOpenMapButton: true,
             onOpenMapPressed: () {
               Navigator.push(
                 context,
@@ -108,6 +109,13 @@ class JourneyInfoBox extends StatelessWidget {
                   builder: (context) => FullMapViewScreen(
                     initialPosition: initialPosition,
                     routeCoordinates: routeCoordinates,
+                    destinationPosition: destinationPosition,
+                    stopPlaces: [
+                      LatLng(11.004556, 76.961632), // Gandhipuram
+                      LatLng(12.9165, 79.1325), // Vellore
+                      LatLng(12.7904, 78.7047), // Ambur
+                      LatLng(12.8342, 79.7036), // Kanchipuram
+                    ],
                   ),
                 ),
               );
