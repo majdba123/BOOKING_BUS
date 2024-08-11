@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Driver_profile/Driver_profile.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/JourneyCard.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/journeys_screen.dart';
 
 class FilterBarJorney extends StatelessWidget {
   final double height;
@@ -31,16 +35,31 @@ class FilterBarJorney extends StatelessWidget {
         children: [
           IconButton(
             icon: Icon(Icons.home, color: Colors.white, size: iconSize),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DashboardDriver()),
+              );
+            },
           ),
           IconButton(
             icon: Icon(Icons.airplane_ticket,
                 color: Colors.white, size: iconSize),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => JourneysScreen()),
+              );
+            },
           ),
           IconButton(
             icon: Icon(Icons.person, color: Colors.white, size: iconSize),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DriverProfilePage()),
+              );
+            },
           ),
         ],
       ),
