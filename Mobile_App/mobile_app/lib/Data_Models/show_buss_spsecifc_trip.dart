@@ -10,7 +10,7 @@ class BusResponse {
   String toTime;
   String type;
   String event;
-  List<Break> breaks;
+  List<BreakPlace> breaks;
   List<SeatModel> seats;
 
   BusResponse({
@@ -27,9 +27,9 @@ class BusResponse {
 
   factory BusResponse.fromJson(Map<String, dynamic> json) {
     var breaksFromJson = json['breaks'] as List;
-    List<Break> breaksList =
-        breaksFromJson.map((i) => Break.fromJson(i)).toList();
-
+    List<BreakPlace> breaksList =
+        breaksFromJson.map((i) => BreakPlace.fromJson(i)).toList();
+    print(breaksList);
     var seatsFromJson = json['seats'] as List;
     List<SeatModel> seatsList =
         seatsFromJson.map((i) => SeatModel.fromJson(i)).toList();
@@ -47,45 +47,45 @@ class BusResponse {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'bus_id': busId,
-      'from': from,
-      'to': to,
-      'from_time': fromTime,
-      'to_time': toTime,
-      'type': type,
-      'event': event,
-      'breaks': breaks.map((e) => e.toJson()).toList(),
-      'seats': seats,
-    };
-  }
+  // Map<String, dynamic> toJson() {
+  //   return {
+  //     'bus_id': busId,
+  //     'from': from,
+  //     'to': to,
+  //     'from_time': fromTime,
+  //     'to_time': toTime,
+  //     'type': type,
+  //     'event': event,
+  //     'breaks': breaksList,
+  //     'seats': seats,
+  //   };
+  // }
 }
 
-class Break {
-  String government;
-  String nameBreak;
-  String status;
+// class Break {
+//   String government;
+//   String nameBreak;
+//   String status;
 
-  Break({
-    required this.government,
-    required this.nameBreak,
-    required this.status,
-  });
+//   Break({
+//     required this.government,
+//     required this.nameBreak,
+//     required this.status,
+//   });
 
-  factory Break.fromJson(Map<String, dynamic> json) {
-    return Break(
-      government: json['government'],
-      nameBreak: json['name_break'],
-      status: json['status'],
-    );
-  }
+//   factory Break.fromJson(Map<String, dynamic> json) {
+//     return Break(
+//       government: json['government'],
+//       nameBreak: json['name_break'],
+//       status: json['status'],
+//     );
+//   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'government': government,
-      'name_break': nameBreak,
-      'status': status,
-    };
-  }
-}
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'government': government,
+//       'name_break': nameBreak,
+//       'status': status,
+//     };
+//   }
+// }

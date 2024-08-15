@@ -22,7 +22,7 @@ class BussofSpsccifTripProvider with ChangeNotifier {
       print('try!!!!');
       _busResponses =
           await TripBusApi().fetch_buss_of_spsecifc_trip(accessToken, tripId);
-
+      print(_busResponses);
       print('the bus response $_busResponses');
     } catch (e) {
       // Handle error
