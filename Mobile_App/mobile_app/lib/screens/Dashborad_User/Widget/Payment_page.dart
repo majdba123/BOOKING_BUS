@@ -238,7 +238,7 @@ class PayButton extends StatelessWidget {
               print(provider.trip_type);
               print(provider.selectedSeat);
               print(provider.selectedBoardingPoint!.breakId);
-              print(provider.selectedBus.busId);
+              print(provider.selectedBus!.busId);
 
               try {
                 await provider.make_reservation(
@@ -246,7 +246,7 @@ class PayButton extends StatelessWidget {
                     provider.trip_type,
                     provider.selectedSeat,
                     provider.selectedBoardingPoint!.breakId,
-                    provider.selectedBus.busId);
+                    provider.selectedBus!.busId);
 
                 Navigator.push(
                   context,

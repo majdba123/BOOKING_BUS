@@ -9,7 +9,8 @@ import 'dart:convert';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/Data_Models/company.dart';
 import 'package:mobile_app/Data_Models/show_buss_spsecifc_trip.dart';
-import 'package:mobile_app/constants.dart'; // To decode JSON responses
+import 'package:mobile_app/constants.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/payment/TicketDetailObject.dart'; // To decode JSON responses
 
 class TripuserProvider with ChangeNotifier {
   List<TripByPath> _trips = [];
@@ -24,8 +25,12 @@ class TripuserProvider with ChangeNotifier {
   List<MYReservation> _Myreservations = [];
 
   List<MYReservation> get Myreservations => _Myreservations;
-  late BusTrip selectedBus;
-  late BusResponse selectedBusTrip;
+  List<TicketDetail> _selectedTicketDetails = [];
+
+  // Getter for the selected ticket details
+  List<TicketDetail> get selectedTicketDetails => _selectedTicketDetails;
+  BusTrip? selectedBus;
+  BusResponse? selectedBusTrip;
   late List<int> selectedSeat;
   late BreakPlace breakPlaces;
   String? from;
@@ -48,6 +53,34 @@ class TripuserProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
+
+  void addTicketDetail(TicketDetail detail) {
+    _selectedTicketDetails.add(detail);
+    notifyListeners();
+  }
+
+  // Function to clear the ticket details (e.g., when starting a new reservation)
+  void clearTicketDetails() {
+    _selectedTicketDetails.clear();
+    notifyListeners();
+  }
+
+  String getSeatType(int seatId) {
+    // Implement your logic to determine the seat type based on seatId
+    // For example:
+    if (seatId % 2 == 0) {
+      return "normal";
+    } else {
+      return "Vip";
+    }
+  }
+
+  // Total amount calculation based on ticket details
+  double get totalAmount {
+    return _selectedTicketDetails.fold(
+        0.0, (sum, item) => sum + (item.price * item.quantity));
+  }
+
   void selectBoardingPoint(BreakPlace point) {
     _selectedBoardingPoint = point;
     notifyListeners();

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/payment/payment_page.dart';
+import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Payment_page.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/break_point.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/payment/payment_page.dart';
-import 'package:provider/provider.dart';
+import 'onboarding_overlay.dart';
 
 class PassengerDetailsPage extends StatefulWidget {
   @override
@@ -468,156 +467,6 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-// Onboarding Overlay Widget
-class OnboardingOverlay extends StatelessWidget {
-  final VoidCallback onNext;
-  final VoidCallback onSkip;
-  final int step;
-
-  const OnboardingOverlay({
-    required this.onNext,
-    required this.onSkip,
-    required this.step,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Semi-transparent background
-        Container(
-          color: Colors.black.withOpacity(0.6),
-        ),
-        // Highlight the "Change" button on step 1
-        if (step == 1) ...[
-          // Highlight the "Change" button
-          Positioned(
-            top: 140,
-            right: 25,
-            child: PulseAnimation(),
-          ),
-          // Tooltip pointing to the "Change" button
-          Positioned(
-            top: 250,
-            right: 20,
-            child: TooltipWithNext(
-              text: "Tap here to select boarding and deboarding points",
-              onNext: onNext,
-            ),
-          ),
-        ],
-        Positioned(
-          bottom: 20,
-          left: 20,
-          child: ElevatedButton(
-            onPressed: onSkip,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-            ),
-            child: Text(
-              "Skip Tutorial",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// Pulse Animation Widget
-class PulseAnimation extends StatefulWidget {
-  @override
-  _PulseAnimationState createState() => _PulseAnimationState();
-}
-
-class _PulseAnimationState extends State<PulseAnimation>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: Duration(seconds: 1),
-      vsync: this,
-    )..repeat(reverse: true);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: 1 + _controller.value * 0.1,
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white,
-                width: 4.0,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-}
-
-// Tooltip with Next Button Widget
-class TooltipWithNext extends StatelessWidget {
-  final String text;
-  final VoidCallback onNext;
-
-  const TooltipWithNext({
-    required this.text,
-    required this.onNext,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: EdgeInsets.all(10.0),
-            color: Colors.white,
-            child: Text(
-              text,
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-          Container(
-            // color: Colors.black.withOpacity(0.5), // Add transparency
-            // alignment: Alignment.center,
-            child: Lottie.asset(
-              'assets/images/arrow.json',
-              width: 150,
-              height: 300,
-              repeat: true,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -7,7 +7,9 @@ import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/BusHeader.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/BusLayout.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/SeatLegend.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/choose_break_place.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/PassengerDetailsPage/custom_button.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/TicketDetailsScreen.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/payment/TicketDetailObject.dart';
 import 'package:provider/provider.dart';
 
 class SeatsGridPage extends StatefulWidget {
@@ -120,16 +122,31 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
                   onPressed: () {
-                    var bus_provider =
+                    var busProvider =
                         Provider.of<TripuserProvider>(context, listen: false);
-                    Provider.of<TripuserProvider>(context, listen: false)
-                        .selectSeat(selectedSeats);
-                    Provider.of<TripuserProvider>(context, listen: false)
-                        .calculatePrice(
-                            selectedSeats.length, bus_provider.price_tiket);
+
+                    // Adding the selected seats to the provider
+                    for (int seatId in selectedSeats) {
+                      // Determine the seat type (e.g., Seater or Sleeper)
+                      String seatType = busProvider.getSeatType(
+                          seatId); // You should implement this method in your provider
+                      int seatPrice = busProvider.price_trip;
+
+                      // Add each seat detail to the provider
+                      busProvider.addTicketDetail(
+                        TicketDetail(
+                            type: seatType, quantity: 1, price: seatPrice),
+                      );
+                    }
+
+                    // Select seats and calculate the total price
+                    busProvider.selectSeat(selectedSeats);
+                    busProvider.calculatePrice(
+                        selectedSeats.length, busProvider.price_tiket);
+
+                    // Navigate to the PassengerDetailsPage
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => PassengerDetailsPage()));
-                    print('Selected seats: $selectedSeats');
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
