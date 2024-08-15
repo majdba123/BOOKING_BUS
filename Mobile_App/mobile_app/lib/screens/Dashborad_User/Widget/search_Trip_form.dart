@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Serach_trip_Result.dart';
@@ -14,12 +13,15 @@ class SearchBusForm extends StatefulWidget {
 class _SearchBusFormState extends State<SearchBusForm> {
   TextEditingController _fromController = TextEditingController();
   TextEditingController _toController = TextEditingController();
+  TextEditingController _companySearchController = TextEditingController();
   bool _isButtonEnabled = false;
+  bool _showCompanyField = false;
 
   @override
   void dispose() {
     _fromController.dispose();
     _toController.dispose();
+    _companySearchController.dispose();
     super.dispose();
   }
 
@@ -32,13 +34,15 @@ class _SearchBusFormState extends State<SearchBusForm> {
 
   void _updateButtonState() {
     setState(() {
-      _isButtonEnabled = _fromController.text.isNotEmpty && _toController.text.isNotEmpty;
+      _isButtonEnabled =
+          _fromController.text.isNotEmpty && _toController.text.isNotEmpty;
     });
   }
 
   Future<void> _searchBuses() async {
-    final from = _fromController.text;
-    final to = _toController.text;
+    final from = _fromController.text.trim();
+    final to = _toController.text.trim();
+    final company = _companySearchController.text.trim();
 
     if (from.isEmpty || to.isEmpty) {
       _showDialog();
@@ -48,7 +52,20 @@ class _SearchBusFormState extends State<SearchBusForm> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final tripProvider = Provider.of<TripuserProvider>(context, listen: false);
 
-    await tripProvider.getTripsByPath(authProvider.accessToken, from, to);
+    await tripProvider.getTripsByPath(
+      authProvider.accessToken,
+      from,
+      to,
+      _showCompanyField && company.isNotEmpty ? company : null,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            BusSearchScreen(searchFuture: Future.value(tripProvider.trips)),
+      ),
+    );
   }
 
   void _showDialog() {
@@ -57,7 +74,8 @@ class _SearchBusFormState extends State<SearchBusForm> {
       builder: (context) {
         return AlertDialog(
           title: Text('Error'),
-          content: Text('Both fields must have a value to search.'),
+          content:
+              Text('Both "From" and "To" fields must have a value to search.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -80,7 +98,7 @@ class _SearchBusFormState extends State<SearchBusForm> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(45.0),
-      margin: EdgeInsets.only(left: 15,right: 15),
+      margin: EdgeInsets.symmetric(horizontal: 15.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -124,21 +142,44 @@ class _SearchBusFormState extends State<SearchBusForm> {
               fillColor: Colors.grey[200],
             ),
           ),
+          SizedBox(height: 10.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Add Filter'),
+              IconButton(
+                icon: Icon(_showCompanyField
+                    ? Icons.arrow_drop_up
+                    : Icons.arrow_drop_down),
+                onPressed: () {
+                  setState(() {
+                    _showCompanyField = !_showCompanyField;
+                    if (!_showCompanyField) {
+                      _companySearchController.clear();
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
+          if (_showCompanyField)
+            TextField(
+              controller: _companySearchController,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.business),
+                hintText: 'Company Name (Optional)',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+              ),
+            ),
           SizedBox(height: 35.0),
           ElevatedButton(
-            onPressed: _isButtonEnabled
-                ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BusSearchScreen(
-                          searchFuture: _searchBuses(),
-                        ),
-                      ),
-                    );
-                  }
-                : _showDialog,
-            child: Text('Search By Path', style: TextStyle(color: Colors.white)),
+            onPressed: _isButtonEnabled ? _searchBuses : _showDialog,
+            child: Text('Search Trip', style: TextStyle(color: Colors.white)),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
               padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 15.0),

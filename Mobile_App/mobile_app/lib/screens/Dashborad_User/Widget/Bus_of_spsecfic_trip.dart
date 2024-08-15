@@ -3,7 +3,6 @@ import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/Data_Models/show_buss_spsecifc_trip.dart'; // Adjust the path as needed
 
 class BusCardofSpecicTrip extends StatefulWidget {
   final int tripId;
@@ -16,272 +15,321 @@ class BusCardofSpecicTrip extends StatefulWidget {
 
 class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
   final int tripId;
+
   _BusCardofSpecicTripState({required this.tripId});
+
   @override
   void initState() {
     super.initState();
-    print('the trip id is $tripId');
     final provider =
         Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     final authprovider = Provider.of<AuthProvider>(context, listen: false);
     provider.getBussofSpecicTrip(tripId, authprovider.accessToken);
-  print(provider.busResponses);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('this is title'),
+      appBar: AppBar(
+        automaticallyImplyLeading: false, // Removes the back button
+        toolbarHeight: 100.0, // Adjusted height for better spacing
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primaryColor,
+                AppColors.primaryColor.withOpacity(0.8)
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
         ),
-        body: Consumer<BussofSpsccifTripProvider>(
-          builder: (context, provider, child) {
-            if (provider.isLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
+        title: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 18.0, vertical: 14.0), // Adjusted padding
+          child: Consumer<BussofSpsccifTripProvider>(
+            builder: (context, provider, child) {
+              if (provider.isLoading || provider.busResponses.isEmpty) {
+                return const Text('Loading...');
+              }
 
-            final busTrips = provider.busResponses;
+              final busTrip = provider.busResponses.first;
 
-            return ListView.builder(
-              itemCount: busTrips.length,
-              itemBuilder: (context, index) {
-                final busTrip = busTrips[index];
-
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    double cardPadding = constraints.maxWidth * 0.04;
-                    double imageWidth = constraints.maxWidth * 0.12;
-                    double textFontSize = constraints.maxWidth * 0.045;
-                    double smallTextFontSize = constraints.maxWidth * 0.035;
-                    double iconSize = constraints.maxWidth * 0.05;
-
-                    return Card(
-                      margin: EdgeInsets.only(bottom: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: InkWell(
-                        child: Padding(
-                          padding: EdgeInsets.all(cardPadding),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: imageWidth,
-                                    height: imageWidth,
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/logo_bus.jpg'),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: cardPadding),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(height: 4.0),
-                                        Text(
-                                          'Bus Type: ${busTrip.type}',
-                                          style: TextStyle(
-                                              color: AppColors.primaryColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: smallTextFontSize),
-                                        ),
-                                        SizedBox(height: 4.0),
-                                        Text(
-                                          'Bus Event: ${busTrip.event}',
-                                          style: TextStyle(
-                                              color: AppColors.primaryColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: smallTextFontSize),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 4.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green[100],
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Text('N.Bus :${busTrip.busId}',
-                                        style: TextStyle(color: Colors.green)),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: cardPadding),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('${busTrip.fromTime} Am',
-                                          style: TextStyle(
-                                              fontSize: textFontSize,
-                                              color: AppColors.primaryColor)),
-                                      SizedBox(height: 4.0),
-                                      Text(busTrip.from,
-                                          style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: smallTextFontSize)),
-                                    ],
-                                  ),
-                                  Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 12.0),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              ' ------------ ',
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: smallTextFontSize),
-                                            ),
-                                            Icon(Icons.directions_bus,
-                                                color: Colors.grey,
-                                                size: iconSize),
-                                            Text(
-                                              ' ------------- ',
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: smallTextFontSize),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('${busTrip.toTime} Am',
-                                          style: TextStyle(
-                                              fontSize: textFontSize,
-                                              color: AppColors.primaryColor)),
-                                      SizedBox(height: 4.0),
-                                      Text(busTrip.to,
-                                          style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: smallTextFontSize)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Divider(
-                                height: 32.0,
-                                thickness: 1.5,
-                              ),
-                              Row(
-                                children: [
-                                  Icon(Icons.star,
-                                      color: Colors.yellow, size: iconSize),
-                                  SizedBox(width: 4.0),
-                                  Text('Rating',
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: smallTextFontSize)),
-                                  Spacer(),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.person, size: iconSize),
-                                      SizedBox(width: 4.0),
-                                      Text('${busTrip.seats.length}',
-                                          style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: smallTextFontSize)),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                ],
-                              ),
-                              SizedBox(height: cardPadding),
-                              Divider(height: 25.0, thickness: 1.5),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Break Places',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: textFontSize)),
-                                  ...busTrip.breaks.map((breakPlace) {
-                                    String government = breakPlace.government;
-                                    if (breakPlace.nameBreak == "start" &&
-                                        breakPlace.government == "Nothing") {
-                                      government = busTrip.from;
-                                    } else if (breakPlace.nameBreak == "end" &&
-                                        breakPlace.government == "Nothing") {
-                                      government = busTrip.to;
-                                    }
-                                    Color statusColor;
-                                    String statusText;
-                                    switch (breakPlace.status) {
-                                      case "done 1":
-                                        statusColor = Colors.yellow;
-                                        statusText = "Return Only";
-                                        break;
-                                      case "done 2":
-                                        statusColor = Colors.red;
-                                        statusText = "Finish Trip";
-                                        break;
-                                      default:
-                                        statusColor = Colors.green;
-                                        statusText = "Pending";
-                                    }
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.place,
-                                              color: AppColors.primaryColor),
-                                          SizedBox(width: 8.0),
-                                          Expanded(
-                                            child: Text(
-                                                '${breakPlace.nameBreak}, $government',
-                                                style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize:
-                                                        smallTextFontSize)),
-                                          ),
-                                          Text(
-                                            statusText,
-                                            style: TextStyle(
-                                                color: statusColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: smallTextFontSize),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                ],
-                              ),
-                            ],
+              return Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.center, // Center alignment for better UX
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          busTrip.from,
+                          style: TextStyle(
+                            fontSize: 22.0, // Larger font size
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
                         ),
                       ),
-                    );
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(
+                          Icons.directions_bus,
+                          color: Colors.white,
+                          size: 28.0, // Slightly larger icon
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          busTrip.to,
+                          style: TextStyle(
+                            fontSize: 22.0, // Larger font size
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.end,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  Center(
+                    child: Text(
+                      'Available Bus Trips',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        centerTitle: false, // Aligns the title content in the header
+      ),
+      body: Consumer<BussofSpsccifTripProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final busTrips = provider.busResponses;
+
+          return ListView.builder(
+            padding: EdgeInsets.all(16.0),
+            itemCount: busTrips.length,
+            itemBuilder: (context, index) {
+              final busTrip = busTrips[index];
+
+              return Card(
+                margin: EdgeInsets.only(bottom: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                elevation: 3,
+                child: InkWell(
+                  onTap: () {
+                    // Action on tapping the bus card
                   },
-                );
-              },
-            );
-          },
-        ));
+                  splashColor: AppColors.primaryColor.withOpacity(0.1),
+                  highlightColor: Colors.grey.withOpacity(0.1),
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 50.0,
+                              height: 50.0,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                image: DecorationImage(
+                                  image:
+                                      AssetImage('assets/images/logo_bus.jpg'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12.0),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    busTrip.type,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4.0),
+                                  Text(
+                                    'Event: ${busTrip.event}',
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 4.0),
+                              decoration: BoxDecoration(
+                                color: Colors.green[50],
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Text('Bus No: ${busTrip.busId}',
+                                  style: TextStyle(color: Colors.green[800])),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildTimeLocationColumn(
+                                busTrip.fromTime, busTrip.from, context),
+                            Icon(Icons.directions_bus,
+                                color: Colors.grey, size: 24.0),
+                            _buildTimeLocationColumn(
+                                busTrip.toTime, busTrip.to, context),
+                          ],
+                        ),
+                        SizedBox(height: 16.0),
+                        Divider(
+                          height: 32.0,
+                          thickness: 1.5,
+                          color: Colors.grey[300],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.star, color: Colors.amber, size: 20),
+                            SizedBox(width: 4.0),
+                            Text('Rating: 4.4',
+                                style: TextStyle(
+                                    color: Colors.grey[700], fontSize: 14.0)),
+                            Spacer(),
+                            Row(
+                              children: [
+                                Icon(Icons.person, size: 20),
+                                SizedBox(width: 4.0),
+                                Text('${busTrip.seats.length} Seats',
+                                    style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 14.0)),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16.0),
+                        Divider(
+                            height: 25.0,
+                            thickness: 1.5,
+                            color: Colors.grey[300]),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Break Places',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0)),
+                            ...busTrip.breaks.map((breakPlace) {
+                              String government = breakPlace.government;
+                              if (breakPlace.nameBreak == "start" &&
+                                  breakPlace.government == "Nothing") {
+                                government = busTrip.from;
+                              } else if (breakPlace.nameBreak == "end" &&
+                                  breakPlace.government == "Nothing") {
+                                government = busTrip.to;
+                              }
+                              Color statusColor;
+                              String statusText;
+                              switch (breakPlace.status) {
+                                case "done 1":
+                                  statusColor = Colors.yellow[800]!;
+                                  statusText = "Return Only";
+                                  break;
+                                case "done 2":
+                                  statusColor = Colors.red[700]!;
+                                  statusText = "Finish Trip";
+                                  break;
+                                default:
+                                  statusColor = Colors.green[700]!;
+                                  statusText = "Pending";
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.place,
+                                        color: AppColors.primaryColor),
+                                    SizedBox(width: 8.0),
+                                    Expanded(
+                                      child: Text(
+                                          '${breakPlace.nameBreak}, $government',
+                                          style: TextStyle(
+                                              color: Colors.grey[700],
+                                              fontSize: 14.0)),
+                                    ),
+                                    Text(
+                                      statusText,
+                                      style: TextStyle(
+                                          color: statusColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14.0),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Column _buildTimeLocationColumn(
+      String time, String location, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          time,
+          style: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+            color: AppColors.primaryColor,
+          ),
+        ),
+        SizedBox(height: 4.0),
+        Text(
+          location,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 14.0,
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -107,10 +107,13 @@ class TripuserProvider with ChangeNotifier {
   }
 
   Future<void> getTripsByPath(
-      String accessToken, String from, String to) async {
-    final response = await http.get(headers: {
-      'Authorization': 'Bearer $accessToken',
-    }, Uri.parse(name_domain_server + 'user/trip_by_path?from=$from&to=$to'));
+      String accessToken, String from, String to, var companyName) async {
+    final response = await http.get(
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+        },
+        Uri.parse(name_domain_server +
+            'user/trip_by_path?from=$from&to=$to&company_name=$companyName'));
 
     if (response.statusCode == 200) {
       final List<dynamic> tripList = json.decode(response.body);

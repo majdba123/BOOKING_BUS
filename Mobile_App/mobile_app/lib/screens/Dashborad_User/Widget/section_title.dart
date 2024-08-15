@@ -5,7 +5,10 @@ class SectionTitle extends StatelessWidget {
   final String title;
   final Widget navigateTo;
 
-  const SectionTitle({required this.title, required this.navigateTo});
+  const SectionTitle({
+    required this.title,
+    required this.navigateTo,
+  });
 
   @override
   Widget build(BuildContext context) {

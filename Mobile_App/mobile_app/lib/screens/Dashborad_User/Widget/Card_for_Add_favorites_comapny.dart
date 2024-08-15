@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Rating_Provider.dart';
@@ -9,12 +10,12 @@ import 'package:provider/provider.dart';
 class CardfavoriteCompany extends StatefulWidget {
   final String name_of_company;
   final String image_link;
-  final int company_id; // Add company ID
+  final int company_id;
 
   const CardfavoriteCompany({
     required this.name_of_company,
     required this.image_link,
-    required this.company_id, // Add company ID
+    required this.company_id,
   });
 
   @override
@@ -48,12 +49,8 @@ class _CardfavoriteCompanyState extends State<CardfavoriteCompany> {
 
     await prefs.setBool('favorite_${widget.company_id}', isFavorite);
     if (isFavorite) {
-      print('add to fav: ');
       provider.addCompanyToFavorite(widget.company_id);
-    }
-
-    if (!isFavorite) {
-      print('canel add to fav: ');
+    } else {
       provider.removeCompanyFromFavorite(widget.company_id);
     }
   }
@@ -61,8 +58,22 @@ class _CardfavoriteCompanyState extends State<CardfavoriteCompany> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double titleFontSize =
-        screenWidth * 0.030; // Adjust the scale factor as needed
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    // Adjust sizes based on screen width and height
+    double cardWidth = screenWidth *
+        0.45; // Adjust width to fit better on various screen sizes
+    double cardHeight = screenHeight * 0.25; // Adjust height
+    double imageHeight = cardHeight * 0.6; // Image takes 60% of the card height
+    double titleFontSize = screenWidth * 0.045; // Title font size
+    double subtitleFontSize = screenWidth * 0.035; // Subtitle font size
+    double iconSize = screenWidth * 0.05; // Icon size
+
+    // Check if the image URL is valid
+    bool isValidUrl = Uri.tryParse(widget.image_link)?.hasAbsolutePath ?? false;
+    String imageUrl = isValidUrl
+        ? widget.image_link
+        : 'https://via.placeholder.com/150'; // Fallback image URL
 
     return InkWell(
       onTap: () => Navigator.of(context).push(
@@ -70,95 +81,95 @@ class _CardfavoriteCompanyState extends State<CardfavoriteCompany> {
           builder: (context) => CompanyInfoPage(
             companyId: widget.company_id,
           ),
-        ), // Navigate to login page
+        ),
       ),
       child: Container(
-        width: 200, // Adjusted width for better proportion
-        margin: EdgeInsets.only(right: 12.0),
-        padding: EdgeInsets.all(16.0),
+        width: cardWidth,
+        height: cardHeight,
+        margin: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.02, vertical: screenHeight * 0.01),
+        padding: EdgeInsets.all(screenWidth * 0.03),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white, Colors.grey[100]!],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12.0),
+          color: Color.fromARGB(255, 240, 237, 237),
+          borderRadius: BorderRadius.circular(16.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10.0,
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
               spreadRadius: 1.0,
             ),
           ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize
-              .min, // Ensures the column takes minimum vertical space
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
+              height: imageHeight,
               width: double.infinity,
-              height: 30.0,
-              child: Center(
-                child: Container(
-                  width: 100.0,
-                  height: 100.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          'https://t3.ftcdn.net/jpg/02/51/59/46/360_F_251594672_c7xertPrElSFJ5eTd6V0CmQE1CyGC6Ke.jpg'),
-                      fit: BoxFit.cover,
+              child: Stack(
+                children: [
+                  // BlurHash Placeholder
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: BlurHash(
+                      hash: 'L5H2EC=PM+yV0g-mq.wG9c010J}I', // Example BlurHash
+                      imageFit: BoxFit.cover,
+                      decodingHeight: 100,
+                      decodingWidth: 100,
                     ),
                   ),
-                ),
+                  // Company Image
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/background_mappp.png',
+                        image: imageUrl,
+                        fit: BoxFit.cover,
+                        fadeInDuration: Duration(milliseconds: 500),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 2.0),
+            SizedBox(height: screenHeight * 0.02),
+            Text(
+              widget.name_of_company,
+              style: TextStyle(
+                color: AppColors.primaryColor,
+                fontSize: titleFontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.005),
+            Text(
+              'Bus company',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: subtitleFontSize,
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.01),
             Row(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.name_of_company,
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontSize: titleFontSize,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4.0),
-                      Text(
-                        'Bus company', // Placeholder for additional info
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: titleFontSize * 0.8,
-                        ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Row(
-                        children: List.generate(5, (index) {
-                          return Icon(
-                            index < 4
-                                ? Icons.star
-                                : Icons
-                                    .star_border, // Assuming a 4-star rating as placeholder
-                            color: Colors.yellow[700],
-                            size: titleFontSize,
-                          );
-                        }),
-                      ),
-                    ],
-                  ),
+                Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      index < 4 ? Icons.star : Icons.star_border,
+                      color: Colors.yellow[700],
+                      size: iconSize,
+                    );
+                  }),
                 ),
-                IconButton(
-                  icon: Icon(
+                Spacer(),
+                GestureDetector(
+                  onTap: _toggleFavorite,
+                  child: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? Colors.red : Colors.grey,
+                    color: isFavorite ? Colors.redAccent : Colors.grey[400],
+                    size: iconSize + 6,
                   ),
-                  onPressed: _toggleFavorite,
                 ),
               ],
             ),

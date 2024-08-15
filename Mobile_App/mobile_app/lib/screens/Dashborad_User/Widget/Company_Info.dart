@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Provider/user/Company_Info.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
+import 'package:mobile_app/Provider/user/Company_Info.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/colors.dart';
 
@@ -50,67 +51,79 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // First Section: Company Photo
-                  Container(
-                    width: double.infinity,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(
-                            // company.user?.profile?.image ??
-                            'https://via.placeholder.com/200'),
-                        fit: BoxFit.cover,
+                  // Company Image with CachedNetworkImage
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDvl9ZaLbuWLu6nIaTUvpdcNk2r6US0oJp1w&s',
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          Icon(Icons.error, size: 50),
+                      fit: BoxFit.cover,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(16.0),
+                            bottomRight: Radius.circular(16.0),
+                          ),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(height: 20),
-                  // Second Section: Company Info
+
+                  // Company Info Card
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          company.nameCompany,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      elevation: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              company.nameCompany,
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(Icons.person, color: Colors.grey[600]),
+                                SizedBox(width: 8),
+                                Text(
+                                  'User ID: ${company.userId}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            Divider(),
+                            _buildAboutSection(),
+                            Divider(),
+                            _buildContactSection(),
+                            Divider(),
+                            _buildSocialMediaSection(),
+                          ],
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          'User ID: ${company.userId}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Created At: ${company.createdAt}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        // SizedBox(height: 10),
-                        // if (company.user?.address != null) ...[
-                        //   Text(
-                        //     'Address:',
-                        //     style: TextStyle(
-                        //       fontSize: 18,
-                        //       fontWeight: FontWeight.bold,
-                        //     ),
-                        //   ),
-                        //   ...company.user!.address!.map((address) => Text(
-                        //         address,
-                        //         style: TextStyle(
-                        //           fontSize: 16,
-                        //           color: Colors.grey[600],
-                        //         ),
-                        //       )),
-                        // ],
-                      ],
+                      ),
                     ),
                   ),
                 ],
@@ -118,6 +131,121 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
             );
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildAboutSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'About Us',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryColor,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'We are a leading transportation company, providing top-notch services to our customers for over 20 years. Our mission is to make your travel experience comfortable and convenient.',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Contact Information',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryColor,
+            ),
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.phone, color: Colors.grey[600]),
+              SizedBox(width: 8),
+              Text(
+                '+1 234 567 890',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.email, color: Colors.grey[600]),
+              SizedBox(width: 8),
+              Text(
+                'info@company.com',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.location_on, color: Colors.grey[600]),
+              SizedBox(width: 8),
+              Text(
+                '123 Main St, City, Country',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialMediaSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildSocialMediaIcon(Icons.facebook, Colors.blue),
+          _buildSocialMediaIcon(Icons.facebook, Colors.lightBlue),
+          _buildSocialMediaIcon(Icons.facebook, Colors.blue[700]!),
+          _buildSocialMediaIcon(Icons.facebook, Colors.pink),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialMediaIcon(IconData iconData, Color color) {
+    return GestureDetector(
+      onTap: () {
+        // Handle social media icon tap
+      },
+      child: CircleAvatar(
+        backgroundColor: color.withOpacity(0.2),
+        child: Icon(iconData, color: color),
       ),
     );
   }

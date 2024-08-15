@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_of_spsecfic_trip.dart';
 
 class RouteCard extends StatelessWidget {
   final String from;
@@ -20,69 +21,80 @@ class RouteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double cardWidth = 280.0; // Adjusted width to match the example size
-    double cardHeight = 100.0; // Adjusted height to match the example size
+    double cardWidth = 280.0;
+    double cardHeight = 80.0;
     double titleFontSize = 16.0;
     double subtitleFontSize = 12.0;
-    double priceFontSize = 14.0;
     double imageWidth = 80.0;
     double imageHeight = 80.0;
 
-    return Container(
-      width: cardWidth,
-      height: cardHeight,
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-      padding: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8), // Adding transparency
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5.0,
-            spreadRadius: 1.0,
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => BusCardofSpecicTrip(
+              tripId: tripId,
+            ),
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: imageWidth,
-            height: imageHeight,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
-                fit: BoxFit.cover,
+        );
+      },
+      child: Container(
+        width: cardWidth,
+        height: cardHeight,
+        margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 240, 237, 237), // Adding transparency
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 5.0,
+              spreadRadius: 1.0,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: imageWidth,
+              height: imageHeight,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                image: DecorationImage(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          SizedBox(width: 8.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$from → $to',
-                  style: TextStyle(
+            SizedBox(width: 8.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$from → $to',
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: titleFontSize,
-                      color: AppColors.primaryColor),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4.0),
-                Text(
-                  'from $price',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: subtitleFontSize,
+                      color: AppColors.primaryColor,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                  SizedBox(height: 4.0),
+                  Text(
+                    'from \n $price \$',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: subtitleFontSize,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -57,6 +57,11 @@ dependencies:
   syncfusion_flutter_gauges: ^20.4.49
   timeline_tile: ^2.0.0
   timelines: ^0.1.0
+  flutter_blurhash: ^0.8.2
+  cached_network_image: ^3.4.1
+  path_provider: ^2.0.0
+
+
 
 
 dev_dependencies:
@@ -85,6 +90,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/images/seats/
+    - assets/images/background_mappp.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

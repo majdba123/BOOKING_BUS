@@ -6,7 +6,7 @@ class Company {
   final String nameCompany;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final User? user; // Make user nullable
+  // final User? user; // Make user nullable
 
   Company({
     required this.id,
@@ -14,7 +14,7 @@ class Company {
     required this.nameCompany,
     required this.createdAt,
     required this.updatedAt,
-    this.user,
+    // this.user,
   });
 
   factory Company.fromJson(Map<String, dynamic> json) {
@@ -24,9 +24,9 @@ class Company {
       nameCompany: json['name_company'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
-      user: json.containsKey('user') && json['user'] != null
-          ? User.fromJson(json['user'])
-          : null, // Check if user exists and is not null
+      // user: json.containsKey('user') && json['user'] != null
+      //     ? User.fromJson(json['user'])
+      //     : null, // Check if user exists and is not null
     );
   }
 
@@ -38,9 +38,9 @@ class Company {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
-    if (user != null) {
-      data['user'] = user!.toJson();
-    }
+    // if (user != null) {
+    //   data['user'] = user!.toJson();
+    // }
     return data;
   }
 }
