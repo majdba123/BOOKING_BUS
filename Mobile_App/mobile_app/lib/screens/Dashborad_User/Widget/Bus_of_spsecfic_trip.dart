@@ -3,6 +3,7 @@ import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Seat_Selection_Screen.dart'; // Import the seat selection screen
 
 class BusCardofSpecicTrip extends StatefulWidget {
   final int tripId;
@@ -31,14 +32,14 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Removes the back button
-        toolbarHeight: 100.0, // Adjusted height for better spacing
+        automaticallyImplyLeading: false,
+        toolbarHeight: 100.0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 AppColors.primaryColor,
-                AppColors.primaryColor.withOpacity(0.8)
+                AppColors.primaryColor.withOpacity(0.8),
               ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -46,8 +47,7 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
           ),
         ),
         title: Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 18.0, vertical: 14.0), // Adjusted padding
+          padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
           child: Consumer<BussofSpsccifTripProvider>(
             builder: (context, provider, child) {
               if (provider.isLoading || provider.busResponses.isEmpty) {
@@ -57,8 +57,7 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
               final busTrip = provider.busResponses.first;
 
               return Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.center, // Center alignment for better UX
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,7 +66,7 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                         child: Text(
                           busTrip.from,
                           style: TextStyle(
-                            fontSize: 22.0, // Larger font size
+                            fontSize: 22.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -80,14 +79,14 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                         child: Icon(
                           Icons.directions_bus,
                           color: Colors.white,
-                          size: 28.0, // Slightly larger icon
+                          size: 28.0,
                         ),
                       ),
                       Expanded(
                         child: Text(
                           busTrip.to,
                           style: TextStyle(
-                            fontSize: 22.0, // Larger font size
+                            fontSize: 22.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -112,7 +111,7 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
             },
           ),
         ),
-        centerTitle: false, // Aligns the title content in the header
+        centerTitle: false,
       ),
       body: Consumer<BussofSpsccifTripProvider>(
         builder: (context, provider, child) {
@@ -136,7 +135,19 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                 elevation: 3,
                 child: InkWell(
                   onTap: () {
-                    // Action on tapping the bus card
+                    // Navigate to seat selection screen
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => SeatsGridPage(
+                          companyName: busTrip.companyName,
+                          from: busTrip.from,
+                          to: busTrip.to,
+                          fromTime: busTrip.fromTime,
+                          toTime: busTrip.toTime,
+                          seats: busTrip.seats,
+                        ),
+                      ),
+                    );
                   },
                   splashColor: AppColors.primaryColor.withOpacity(0.1),
                   highlightColor: Colors.grey.withOpacity(0.1),
@@ -207,12 +218,14 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                                 busTrip.toTime, busTrip.to, context),
                           ],
                         ),
-                        SizedBox(height: 16.0),
+                        SizedBox(height: 8.0),
                         Divider(
                           height: 32.0,
                           thickness: 1.5,
                           color: Colors.grey[300],
                         ),
+                        _buildBreakStopTimeline(busTrip),
+                        SizedBox(height: 16.0),
                         Row(
                           children: [
                             Icon(Icons.star, color: Colors.amber, size: 20),
@@ -233,69 +246,7 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 16.0),
-                        Divider(
-                            height: 25.0,
-                            thickness: 1.5,
-                            color: Colors.grey[300]),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Break Places',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.0)),
-                            ...busTrip.breaks.map((breakPlace) {
-                              String government = breakPlace.government;
-                              if (breakPlace.nameBreak == "start" &&
-                                  breakPlace.government == "Nothing") {
-                                government = busTrip.from;
-                              } else if (breakPlace.nameBreak == "end" &&
-                                  breakPlace.government == "Nothing") {
-                                government = busTrip.to;
-                              }
-                              Color statusColor;
-                              String statusText;
-                              switch (breakPlace.status) {
-                                case "done 1":
-                                  statusColor = Colors.yellow[800]!;
-                                  statusText = "Return Only";
-                                  break;
-                                case "done 2":
-                                  statusColor = Colors.red[700]!;
-                                  statusText = "Finish Trip";
-                                  break;
-                                default:
-                                  statusColor = Colors.green[700]!;
-                                  statusText = "Pending";
-                              }
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.place,
-                                        color: AppColors.primaryColor),
-                                    SizedBox(width: 8.0),
-                                    Expanded(
-                                      child: Text(
-                                          '${breakPlace.nameBreak}, $government',
-                                          style: TextStyle(
-                                              color: Colors.grey[700],
-                                              fontSize: 14.0)),
-                                    ),
-                                    Text(
-                                      statusText,
-                                      style: TextStyle(
-                                          color: statusColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14.0),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          ],
-                        ),
+                        SizedBox(height: 8.0),
                       ],
                     ),
                   ),
@@ -305,6 +256,81 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildBreakStopTimeline(busTrip) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Break Stops',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0,
+            color: AppColors.primaryColor,
+          ),
+        ),
+        SizedBox(height: 10.0),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final totalWidth = constraints.maxWidth;
+            final segmentWidth = totalWidth / busTrip.breaks.length;
+            return Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                Positioned(
+                  left: segmentWidth / 2,
+                  right: segmentWidth / 2,
+                  child: CustomPaint(
+                    size: Size(
+                      totalWidth - segmentWidth,
+                      10.0,
+                    ),
+                    painter: RoadPathPainter(),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: busTrip.breaks.map<Widget>((breakPlace) {
+                    return Container(
+                      width: segmentWidth,
+                      child: Column(
+                        children: [
+                          Text(
+                            '40',
+                            // breakPlace.time, // Time of the stop
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          SizedBox(height: 4.0),
+                          Icon(
+                            Icons.location_on,
+                            color: AppColors.primaryColor,
+                            size: 20.0,
+                          ),
+                          SizedBox(height: 4.0),
+                          Text(
+                            breakPlace.nameBreak, // Name of the stop
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -332,4 +358,31 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
       ],
     );
   }
+}
+
+class RoadPathPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = Colors.grey[400]!
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+
+    double dashWidth = 6.0;
+    double dashSpace = 4.0;
+    double startX = 0.0;
+
+    // Draw dashed line only between the first and last points
+    while (startX < size.width) {
+      canvas.drawLine(
+        Offset(startX, size.height / 2),
+        Offset(startX + dashWidth, size.height / 2),
+        paint,
+      );
+      startX += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

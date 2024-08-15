@@ -114,8 +114,8 @@ class _CardfavoriteCompanyState extends State<CardfavoriteCompany> {
                     child: BlurHash(
                       hash: 'L5H2EC=PM+yV0g-mq.wG9c010J}I', // Example BlurHash
                       imageFit: BoxFit.cover,
-                      decodingHeight: 100,
-                      decodingWidth: 100,
+                      decodingHeight: 150,
+                      decodingWidth: 150,
                     ),
                   ),
                   // Company Image
@@ -125,7 +125,7 @@ class _CardfavoriteCompanyState extends State<CardfavoriteCompany> {
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/background_mappp.png',
                         image: imageUrl,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         fadeInDuration: Duration(milliseconds: 500),
                       ),
                     ),

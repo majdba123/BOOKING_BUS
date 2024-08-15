@@ -60,6 +60,8 @@ dependencies:
   flutter_blurhash: ^0.8.2
   cached_network_image: ^3.4.1
   path_provider: ^2.0.0
+  lottie: ^3.1.2
+
 
 
 

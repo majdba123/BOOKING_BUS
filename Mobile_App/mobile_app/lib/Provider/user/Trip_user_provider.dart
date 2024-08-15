@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart'
     as http; // Assuming you're using the http package for API calls
 import 'package:mobile_app/Api_Services/User/User_profile.dart';
+import 'package:mobile_app/Data_Models/AlltripsModelUser.dart';
 import 'package:mobile_app/Data_Models/My_Reservation.dart';
 import 'package:mobile_app/Data_Models/Reservation_Success_model.dart';
 import 'dart:convert';
@@ -13,6 +14,9 @@ class TripuserProvider with ChangeNotifier {
   List<TripByPath> _trips = [];
 
   List<TripByPath> get trips => _trips;
+  List<AllTrips> _alltrips = [];
+
+  List<AllTrips> get AllTripsItems => _alltrips;
   List<Company> _compaines = [];
 
   List<Company> get compaines => _compaines;
@@ -134,6 +138,7 @@ class TripuserProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       final List<dynamic> tripList = json.decode(response.body);
       _compaines = tripList.map((json) => Company.fromJson(json)).toList();
+      print(_compaines);
       notifyListeners();
     } else {
       throw Exception('Failed to load trips');
@@ -147,7 +152,8 @@ class TripuserProvider with ChangeNotifier {
 
     if (response.statusCode == 200) {
       final List<dynamic> tripList = json.decode(response.body);
-      _trips = tripList.map((json) => TripByPath.fromJson(json)).toList();
+      _alltrips = tripList.map((json) => AllTrips.fromJson(json)).toList();
+      print(_alltrips);
       notifyListeners();
     } else {
       throw Exception('Failed to load trips');

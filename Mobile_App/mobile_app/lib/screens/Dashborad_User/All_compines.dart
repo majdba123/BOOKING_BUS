@@ -115,10 +115,10 @@ class AllCompaniesPage extends StatelessWidget {
         topRight: Radius.circular(16.0),
       ),
       child: Image.network(
-        'https://via.placeholder.com/150', // Replace with company.imageUrl if available
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDvl9ZaLbuWLu6nIaTUvpdcNk2r6US0oJp1w&s', // Replace with company.imageUrl if available
         height: 120.0,
         width: double.infinity,
-        fit: BoxFit.cover,
+        fit: BoxFit.fitHeight,
         errorBuilder: (context, error, stackTrace) => Image.network(
           'https://via.placeholder.com/150',
           height: 120.0,

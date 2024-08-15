@@ -24,39 +24,60 @@ class DashboardUser extends StatefulWidget {
 
 class _DashboardUserState extends State<DashboardUser> {
   Map<String, String> _eventData = {};
+  bool _isSubscribed = false; // Track subscription status
+  bool _dataLoaded = false; // Track if data has been loaded
 
   @override
   void initState() {
     super.initState();
     _subscribeToPusher();
-    _loadData();
+    _loadData(); // Load data once on initialization
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _loadData(); // Reload data when dependencies change
+  void dispose() {
+    _unsubscribeFromPusher(); // Unsubscribe when leaving the screen
+    super.dispose();
   }
 
   void _subscribeToPusher() {
-    PusherService().subscribeToChannel("my-channel", (event) {
-      setState(() {
-        _eventData["form-submitted"] = event.data;
-        print('the event data from trip is!!!');
-        print(event.data);
+    if (!_isSubscribed) {
+      PusherService().subscribeToChannel("my-channel", (event) {
+        setState(() {
+          _eventData["form-submitted"] = event.data;
+          print('the event data from trip is!!!');
+          print(event.data);
+        });
       });
-    });
+      _isSubscribed = true;
+    }
+  }
+
+  void _unsubscribeFromPusher() {
+    if (_isSubscribed) {
+      PusherService().unsubscribeFromChannel("my-channel");
+      _isSubscribed = false;
+    }
   }
 
   void _loadData() {
-    final tripProvider = Provider.of<TripuserProvider>(context, listen: false);
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!_dataLoaded) {
+      // Only load data if it hasn't been loaded yet
+      final tripProvider =
+          Provider.of<TripuserProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    tripProvider.getallTrips(authProvider.accessToken);
-    tripProvider.getAllcompanies(authProvider.accessToken);
+      tripProvider.getallTrips(authProvider.accessToken);
+      tripProvider.getAllcompanies(authProvider.accessToken);
+
+      setState(() {
+        _dataLoaded = true; // Mark data as loaded
+      });
+    }
   }
 
   void _logout(BuildContext context) {
+    _unsubscribeFromPusher(); // Unsubscribe on logout
     Provider.of<AuthProvider>(context, listen: false).logout();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => SignInPage()),
@@ -138,7 +159,7 @@ class _DashboardUserState extends State<DashboardUser> {
                   padding: const EdgeInsets.all(16.0),
                   child: Consumer<TripuserProvider>(
                     builder: (context, tripProvider, child) {
-                      if (tripProvider.trips.isEmpty) {
+                      if (tripProvider.AllTripsItems.isEmpty) {
                         return Center(child: CircularProgressIndicator());
                       }
 
@@ -151,17 +172,16 @@ class _DashboardUserState extends State<DashboardUser> {
                           ),
                           SizedBox(height: 8.0),
                           AutoScrollingHorizontalList(
-                            items: tripProvider.trips
-                                .map((trip) => RouteCard(
+                            items: tripProvider.AllTripsItems.map(
+                                (trip) => RouteCard(
                                       imageUrl:
                                           'https://t3.ftcdn.net/jpg/02/51/59/46/360_F_251594672_c7xertPrElSFJ5eTd6V0CmQE1CyGC6Ke.jpg',
-                                      companyName: trip.companyId,
+                                      companyName: trip.companyName,
                                       tripId: trip.tripId,
                                       from: trip.from,
                                       to: trip.to,
                                       price: trip.price,
-                                    ))
-                                .toList(),
+                                    )).toList(),
                           ),
                           SizedBox(height: 12.0),
                           SectionTitle(
@@ -174,7 +194,7 @@ class _DashboardUserState extends State<DashboardUser> {
                                 .map((company) => CardfavoriteCompany(
                                       name_of_company: company.nameCompany,
                                       image_link:
-                                          'https://t3.ftcdn.net/jpg/02/51/59/46/360_F_251594672_c7xertPrElSFJ5eTd6V0CmQE1CyGC6Ke.jpg',
+                                          'https://alkadmous.com/SD08/msf/1481723158_57034255.jpg',
                                       company_id: company.id,
                                     ))
                                 .toList(),

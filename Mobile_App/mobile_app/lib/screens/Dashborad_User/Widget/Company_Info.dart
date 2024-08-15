@@ -56,7 +56,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                     aspectRatio: 16 / 9,
                     child: CachedNetworkImage(
                       imageUrl:
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDvl9ZaLbuWLu6nIaTUvpdcNk2r6US0oJp1w&s',
+                          'https://alkadmous.com/SD08/msf/1481723158_57034255.jpg',
                       placeholder: (context, url) => Center(
                         child: CircularProgressIndicator(),
                       ),
@@ -71,7 +71,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                           ),
                           image: DecorationImage(
                             image: imageProvider,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                           ),
                         ),
                       ),

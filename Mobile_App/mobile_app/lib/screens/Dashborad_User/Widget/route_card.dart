@@ -21,10 +21,12 @@ class RouteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double cardWidth = 280.0;
-    double cardHeight = 80.0;
+    double cardWidth = MediaQuery.of(context).size.width * 0.85;
+    double cardHeight =
+        100.0; // Adjusted height to accommodate the company name
     double titleFontSize = 16.0;
     double subtitleFontSize = 12.0;
+    double companyFontSize = 11.0; // Font size for the company name
     double imageWidth = 80.0;
     double imageHeight = 80.0;
 
@@ -73,6 +75,8 @@ class RouteCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                 
+                  SizedBox(height: 4.0),
                   Text(
                     '$from → $to',
                     style: TextStyle(
@@ -82,9 +86,18 @@ class RouteCard extends StatelessWidget {
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
+                   Text(
+                    companyName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: companyFontSize,
+                      color: Colors.black87,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   SizedBox(height: 4.0),
                   Text(
-                    'from \n $price \$',
+                    'from $price \$',
                     style: TextStyle(
                       color: Colors.green,
                       fontSize: subtitleFontSize,
