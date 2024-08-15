@@ -18,6 +18,14 @@ class _PointsPageState extends State<PointsPage> {
         padding: const EdgeInsets.all(16.0),
         child: Consumer<TripuserProvider>(
           builder: (context, busProvider, child) {
+            // Determine the source of the breaks
+            List<BreakPlace>? breaks;
+            if (busProvider.selectedBus != null) {
+              breaks = busProvider.selectedBus!.breaks;
+            } else if (busProvider.selectedBusTrip != null) {
+              breaks = busProvider.selectedBusTrip!.breaks;
+            }
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -46,49 +54,62 @@ class _PointsPageState extends State<PointsPage> {
                   ],
                 ),
                 SizedBox(height: 20),
-                Text(
-                  'Boarding points:',
-                  style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
+                if (breaks != null) ...[
+                  Text(
+                    'Boarding points:',
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
-                ),
-                ...busProvider.selectedBus!.breaks.map((point) {
-                  return RadioListTile<BreakPlace>(
-                    title: Text(point.nameBreak),
-                    value: point,
-                    groupValue: busProvider.selectedBoardingPoint,
-                    onChanged: (value) {
-                      if (value != null) {
-                        busProvider.selectBoardingPoint(value);
-                        busProvider.selectBordingBreakPlcaeId(value.breakId);
-                      }
-                    },
-                  );
-                }).toList(),
-                SizedBox(height: 20),
-                Text(
-                  'Deboarding points:',
-                  style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
+                  ...breaks.map((point) {
+                    return RadioListTile<BreakPlace>(
+                      title: Text(point.nameBreak),
+                      value: point,
+                      groupValue: busProvider.selectedBoardingPoint,
+                      onChanged: (value) {
+                        if (value != null) {
+                          busProvider.selectBoardingPoint(value);
+                          busProvider.selectBordingBreakPlcaeId(value.breakId);
+                        }
+                      },
+                    );
+                  }).toList(),
+                  SizedBox(height: 20),
+                  Text(
+                    'Deboarding points:',
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
-                ),
-                ...busProvider.selectedBus!.breaks.map((point) {
-                  return RadioListTile<BreakPlace>(
-                    title: Text(point.nameBreak),
-                    value: point,
-                    groupValue: busProvider.selectedDeboardingPoint,
-                    onChanged: (value) {
-                      if (value != null) {
-                        busProvider.selectDeboardingPoint(value);
-                        busProvider.selectdeBordingBreakPlcaeId(value.breakId);
-                      }
-                    },
-                  );
-                }).toList(),
+                  ...breaks.map((point) {
+                    return RadioListTile<BreakPlace>(
+                      title: Text(point.nameBreak),
+                      value: point,
+                      groupValue: busProvider.selectedDeboardingPoint,
+                      onChanged: (value) {
+                        if (value != null) {
+                          busProvider.selectDeboardingPoint(value);
+                          busProvider
+                              .selectdeBordingBreakPlcaeId(value.breakId);
+                        }
+                      },
+                    );
+                  }).toList(),
+                ] else ...[
+                  Center(
+                    child: Text(
+                      'No breaks available',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
                 Spacer(),
                 Container(
                   width: double.infinity,

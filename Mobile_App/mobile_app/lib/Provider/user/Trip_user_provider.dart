@@ -8,6 +8,7 @@ import 'package:mobile_app/Data_Models/Reservation_Success_model.dart';
 import 'dart:convert';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/Data_Models/company.dart';
+import 'package:mobile_app/Data_Models/show_buss_spsecifc_trip.dart';
 import 'package:mobile_app/constants.dart'; // To decode JSON responses
 
 class TripuserProvider with ChangeNotifier {
@@ -24,6 +25,7 @@ class TripuserProvider with ChangeNotifier {
 
   List<MYReservation> get Myreservations => _Myreservations;
   late BusTrip selectedBus;
+  late BusResponse selectedBusTrip;
   late List<int> selectedSeat;
   late BreakPlace breakPlaces;
   String? from;
@@ -34,6 +36,7 @@ class TripuserProvider with ChangeNotifier {
   BreakPlace? _selectedBoardingPoint;
   BreakPlace? _selectedDeboardingPoint;
   int price_tiket = 0;
+  int price_trip = 0;
   int totoal_price = 0;
   BreakPlace? get selectedBoardingPoint => _selectedBoardingPoint;
   BreakPlace? get selectedDeboardingPoint => _selectedDeboardingPoint;
@@ -52,6 +55,11 @@ class TripuserProvider with ChangeNotifier {
 
   void select_price_tikect(int price) {
     price_tiket = price;
+    notifyListeners();
+  }
+
+  void save_price_from_Trip(int price) {
+    price_trip = price;
     notifyListeners();
   }
 
@@ -92,6 +100,11 @@ class TripuserProvider with ChangeNotifier {
 
   void selectBus(BusTrip bus) {
     selectedBus = bus;
+    notifyListeners();
+  }
+
+  void selectBusTrip(BusResponse bus) {
+    selectedBusTrip = bus;
     notifyListeners();
   }
 

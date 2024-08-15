@@ -27,8 +27,8 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final busProvider = Provider.of<TripuserProvider>(context);
-    print(busProvider.selectedBus?.breaks);
-    print(busProvider.selectedSeat);
+    // print(busProvider.selectedBus?.breaks);
+    // print(busProvider.selectedSeat);
     return Scaffold(
       backgroundColor: Color(0xFFE0E0E0),
       body: LayoutBuilder(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_of_spsecfic_trip.dart';
+import 'package:provider/provider.dart';
 
 class RouteCard extends StatelessWidget {
   final String from;
@@ -32,6 +34,8 @@ class RouteCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
+        Provider.of<TripuserProvider>(context, listen: false)
+            .save_price_from_Trip(int.parse(price));
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => BusCardofSpecicTrip(

@@ -3,9 +3,12 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/Data_Models/seat_model.dart';
+import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/BusHeader.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/BusLayout.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/SeatLegend.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/choose_break_place.dart';
+import 'package:provider/provider.dart';
 
 class SeatsGridPage extends StatefulWidget {
   final String companyName;
@@ -117,6 +120,15 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
                   onPressed: () {
+                    var bus_provider =
+                        Provider.of<TripuserProvider>(context, listen: false);
+                    Provider.of<TripuserProvider>(context, listen: false)
+                        .selectSeat(selectedSeats);
+                    Provider.of<TripuserProvider>(context, listen: false)
+                        .calculatePrice(
+                            selectedSeats.length, bus_provider.price_tiket);
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => PassengerDetailsPage()));
                     print('Selected seats: $selectedSeats');
                   },
                   style: ButtonStyle(
