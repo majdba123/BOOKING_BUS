@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Company;
+use App\Events\NotificatinEvent;
 use App\Models\Driver;
 
 class UserApiController extends Controller
@@ -36,6 +37,9 @@ class UserApiController extends Controller
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
         ]);
+
+
+        event(new NotificatinEvent("new user registed : $user->name"));
 
         return response()->json([
             'message' => 'User Created ',

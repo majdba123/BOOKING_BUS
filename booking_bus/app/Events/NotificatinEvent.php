@@ -10,16 +10,16 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewMessage
+class NotificatinEvent  implements shouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    public $notification;
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct($notification)
     {
-        //
+        $this->notification = $notification;
     }
 
     /**
@@ -29,8 +29,11 @@ class NewMessage
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
+        return ['notification-channel'];
+    }
+
+    public function broadcastAs()
+    {
+        return 'form-submitted';
     }
 }
