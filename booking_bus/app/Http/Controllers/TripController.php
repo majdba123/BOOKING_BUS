@@ -347,6 +347,8 @@ class TripController extends Controller
 
     public function index_user()
     {
+
+        //this commment by hamza
         $trips = Trip::where('status', ['padding' ,'finished_going'])->with('bus_trip')->get();
 
         $data = [];
