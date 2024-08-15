@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
+
 class BusResponse {
   int busId;
   String from;
@@ -9,7 +11,7 @@ class BusResponse {
   String type;
   String event;
   List<Break> breaks;
-  List<Seat> seats;
+  List<SeatModel> seats;
 
   BusResponse({
     required this.busId,
@@ -25,10 +27,12 @@ class BusResponse {
 
   factory BusResponse.fromJson(Map<String, dynamic> json) {
     var breaksFromJson = json['breaks'] as List;
-    List<Break> breaksList = breaksFromJson.map((i) => Break.fromJson(i)).toList();
+    List<Break> breaksList =
+        breaksFromJson.map((i) => Break.fromJson(i)).toList();
 
     var seatsFromJson = json['seats'] as List;
-    List<Seat> seatsList = seatsFromJson.map((i) => Seat.fromJson(i)).toList();
+    List<SeatModel> seatsList =
+        seatsFromJson.map((i) => SeatModel.fromJson(i)).toList();
 
     return BusResponse(
       busId: json['bus_id'],
@@ -53,7 +57,7 @@ class BusResponse {
       'type': type,
       'event': event,
       'breaks': breaks.map((e) => e.toJson()).toList(),
-      'seats': seats.map((e) => e.toJson()).toList(),
+      'seats': seats,
     };
   }
 }
@@ -81,22 +85,6 @@ class Break {
     return {
       'government': government,
       'name_break': nameBreak,
-      'status': status,
-    };
-  }
-}
-
-class Seat {
-  int status;
-
-  Seat({required this.status});
-
-  factory Seat.fromJson(Map<String, dynamic> json) {
-    return Seat(status: json['status']);
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
       'status': status,
     };
   }

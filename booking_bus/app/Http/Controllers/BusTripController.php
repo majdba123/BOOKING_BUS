@@ -88,6 +88,7 @@ class BusTripController extends Controller
 
 
         $busTripsData = [];
+
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,

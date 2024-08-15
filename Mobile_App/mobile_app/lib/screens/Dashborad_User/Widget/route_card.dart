@@ -35,6 +35,7 @@ class RouteCard extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => BusCardofSpecicTrip(
+              companyName: companyName,
               tripId: tripId,
             ),
           ),
@@ -75,7 +76,6 @@ class RouteCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                 
                   SizedBox(height: 4.0),
                   Text(
                     '$from → $to',
@@ -86,7 +86,7 @@ class RouteCard extends StatelessWidget {
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
-                   Text(
+                  Text(
                     companyName,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,

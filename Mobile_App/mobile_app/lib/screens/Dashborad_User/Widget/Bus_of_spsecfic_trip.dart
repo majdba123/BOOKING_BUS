@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/SeatsGridPage.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Seat_Selection_Screen.dart'; // Import the seat selection screen
 
 class BusCardofSpecicTrip extends StatefulWidget {
   final int tripId;
-  BusCardofSpecicTrip({required this.tripId});
+  final String companyName;
+  BusCardofSpecicTrip({required this.tripId, required this.companyName});
 
   @override
   _BusCardofSpecicTripState createState() =>
-      _BusCardofSpecicTripState(tripId: tripId);
+      _BusCardofSpecicTripState(tripId: tripId, companyName: companyName);
 }
 
 class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
   final int tripId;
-
-  _BusCardofSpecicTripState({required this.tripId});
+  final String companyName;
+  _BusCardofSpecicTripState({required this.tripId, required this.companyName});
 
   @override
   void initState() {
@@ -139,7 +140,7 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => SeatsGridPage(
-                          companyName: busTrip.companyName,
+                          companyName: companyName,
                           from: busTrip.from,
                           to: busTrip.to,
                           fromTime: busTrip.fromTime,

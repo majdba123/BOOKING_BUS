@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Seat_Selection_Screen.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/bottom_nav_bar.dart';
 
