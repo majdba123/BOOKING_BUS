@@ -70,13 +70,13 @@ class BusTripController extends Controller
     {
 
         $companyId = Auth::user();
-        if($companyId->company){
-            $trip = Trip::where('company_id' , $companyId->company->id)->find($tripId);
+        if ($companyId->company) {
+            $trip = Trip::where('company_id', $companyId->company->id)->find($tripId);
             if (!$trip) {
                 // Return an error or a default response if the trip is not found
                 return response()->json(['error' => 'Trip not found'], 404);
             }
-        }else{
+        } else {
             $trip = Trip::find($tripId);
             if (!$trip) {
                 // Return an error or a default response if the trip is not found
@@ -102,7 +102,7 @@ class BusTripController extends Controller
             $breaksData = [];
             foreach ($busTrip->Pivoit as $pivot) {
                 $breakData = [
-                    'id' => $pivot->id,
+                    'break_id' => $pivot->id,
                     'government' => $pivot->break_trip->break->area->name,
                     'name_break' => $pivot->break_trip->break->name,
                     'status' => $pivot->status,
@@ -116,6 +116,7 @@ class BusTripController extends Controller
             $seatsData = [];
             foreach ($seats as $seat) {
                 $seatsData[] = [
+                    'id' => $seat->id,
                     'status' => $seat->status,
                     // Add any other columns you want to include from the seats table
                 ];
@@ -156,9 +157,7 @@ class BusTripController extends Controller
             $busTrips->whereHas('trip.path', function ($query) use ($from) {
 
                 $query->where('from', $from);
-
             });
-
         }
 
 
@@ -167,9 +166,7 @@ class BusTripController extends Controller
             $busTrips->whereHas('trip.path', function ($query) use ($to) {
 
                 $query->where('to', $to);
-
             });
-
         }
 
         $busTrips = $busTrips->get();
