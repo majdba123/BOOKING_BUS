@@ -21,7 +21,6 @@ import AllRating from "../views/Company/Rating/AllRating.vue";
 import AllFavourite from "../views/Company/Favourite/AllFavourite.vue";
 import AllReservation from "../views/Company/Reservation/AllReservation.vue";
 
-
 const routes = [
     {
         path: "/",

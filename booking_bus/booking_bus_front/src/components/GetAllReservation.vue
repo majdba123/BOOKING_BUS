@@ -6,18 +6,20 @@
             <button class="nav-btnd" @click="toggleTripRatings">
                 All Reservation
             </button>
-            <button class="nav-btnd" @click="toggleDriverRatings">
-                Driver Ratings
+            <button class="nav-btnd" @click="showReservationStatusModal = true">
+                Reservation Status
             </button>
-            <button class="nav-btnd" @click="toggleAllTrips">All Trips</button>
+            <button class="nav-btnd" @click="toggleAllReservationTheBus">
+                Reservation The Bus
+            </button>
             <button class="nav-btnd" @click="toggleAllDrivers">
                 All Drivers
             </button>
         </header>
 
         <!-- Start all trips table -->
-        <div v-if="showAllTrips" class="recent_orders">
-            <h1>All Trips</h1>
+        <div v-if="showAllReservationTheBus" class="recent_orders">
+            <h1>All Reservation The Bus</h1>
             <div class="table-container">
                 <table>
                     <thead>
@@ -85,41 +87,97 @@
 
         <!-- Start ratings tables -->
         <div v-if="showTripRatings" class="recent_orders">
-            <h1>Trip Ratings</h1>
+            <h1>All Reservation</h1>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>Reservation ID</th>
+                            <th>Price</th>
+                            <th>Type</th>
+                            <th>User Name</th>
                             <th>User ID</th>
-                            <th>Trip ID</th>
-                            <th>Rating</th>
-                            <th>Created At</th>
-                            <th>Updated At</th>
+                            <th>Break</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>ID Seat</th>
+                            <th>Status Seat</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(rating, index) in tripRatings" :key="index">
-                            <td>{{ rating.id }}</td>
-                            <td>{{ rating.user_id }}</td>
-                            <td>{{ rating.trip_id }}</td>
-                            <td>
-                                <span
-                                    v-for="n in 5"
-                                    :key="n"
-                                    class="fa"
-                                    :class="
-                                        n <= rating.rating
-                                            ? 'fa-star'
-                                            : 'fa-star-o'
-                                    "
-                                ></span>
-                            </td>
-                            <td>{{ rating.created_at }}</td>
-                            <td>{{ rating.updated_at }}</td>
+                        <tr
+                            v-for="(Reservation, index) in AllReservation"
+                            :key="index"
+                        >
+                            <td>{{ Reservation.id }}</td>
+                            <td>{{ Reservation.price }}</td>
+                            <td>{{ Reservation.type }}</td>
+                            <td>{{ Reservation.user_name }}</td>
+                            <td>{{ Reservation.user_id }}</td>
+                            <td>{{ Reservation.break }}</td>
+                            <td>{{ Reservation.from }}</td>
+                            <td>{{ Reservation.to }}</td>
+                            <td>{{ Reservation.seats[0].id }}</td>
+                            <td>{{ Reservation.seats[0].status }}</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div v-if="showReservationStatusModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Reservation Status</div>
+                <div class="modal-body">
+                    <button
+                        class="status-btn"
+                        @click="fetchReservationStatus('padding')"
+                    >
+                        Pending
+                    </button>
+                    <button
+                        class="status-btn"
+                        @click="fetchReservationStatus('available')"
+                    >
+                        Available
+                    </button>
+                    <button
+                        class="status-btn"
+                        @click="fetchReservationStatus('completed')"
+                    >
+                        Complated
+                    </button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User Name</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(
+                                    Reservation, index
+                                ) in ReservationStatusData"
+                                :key="index"
+                            >
+                                <td>{{ Reservation.id }}</td>
+
+                                <td>{{ Reservation.user_name }}</td>
+
+                                <td>{{ Reservation.price }}</td>
+
+                                <td>{{ Reservation.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeBusStatusModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -259,46 +317,62 @@ export default {
     name: "GetAllReservation",
     data() {
         return {
+            showReservationStatusModal: false,
+
             showTripRatings: false,
             showDriverRatings: false,
-            showAllTrips: false,
+            showAllReservationTheBus: false,
             showAllDrivers: false,
             showTripRatingsModal: false,
             showDriverRatingsModal: false,
-            tripRatings: [],
+            AllReservation: [],
             driverRatings: [],
             Trips: [],
             Drivers: [],
             tripRatingsDetails: [],
             driverRatingsDetails: [],
+            ReservationStatusData: [],
         };
     },
     methods: {
+        fetchReservationStatus(status) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "get",
+                url: ` http://127.0.0.1:8000/api/company/all_reservation_by_status?status=${status}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.ReservationStatusData = response.data;
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching bus status");
+                    console.error(error);
+                });
+        },
+        closeBusStatusModal() {
+            this.showReservationStatusModal = false;
+        },
         toggleTripRatings() {
             this.showTripRatings = true;
             this.showDriverRatings = false;
-            this.showAllTrips = false;
+            this.showAllReservationTheBus = false;
             this.showAllDrivers = false;
-            this.fetchTripRatings();
+            this.fetchReservation();
         },
-        toggleDriverRatings() {
-            this.showTripRatings = false;
-            this.showDriverRatings = true;
-            this.showAllTrips = false;
-            this.showAllDrivers = false;
-            this.fetchDriverRatings();
-        },
-        toggleAllTrips() {
+
+        toggleAllReservationTheBus() {
             this.showTripRatings = false;
             this.showDriverRatings = false;
-            this.showAllTrips = true;
+            this.showAllReservationTheBus = true;
             this.showAllDrivers = false;
             this.AllTrips();
         },
         toggleAllDrivers() {
             this.showTripRatings = false;
             this.showDriverRatings = false;
-            this.showAllTrips = false;
+            this.showAllReservationTheBus = false;
             this.showAllDrivers = true;
             this.AllDriver();
         },
@@ -306,11 +380,25 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_trip_rating",
+                url: "http://127.0.0.1:8000/api/company/all_reservation",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.tripRatings = response.data;
+                    this.AllReservation = response.data;
+                })
+                .catch((error) => {
+                    console.error("Error fetching trip ratings:", error);
+                });
+        },
+        fetchBusTrip(x) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/company/get_bus_trip/" + x,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.AllReservation = response.data;
                 })
                 .catch((error) => {
                     console.error("Error fetching trip ratings:", error);
@@ -460,9 +548,6 @@ h2 {
     overflow-x: auto;
     margin-top: 20px;
 }
-.recent_orders h1 {
-    margin: 15px;
-}
 
 .table-container {
     width: 100%;
@@ -528,6 +613,44 @@ select:focus {
 }
 
 /* Button styling */
+.delete-btn,
+.edit-btn,
+.status-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s;
+    color: white;
+    margin: 0 5px;
+}
+
+.delete-btn {
+    background-color: #d9534f;
+}
+
+.delete-btn:hover {
+    background-color: #c9302c;
+}
+
+.edit-btn {
+    background-color: #f0ad4e;
+}
+
+.edit-btn:hover {
+    background-color: #ec971f;
+}
+
+.status-btn {
+    background-color: #007bff;
+    margin-bottom: 10px;
+}
+
+.status-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Navigation styling */
 .navd {
     display: flex;
     align-items: center;
@@ -536,7 +659,7 @@ select:focus {
     margin-top: 20px;
     background-color: #fff;
     border-radius: 10px;
-    width: 90%;
+    width: 100%;
 }
 
 .nav-btnd {
@@ -571,6 +694,65 @@ select:focus {
     transition: 0.3s ease;
 }
 
+/* Form and Map styling */
+.form-containerd {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    border-radius: 10px;
+    max-width: 400px;
+    width: 100%;
+    margin-top: 50px;
+    margin: 40px auto;
+}
+
+.form-groupd {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: #007bff;
+}
+
+.submit-btnnd {
+    display: flex;
+    justify-content: center;
+}
+
+.submit-btnd {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.submit-btnd:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+}
+
 /* Modal styling */
 .modal {
     display: flex;
@@ -594,38 +776,124 @@ select:focus {
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 
+.modal-header,
+.modal-body,
+.modal-footer {
+    margin-bottom: 10px;
+}
+
 .modal-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.modal-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+    justify-content: flex-end;
 }
 
-.modal-header h2 {
-    margin: 0;
-}
-
-.close {
-    cursor: pointer;
-    font-size: 1.5rem;
-}
-
-.fa-star,
-.fa-star-o {
-    color: #ffd700; /* gold color for the stars */
-}
-
-.status-btn.view-ratings-btn {
-    background-color: #7380ec;
+.close-modal {
+    padding: 8px 16px;
+    background-color: #d9534f;
     color: white;
-    padding: 5px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.status-btn.view-ratings-btn:hover {
-    background-color: #5a68d8;
+.close-modal:hover {
+    background-color: #c9302c;
+}
+
+.update-btn {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.update-btn:hover {
+    background-color: #4cae4c;
+}
+
+/* Seats styling */
+.seats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    justify-content: center;
+}
+
+.seat {
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.seat:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.seat.occupied {
+    background-color: #d9534f;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .containerd {
+        padding: 10px;
+    }
+
+    .navd {
+        flex-direction: column;
+    }
+
+    .nav-btnd {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .form-containerd {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
+
+    .seats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+    }
+
+    .seat {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .seats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .seat {
+        width: 100%;
+        height: 50px;
+        font-size: 1rem;
+    }
 }
 </style>
