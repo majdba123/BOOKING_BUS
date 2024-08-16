@@ -124,6 +124,7 @@ export default {
                     },
                 ],
             },
+            isDarkMode: false, // لإدارة حالة الوضع الداكن
         };
     },
     watch: {
@@ -146,18 +147,26 @@ export default {
             }
         },
         toggleTheme() {
+            this.isDarkMode = !this.isDarkMode; // تغيير حالة الوضع الداكن
+            document.body.classList.toggle(
+                "dark-theme-variables",
+                this.isDarkMode
+            );
+            localStorage.setItem(
+                "darkMode",
+                this.isDarkMode ? "enabled" : "disabled"
+            ); // حفظ الحالة في localStorage
+
             const themeToggler = this.$refs.themeToggler;
-            if (themeToggler) {
-                themeToggler
-                    .querySelector("span:nth-child(1)")
-                    .classList.toggle("active");
-                themeToggler
-                    .querySelector("span:nth-child(2)")
-                    .classList.toggle("active");
-            }
+            themeToggler
+                .querySelector("span:nth-child(1)")
+                .classList.toggle("active", !this.isDarkMode);
+            themeToggler
+                .querySelector("span:nth-child(2)")
+                .classList.toggle("active", this.isDarkMode);
         },
         search() {
-            // Search functionality can be handled here
+            // هنا يمكنك تنفيذ وظيفة البحث
         },
         DeleteDriver(x) {
             const access_token = window.localStorage.getItem("access_token");
@@ -211,6 +220,25 @@ export default {
                 });
         },
     },
+    mounted() {
+        // التحقق من تفضيلات المستخدم المحفوظة في localStorage
+        const savedTheme = localStorage.getItem("darkMode");
+        if (savedTheme === "enabled") {
+            this.isDarkMode = true;
+            document.body.classList.add("dark-theme-variables");
+        } else {
+            this.isDarkMode = false;
+            document.body.classList.remove("dark-theme-variables");
+        }
+
+        const themeToggler = this.$refs.themeToggler;
+        themeToggler
+            .querySelector("span:nth-child(1)")
+            .classList.toggle("active", !this.isDarkMode);
+        themeToggler
+            .querySelector("span:nth-child(2)")
+            .classList.toggle("active", this.isDarkMode);
+    },
 };
 </script>
 
@@ -241,6 +269,7 @@ export default {
 
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
+
 .dark-theme-variables {
     --clr-color-background: #181a1e;
     --clr-white: #202528;
@@ -266,11 +295,12 @@ body {
     height: 100%;
     font-size: 0.88rem;
     user-select: none;
-    background: #f6f6f9;
+    background: var(--clr-color-background); /* هنا يتم ضبط الخلفية */
     overflow-y: auto;
 }
 
 .container {
+    background: var(--clr-color-background); /* تأكد من ضبط الخلفية هنا أيضًا */
     display: grid;
     width: 100%;
     gap: 1.8rem;
@@ -281,33 +311,39 @@ body {
 }
 
 a {
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
     margin-top: 20px;
+    color: var(--clr-dark);
 }
 
 h2 {
     font-size: 1.4rem;
+    color: var(--clr-dark);
 }
 
 h3 {
     font-size: 0.87rem;
+    color: var(--clr-dark);
 }
 
 h4 {
     font-size: 0.8rem;
+    color: var(--clr-dark);
 }
 
 h5 {
     font-size: 0.77rem;
+    color: var(--clr-dark);
 }
 
 small {
     font-size: 0.75rem;
+    color: var(--clr-dark);
 }
 
 .profile-photo img {
@@ -322,7 +358,7 @@ small {
 }
 
 .primary {
-    color: #7380ec;
+    color: var(--clr-primary);
 }
 
 .success {
@@ -330,17 +366,17 @@ small {
 }
 
 .danger {
-    color: #ff7782;
+    color: var(--clr-danger);
 }
 
 .warning {
-    color: #ffbb55;
+    color: var(--clr-warning);
 }
 
 /* aside */
 aside {
     height: 100vh;
-    background-color: #fff;
+    background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -373,7 +409,7 @@ aside .logo {
     display: flex;
     align-items: center;
     gap: 1rem;
-    background-color: #fff;
+    background-color: var(--clr-white);
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 15px;
@@ -387,14 +423,14 @@ aside .logo {
 .date button {
     padding: 0.5rem 1rem;
     border: none;
-    background-color: #007bff;
-    color: #fff;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     border-radius: 1rem;
     cursor: pointer;
 }
 
 .date button:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
     transition: 0.4s ease-in;
 }
 
@@ -405,7 +441,7 @@ aside .logo {
 .right {
     margin-top: 1.4rem;
     padding: 1rem;
-    background-color: #f6f6f9;
+    background-color: var(--clr-color-background);
     grid-column: span 1;
 }
 
@@ -421,7 +457,7 @@ aside .logo {
 }
 
 .right .theme-toggler {
-    background-color: #fff;
+    background-color: var(--clr-white);
     display: flex;
     justify-content: space-between;
     height: 1.6rem;
@@ -440,8 +476,8 @@ aside .logo {
 }
 
 .right .theme-toggler span.active {
-    background-color: #7380ec;
-    color: #fff;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     border-radius: 10px;
 }
 
@@ -453,6 +489,7 @@ aside .logo {
 
 .right .profile .info p {
     margin: 0;
+    color: var(--clr-dark);
 }
 
 .right .profile .profile-photo img {
@@ -464,14 +501,14 @@ aside .logo {
 
 .right .driver_status {
     margin-top: 4rem;
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 
 .right .driver_status h2 {
-    color: #363949;
+    color: var(--clr-dark);
     margin-bottom: 14px;
     margin-left: 42px;
 }
@@ -504,14 +541,14 @@ aside .logo {
 
 .driver_chart {
     margin-top: 3rem;
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 
 .driver_chart h2 {
-    color: #363949;
+    color: var(--clr-dark);
     margin-bottom: 14px;
     margin-left: 42px;
 }
@@ -522,14 +559,14 @@ aside .logo {
 }
 
 .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
     border-radius: 2rem;
     padding: 1.8rem;
     text-align: center;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     transition: all 0.3s ease;
-    color: #363949;
+    color: var(--clr-dark);
     max-width: 100px;
 }
 
@@ -543,13 +580,13 @@ table thead tr th {
 
 table tbody tr {
     height: 3.8rem;
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid var(--clr-white);
     color: #677483;
 }
 
 table tbody td {
     height: 3.8rem;
-    border-bottom: 1px solid #363949;
+    border-bottom: 1px solid var(--clr-dark);
     color: #677483;
 }
 
@@ -566,17 +603,17 @@ table tbody tr:last-child td {
 /* Select styling */
 select {
     padding: 10px;
-    border: 1px solid #7380ec;
+    border: 1px solid var(--clr-primary);
     border-radius: 5px;
-    background-color: #fff;
-    color: #363949;
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
     font-size: 0.88rem;
     outline: none;
     transition: border-color 0.3s;
 }
 
 select:focus {
-    border-color: #007bff;
+    border-color: var(--clr-primary-variant);
 }
 
 /* Delete button styling */
@@ -585,14 +622,14 @@ select:focus {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    border: 1px solid #ff7782;
-    background-color: #fff;
-    color: #ff7782;
+    border: 1px solid var(--clr-danger);
+    background-color: var(--clr-white);
+    color: var(--clr-danger);
 }
 
 .delete-btn:hover {
-    background-color: #ff7782;
-    color: #fff;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
 }
 
 /**********
@@ -644,7 +681,7 @@ select:focus {
         position: fixed;
         width: 18rem;
         z-index: 3;
-        background-color: #fff;
+        background-color: var(--clr-white);
         display: none;
         left: -100px;
         animation: menuAni 1s forwards;
@@ -684,7 +721,7 @@ select:focus {
         justify-content: center;
         align-items: center;
         padding: 0 0.8rem;
-        background-color: #fff;
+        background-color: var(--clr-white);
         width: 100%;
         height: 4.6rem;
         z-index: 2;
@@ -721,7 +758,7 @@ select:focus {
         display: inline-block;
         background: transparent;
         cursor: pointer;
-        color: #363949;
+        color: var(--clr-dark);
         position: absolute;
         left: 1rem;
     }
@@ -745,8 +782,8 @@ select:focus {
     }
 
     .theme-toggler span.active {
-        background-color: #7380ec;
-        color: #fff;
+        background-color: var(--clr-primary);
+        color: var(--clr-white);
         border-radius: 10px;
     }
 }
