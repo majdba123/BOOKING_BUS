@@ -460,6 +460,9 @@ h2 {
     overflow-x: auto;
     margin-top: 20px;
 }
+.recent_orders h1 {
+    margin: 15px;
+}
 
 .table-container {
     width: 100%;
@@ -528,11 +531,12 @@ select:focus {
 .navd {
     display: flex;
     align-items: center;
+    justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
     background-color: #fff;
     border-radius: 10px;
-    width: 80%;
+    width: 90%;
 }
 
 .nav-btnd {
