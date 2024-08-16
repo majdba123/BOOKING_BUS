@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/screens/DashBorad_Company/Driver_managment/Driver.dart';
+import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
+import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:mobile_app/Data_Models/Driver.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Driver_managment/Update_Driver_Page.dart';
+import 'package:provider/provider.dart';
 
 
 class GetAllDriversPage extends StatefulWidget {
@@ -9,112 +13,185 @@ class GetAllDriversPage extends StatefulWidget {
 }
 
 class _GetAllDriversPageState extends State<GetAllDriversPage> {
-  List<Driver> drivers = [
-    Driver(name: 'John Doe', email: 'john.doe@example.com', status: "p"),
-    Driver(name: 'Jane Smith', email: 'jane.smith@example.com', status: "p"),
-    Driver(name: 'Michael Johnson', email: 'michael.johnson@example.com', status: "p"),
-  ];
+ @override
+  void initState() {
+    super.initState();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    Provider.of<DriverProvider>(context, listen: false).fetchDrivers(authProvider.accessToken);
+  }
+// void _showUpdateDialog(BuildContext context, Driver driver, int index) {
+//     final _namecontroller = TextEditingController(text:driver.user.name);
+//     final _emailController = TextEditingController(text:driver.user.email );
 
-  void deleteDriver(Driver driver) {
-    setState(() {
-      drivers.remove(driver);
-    });
+//     showDialog(
+//       context: context,
+//       builder: (context) => AlertDialog(
+//         title: Text('Update driver'),
+//         content: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             TextField(
+//               controller: _namecontroller,
+//               decoration: InputDecoration(labelText: 'name'),
+//             ),
+//             TextField(
+//               controller: _emailController,
+//               decoration: InputDecoration(labelText: 'email'),
+//             ),
+            
+//           ],
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () {
+//               Navigator.of(context).pop();
+//             },
+//             child: Text('Cancel'),
+//           ),
+//           TextButton(
+//             onPressed: () async {
+//               final driverProvider = Provider.of<DriverProvider>(context, listen: false);
+//                final authProvider = Provider.of<AuthProvider>(context, listen: false);
+//               await driverProvider.updated(authProvider.accessToken, index, _fromController.text, _toController.text);
+//               Navigator.of(context).pop();
+//             },
+//             child: Text('Update'),
+//           ),
+//         ],
+//       ),
+//     );
+  // }
+
+  void _showDeleteDialog(BuildContext context, int id, int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete driver'),
+        content: Text('Are you sure you want to delete this driver?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final driverProvider = Provider.of<DriverProvider>(context, listen: false);
+              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              await driverProvider.deleteDriver(authProvider.accessToken, id);
+              Navigator.of(context).pop();
+            },
+            child: Text('Delete'),
+          ),
+        ],
+      ),
+    );
   }
 
-  void updateDriver(Driver oldDriver, Driver newDriver) {
-    setState(() {
-      int index = drivers.indexOf(oldDriver);
-      drivers[index] = newDriver;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+        final driverProvider = Provider.of<DriverProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('All Drivers'),
       ),
-      body: ListView.builder(
-        itemCount: drivers.length,
+      body: driverProvider.isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView.builder(
+        itemCount: driverProvider.Drivers.length,
         itemBuilder: (context, index) {
-          return DriverCard(
-            driver: drivers[index],
-            onDelete: () => deleteDriver(drivers[index]),
-            onUpdate: (newDriver) => updateDriver(drivers[index], newDriver),
-          );
+           final driver = driverProvider.Drivers[index];
+          return Card(
+                    margin: EdgeInsets.only(bottom: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'id :${driver.id}',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue[900],
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                      Text(
+                                    'name :${driver.user!.name}',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                      Text(
+                                    'email: ${driver.user!.email}',
+                                   style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                   SizedBox(height: 8),
+                                      Text(
+                                    'status :${driver.status}',
+                                   style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Created: ${driver.createdAt}',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  Text(
+                                    'Updated: ${driver.updatedAt}',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  // IconButton(
+                                  //   icon: Icon(Icons.edit, color: Colors.blue),
+                                  //   onPressed: () {
+                                  //     // _showUpdateDialog(context, trip, index);
+                                  //   },
+                                  // ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      _showDeleteDialog(context, driver.id, index);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
         },
-      ),
+      )),
     );
   }
 }
 
-class DriverCard extends StatelessWidget {
-  final Driver driver;
-  final VoidCallback onDelete;
-  final Function(Driver) onUpdate;
-
-  DriverCard({
-    required this.driver,
-    required this.onDelete,
-    required this.onUpdate,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 4,
-      child: ListTile(
-        title: Text(driver.name),
-        subtitle: Text(driver.email),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UpdateDriverPage(driver: driver),
-                  ),
-                ).then((updatedDriver) {
-                  if (updatedDriver != null) {
-                    onUpdate(updatedDriver);
-                  }
-                });
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('Delete Driver'),
-                    content: Text('Are you sure you want to delete ${driver.name}?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          onDelete();
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Delete'),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
