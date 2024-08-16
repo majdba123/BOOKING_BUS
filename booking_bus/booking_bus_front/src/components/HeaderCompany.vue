@@ -114,7 +114,7 @@ body {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 14rem;
+    grid-template-columns: 14rem auto 19rem;
     margin-left: 0;
 }
 
@@ -125,6 +125,7 @@ a {
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
+    margin-top: 20px;
 }
 
 h2 {

@@ -1,136 +1,101 @@
 <template>
-    <div class="container">
-        <!-- Aside section start -->
-        <aside ref="sideMenu">
-            <!-- Start top -->
-            <div class="top">
-                <div class="logo">
-                    <h2>T<span class="danger">RAVEL</span></h2>
-                </div>
-                <div class="close" @click="closeMenu">
-                    <span class="material-icons" aria-label="Close">close</span>
-                </div>
-            </div>
-            <!-- End top -->
-
-            <!-- Start sidebar -->
-            <SidebarCompany />
-            <!-- End sidebar -->
-        </aside>
-        <div class="main-content">
-            <main>
-                <h1>{{ x }}</h1>
-                <div class="top-bar">
-                    <div class="date">
-                        <input
-                            type="text"
-                            placeholder="Search In..."
-                            aria-label="Search"
-                            v-model="searchQuery"
-                        />
-                        <button @click="search">Search</button>
+    <body>
+        <div class="container">
+            <!-- Aside section start -->
+            <aside ref="sideMenu">
+                <!-- Start top -->
+                <div class="top">
+                    <div class="logo">
+                        <h2>T<span class="danger">RAVEL</span></h2>
+                    </div>
+                    <div class="close" @click="closeMenu">
+                        <span class="material-icons" aria-label="Close"
+                            >close</span
+                        >
                     </div>
                 </div>
-                <AddTrip ref="addTrip" />
-            </main>
-        </div>
-        <!-- Right section start -->
-        <div class="right">
-            <!--start top-->
-            <div class="top">
-                <button id="menu_bar" @click="openMenu">
-                    <span class="material-icons">menu</span>
-                </button>
-                <div
-                    class="theme-toggler"
-                    ref="themeToggler"
-                    @click="toggleTheme"
-                >
-                    <span class="material-icons active">light_mode</span>
-                    <span class="material-icons">dark_mode</span>
-                </div>
-                <div class="profile">
-                    <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
-                    </div>
-                    <div class="profile-photo">
-                        <img src="@/assets/busss.png" alt="Profile" />
-                    </div>
-                </div>
-            </div>
-            <!--end top-->
+                <!-- End top -->
 
-            <!--start driver_chart-->
-            <div class="driver_chart">
-                <h2>Path Workload Status</h2>
-                <DriverChart :chartData="chartData" />
-            </div>
+                <!-- Start sidebar -->
+                <SidebarCompany />
+                <!-- End sidebar -->
+            </aside>
 
-            <!--start driver_status-->
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
+            <!-- Main section start -->
+            <GetAllRating />
+            <!-- Main section end -->
+
+            <!-- Right section start -->
+            <div class="right">
+                <!--start top-->
+                <div class="top">
+                    <button id="menu_bar" @click="openMenu">
+                        <span class="material-icons">menu</span>
+                    </button>
+                    <div
+                        class="theme-toggler"
+                        ref="themeToggler"
+                        @click="toggleTheme"
+                    >
+                        <span class="material-icons active">light_mode</span>
+                        <span class="material-icons">dark_mode</span>
+                    </div>
+                    <div class="profile">
                         <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
+                            <p><b>Babar</b></p>
+                            <p>Admin</p>
                         </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
+                        <div class="profile-photo">
+                            <img src="@/assets/busss.png" alt="Profile" />
                         </div>
                     </div>
                 </div>
+                <!--end top-->
+
+                <!--start recent_updates-->
+
+                <div class="recent_updates">
+                    <h2>Name Companys</h2>
+                    <div class="updates">
+                        <div class="update">
+                            <div class="profile-photo">
+                                <img src="@/assets/busss.png" alt="Profile" />
+                            </div>
+                            <div class="message">
+                                <p><b>Babar</b> Received his order</p>
+                            </div>
+                        </div>
+                        <div class="update">
+                            <div class="profile-photo">
+                                <img src="@/assets/busss.png" alt="Profile" />
+                            </div>
+                            <div class="message">
+                                <p><b>Babar</b> Received his order</p>
+                            </div>
+                        </div>
+                        <div class="update">
+                            <div class="profile-photo">
+                                <img src="@/assets/busss.png" alt="Profile" />
+                            </div>
+                            <div class="message">
+                                <p><b>Babar</b> Received his order</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end recent_updates-->
             </div>
-            <!--end driver_status-->
+            <!-- Right section end -->
         </div>
-        <!-- Right section end -->
-    </div>
+    </body>
 </template>
 
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import DriverChart from "@/components/DriverChart.vue";
-import AddTrip from "@/components/AddTrip.vue";
-
-import store from "@/store";
+import GetAllRating from "@/components/GetAllRating.vue";
 
 export default {
-    name: "AllPath2",
-    components: { SidebarCompany, DriverChart, AddTrip },
-    data() {
-        return {
-            x: store.state.x,
-            searchQuery: "",
-            Driver: [],
-            Bus: [],
-            chartData: {
-                labels: ["Under Pressure", "Not Working"],
-                datasets: [
-                    {
-                        label: "Driver Workload Status",
-                        data: [60, 40],
-                        backgroundColor: [
-                            "rgba(255, 99, 132, 0.2)",
-                            "rgba(75, 192, 192, 0.2)",
-                        ],
-                        borderColor: [
-                            "rgba(255, 99, 132, 1)",
-                            "rgba(75, 192, 192, 1)",
-                        ],
-                        borderWidth: 1,
-                    },
-                ],
-            },
-        };
-    },
-    watch: {
-        searchQuery(newQuery) {
-            store.commit("updateSearchQuery", newQuery);
-            console.log(store.state.searchQuery);
-        },
-    },
+    name: "AllRating",
     methods: {
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -155,10 +120,8 @@ export default {
                     .classList.toggle("active");
             }
         },
-        search() {
-            // Search functionality can be handled here
-        },
     },
+    components: { SidebarCompany, GetAllRating },
 };
 </script>
 
@@ -222,7 +185,7 @@ body {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 19rem;
+    grid-template-columns: 14rem auto 14rem;
     margin-left: 0;
     height: 100vh;
     overflow-y: auto;
@@ -235,7 +198,6 @@ a {
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
-    margin-top: 20px;
 }
 
 h2 {
@@ -306,62 +268,22 @@ aside .logo {
     gap: 1rem;
 }
 
-.top-bar {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.map-container {
-    margin: 10px;
-    flex: 1;
-}
-
-.date {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background-color: #fff;
-    border-radius: 0.9rem;
-    padding: 9px;
-    margin-top: 15px;
-    margin-left: 10px;
-}
-
-.date input {
-    flex: 1;
-}
-
-.date button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: #007bff;
-    color: #fff;
-    border-radius: 1rem;
-    cursor: pointer;
-}
-
-.date button:hover {
-    background-color: #0056b3;
-    transition: 0.4s ease-in;
-}
-
 /* Main section styles */
 /*
-          start right side
-  ***************************** */
+        start right side
+***************************** */
 .right {
     margin-top: 1.4rem;
     padding: 1rem;
     background-color: #f6f6f9;
     grid-column: span 1;
+    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
 }
 
 .right .top {
     display: flex;
     justify-content: space-between;
     gap: 2rem;
-    margin-left: 15px;
 }
 
 .right .top button {
@@ -410,146 +332,42 @@ aside .logo {
     overflow: hidden;
 }
 
-.right .driver_status {
-    margin-top: 4rem;
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+/***recent update */
+.right .recent_updates {
+    margin-top: 1rem;
+    margin-left: -20px;
 }
-
-.right .driver_status h2 {
+.right .recent_updates h2 {
     color: #363949;
     margin-bottom: 14px;
-    margin-left: 42px;
 }
 
-.right .driver_status .statuses {
-    padding: 1rem;
-}
-
-.right .driver_status .status {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.right .driver_status .status .info {
-    margin-left: 10px;
-    align-items: center;
-}
-
-.right .driver_status .status .info p {
-    margin: 10px;
-}
-
-.p {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.driver_chart {
-    margin-top: 3rem;
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-}
-
-.driver_chart h2 {
-    color: #363949;
-    margin-bottom: 14px;
-    margin-left: 42px;
-}
-
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-}
-
-.recent_orders table {
+.right .recent_updates .updates {
     background-color: #fff;
-    width: 100%;
-    border-radius: 2rem;
     padding: 1.8rem;
-    text-align: center;
+    border-radius: 2rem;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     transition: all 0.3s ease;
-    color: #363949;
-    max-width: 100px;
 }
 
-.recent_orders table:hover {
+.right .recent_updates .updates:hover {
     box-shadow: none;
 }
 
-table thead tr th {
-    padding: 15px;
-}
-
-table tbody tr {
-    height: 3.8rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
-}
-
-table tbody td {
-    height: 3.8rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
-}
-
-table tbody tr:last-child td {
-    border: none;
-}
-
-.recent_orders a {
-    text-align: center;
-    display: block;
-    margin: 1rem;
-}
-
-/* Select styling */
-select {
-    padding: 10px;
-    border: 1px solid #7380ec;
-    border-radius: 5px;
-    background-color: #fff;
-    color: #363949;
-    font-size: 0.88rem;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-select:focus {
-    border-color: #007bff;
-}
-
-/* Delete button styling */
-.delete-btn {
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    border: 1px solid #ff7782;
-    background-color: #fff;
-    color: #ff7782;
-}
-
-.delete-btn:hover {
-    background-color: #ff7782;
-    color: #fff;
+.right .recent_updates .update {
+    display: grid;
+    grid-template-columns: 2.6rem auto;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 /**********
-  media query
-  ********** */
+media query
+********** */
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
-        grid-template-columns: 7rem auto 18rem;
+        grid-template-columns: 7rem auto 14rem;
     }
     aside .sidebar h3 {
         display: none;
@@ -583,9 +401,6 @@ select:focus {
     .container {
         width: 100%;
         grid-template-columns: repeat(1, 1fr);
-    }
-    .map-container {
-        margin: 30px;
     }
 
     aside {

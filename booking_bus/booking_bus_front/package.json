@@ -15,6 +15,7 @@
     "bootstrap-vue": "^2.23.1",
     "chart.js": "^4.4.3",
     "core-js": "^3.8.3",
+    "three": "^0.167.1",
     "vue": "^3.2.13",
     "vue-cli-service": "^5.0.10",
     "vue-router": "^4.0.3",

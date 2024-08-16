@@ -6,8 +6,59 @@
             <button class="nav-btnd" @click="showForm = false">
                 Show Trips
             </button>
+            <button class="nav-btnd" @click="showTripStatusModal = true">
+                Trip Status
+            </button>
         </header>
-
+        <div v-if="showTripStatusModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Trip Status</div>
+                <div class="modal-body">
+                    <button
+                        class="status-btn"
+                        @click="fetchTripStatus('padding')"
+                    >
+                        Pending
+                    </button>
+                    <button
+                        class="status-btn"
+                        @click="fetchTripStatus('available')"
+                    >
+                        Available
+                    </button>
+                    <button
+                        class="status-btn"
+                        @click="fetchTripStatus('finished')"
+                    >
+                        Finished
+                    </button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Trip ID</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(trip, index) in tripStatusData"
+                                :key="index"
+                            >
+                                <td>{{ trip.id }}</td>
+                                <td>{{ trip.price }}</td>
+                                <td>{{ trip.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeTripStatusModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
         <div v-if="showForm" class="form-map-container">
             <form @submit.prevent="handleSubmit" class="form-containerd">
                 <div class="form-groupd">
@@ -138,7 +189,7 @@
                                     class="Button details-btn"
                                     @click="fetchTripDetails(trip.id)"
                                 >
-                                    Details
+                                    <span class="material-icons"> info </span>
                                 </button>
                             </td>
                             <td>
@@ -146,15 +197,15 @@
                                     class="Button delete-btn"
                                     @click="DeleteTrip(trip.id)"
                                 >
-                                    Delete
+                                    <span class="material-icons">delete</span>
                                 </button>
                             </td>
                             <td>
                                 <button
                                     class="Button edit-btn"
-                                    @click="editTrip(index)"
+                                    @click="editTrip(index, trip.id)"
                                 >
-                                    Edit
+                                    <span class="material-icons">edit</span>
                                 </button>
                             </td>
                         </tr>
@@ -212,122 +263,123 @@
             <div class="modal-content">
                 <span class="close" @click="cancelEdit">&times;</span>
                 <h2>Edit Trip</h2>
-                <form @submit.prevent="saveChanges" class="form-containerd">
-                    <div class="form-groupd">
-                        <label for="editPath">Path</label>
-                        <select v-model="editedTrip.path_id" class="input">
-                            <option
-                                v-for="(pathItem, index) in paths"
-                                :key="index"
-                                :value="pathItem.id"
-                            >
-                                {{ pathItem.from }} >> {{ pathItem.to }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-groupd">
-                        <label for="editPrice">Price</label>
-                        <input
-                            type="text"
-                            id="editPrice"
-                            v-model="editedTrip.price"
-                            required
-                        />
-                    </div>
-                    <div class="form-groupd">
-                        <label for="editArea">Area</label>
-                        <select
-                            v-model="editedTrip.area_id"
-                            class="input"
-                            @change="fetchBreak"
-                        >
-                            <option
-                                v-for="(areaItem, index) in Government"
-                                :key="index"
-                                :value="areaItem.id"
-                            >
-                                {{ areaItem.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-groupd">
-                        <label for="editBreaks">Search Break Areas</label>
-                        <select
-                            v-model="editedTrip.break_areas"
-                            class="input multi-select"
-                            multiple
-                        >
-                            <option
-                                v-for="(breakItem, index) in breaks"
-                                :key="index"
-                                :value="breakItem.id"
-                            >
-                                {{ breakItem.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-groupd">
-                        <label for="editBus">Bus</label>
-                        <div
-                            v-for="(bus, index) in editedTrip.buses"
+                <div class="form-groupd">
+                    <label for="path">Path</label>
+                    <select v-model="path" class="input" required>
+                        <option
+                            v-for="(pathItem, index) in paths"
                             :key="index"
-                            class="bus-field"
+                            :value="pathItem.id"
                         >
-                            <select v-model="bus.bus_id" class="input">
-                                <option
-                                    v-for="(busItem, i) in availableBuses"
-                                    :key="i"
-                                    :value="busItem.id"
-                                >
-                                    {{ busItem.number_bus }}
-                                </option>
-                            </select>
-                            <span>Type</span>
-                            <select v-model="bus.type" class="input">
-                                <option value="all">All</option>
-                                <option value="going">Going</option>
-                            </select>
-                            <span>Start Time</span>
-                            <input
-                                v-model="bus.start_time"
-                                type="time"
-                                class="input"
-                            />
-                            <span>End Time</span>
-                            <input
-                                v-model="bus.end_time"
-                                type="time"
-                                class="input"
-                            />
-                            <button
-                                @click="removeBus(index)"
-                                class="Button remove-bus-button"
+                            {{ pathItem.from }} >> {{ pathItem.to }}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-groupd">
+                    <label for="price">Price</label>
+                    <input type="text" id="price" v-model="price" required />
+                </div>
+
+                <div class="form-groupd">
+                    <label for="area">Area</label>
+                    <select
+                        v-model="area"
+                        class="input"
+                        @change="fetchBreak"
+                        required
+                    >
+                        <option
+                            v-for="(areaItem, index) in Government"
+                            :key="index"
+                            :value="areaItem.id"
+                        >
+                            {{ areaItem.name }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-groupd">
+                    <label for="search_break_areas">Search Break Areas</label>
+                    <select
+                        v-model="search_break_areas"
+                        class="input multi-select"
+                        multiple
+                        required
+                    >
+                        <option
+                            v-for="(breakItem, index) in breaks"
+                            :key="index"
+                            :value="breakItem.id"
+                        >
+                            {{ breakItem.name }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-groupd">
+                    <label for="bus">Bus</label>
+                    <div
+                        v-for="(bus, index) in buses"
+                        :key="index"
+                        class="bus-field"
+                    >
+                        <select v-model="bus.bus_id" class="input" required>
+                            <option
+                                v-for="(busItem, i) in availableBuses"
+                                :key="i"
+                                :value="busItem.id"
                             >
-                                Remove Bus
-                            </button>
-                        </div>
-                        <button @click="addBus" class="Button add-bus-button">
-                            Add Another Bus
-                        </button>
-                    </div>
-                    <div class="form-groupd">
-                        <label for="editDate">Date</label>
+                                {{ busItem.number_bus }}
+                            </option>
+                        </select>
+                        <label>Type</label>
+                        <select v-model="bus.type" class="input">
+                            <option value="all">All</option>
+                            <option value="going">Going</option>
+                        </select>
+                        <label>Start Time</label>
                         <input
-                            type="date"
-                            id="editDate"
-                            v-model="editedTrip.date"
-                            required
+                            v-model="bus.start_time"
+                            type="time"
+                            class="input"
                         />
-                    </div>
-                    <div class="submit-btnnd">
-                        <button type="submit" class="submit-btnd">
-                            Save Changes
+                        <label>End Time</label>
+                        <input
+                            v-model="bus.end_time"
+                            type="time"
+                            class="input"
+                        />
+                        <button
+                            @click="removeBus(index)"
+                            class="Button remove-bus-button"
+                        >
+                            Remove Bus
                         </button>
-                        <button @click="cancelEdit" class="Button">
-                            Cancel
-                        </button>
                     </div>
-                </form>
+                    <button @click="addBus" class="Button add-bus-button">
+                        Add Another Bus
+                    </button>
+                </div>
+                <div class="form-groupd">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" v-model="date" />
+                </div>
+                <div class="submit-btnnd">
+                    <button
+                        type="submit"
+                        @click="saveChanges()"
+                        class="submit-btnd"
+                    >
+                        Save Changes
+                    </button>
+                    <button
+                        @click="cancelEdit"
+                        class="submit-btnd"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -342,6 +394,7 @@ export default {
     name: "AddTrip",
     data() {
         return {
+            x: "",
             showForm: true,
             Trips: [],
             paths: [],
@@ -361,6 +414,16 @@ export default {
                     date: "",
                 },
             ],
+            buse: [
+                {
+                    path_id: "",
+                    price: "",
+                    area_id: "",
+                    break_areas: [],
+                    buses: [],
+                    date: "",
+                },
+            ],
             date: "",
             showEditModal: false,
             selectedTrip: null,
@@ -374,6 +437,8 @@ export default {
             },
             editingIndex: null,
             toast: useToast(),
+            showTripStatusModal: false,
+            tripStatusData: [],
         };
     },
     mounted() {
@@ -426,7 +491,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
+                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=available",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -460,6 +525,24 @@ export default {
                 end_time: "",
                 date: "",
             });
+        },
+        fetchBreakk(areaId) {
+            const access_token = window.localStorage.getItem("access_token");
+            console.log("Fetching breaks for area ID:", areaId); // لطباعة ID المنطقة في الconsole
+
+            axios({
+                method: "get",
+                url: `http://127.0.0.1:8000/api/company/all_breaks/${areaId}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.breaks = response.data;
+                    console.log("Breaks fetched successfully:", this.breaks); // طباعة البيانات المجلوبة
+                })
+                .catch((error) => {
+                    console.error("Error getting breaks:", error); // طباعة الخطأ في الconsole
+                    window.alert("Error getting breaks");
+                });
         },
         removeBus(index) {
             this.buses.splice(index, 1);
@@ -514,6 +597,22 @@ export default {
                     console.log(this.date);
                 });
         },
+        fetchAllDriverWithBus() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/company/all_driver_with_bus/avalibale",
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.driverWithBusData = response.data;
+                    console.log(this.driverWithBusData);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching drivers with bus.");
+                    console.error(error);
+                });
+        },
         AllTrips() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -559,9 +658,8 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    store.state.Trips;
+                    this.AllTrips();
                 })
-
                 .catch((error) => {
                     this.toast.error("Error Deleting Trip", {
                         transition: "Vue-Toastification__shake",
@@ -585,6 +683,7 @@ export default {
             })
                 .then((response) => {
                     this.selectedTrip = response.data[0];
+                    console.log(response);
                 })
                 .catch((error) => {
                     window.alert("Error fetching trip details");
@@ -594,45 +693,41 @@ export default {
         closeDetails() {
             this.selectedTrip = null;
         },
-        editTrip(index) {
+        editTrip(index, x) {
             this.editingIndex = index;
-            this.editedTrip = JSON.parse(JSON.stringify(this.Trips[index]));
-            this.fetchBreak(); // لجلب البيانات المناسبة للـ area
+            this.x = x;
+            console.log(this.x);
         },
         cancelEdit() {
             this.editingIndex = null;
             this.resetEditedTrip();
         },
         saveChanges() {
-            const access_token = window.localStorage.getItem("access_token");
-            const tripId = this.Trips[this.editingIndex].id;
+            const token = window.localStorage.getItem("access_token");
 
-            if (!this.editedTrip.buses) {
-                window.alert("Error: No buses defined.");
-                return;
-            }
-
-            const busIds = this.editedTrip.buses.map((bus) => ({
+            const busIds = this.buses.map((bus) => ({
                 bus_id: bus.bus_id,
                 type: bus.type,
                 start_time: bus.start_time,
                 end_time: bus.end_time,
-                date: this.editedTrip.date,
+                date: this.date,
             }));
 
             axios({
                 method: "put",
-                url: `http://127.0.0.1:8000/api/company/update_trip/${tripId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
+                url: "http://127.0.0.1:8000/api/company/update_trip/" + this.x,
+                headers: { Authorization: `Bearer ${token}` },
                 data: {
-                    path_id: this.editedTrip.path_id,
-                    price: this.editedTrip.price,
-                    area: this.editedTrip.area_id,
-                    breaks_ids: this.editedTrip.break_areas,
+                    path_id: this.path,
+                    price: this.price,
+                    area: this.area,
+                    breaks_ids: this.search_break_areas,
                     bus_ids: busIds,
                 },
             })
-                .then(() => {
+                .then((response) => {
+                    console.log(response);
+
                     this.Trips.splice(this.editingIndex, 1, this.editedTrip);
                     this.editingIndex = null;
                     this.resetEditedTrip();
@@ -658,6 +753,37 @@ export default {
                     });
                     console.error(error);
                 });
+        },
+        fetchTripStatus(status) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "get",
+                url: `http://127.0.0.1:8000/api/company/all_trips_by_status?status=${status}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.tripStatusData = response.data;
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching trip status");
+                    console.error(error);
+                });
+        },
+        closeTripStatusModal() {
+            this.showTripStatusModal = false;
+        },
+        addBusToEdit() {
+            this.editedTrip.buses.push({
+                bus_id: "",
+                type: "all",
+                start_time: "",
+                end_time: "",
+                date: "",
+            });
+        },
+        removeBusFromEdit(index) {
+            this.editedTrip.buses.splice(index, 1);
         },
         resetEditedTrip() {
             this.editedTrip = {
@@ -692,6 +818,9 @@ export default {
                         .toLowerCase()
                         .includes(store.state.searchQuery.toLowerCase()) ||
                     (trip.area_name || "")
+                        .toLowerCase()
+                        .includes(store.state.searchQuery.toLowerCase()) ||
+                    trip.status
                         .toLowerCase()
                         .includes(store.state.searchQuery.toLowerCase())
                 );
@@ -803,18 +932,30 @@ table tbody tr:last-child td {
 
 /* Select styling */
 select {
-    padding: 8px;
-    border: 1px solid #7380ec;
-    border-radius: 4px;
-    background-color: #fff;
+    padding: 10px;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    background-color: #f6f6f9;
     color: #363949;
+    font-size: 16px;
+    width: 100%;
+    transition: border-color 0.3s ease;
 }
 
 select:focus {
-    border-color: #007bff;
+    border-color: #0056b3;
+    outline: none;
 }
 
-/* Button styling */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #363949;
+    font-size: 16px;
+}
+
+/* Adjusted Button styling */
 .delete-btn,
 .edit-btn,
 .status-btn,
@@ -826,6 +967,9 @@ select:focus {
     transition: background-color 0.3s ease;
     color: white;
     margin: 0 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centers the icon and text */
 }
 
 .delete-btn {
@@ -861,6 +1005,12 @@ select:focus {
     background-color: #31b0d5;
 }
 
+/* Center icons and text in table-container */
+.table-container span {
+    margin-right: 15px;
+    /* Centers the span content */
+}
+
 /* Navigation styling */
 .navd {
     display: flex;
@@ -869,13 +1019,8 @@ select:focus {
     margin-bottom: 10px;
     margin-top: 20px;
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 10px;
-    flex-wrap: wrap;
 }
 
 .nav-btnd {
@@ -921,39 +1066,47 @@ select:focus {
 .form-containerd {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
-    max-width: 400px;
     width: 100%;
 }
 
 .form-groupd {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
+    font-weight: 600;
+    color: #363949;
+    font-size: 16px;
 }
 
 input {
     width: 100%;
     padding: 10px;
-    border: 2px solid #ccc;
+    border: 2px solid #ddd;
     border-radius: 5px;
-    transition: border-color 0.3s;
+    font-size: 16px;
+    color: #363949;
+    background-color: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
 }
 
 input:focus {
     border-color: #007bff;
+    outline: none;
 }
 
 .submit-btnnd {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .submit-btnd {
@@ -964,6 +1117,7 @@ input:focus {
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s;
+    margin: 10px;
 }
 
 .submit-btnd:hover {
@@ -1010,6 +1164,20 @@ input:focus {
     max-width: 600px;
     width: 90%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.modal-content h2 {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+.modal-content span {
+    font-size: 25px;
+    color: #000;
+    margin-left: 10px;
 }
 
 .modal-header,
@@ -1055,6 +1223,84 @@ input:focus {
     background-color: #4cae4c;
 }
 
+/* Seats styling */
+.seats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    justify-content: center;
+}
+
+.seat {
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.seat:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.seat.occupied {
+    background-color: #d9534f;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .containerd {
+        padding: 10px;
+    }
+
+    .navd {
+        flex-direction: column;
+    }
+
+    .nav-btnd {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .form-containerd {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
+
+    .seats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+    }
+
+    .seat {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .seats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .seat {
+        width: 100%;
+        height: 50px;
+        font-size: 1rem;
+    }
+}
+
 .field span {
     color: #333;
     font-weight: 500;
@@ -1089,27 +1335,25 @@ input:focus {
 }
 
 .Button {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 2px 6px;
     border: none;
-    font-size: 16px;
+    margin: 10px;
+    border-radius: 3px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px; /* Adding space between buttons */
-}
-
-.Button:hover {
-    background-color: #0056b3;
-}
-
-.Button:focus {
-    outline: none;
+    transition: background-color 0.3s;
+    align-items: center;
+    font-size: 11px;
+    height: 30px;
+    width: 30px;
 }
 
 .remove-bus-button {
     background-color: #dc3545;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .remove-bus-button:hover {
@@ -1119,6 +1363,11 @@ input:focus {
 .add-bus-button {
     margin-top: 10px;
     background-color: #28a745;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .add-bus-button:hover {

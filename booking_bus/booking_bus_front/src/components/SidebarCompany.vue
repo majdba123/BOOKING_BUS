@@ -21,20 +21,11 @@
         </RouterLink>
 
         <router-link
-            to="AllTrip2"
-            @click="selectOption('Trip')"
-            :class="{ active: selectedOption === 'Trip' }"
-        >
-            <span class="material-icons" aria-label="Analytics">insights</span>
-            <h3>Trip</h3>
-        </router-link>
-
-        <router-link
             to="AllPath2"
             @click="selectOption('Path')"
             :class="{ active: selectedOption === 'Path' }"
         >
-            <span class="material-icons" aria-label="Analytics">insights</span>
+            <span class="material-icons" aria-label="Analytics">timeline</span>
             <h3>Path</h3>
         </router-link>
 
@@ -44,47 +35,67 @@
             :class="{ active: selectedOption === 'Bus' }"
         >
             <span class="material-icons" aria-label="Products"
-                >receipt_long</span
+                >directions_bus</span
             >
             <h3>Bus</h3>
         </router-link>
 
-        <a
-            @click="selectOption('Messages')"
-            :class="{ active: selectedOption === 'Messages' }"
+        <router-link
+            to="AllTrip2"
+            @click="selectOption('Trip')"
+            :class="{ active: selectedOption === 'Trip' }"
         >
-            <span class="material-icons" aria-label="Messages"
-                >mail_outline</span
-            >
-            <h3>Messages</h3>
+            <span class="material-icons" aria-label="Analytics">route</span>
+            <h3>Trip</h3>
+        </router-link>
+        <router-link
+            to="AllRating"
+            @click="selectOption('Rate')"
+            :class="{ active: selectedOption === 'Rate' }"
+        >
+            <span class="material-icons" aria-label="Rate">star</span>
+            <h3>Rate</h3>
             <span class="msg_count">14</span>
-        </a>
+        </router-link>
 
-        <a
-            @click="selectOption('Reports')"
-            :class="{ active: selectedOption === 'Reports' }"
-        >
-            <span class="material-icons" aria-label="Reports"
-                >report_gmailerrorred</span
-            >
-            <h3>Reports</h3>
-        </a>
+        <router-link to="AllBreak">
+            <span class="material-icons" aria-label="Analytics">pin_drop</span>
+            <h3>Break</h3>
+        </router-link>
 
-        <a
-            @click="selectOption('Settings')"
-            :class="{ active: selectedOption === 'Settings' }"
+        <router-link
+            to="PrivateTrip"
+            @click="selectOption('PrivateTrip')"
+            :class="{ active: selectedOption === 'PrivateTrip' }"
         >
-            <span class="material-icons" aria-label="Settings">settings</span>
-            <h3>Settings</h3>
-        </a>
+            <span class="material-icons" aria-label="Products">commute</span>
+            <h3>Private Trip</h3>
+        </router-link>
+        <router-link
+            to="AllFavourite"
+            @click="selectOption('Favourite')"
+            :class="{ active: selectedOption === 'Favourite' }"
+        >
+            <span class="material-icons" aria-label="Products">favorite</span>
+            <h3>Favourite</h3>
+        </router-link>
 
-        <a
-            @click="selectOption('Add Product')"
-            :class="{ active: selectedOption === 'Add Product' }"
+        <router-link
+            to="ProfileCompany"
+            @click="selectOption('Profile')"
+            :class="{ active: selectedOption === 'Profile' }"
         >
-            <span class="material-icons" aria-label="Add Product">add</span>
-            <h3>Add Product</h3>
-        </a>
+            <span class="material-icons" aria-label="Products">person</span>
+            <h3>Profile</h3>
+        </router-link>
+        <router-link
+            to="AllReservation"
+            @click="selectOption('Reservation')"
+            :class="{ active: selectedOption === 'Reservation' }"
+        >
+            <span class="material-icons" aria-label="Products">person</span>
+            <h3>Reservation</h3>
+        </router-link>
 
         <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">
             <span class="material-icons" aria-label="Logout">logout</span>
@@ -102,7 +113,7 @@ export default {
     name: "SideBarCompany",
     data() {
         return {
-            selectedOption: "Driver", // Set default selected option if needed
+            selectedOption: "Dashboard", // Set default selected option to Dashboard
         };
     },
     methods: {
@@ -115,7 +126,7 @@ export default {
             }).then(function (response) {
                 if (response.status == 200) {
                     console.log(response);
-                    window.alert("Logout succesful");
+                    window.alert("Logout successful");
                     window.localStorage.setItem(
                         "access_token",
                         response.data.access_token
@@ -161,6 +172,7 @@ export default {
 
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
+
 .dark-theme-variables {
     --clr-color-background: #181a1e;
     --clr-white: #202528;
@@ -256,11 +268,13 @@ small {
 }
 
 aside {
-    height: 100vh;
+    position: sticky;
+    top: 0;
+    width: 14rem;
     background-color: #fff;
-    display: flex;
-    flex-direction: column;
     padding: 1rem;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    margin-top: 1rem;
 }
 
 aside .top {
@@ -342,6 +356,7 @@ aside .sidebar a span.msg_count {
     font-size: 11px;
     border-radius: 0.4rem;
 }
+
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;

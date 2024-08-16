@@ -124,7 +124,7 @@ export default {
                         if (userType === "admin") {
                             router.push("/AdminPage");
                         } else if (userType === "company") {
-                            router.push("/CompanyPage");
+                            router.push("/BookingLogin");
                         } else if (userType === "user") {
                             router.push("/UserPage");
                         } else {

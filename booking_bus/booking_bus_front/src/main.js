@@ -1,7 +1,9 @@
 import { createApp } from "vue";
-import App from "./App.vue";
-import store from "./store";
+//import BookingLogin from "./views/BookingLogin.vue"; // Adjusted import path
+//import AboutView from "./views/AboutView.vue";
 import router from "./router";
+import store from "./store";
+import App from "./App.vue";
 import Toast, { POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 

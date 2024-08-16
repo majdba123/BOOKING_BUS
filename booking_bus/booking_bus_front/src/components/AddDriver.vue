@@ -11,7 +11,7 @@
             <button class="nav-btnd" @click="showDriverStatusModal = true">
                 Driver Status
             </button>
-            <button class="nav-btnd" @click="showDriverWithBusModal = true">
+            <button class="nav-btnd" @click="fetchAllDriverWithBus">
                 Drivers with Bus
             </button>
         </header>
@@ -133,7 +133,7 @@
                     </button>
                     <button
                         class="status-btn"
-                        @click="fetchDriverStatus('completed')"
+                        @click="fetchDriverStatus('Completed')"
                     >
                         Completed
                     </button>
@@ -400,6 +400,9 @@ export default {
                         .includes(store.state.searchQuery.toLowerCase()) ||
                     driver.email_driver
                         .toLowerCase()
+                        .includes(store.state.searchQuery.toLowerCase()) ||
+                    driver.status
+                        .toLowerCase()
                         .includes(store.state.searchQuery.toLowerCase())
                 );
             });
@@ -564,11 +567,8 @@ select:focus {
     margin-bottom: 10px;
     margin-top: 20px;
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
 }
 
 .nav-btnd {

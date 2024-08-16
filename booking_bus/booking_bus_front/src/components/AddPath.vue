@@ -227,6 +227,7 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
+                    this.AllPaths();
                 })
                 .catch((error) => {
                     this.toast.error("Error Deleting Path", {
@@ -460,7 +461,6 @@ select:focus {
     margin-bottom: 10px;
     margin-top: 20px;
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
 }
@@ -503,6 +503,7 @@ select:focus {
     justify-content: space-between;
     width: 100%;
     margin-top: 20px;
+    height: 250px;
 }
 
 .form-containerd {
@@ -636,9 +637,5 @@ input:focus {
     border-radius: 5px;
     cursor: pointer;
     margin-right: 10px;
-}
-
-.update-btn:hover {
-    background-color: #4cae4c;
 }
 </style>

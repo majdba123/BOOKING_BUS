@@ -20,18 +20,8 @@
         <div class="main-content">
             <main>
                 <h1>{{ x }}</h1>
-                <div class="top-bar">
-                    <div class="date">
-                        <input
-                            type="text"
-                            placeholder="Search In..."
-                            aria-label="Search"
-                            v-model="searchQuery"
-                        />
-                        <button @click="search">Search</button>
-                    </div>
-                </div>
-                <AddPath ref="addPath" />
+
+                <ProfileCompanys ref="ProfileCompanys" />
             </main>
         </div>
         <!-- Right section start -->
@@ -92,13 +82,13 @@
 <script>
 import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import AddPath from "@/components/AddPath.vue";
+import ProfileCompanys from "@/components/ProfileCompanys.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 
 export default {
-    name: "AllPath2",
-    components: { SidebarCompany, AddPath, DriverChart },
+    name: "ProfileCompany",
+    components: { SidebarCompany, ProfileCompanys, DriverChart },
     data() {
         return {
             x: store.state.x,
@@ -357,46 +347,6 @@ aside .logo {
     gap: 1rem;
 }
 
-.top-bar {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.map-container {
-    margin: 10px;
-    flex: 1;
-}
-
-.date {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background-color: #fff;
-    border-radius: 0.9rem;
-    padding: 9px;
-    margin-top: 15px;
-    margin-left: 10px;
-}
-
-.date input {
-    flex: 1;
-}
-
-.date button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: #007bff;
-    color: #fff;
-    border-radius: 1rem;
-    cursor: pointer;
-}
-
-.date button:hover {
-    background-color: #0056b3;
-    transition: 0.4s ease-in;
-}
-
 /* Main section styles */
 /*
           start right side
@@ -523,13 +473,14 @@ aside .logo {
 .recent_orders table {
     background-color: #fff;
     width: 100%;
-    border-radius: 2rem;
-    padding: 1.8rem;
+    border-radius: 1rem; /* Reduced border-radius */
+    padding: 1rem; /* Reduced padding */
     text-align: center;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18); /* Reduced shadow */
     transition: all 0.3s ease;
     color: #363949;
-    max-width: 100px;
+    max-width: none; /* Adjusted to fit the container */
+    font-size: 0.85rem; /* Reduced font size */
 }
 
 .recent_orders table:hover {
@@ -537,17 +488,18 @@ aside .logo {
 }
 
 table thead tr th {
-    padding: 15px;
+    padding: 10px; /* Reduced padding */
+    font-size: 0.9rem; /* Adjusted font size */
 }
 
 table tbody tr {
-    height: 3.8rem;
+    height: 3rem; /* Reduced row height */
     border-bottom: 1px solid #fff;
     color: #677483;
 }
 
 table tbody td {
-    height: 3.8rem;
+    height: 3rem; /* Reduced cell height */
     border-bottom: 1px solid #363949;
     color: #677483;
 }
@@ -559,7 +511,8 @@ table tbody tr:last-child td {
 .recent_orders a {
     text-align: center;
     display: block;
-    margin: 1rem;
+    margin: 1rem; /* Adjusted margin */
+    font-size: 0.85rem; /* Reduced font size */
 }
 
 /* Select styling */
@@ -634,9 +587,6 @@ select:focus {
     .container {
         width: 100%;
         grid-template-columns: repeat(1, 1fr);
-    }
-    .map-container {
-        margin: 30px;
     }
 
     aside {
@@ -747,6 +697,96 @@ select:focus {
         background-color: #7380ec;
         color: #fff;
         border-radius: 10px;
+    }
+}
+
+.top-bar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.date {
+    display: inline-block;
+    background-color: #fff;
+    border-radius: 0.9rem;
+    padding: 9px;
+    margin-top: 9px;
+}
+.date:hover {
+    box-shadow: none;
+}
+
+.date button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 1rem;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.date button:hover {
+    background-color: #0056b3;
+    transition: 0.4s ease-in;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    .date {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 5px;
+    }
+
+    .date input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .date button {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        width: 100%;
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .date {
+        flex-direction: row;
+        align-items: center;
+        padding: 5px;
+        gap: 5px;
+    }
+
+    .date input {
+        width: 100%;
+        font-size: 0.88rem;
+    }
+
+    .date button {
+        font-size: 0.88rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    input {
+        width: 100%;
+        font-size: 0.75rem;
+    }
+
+    .date {
+        padding: 5px;
+    }
+
+    .date button {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
     }
 }
 </style>
