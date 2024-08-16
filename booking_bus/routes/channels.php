@@ -18,6 +18,22 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 
-Broadcast::channel('charge-balance-private-notification-{id}', function () {
+Broadcast::channel('private-notification-{id}', function () {
+    return true;
+});
+
+
+
+Broadcast::channel('trip-break-private-channel-{id}', function () {
+    return true;
+});
+
+
+Broadcast::channel('private-seat-channel-{id}', function () {
+    return true;
+});
+
+
+Broadcast::channel('private-company-notification-{id}', function () {
     return true;
 });

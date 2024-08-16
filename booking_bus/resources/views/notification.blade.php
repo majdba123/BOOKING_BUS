@@ -11,11 +11,12 @@
       cluster: 'ap2'
     });
 
-    var channel = pusher.subscribe('notification-channel');
-    channel.bind('form-submitted', function(data) {
+    var channel = pusher.subscribe('notification-public-channel');
+    channel.bind('NotificatinEvent', function(data) {
       alert(JSON.stringify(data));
     });
   </script>
+
 </head>
 <body>
   <h1>Notification Test</h1>

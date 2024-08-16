@@ -103,6 +103,9 @@ class OrderPrivateTripController extends Controller
         $order->private_trip_id = $privateTrip->id;
         $order->company_id = $company_id;
         $order->price = $request->input('price');
+        $company_name =Auth::user()->Company;
+        $massage =" company $company_name->name accept your private trip " ;
+        event(new PrivateNotification($privateTrip->user->id , $massage));
 
         $order->save();
 

@@ -29,12 +29,12 @@ class NewTrip implements shouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['my-channel'];
+        return ['trip_channel'];
     }
 
     public function broadcastAs()
     {
-        return 'form-submitted';
+        return 'NewTrip';
     }
 }
 
