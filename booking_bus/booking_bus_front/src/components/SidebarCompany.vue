@@ -88,6 +88,14 @@
             <span class="material-icons" aria-label="Products">person</span>
             <h3>Profile</h3>
         </router-link>
+        <router-link
+            to="AllReservation"
+            @click="selectOption('Reservation')"
+            :class="{ active: selectedOption === 'Reservation' }"
+        >
+            <span class="material-icons" aria-label="Products">person</span>
+            <h3>Reservation</h3>
+        </router-link>
 
         <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">
             <span class="material-icons" aria-label="Logout">logout</span>
