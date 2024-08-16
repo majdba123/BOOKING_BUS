@@ -1,101 +1,72 @@
 <template>
-    <body>
-        <div class="container">
-            <!-- Aside section start -->
-            <aside ref="sideMenu">
-                <!-- Start top -->
-                <div class="top">
-                    <div class="logo">
-                        <h2>T<span class="danger">RAVEL</span></h2>
-                    </div>
-                    <div class="close" @click="closeMenu">
-                        <span class="material-icons" aria-label="Close"
-                            >close</span
-                        >
-                    </div>
+    <div class="container">
+        <!-- Aside section start -->
+        <aside ref="sideMenu">
+            <!-- Start top -->
+            <div class="top">
+                <div class="logo">
+                    <h2>T<span class="danger">RAVEL</span></h2>
                 </div>
-                <!-- End top -->
-
-                <!-- Start sidebar -->
-                <SidebarCompany />
-                <!-- End sidebar -->
-            </aside>
-
-            <!-- Main section start -->
-            <MainCompany />
-            <!-- Main section end -->
-
-            <!-- Right section start -->
-            <div class="right">
-                <!--start top-->
-                <div class="top">
-                    <button id="menu_bar" @click="openMenu">
-                        <span class="material-icons">menu</span>
-                    </button>
-                    <div
-                        class="theme-toggler"
-                        ref="themeToggler"
-                        @click="toggleTheme"
-                    >
-                        <span class="material-icons active">light_mode</span>
-                        <span class="material-icons">dark_mode</span>
-                    </div>
-                    <div class="profile">
-                        <div class="info">
-                            <p><b>Babar</b></p>
-                            <p>Admin</p>
-                        </div>
-                        <div class="profile-photo">
-                            <img src="@/assets/busss.png" alt="Profile" />
-                        </div>
-                    </div>
+                <div class="close" @click="closeMenu">
+                    <span class="material-icons" aria-label="Close">close</span>
                 </div>
-                <!--end top-->
-
-                <!--start recent_updates-->
-
-                <div class="recent_updates">
-                    <h2>Name Companys</h2>
-                    <div class="updates">
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                            <div class="message">
-                                <p><b>Babar</b> Received his order</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--end recent_updates-->
             </div>
-            <!-- Right section end -->
-        </div>
-    </body>
-</template>
+            <!-- End top -->
 
+            <!-- Start sidebar -->
+            <SidebarCompany />
+            <!-- End sidebar -->
+        </aside>
+
+        <div class="main-content">
+            <!-- زر القائمة -->
+            <button id="menu_bar" @click="openMenu" class="menu-button">
+                <span class="material-icons">menu</span>
+            </button>
+
+            <!-- Main content -->
+            <MainCompany />
+
+            <!-- Dashboard Charts -->
+            <div class="charts-wrapper">
+                <DashboardCharts />
+            </div>
+        </div>
+
+        <!-- Main section end -->
+
+        <!-- Right section start -->
+
+        <!-- Right section end -->
+    </div>
+</template>
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import MainCompany from "@/components/MainCompany.vue";
-
+import DashboardCharts from "@/components/DashboardCharts.vue";
 export default {
+    mounted() {
+        // استدعاء الدالة عند تحميل الصفحة لأول مرة
+        this.handleResize();
+
+        // إضافة مستمع للحدث لتتبع تغييرات حجم الشاشة
+        window.addEventListener("resize", this.handleResize);
+    },
+    beforeUnmount() {
+        // إزالة مستمع الحدث عند تدمير المكون لتجنب تسريب الذاكرة
+        window.removeEventListener("resize", this.handleResize);
+    },
     methods: {
+        handleResize() {
+            const sideMenu = this.$refs.sideMenu;
+            if (window.innerWidth > 768) {
+                // فتح الشريط الجانبي إذا كانت الشاشة كبيرة
+                sideMenu.style.display = "block";
+            } else {
+                // إخفاء الشريط الجانبي إذا كانت الشاشة صغيرة
+                sideMenu.style.display = "none";
+            }
+        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
@@ -120,10 +91,10 @@ export default {
             }
         },
     },
-    components: { SidebarCompany, MainCompany },
+
+    components: { SidebarCompany, MainCompany, DashboardCharts },
 };
 </script>
-
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -151,6 +122,7 @@ export default {
 
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
+
 .dark-theme-variables {
     --clr-color-background: #181a1e;
     --clr-white: #202528;
@@ -184,7 +156,7 @@ body {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 14rem;
+    grid-template-columns: 14rem auto;
     margin-left: 0;
     height: 100vh;
     overflow-y: auto;
@@ -194,59 +166,36 @@ a {
     color: #363949;
 }
 
-h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+.main-content {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px;
 }
 
-h2 {
-    font-size: 1.4rem;
+.charts-wrapper {
+    margin-top: 20px;
+    width: 100%;
 }
 
-h3 {
-    font-size: 0.87rem;
+.content-and-charts {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
 }
 
-h4 {
-    font-size: 0.8rem;
+.MainCompany {
+    flex: none;
+    width: 100%;
 }
 
-h5 {
-    font-size: 0.77rem;
+.DashboardCharts {
+    flex: none;
+    width: 100%;
 }
 
-small {
-    font-size: 0.75rem;
-}
-
-.profile-photo img {
-    width: 2.8rem;
-    height: 2.8rem;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.text-muted {
-    color: #7d8da1;
-}
-
-.primary {
-    color: #7380ec;
-}
-
-.success {
-    color: var(--clr-success);
-}
-
-.danger {
-    color: #ff7782;
-}
-
-.warning {
-    color: #ffbb55;
-}
-
-/* aside */
 aside {
     height: 100vh;
     background-color: #fff;
@@ -267,16 +216,30 @@ aside .logo {
     gap: 1rem;
 }
 
-/* Main section styles */
-/*
-        start right side
-***************************** */
+.menu-button {
+    display: none;
+    background: transparent;
+    cursor: pointer;
+    color: #363949;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    border: none;
+    font-size: 24px;
+}
+
+.menu-button .material-icons {
+    font-size: 24px;
+    color: #363949;
+}
+
+/* Right section styles */
 .right {
     margin-top: 1.4rem;
     padding: 1rem;
     background-color: #f6f6f9;
     grid-column: span 1;
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
+    overflow-y: auto;
 }
 
 .right .top {
@@ -336,6 +299,7 @@ aside .logo {
     margin-top: 1rem;
     margin-left: -20px;
 }
+
 .right .recent_updates h2 {
     color: #363949;
     margin-bottom: 14px;
@@ -361,9 +325,12 @@ aside .logo {
 }
 
 /**********
-media query
-********** */
+    media query
+    ********** */
 @media screen and (max-width: 1200px) {
+    .menu-button {
+        display: inline-block; /* إظهار الزر في الوضع المتجاوب */
+    }
     .container {
         width: 94%;
         grid-template-columns: 7rem auto 14rem;
@@ -400,6 +367,13 @@ media query
     .container {
         width: 100%;
         grid-template-columns: repeat(1, 1fr);
+    }
+
+    .content-and-charts {
+        flex-direction: column;
+    }
+    .charts-wrapper {
+        margin-top: 20px;
     }
 
     aside {
