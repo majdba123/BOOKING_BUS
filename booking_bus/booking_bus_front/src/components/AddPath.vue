@@ -10,6 +10,7 @@
 
         <div v-if="showForm" class="form-map-container">
             <form @submit.prevent="handleSubmit" class="form-containerd">
+                <h2>Add Path</h2>
                 <div class="form-groupd">
                     <label for="nameStart">Name Start</label>
                     <input
@@ -100,7 +101,7 @@
                         required
                     />
 
-                    <div class="map-container">
+                    <div class="map-containers">
                         <MapPath />
                     </div>
                 </div>
@@ -529,27 +530,36 @@ select:focus {
     justify-content: space-between;
     width: 100%;
     margin-top: 20px;
-    height: 250px;
+    height: 350px;
 }
-
 .form-containerd {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
+    text-align: center;
 }
-
+h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #333;
+}
 .form-groupd {
+    width: 100%;
     margin-bottom: 15px;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
+    text-align: left;
     font-weight: bold;
 }
 
@@ -566,6 +576,7 @@ input:focus {
 }
 
 .submit-btnnd {
+    margin-top: auto;
     display: flex;
     justify-content: center;
 }
@@ -586,9 +597,15 @@ input:focus {
 
 .map-container {
     flex: 1;
+    margin-left: 10px;
+    min-width: 400px;
+    border-radius: 20px;
+}
+.map-containers {
+    flex: 1;
     margin-top: 20px;
     min-width: 400px;
-    border-radius: 6px;
+    border-radius: 20px;
 }
 
 @media screen and (max-width: 1200px) {
