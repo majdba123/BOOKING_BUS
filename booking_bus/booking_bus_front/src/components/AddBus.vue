@@ -59,21 +59,24 @@
                                     class="edit-btn"
                                     @click="openEditModal(bus, index)"
                                 >
-                                    Edit
+                                    <span class="material-icons">edit</span>
                                 </button>
                                 <button
                                     class="delete-btn"
                                     @click="DeleteBus(bus.id)"
                                 >
-                                    Delete
+                                    <span class="material-icons">delete</span>
                                 </button>
                             </td>
+
                             <td>
                                 <button
                                     class="status-btn"
                                     @click="showSeats(bus.id)"
                                 >
-                                    View Seats
+                                    <span class="material-icons"
+                                        >visibility</span
+                                    >
                                 </button>
                             </td>
                         </tr>
@@ -85,25 +88,19 @@
         <div v-if="showBusStatusModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Bus Status</div>
+                <button class="status-btns" @click="fetchBusStatus('pending')">
+                    Pending
+                </button>
+                <button
+                    class="status-btns"
+                    @click="fetchBusStatus('available')"
+                >
+                    Available
+                </button>
+                <button class="status-btns" @click="fetchBusStatus('finished')">
+                    Finished
+                </button>
                 <div class="modal-body">
-                    <button
-                        class="status-btn"
-                        @click="fetchBusStatus('pending')"
-                    >
-                        Pending
-                    </button>
-                    <button
-                        class="status-btn"
-                        @click="fetchBusStatus('available')"
-                    >
-                        Available
-                    </button>
-                    <button
-                        class="status-btn"
-                        @click="fetchBusStatus('finished')"
-                    >
-                        Finished
-                    </button>
                     <table>
                         <thead>
                             <tr>
@@ -485,43 +482,70 @@ select:focus {
 }
 
 /* Button styling */
-.delete-btn,
-.edit-btn,
-.status-btn {
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
+.edit-btn.material-icons,
+.delete-btn.material-icons,
+.status-btn.material-icons {
+    padding: 2px 6px;
     border: none;
-    transition: background-color 0.3s ease, transform 0.2s;
-    color: white;
-    margin: 0 5px;
-}
-
-.delete-btn {
-    background-color: #d9534f;
-}
-
-.delete-btn:hover {
-    background-color: #c9302c;
+    margin: 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
 }
 
 .edit-btn {
-    background-color: #f0ad4e;
+    color: #4caf50;
+    background-color: #f1f1f1;
+    border-radius: 9px;
+    padding: 3px;
+    margin: 5px;
+}
+.edit-btn:hover {
+    color: #fff;
+    background-color: #4caf50;
 }
 
-.edit-btn:hover {
-    background-color: #ec971f;
+.delete-btn {
+    color: #f44336;
+    background-color: #f1f1f1;
+    border-radius: 9px;
+    padding: 3px;
+}
+
+.delete-btn:hover {
+    color: #fff;
+    background-color: #f44336;
 }
 
 .status-btn {
+    border-radius: 9px;
     background-color: #007bff;
-    margin-bottom: 10px;
+    transition: background-color 0.3s ease, transform 0.2s;
+    color: white;
+    width: 30px;
 }
 
 .status-btn:hover {
     background-color: #0056b3;
 }
-
+.status-btns {
+    border-radius: 9px;
+    background-color: #007bff;
+    transition: background-color 0.3s ease, transform 0.2s;
+    color: white;
+    margin: 10px;
+    padding: 10px;
+}
+.status-btns:hover {
+    background-color: #0056b3;
+}
 /* Navigation styling */
 .navd {
     display: flex;
@@ -649,9 +673,10 @@ input:focus {
 }
 
 .modal-header,
-.modal-body,
-.modal-footer {
+.modal-body {
     margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
 }
 
 .modal-header {
@@ -662,6 +687,43 @@ input:focus {
 .modal-footer {
     display: flex;
     justify-content: flex-end;
+}
+.modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body table th,
+.modal-body table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 8px;
+}
+
+.modal-body table tbody tr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body table thead {
+    display: flex;
+    justify-content: center;
+}
+
+.modal-body table tbody {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body table tr {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.modal-body table td {
+    flex: 1;
 }
 
 .close-modal {
