@@ -15,19 +15,19 @@
                 <div class="modal-header">Trip Status</div>
                 <div class="modal-body">
                     <button
-                        class="status-btn"
+                        class="status-btns"
                         @click="fetchTripStatus('padding')"
                     >
                         Pending
                     </button>
                     <button
-                        class="status-btn"
+                        class="status-btns"
                         @click="fetchTripStatus('available')"
                     >
                         Available
                     </button>
                     <button
-                        class="status-btn"
+                        class="status-btns"
                         @click="fetchTripStatus('finished')"
                     >
                         Finished
@@ -186,7 +186,7 @@
                             <td>{{ trip.price }}</td>
                             <td>
                                 <button
-                                    class="Button details-btn"
+                                    class="details-btn"
                                     @click="fetchTripDetails(trip.id)"
                                 >
                                     <span class="material-icons"> info </span>
@@ -194,7 +194,7 @@
                             </td>
                             <td>
                                 <button
-                                    class="Button delete-btn"
+                                    class="delete-btn"
                                     @click="DeleteTrip(trip.id)"
                                 >
                                     <span class="material-icons">delete</span>
@@ -202,7 +202,7 @@
                             </td>
                             <td>
                                 <button
-                                    class="Button edit-btn"
+                                    class="edit-btn"
                                     @click="editTrip(index, trip.id)"
                                 >
                                     <span class="material-icons">edit</span>
@@ -956,38 +956,58 @@ label {
 }
 
 /* Adjusted Button styling */
-.delete-btn,
-.edit-btn,
-.status-btn,
-.details-btn {
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
+.edit-btn.material-icons,
+.delete-btn.material-icons,
+.status-btn.material-icons,
+.details-btn.material-icons {
+    padding: 2px 6px;
     border: none;
-    transition: background-color 0.3s ease;
-    color: white;
-    margin: 0 5px;
+    margin: 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 9px;
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center; /* Centers the icon and text */
-}
-
-.delete-btn {
-    background-color: #d9534f;
-}
-
-.delete-btn:hover {
-    background-color: #c9302c;
+    height: 20px;
+    width: 30px;
+    cursor: pointer;
 }
 
 .edit-btn {
-    background-color: #f0ad4e;
+    color: #4caf50;
+    border-radius: 9px;
+    padding: 3px;
+    margin: 5px;
 }
-
 .edit-btn:hover {
-    background-color: #ec971f;
+    color: #fff;
+    background-color: #4caf50;
 }
 
+.delete-btn {
+    color: #f44336;
+    border-radius: 9px;
+    padding: 3px;
+    margin: 5px;
+}
+
+.delete-btn:hover {
+    color: #fff;
+    background-color: #f44336;
+}
+
+.details-btn {
+    color: #007bff;
+    border-radius: 9px;
+    padding: 3px;
+}
+
+.details-btn:hover {
+    color: #fff;
+    background-color: #31b0d5;
+}
 .status-btn {
     background-color: #007bff;
     margin-bottom: 10px;
@@ -996,20 +1016,18 @@ label {
 .status-btn:hover {
     background-color: #0056b3;
 }
-
-.details-btn {
-    background-color: #5bc0de;
+.status-btns {
+    border-radius: 9px;
+    background-color: #007bff;
+    transition: background-color 0.3s ease, transform 0.2s;
+    color: white;
+    margin: 10px;
+    padding: 10px;
 }
-
-.details-btn:hover {
-    background-color: #31b0d5;
+.status-btns:hover {
+    background-color: #0056b3;
 }
-
 /* Center icons and text in table-container */
-.table-container span {
-    margin-right: 15px;
-    /* Centers the span content */
-}
 
 /* Navigation styling */
 .navd {
@@ -1129,7 +1147,43 @@ input:focus {
     margin-left: 20px;
     min-width: 400px;
 }
+.modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
+.modal-body table th,
+.modal-body table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 8px;
+}
+
+.modal-body table tbody tr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body table thead {
+    display: flex;
+    justify-content: center;
+}
+
+.modal-body table tbody {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body table tr {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.modal-body table td {
+    flex: 1;
+}
 @media screen and (max-width: 1200px) {
     .form-map-container {
         flex-direction: column;
