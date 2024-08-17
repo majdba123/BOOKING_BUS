@@ -10,6 +10,8 @@ use App\Models\Bus_Driver;
 use App\Models\Reservation;
 use App\Models\Bus_Trip;
 use App\Models\user;
+use App\Events\BreakTripEvent;
+use App\Events\CompanyNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -69,14 +71,17 @@ class DriverController extends Controller
         ]);
 
         $id= $user->id;
-        $company_id =Auth::user()->Company->id;
+        $company_id =Auth::user()->Company;
+
         #return response()->json($id);
 
         $driver = Driver::create([
             'user_id' => $id,
-            'company_id' => $company_id,
+            'company_id' => $company_id->id,
         ]);
-
+         $drivaer_name = $driver->user->name;
+        $notification ="new Driver Regiseter $drivaer_name ";
+        event(new CompanyNotification($company_id ,$notification));
 
         return response()->json([
             'message' => 'driver Created ',
@@ -221,6 +226,7 @@ class DriverController extends Controller
     public function start_trip()
     {
         $driver = Auth::user()->Driver;
+        $company = $driver->company;
 
         $bus = Bus_Driver::where('status', 'pending')
                         ->where('driver_id', $driver->id)
@@ -235,7 +241,12 @@ class DriverController extends Controller
         if ($name_breaks->first() === "start") {
             $bus_trip->event = $name_breaks->first();
             $bus_trip->save();
-            $pivoit_id=$bus_trip->Pivoit->first()->id;
+            $pivoit_id=$bus_trip->Pivoit->first();
+
+            event(new BreakTripEvent($bus_trip , $pivoit_id ));
+
+            $notification ="your bus_trip $bus_trip->id  is started  ";
+            event(new CompanyNotification($company ,$notification));
 
             $reservations = Reservation::where('status', 'padding')
             ->where('pivoit_id', $pivoit_id)
@@ -264,7 +275,6 @@ class DriverController extends Controller
     public function finish_breaks($pivoit_id)
     {
         $driver = Auth::user()->Driver;
-
         $bus = Bus_Driver::where('status', 'pending')
                         ->where('driver_id', $driver->id)
                         ->first();
@@ -299,6 +309,7 @@ class DriverController extends Controller
                     $pivoit->save();
                     $bus_trip->event ='running';
                     $bus_trip->save();
+                    event(new BreakTripEvent($bus_trip , $pivoit ));
                     if($bus_trip->status == 'pending')
                     {
                         $type_reservation = 1 ;
@@ -360,6 +371,7 @@ class DriverController extends Controller
                     $pivoit->save();
                     $bus_trip->event ='running';
                     $bus_trip->save();
+                    event(new BreakTripEvent($bus_trip , $pivoit ));
                     if($bus_trip->status == 'pending')
                     {
                         $type_reservation = 1 ;
@@ -422,6 +434,7 @@ class DriverController extends Controller
                     $pivoit->save();
                     $bus_trip->event ='running';
                     $bus_trip->save();
+                    event(new BreakTripEvent($bus_trip , $pivoit ));
                     if($bus_trip->status == 'pending')
                     {
                         $type_reservation = 1 ;
@@ -487,6 +500,7 @@ class DriverController extends Controller
                     $bus_trip->event ='finished_trip';
                     $bus_trip->status ='finished';
                     $bus_trip->save();
+                    event(new BreakTripEvent($bus_trip , $pivoit ));
                     if($bus_trip->status == 'pending')
                     {
                         $type_reservation = 1 ;
@@ -546,6 +560,7 @@ class DriverController extends Controller
                     $pivoit->save();
                     $bus_trip->event ='runing';
                     $bus_trip->save();
+                    event(new BreakTripEvent($bus_trip , $pivoit ));
                     if($bus_trip->status == 'pending')
                     {
                         $type_reservation = 1 ;
@@ -628,6 +643,7 @@ class DriverController extends Controller
     {
         try {
             $driver = Auth::user()->Driver;
+            $company =$driver->company;
 
             $bus = Bus_Driver::where('status', 'pending')
                             ->where('driver_id', $driver->id)
@@ -656,6 +672,7 @@ class DriverController extends Controller
                     $bus_trip->event = $pivoit->break_trip->break->name;
                     $bus_trip->status = "finished_going";
                     $bus_trip->save();
+                    event(new BreakTripEvent($bus_trip , $pivoit ));
                     $atLeastOneFinishedGoing = $bus_trip->trip->bus_trip()
                     ->where('status', 'finished_going')
                     ->first();
@@ -663,6 +680,7 @@ class DriverController extends Controller
                     if ($atLeastOneFinishedGoing && $allFinished) {
                         $bus_trip->trip->status = "finished_going";
                         $bus_trip->trip->save(); // <--- Add this line
+
                     }
                     $reservations = Reservation::where('status', 'padding')
                     ->where('pivoit_id', $pivoit_id)
@@ -711,12 +729,15 @@ class DriverController extends Controller
                     $bus_trip->status = "finished";
                     $pivoit->status == 'done2';
                     $pivoit->save();
+                    $notification ="your bus_trip $bus_trip->id  is finished  ";
+                    event(new CompanyNotification($company ,$notification));
                     $bus_trip->bus->status = "available" ;
                     $driver->status = "available" ;
                     $driver->save();
                     $bus->bus->status = "available" ;
                     $bus->bus->save();
                     $bus_trip->save();
+                    event(new BreakTripEvent($bus_trip , $pivoit ));
                     $seats = $bus->bus->seat; // assuming you have a 'eats' relationship in your Bus model
                     foreach ($seats as $seat) {
                         $seat->status = 0;

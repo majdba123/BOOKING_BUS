@@ -29,6 +29,11 @@ Route::get('/foruser', function () {
     return view('foruser');
 })->middleware('auth');
 
+
+Route::get('/breaktrip', function () {
+    return view('breakTrip');
+})->middleware('auth');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

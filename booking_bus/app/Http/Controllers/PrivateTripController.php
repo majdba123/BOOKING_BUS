@@ -52,6 +52,7 @@ class PrivateTripController extends Controller
         $private->date = $request->input('date');
         $private->start_time = $request->input('start_time');
         $private->save();
+
         return response()->json(['message' => 'Private trip created successfully'], 201);
     }
     /**

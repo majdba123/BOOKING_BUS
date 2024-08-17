@@ -13,14 +13,13 @@ use Illuminate\Queue\SerializesModels;
 class SeatEvent implements shouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    public $bus_trip;
     public $seat;
-    /**
-     * Create a new event instance.
-     */
-    public function __construct($seat)
-    {
-        $this->seat = $seat;
 
+    public function __construct($bus_trip ,$seat)
+    {
+        $this->bus_trip = $bus_trip;
+        $this->seat = $seat;
     }
 
     /**
@@ -30,11 +29,12 @@ class SeatEvent implements shouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['seat-channel'];
+        return ['private-seat-channel-'. $this->bus_trip->id];
+
     }
 
     public function broadcastAs()
     {
-        return 'form-submitted';
+        return 'SeatEvent';
     }
 }

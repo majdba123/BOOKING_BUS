@@ -10,16 +10,18 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NotificatinEvent  implements shouldBroadcast
+class CompanyNotification
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    public $company;
     public $notification;
     /**
      * Create a new event instance.
      */
-    public function __construct($notification)
+    public function __construct($company ,$notification)
     {
-        $this->notification = $notification;
+        $this->company =$company;
+        $this->notification =$notification;
     }
 
     /**
@@ -29,11 +31,13 @@ class NotificatinEvent  implements shouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['notification-public-channel'];
+        return ['private-company-notification-'. $this->company->id];
+
     }
+
 
     public function broadcastAs()
     {
-        return 'NotificatinEvent';
+        return 'CompanyNotification';
     }
 }

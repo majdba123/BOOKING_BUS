@@ -10,16 +10,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NotificatinEvent  implements shouldBroadcast
+class BreakTripEvent  implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $notification;
+
     /**
      * Create a new event instance.
      */
-    public function __construct($notification)
+    public $bus_trip;
+    public $pivoit;
+
+    public function __construct($bus_trip ,$pivoit)
     {
-        $this->notification = $notification;
+        $this->bus_trip = $bus_trip;
+        $this->pivoit = $pivoit;
     }
 
     /**
@@ -29,11 +33,12 @@ class NotificatinEvent  implements shouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['notification-public-channel'];
+        return ['trip-break-private-channel-' . $this->bus_trip->id];
     }
+
 
     public function broadcastAs()
     {
-        return 'NotificatinEvent';
+        return 'BreakTripEvent';
     }
 }
