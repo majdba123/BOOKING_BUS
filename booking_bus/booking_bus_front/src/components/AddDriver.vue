@@ -1,5 +1,5 @@
 <template>
-    <div class="containerd">
+    <div :class="['containerd', { 'dark-theme-variables': isDarkMode }]">
         <!-- Header with buttons -->
         <header class="navd">
             <button class="nav-btnd" @click="showForm = true">
@@ -212,6 +212,7 @@
 import axios from "axios";
 import store from "@/store";
 import { useToast } from "vue-toastification";
+import { Chart } from "chart.js";
 
 export default {
     name: "AddDriver",
@@ -228,11 +229,19 @@ export default {
             showDriverStatusModal: false,
             showDriverWithBusModal: false,
             toast: useToast(),
+            isDarkMode: false, // إدارة حالة الوضع الداكن
         };
     },
     mounted() {
         this.AllDriver();
         this.fetchBus();
+        this.isDarkMode = localStorage.getItem("theme") === "dark";
+        if (this.isDarkMode) {
+            document.body.classList.add("dark-theme-variables");
+        }
+        this.$nextTick(() => {
+            this.createChart(); // إنشاء الرسم البياني بعد التأكد من جاهزية DOM
+        });
     },
     methods: {
         closeDriverStatusModal() {
@@ -390,6 +399,61 @@ export default {
                     console.error(error);
                 });
         },
+        toggleTheme() {
+            this.isDarkMode = !this.isDarkMode;
+            document.body.classList.toggle(
+                "dark-theme-variables",
+                this.isDarkMode
+            );
+            localStorage.setItem("theme", this.isDarkMode ? "dark" : "light");
+        },
+        createChart() {
+            // هنا يمكنك إنشاء الرسم البياني الخاص بك باستخدام Chart.js
+            const ctx = document.getElementById("myChart").getContext("2d");
+            new Chart(ctx, {
+                type: "bar", // نوع الرسم البياني
+                data: {
+                    labels: [
+                        "Red",
+                        "Blue",
+                        "Yellow",
+                        "Green",
+                        "Purple",
+                        "Orange",
+                    ],
+                    datasets: [
+                        {
+                            label: "# of Votes",
+                            data: [12, 19, 3, 5, 2, 3],
+                            backgroundColor: [
+                                "rgba(255, 99, 132, 0.2)",
+                                "rgba(54, 162, 235, 0.2)",
+                                "rgba(255, 206, 86, 0.2)",
+                                "rgba(75, 192, 192, 0.2)",
+                                "rgba(153, 102, 255, 0.2)",
+                                "rgba(255, 159, 64, 0.2)",
+                            ],
+                            borderColor: [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)",
+                                "rgba(255, 159, 64, 1)",
+                            ],
+                            borderWidth: 1,
+                        },
+                    ],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        },
     },
     computed: {
         filteredDrivers() {
@@ -439,6 +503,21 @@ export default {
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 
+.dark-theme-variables {
+    --clr-primary: #bb86fc;
+    --clr-danger: #cf6679;
+    --clr-success: #03dac6;
+    --clr-white: #121212;
+    --clr-info-dark: #bb86fc;
+    --clr-info-light: #292929;
+    --clr-dark: #f6f6f9;
+    --clr-warning: #ffbb55;
+    --clr-light: rgba(255, 255, 255, 0.2);
+    --clr-primary-variant: #3700b3;
+    --clr-dark-variant: #1f1f1f;
+    --clr-color-background: #121212;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -455,12 +534,12 @@ body {
     height: 100%;
     font-size: 0.88rem;
     user-select: none;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
 }
 
 .recent_orders h1 {
     margin: 18px;
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 .recent_orders {
@@ -475,13 +554,13 @@ body {
 }
 
 .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
     border-radius: 1rem;
     padding: 1rem;
     text-align: center;
     box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
+    color: var(--clr-dark);
     max-width: none;
     font-size: 0.85rem;
 }
@@ -497,19 +576,19 @@ table thead tr th {
 
 table tbody tr {
     height: 3rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-white);
+    color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
 }
 
 table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: var(--clr-light);
 }
 
 table tbody td {
     height: 3rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-dark);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr:last-child td {
@@ -526,17 +605,17 @@ table tbody tr:last-child td {
 /* Select styling */
 select {
     padding: 8px;
-    border: 1px solid #7380ec;
+    border: 1px solid var(--clr-primary);
     border-radius: 4px;
-    background-color: #fff;
-    color: #363949;
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
     font-size: 0.85rem;
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 select:focus {
-    border-color: #007bff;
+    border-color: var(--clr-primary);
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
@@ -547,15 +626,15 @@ select:focus {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s;
-    border: 1px solid #ff7782;
-    background-color: #fff;
-    color: #ff7782;
+    border: 1px solid var(--clr-danger);
+    background-color: var(--clr-white);
+    color: var(--clr-danger);
 }
 
 .delete-btn:hover,
 .cancel-btn:hover {
-    background-color: #ff7782;
-    color: #fff;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     transform: translateY(-3px);
 }
 
@@ -566,7 +645,7 @@ select:focus {
     justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
-    background-color: #fff;
+    background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
 }
@@ -576,8 +655,8 @@ select:focus {
     margin: 10px;
     border: none;
     border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
     font-size: 12px;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -610,12 +689,16 @@ select:focus {
     align-items: center;
     flex-direction: column;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--clr-info-light); /* الخلفية الافتراضية للنموذج */
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
     margin-top: 50px;
+    transition: background-color 0.3s ease; /* إضافة تأثير انتقال للخلفية */
+}
+.dark-theme-variables .form-containerd {
+    background-color: var(--clr-dark-variant); /* الخلفية في الوضع الداكن */
 }
 
 .form-groupd {
@@ -649,15 +732,15 @@ input:focus {
 .submit-btnd {
     padding: 10px 20px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-btnd:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
     transform: translateY(-3px);
 }
 
@@ -676,7 +759,7 @@ input:focus {
 }
 
 .modal-content {
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     max-width: 500px;
@@ -703,7 +786,7 @@ input:focus {
 .close-modal {
     padding: 8px 16px;
     background-color: #d9534f;
-    color: white;
+    color: var(--clr-white);
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -719,13 +802,13 @@ input:focus {
     border-radius: 4px;
     cursor: pointer;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     transition: background-color 0.3s;
 }
 
 .status-btn:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
 }
 
 /* Responsive Design */
@@ -776,8 +859,8 @@ input:focus {
     }
 
     .theme-toggler span.active {
-        background-color: #7380ec;
-        color: #fff;
+        background-color: var(--clr-primary);
+        color: var(--clr-white);
         border-radius: 10px;
     }
 }
@@ -791,5 +874,6 @@ input:focus {
     align-items: center;
     background-size: cover;
     min-height: 100vh;
+    background: var(--clr-color-background);
 }
 </style>

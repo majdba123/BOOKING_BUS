@@ -5,58 +5,6 @@
         <!-- End insights -->
 
         <!-- Start recent orders -->
-        <div class="recent_orders">
-            <h1>Name Companys</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Company Name</th>
-                        <th>Count User</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <!-- Repeat similar rows for demonstration -->
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- End recent orders -->
     </main>
 </template>
 <script>
@@ -153,7 +101,6 @@ body {
     overflow: hidden;
     font-size: 0.88rem;
     user-select: none;
-    overflow-x: hidden;
     background: #f6f6f9;
 }
 

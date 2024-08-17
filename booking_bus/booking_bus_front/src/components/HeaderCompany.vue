@@ -10,46 +10,97 @@
                 />
                 <button>Search</button>
             </div>
+            <div class="profile-menu">
+                <div
+                    class="theme-toggler"
+                    ref="themeToggler"
+                    @click="toggleTheme"
+                >
+                    <span class="material-icons active">light_mode</span>
+                    <span class="material-icons">dark_mode</span>
+                </div>
+                <img
+                    :src="profileImage"
+                    alt="Profile"
+                    class="profile-picture"
+                    @click="toggleProfileMenu"
+                />
+                <ul v-if="showProfileMenu" class="dropdown-menu">
+                    <li @click="goToProfile">Go to Profile</li>
+                    <li @click="logout">Logout</li>
+                </ul>
+            </div>
         </div>
     </main>
 </template>
 
 <script>
 import store from "@/store";
+
 export default {
     name: "HeaderCompany",
     data() {
         return {
             x: store.state.x,
+            showProfileMenu: false,
+            profileImage: "",
+            isDarkMode: false, // حالة الوضع الداكن
         };
     },
     methods: {
-        openMenu() {
-            const sideMenu = this.$refs.sideMenu;
-            if (sideMenu) {
-                sideMenu.style.display = "block";
+        toggleProfileMenu() {
+            this.showProfileMenu = !this.showProfileMenu;
+            if (this.showProfileMenu) {
+                setTimeout(() => {
+                    const dropdownMenu =
+                        this.$el.querySelector(".dropdown-menu");
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.add("show");
+                    }
+                }, 10);
+            } else {
+                const dropdownMenu = this.$el.querySelector(".dropdown-menu");
+                if (dropdownMenu) {
+                    dropdownMenu.classList.remove("show");
+                }
             }
         },
-        closeMenu() {
-            const sideMenu = this.$refs.sideMenu;
-            if (sideMenu) {
-                sideMenu.style.display = "none";
-            }
+        goToProfile() {
+            this.$router.push("/ProfileCompany");
+        },
+        logout() {
+            store.dispatch("logout");
+            this.$router.push("/");
+        },
+        fetchProfileInfo() {
+            const userDataFrame = {
+                image: "path/to/profile-image.jpg",
+            };
+            this.profileImage = userDataFrame.image;
         },
         toggleTheme() {
+            this.isDarkMode = !this.isDarkMode; // تبديل الحالة
+            document.body.classList.toggle(
+                "dark-theme-variables",
+                this.isDarkMode
+            );
             const themeToggler = this.$refs.themeToggler;
-            if (themeToggler) {
-                themeToggler
-                    .querySelector("span:nth-child(1)")
-                    .classList.toggle("active");
-                themeToggler
-                    .querySelector("span:nth-child(2)")
-                    .classList.toggle("active");
-            }
+            themeToggler.querySelectorAll("span").forEach((span) => {
+                span.classList.toggle("active");
+            });
         },
     },
-    mounted() {},
-    components: {},
+    mounted() {
+        this.fetchProfileInfo();
+        // التحقق من وجود الوضع الداكن عند التحميل
+        if (document.body.classList.contains("dark-theme-variables")) {
+            this.isDarkMode = true;
+            const themeToggler = this.$refs.themeToggler;
+            themeToggler.querySelectorAll("span").forEach((span) => {
+                span.classList.toggle("active");
+            });
+        }
+    },
 };
 </script>
 
@@ -69,24 +120,16 @@ export default {
     --clr-primary-variant: #111e88;
     --clr-dark-variant: #677483;
     --clr-color-background: #f6f6f9;
-
-    --card-border-radius: 2rem;
-    --border-radius-1: 0.4rem;
-    --border-radius-2: 0.8rem;
-    --border-radius-3: 1.2rem;
-
-    --card-padding: 1.8rem;
-    --padding-1: 1.2rem;
-
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
+
 .dark-theme-variables {
     --clr-color-background: #181a1e;
     --clr-white: #202528;
     --clr-light: rgba(0, 0, 0, 0.4);
     --clr-dark: #edeffd;
     --clr-dark-variant: #677483;
-    --box-shadow: 0 2rem 3rem var(--clr-light);
+    --clr-primary: #bb86fc; /* لون أساسي مختلف للوضع الداكن */
+    --clr-danger: #cf6679; /* لون الخطر للوضع الداكن */
 }
 
 * {
@@ -107,19 +150,20 @@ body {
     font-size: 0.88rem;
     user-select: none;
     overflow-x: hidden;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
+    color: var(--clr-dark);
 }
 
 .container {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 19rem;
+    grid-template-columns: 14rem auto 14rem;
     margin-left: 0;
 }
 
 a {
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 h1 {
@@ -152,12 +196,13 @@ small {
     display: flex;
     gap: 1rem;
     align-items: center;
+    justify-content: space-between;
 }
 
 .date {
     display: flex;
     align-items: center;
-    background-color: #fff;
+    background-color: var(--clr-white);
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 9px;
@@ -168,24 +213,119 @@ small {
     background-color: transparent;
     border: none;
     outline: none;
-    color: #363949;
+    color: var(--clr-dark);
     padding: 0 10px;
-    max-width: 400px; /* Adjust the max-width as needed */
+    max-width: 400px;
 }
 
 .date button {
     padding: 0.5rem 1rem;
     border: none;
-    background-color: #007bff;
-    color: #fff;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     border-radius: 1rem;
     cursor: pointer;
     margin-left: 5px;
 }
 
 .date button:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
     transition: 0.4s ease-in;
+}
+
+.profile-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.theme-toggler {
+    background-color: var(--clr-white);
+    display: flex;
+    justify-content: space-between;
+    height: 1.7rem;
+    width: 3.1rem;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-right: 20px;
+}
+
+.theme-toggler span {
+    font-size: 1rem;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggler span.active {
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border-radius: 8px;
+}
+
+.profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--clr-primary);
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.profile-picture:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: var(--clr-white);
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 10px 0;
+    z-index: 1000;
+    width: 150px;
+    animation: fadeIn 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-menu li:hover {
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+}
+
+/* Adding a subtle fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Responsive Design */
