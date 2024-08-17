@@ -100,13 +100,15 @@
                                     class="delete-btn"
                                     @click="DeleteDriver(user.driver_id)"
                                 >
-                                    Delete
+                                    <span class="material-icons">delete</span>
                                 </button>
                                 <button
                                     class="cancel-btn"
                                     @click="CancelDriver(user.driver_id)"
                                 >
-                                    Cancel
+                                    <span class="material-icons"
+                                        >close_small</span
+                                    >
                                 </button>
                             </td>
                         </tr>
@@ -620,24 +622,47 @@ select:focus {
 }
 
 /* Delete button styling */
-.delete-btn,
-.cancel-btn {
-    padding: 8px 16px;
-    border-radius: 4px;
+
+.delete-btn.material-icons,
+.cancel-btn.material-icons {
+    padding: 0;
+    border: none;
+    margin: 5px;
+    border-radius: 50%;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s;
-    border: 1px solid var(--clr-danger);
-    background-color: var(--clr-white);
-    color: var(--clr-danger);
+    transition: background-color 0.3s;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    width: 20px;
 }
 
-.delete-btn:hover,
+.cancel-btn {
+    color: #4caf50;
+    background-color: #f1f1f1;
+    border-radius: 9px;
+    width: 29px;
+    padding: 2px;
+    margin: 5px;
+}
 .cancel-btn:hover {
-    background-color: var(--clr-danger);
-    color: var(--clr-white);
-    transform: translateY(-3px);
+    color: #fff;
+    background-color: #4caf50;
 }
 
+.delete-btn {
+    color: #f44336;
+    background-color: #f1f1f1;
+    border-radius: 9px;
+    padding: 3px;
+}
+
+.delete-btn:hover {
+    color: #fff;
+    background-color: #f44336;
+}
 /* Navigation styling */
 .navd {
     display: flex;
@@ -689,16 +714,16 @@ select:focus {
     align-items: center;
     flex-direction: column;
     padding: 20px;
-    background-color: var(--clr-info-light); /* الخلفية الافتراضية للنموذج */
+    background-color: var(--clr-info-light);
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
     margin-top: 50px;
-    transition: background-color 0.3s ease; /* إضافة تأثير انتقال للخلفية */
+    transition: background-color 0.3s ease;
 }
 .dark-theme-variables .form-containerd {
-    background-color: var(--clr-dark-variant); /* الخلفية في الوضع الداكن */
+    background-color: var(--clr-dark-variant);
 }
 
 .form-groupd {
@@ -781,6 +806,43 @@ input:focus {
 .modal-footer {
     display: flex;
     justify-content: flex-end;
+}
+.modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body table th,
+.modal-body table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 8px;
+}
+
+.modal-body table tbody tr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body table thead {
+    display: flex;
+    justify-content: center;
+}
+
+.modal-body table tbody {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body table tr {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.modal-body table td {
+    flex: 1;
 }
 
 .close-modal {

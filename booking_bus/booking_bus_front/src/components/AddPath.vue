@@ -10,6 +10,7 @@
 
         <div v-if="showForm" class="form-map-container">
             <form @submit.prevent="handleSubmit" class="form-containerd">
+                <h2>Add Path</h2>
                 <div class="form-groupd">
                     <label for="nameStart">Name Start</label>
                     <input
@@ -65,13 +66,13 @@
                                     class="edit-btn"
                                     @click="openEditModal(path, index)"
                                 >
-                                    Edit
+                                    <span class="material-icons">edit</span>
                                 </button>
                                 <button
                                     class="delete-btn"
                                     @click="DeletePath(path.id)"
                                 >
-                                    Delete
+                                    <span class="material-icons">delete</span>
                                 </button>
                             </td>
                         </tr>
@@ -100,12 +101,14 @@
                         required
                     />
 
-                    <div class="map-container">
+                    <div class="map-containers">
                         <MapPath />
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="edit-btn" @click="updatePath">Update</button>
+                    <button class="update-btn" @click="updatePath">
+                        Update
+                    </button>
                     <button @click="closeEditModal" class="close-modal">
                         Cancel
                     </button>
@@ -426,33 +429,58 @@ select:focus {
 }
 
 /* Button styling */
-.delete-btn,
-.edit-btn {
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
+.edit-btns {
+    color: #f1f1f1;
+    background-color: #4caf50;
+    border-radius: 9px;
+    padding: 10px;
+    margin: 5px;
+    transition: background-color 0.3s;
+}
+.edit-btns:hover {
+    background-color: #3a8d3c;
+}
+.edit-btn.material-icons,
+.delete-btn.material-icons,
+.status-btn.material-icons {
+    padding: 2px 6px;
     border: none;
-    transition: background-color 0.3s ease;
-    color: white;
-    margin: 0 5px;
+    margin: 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    color: #4caf50;
+    background-color: #f1f1f1;
+    border-radius: 9px;
+    padding: 3px;
+    margin: 5px;
+}
+.edit-btn:hover {
+    color: #fff;
+    background-color: #4caf50;
 }
 
 .delete-btn {
-    background-color: #d9534f;
+    color: #f44336;
+    background-color: #f1f1f1;
+    border-radius: 9px;
+    padding: 3px;
 }
 
 .delete-btn:hover {
-    background-color: #c9302c;
+    color: #fff;
+    background-color: #f44336;
 }
-
-.edit-btn {
-    background-color: #f0ad4e;
-}
-
-.edit-btn:hover {
-    background-color: #ec971f;
-}
-
 /* Navigation styling */
 .navd {
     display: flex;
@@ -503,27 +531,36 @@ select:focus {
     justify-content: space-between;
     width: 100%;
     margin-top: 20px;
-    height: 250px;
+    height: 350px;
 }
-
 .form-containerd {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
+    text-align: center;
 }
-
+h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #333;
+}
 .form-groupd {
+    width: 100%;
     margin-bottom: 15px;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
+    text-align: left;
     font-weight: bold;
 }
 
@@ -540,6 +577,7 @@ input:focus {
 }
 
 .submit-btnnd {
+    margin-top: auto;
     display: flex;
     justify-content: center;
 }
@@ -560,8 +598,15 @@ input:focus {
 
 .map-container {
     flex: 1;
-    margin-left: 20px;
+    margin-left: 10px;
     min-width: 400px;
+    border-radius: 20px;
+}
+.map-containers {
+    flex: 1;
+    margin-top: 20px;
+    min-width: 400px;
+    border-radius: 20px;
 }
 
 @media screen and (max-width: 1200px) {
@@ -596,8 +641,10 @@ input:focus {
     padding: 20px;
     border-radius: 10px;
     max-width: 500px;
-    width: 80%;
+    width: 50%;
+    height: 85%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    overflow: scroll;
 }
 
 .modal-header,
@@ -607,8 +654,10 @@ input:focus {
 }
 
 .modal-header {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: bold;
+    display: flex;
+    justify-content: center;
 }
 
 .modal-footer {
@@ -637,5 +686,8 @@ input:focus {
     border-radius: 5px;
     cursor: pointer;
     margin-right: 10px;
+}
+.update-btn:hover {
+    background-color: #489248;
 }
 </style>
