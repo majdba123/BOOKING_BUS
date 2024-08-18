@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Reservation;
 use App\Models\Trip;
 use App\Models\Breaks_trip;
