@@ -13,6 +13,8 @@ use App\Models\Breaks;
 use App\Models\Pivoit;
 use App\Models\Bus;
 use App\Events\NewTrip;
+use App\Models\Policy\SatisfactionRate\SatisfactionRate;
+use App\Models\Policy\SatisfactionRate\UserSatisfactionRate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -495,6 +497,8 @@ class TripController extends Controller
             'description' => 'required|string|max:100',
             'reasons' => 'required|array',
             'reasons.*' => 'string|max:50',
+            'rate' => 'numeric|min:0|max:100',
+            'satisfaction_rate_description' => 'string|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -510,7 +514,9 @@ class TripController extends Controller
         $tripId = $request->input('trip_id');
         $description = $request->input('description');
         $reasons = $request->input('reasons');
-
+        $rate = $request->input('rate');
+        $satisfactionRateDescription = $request->input('satisfaction_rate_description');
+        DB::beginTransaction();
         try {
 
             $trip = Bus_Trip::findOrFail($tripId);
@@ -558,7 +564,15 @@ class TripController extends Controller
 
             $company = $trip->bus->company->user;
             // print($company);
-
+            $satisfactionRate = null;
+            if ($rate !== null && $rate > 0) {
+                $satisfactionRate = SatisfactionRate::create([
+                    'company_id' => $trip->bus->company->id,
+                    'description' => $satisfactionRateDescription,
+                    'rate' => $rate,
+                ]);
+                $satisfactionRateValue = $satisfactionRate->rate;
+            }
             $reservedSeats = Seat_Reservation::whereHas('seat', function ($query) use ($buses) {
                 $query->whereIn('bus_id', $buses->pluck('id'));
             })->where('status', 'padding')->get();
@@ -586,22 +600,36 @@ class TripController extends Controller
                 $reservation->save();
 
                 $user = $reservationRecord->user;
+
                 // print('user !' . $user);
+                // Calculate and apply satisfaction rate if not zero
+                if ($satisfactionRate !== null) {
+                    // Create or update the satisfaction rate record
 
+
+                    $pointsAwarded = ($refundPoints * $satisfactionRateValue) / 100;
+
+                    $user->point += $pointsAwarded;
+                    $user->save();
+
+                    // Store the user satisfaction rate record
+                    UserSatisfactionRate::create([
+                        'user_id' => $user->id,
+                        'satisfaction_rate_id' => $satisfactionRate->id,
+                    ]);
+                }
                 if ($company->point >= $refundPoints) {
-
                     $company->point -= $refundPoints;
                     $user->point += $refundPoints;
-
 
                     $company->save();
                     $user->save();
                 } else {
-
+                    DB::rollBack();
                     return response()->json(['error' => 'Company does not have enough points for refund'], 400);
                 }
             }
-
+            DB::commit();
             return response()->json([
                 'message' => 'Trip has been successfully canceled',
                 'canceled_trip_id' => $canceledTrip->id,
