@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Events\SeatEvent;
-
+use App\Models\Policy\Reward\Reward;
 
 class ReservationController extends Controller
 {
@@ -139,10 +139,29 @@ class ReservationController extends Controller
 
         $user = auth()->user();
         if ($user->point < $price) {
-            // User does not have enough points
-            return response()->json([
-                'message' => 'You do not have enough points to make this reservation',
-            ]);
+            return response()->json(['message' => 'You do not have enough points to make this reservation']);
+        }
+
+        $reward = Reward::where('company_id', $bus_trip->bus->company->id)
+            ->where('Reservation_Costs', '<=', $price)
+            ->orderBy('Reservation_Costs', 'desc')
+            ->first();
+
+        if ($reward) {
+            $reward_points = ($price * ($reward->reward_percentage / 100));
+        } else {
+            $reward_points = 0;
+        }
+
+        $user->point -= $price;
+        $user->save();
+
+        // إضافة المكافأة إلى نقاط المستخدم
+        if ($reward_points > 0) {
+            $user->point += $reward_points;
+            $user->save();
+
+            $user->rewards()->attach($reward->id);
         }
 
 
@@ -185,12 +204,11 @@ class ReservationController extends Controller
             }
         }
 
-        $user->point -= $price;
-        $user->save();
 
         $company = $bus_trip->bus->company->user;
         $company->point += $price;
         $company->save();
+
 
 
 

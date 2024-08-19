@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Policy\Reward\Reward;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -99,5 +101,10 @@ class User extends Authenticatable
     public function Company()
     {
         return $this->hasOne(Company::class);
+    }
+    //code by hamza
+    public function rewards()
+    {
+        return $this->belongsToMany(Reward::class, 'reward_user')->withTimestamps();
     }
 }

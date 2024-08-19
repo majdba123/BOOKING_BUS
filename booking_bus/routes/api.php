@@ -27,14 +27,7 @@ use App\Http\Controllers\InquiresController;
 use App\Http\Controllers\DriverProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminDashBoardController;
-
-
-
-
-
-
-
-
+use App\Http\Controllers\RewardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,8 +141,13 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
     Route::post('/get_profit_trip/{bus_trip_id}', [DashboardController::class, 'get_profit_trip']);
     Route::post('/user_infomation_id/{user_id}', [DashboardController::class, 'user_info']);
 
-
-
+    Route::prefix('rewards')->group(function () {
+        Route::get('/', [RewardController::class, 'index']);
+        Route::get('/{id}', [RewardController::class, 'show']);
+        Route::post('/store', [RewardController::class, 'store']);
+        Route::put('/{id}', [RewardController::class, 'update']);
+        Route::delete('/{id}', [RewardController::class, 'destroy']);
+    });
 });
 
 
