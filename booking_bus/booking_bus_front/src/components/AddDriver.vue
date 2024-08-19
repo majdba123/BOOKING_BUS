@@ -82,10 +82,12 @@
                             <td>{{ user.status }}</td>
                             <td>
                                 <select
+                                    :value="user.selectedBusId || ''"
                                     @change="
                                         SelectDriver($event, user.driver_id)
                                     "
                                 >
+                                    <option value="">Select a bus</option>
                                     <option
                                         v-for="(bus, index) in Bus"
                                         :key="index"
@@ -241,10 +243,22 @@ export default {
         if (this.isDarkMode) {
             document.body.classList.add("dark-theme-variables");
         }
+
         this.$nextTick(() => {
             this.createChart(); // إنشاء الرسم البياني بعد التأكد من جاهزية DOM
+
+            // تحديث السائقين بالقيم المخزنة في localStorage
+            this.Driver.forEach((driver) => {
+                const savedBusId = localStorage.getItem(
+                    `driver_${driver.driver_id}_busId`
+                );
+                if (savedBusId) {
+                    driver.selectedBusId = savedBusId;
+                }
+            });
         });
     },
+
     methods: {
         closeDriverStatusModal() {
             this.showDriverStatusModal = false;
@@ -347,27 +361,35 @@ export default {
                     console.error(error);
                 });
         },
-        SelectDriver(event, userId) {
-            const busId = event.target.value;
-            const access_token = window.localStorage.getItem("access_token");
-            console.log("Selected Bus ID:", busId);
+        methods: {
+            SelectDriver(event, userId) {
+                const busId = event.target.value;
+                const access_token =
+                    window.localStorage.getItem("access_token");
+                console.log("Selected Bus ID:", busId);
 
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
-                data: { driver_id: userId },
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    console.log("Selection Complete for Bus ID:", busId);
-                    this.toast.success("Driver assigned to bus successfully!");
-                    this.AllDriver();
+                axios({
+                    method: "post",
+                    url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
+                    data: { driver_id: userId },
+                    headers: { Authorization: `Bearer ${access_token}` },
                 })
-                .catch((error) => {
-                    this.toast.error("Error assigning driver to bus.");
-                    console.error("Error for Bus ID:", busId, error);
-                });
+                    .then(() => {
+                        console.log("Selection Complete for Bus ID:", busId);
+                        this.toast.success(
+                            "Driver assigned to bus successfully!"
+                        );
+
+                        // تحديث القيمة المحلية وتخزينها في localStorage
+                        localStorage.setItem(`driver_${userId}_busId`, busId);
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error assigning driver to bus.");
+                        console.error("Error for Bus ID:", busId, error);
+                    });
+            },
         },
+
         fetchDriverStatus(status) {
             const access_token = window.localStorage.getItem("access_token");
             axios({

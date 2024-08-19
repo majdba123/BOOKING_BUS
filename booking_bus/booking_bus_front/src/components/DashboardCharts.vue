@@ -13,14 +13,6 @@
                     <canvas id="driverStatusChart"></canvas>
                 </div>
             </div>
-            <div class="chart-pair">
-                <div class="chart-container">
-                    <canvas id="reservationChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <canvas id="privateTripsChart"></canvas>
-                </div>
-            </div>
             <div class="chart-trio">
                 <div class="chart-container">
                     <canvas id="dailyProfitsChart"></canvas>
@@ -32,26 +24,41 @@
                     <canvas id="monthlyProfitsChart"></canvas>
                 </div>
             </div>
+            <div class="chart-pair">
+                <div class="chart-container">
+                    <canvas id="reservationChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="privateTripsChart"></canvas>
+                </div>
+            </div>
         </div>
         <div class="recent-orders">
-            <h1>Name Companys</h1>
+            <h1>Name Trips</h1>
             <table>
                 <thead>
                     <tr>
-                        <th>Company Name</th>
-                        <th>Count User</th>
-                        <th>Location</th>
+                        <th>Trip Name</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Price</th>
                         <th>Status</th>
-                        <th>Details</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>A Shahen</td>
-                        <td>200</td>
-                        <td>Aleppo</td>
-                        <td class="warning">Pending</td>
-                        <td class="primary">Details</td>
+                    <tr v-for="trip in trips" :key="trip.name">
+                        <td>{{ trip.name }}</td>
+                        <td>{{ trip.from }}</td>
+                        <td>{{ trip.to }}</td>
+                        <td>{{ trip.price }}</td>
+                        <td
+                            :class="{
+                                warning: trip.status === 'Pending',
+                                primary: trip.status === 'Completed',
+                            }"
+                        >
+                            {{ trip.status }}
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -67,6 +74,8 @@ export default {
     name: "DashboardCharts",
     data() {
         return {
+            trips: [], // Store trip data here
+
             dashboardData: null,
             dailyProfits: [],
             weeklyProfits: [],
@@ -82,12 +91,38 @@ export default {
         };
     },
     mounted() {
+        this.fetchTripsData(); // Fetch trips data when component is mounted
+
         this.fetchDashboardData();
     },
     beforeUnmount() {
         this.destroyCharts();
     },
     methods: {
+        fetchTripsData() {
+            const accessToken = window.localStorage.getItem("access_token");
+            axios
+                .get("http://127.0.0.1:8000/api/company/all_trips", {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                })
+                .then((response) => {
+                    this.trips = response.data
+                        .map((trip) => ({
+                            name: `${trip.path.from} to ${trip.path.to}`,
+                            from: trip.path.from,
+                            to: trip.path.to,
+                            price: parseFloat(trip.price),
+                            status: trip.status,
+                        }))
+                        .sort((a, b) => b.price - a.price);
+                })
+                .catch((error) => {
+                    console.error("Error fetching trips data:", error);
+                });
+        },
+
         fetchDashboardData() {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -473,6 +508,7 @@ h2 {
 
 .recent-orders {
     margin-top: 20px;
+    margin-left: 20px;
     width: 100%;
 }
 
@@ -485,11 +521,11 @@ h2 {
 
 .recent-orders table {
     background-color: #fff;
-    width: 100%;
-    border-radius: 2rem;
-    padding: 1.8rem;
+    width: 90%;
+    border-radius: 1rem;
+    padding: 1rem;
     text-align: center;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: 0 1.5rem 2.5rem rgba(132, 139, 200, 0.18);
     transition: all 0.3s ease;
     color: #363949;
     margin-bottom: 20px;
@@ -500,19 +536,19 @@ h2 {
 }
 
 .recent-orders table thead tr th {
-    padding: 15px;
+    padding: 10px;
     color: #007bff;
     font-weight: bold;
 }
 
 .recent-orders table tbody tr {
-    height: 3.8rem;
+    height: 3rem;
     border-bottom: 1px solid #f1f1f1;
     color: #677483;
 }
 
 .recent-orders table tbody td {
-    padding: 10px;
+    padding: 8px;
     border-bottom: 1px solid #f1f1f1;
 }
 

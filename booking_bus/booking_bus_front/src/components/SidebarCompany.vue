@@ -297,7 +297,7 @@ aside .sidebar a {
     align-items: center;
     margin-left: 2rem;
     color: #7d8da1;
-    height: 3.2rem;
+    height: 2.7rem;
     text-decoration: none;
     gap: 1rem;
     transition: all 0.1s ease-in;

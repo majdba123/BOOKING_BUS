@@ -495,8 +495,8 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 20px;
-    width: 20px;
+    height: 15px;
+    width: 15px;
     cursor: pointer;
 }
 
