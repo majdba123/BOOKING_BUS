@@ -29,6 +29,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminDashBoardController;
 use App\Http\Controllers\RewardController;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -52,7 +53,7 @@ Route::post('logout', [UserApiController::class, 'logout'])->middleware('auth:sa
 Route::post('register/company', [CompanyController::class, 'register']);
 
 
-
+Route::get('all_user', [AdminDashBoardController::class, 'all_user']);
 
 
 
