@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Events\SeatEvent;
-
+use App\Events\PrivateNotification;
 
 class ReservationController extends Controller
 {
@@ -185,7 +185,7 @@ class ReservationController extends Controller
         }
 
         $user->point -= $price;
-        $user->save();
+       $user->save();
 
         $company = $bus_trip->bus->company->user;
         $company->point += $price;

@@ -36,6 +36,7 @@ use App\Http\Controllers\AdminDashBoardController;
 
 
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -59,7 +60,7 @@ Route::post('logout',[UserApiController::class,'logout'])->middleware('auth:sanc
 Route::post('register/company',[CompanyController::class,'register']);
 
 
-
+Route::get('all_user', [AdminDashBoardController::class, 'all_user']);
 
 
 

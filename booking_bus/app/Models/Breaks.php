@@ -10,6 +10,7 @@ class Breaks extends Model
     use HasFactory;
     protected $fillable = [
         'name',
+        'area_id'
     ];
 
 

@@ -5,7 +5,8 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
+use Faker\Generator as Faker;
+use App\Models\User;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
@@ -24,12 +25,12 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'point' => 200,
-            'remember_token' => Str::random(10),
+            'name' => $this->faker->firstName . ' ' . $this->faker->lastName,
+            'email' => $this->faker->unique()->email,
+            'lang' => $this->faker->longitude, // generate a random longitude
+            'lat' => $this->faker->latitude,
+            'password' => Hash::make('password'), // generate a hashed password
+            'type' => $this->faker->randomElement(['0', '1']), // assuming 0 and 1 are the possible values
         ];
     }
 
@@ -42,4 +43,12 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    public function admin()
+    {
+        return $this->state([
+            'type' => '1',
+        ]);
+    }
+    //$user = User::factory()->count(3)->admin()->create(); // creates 3 admin users
 }

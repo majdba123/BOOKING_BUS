@@ -150,7 +150,7 @@ class TripController extends Controller
         }
         $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->find($trip->id);
         event(new NewTrip($trips1));
-        return response()->json($trips1);
+        return response()->json($trips1, 201);
     }
 
     /**
@@ -331,7 +331,7 @@ class TripController extends Controller
         ]);
     }
 
-
+    
     public function index_user()
     {
 

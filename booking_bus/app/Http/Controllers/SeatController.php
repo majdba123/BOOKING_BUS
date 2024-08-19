@@ -151,7 +151,7 @@ class SeatController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($seat_id)
+    public function destroy( Request $request ,$seat_id)
     {
         $validator = Validator::make($request->all(), [
             'bus_id'  => 'required|integer'
