@@ -28,28 +28,7 @@
             <!-- Right section start -->
             <div class="right">
                 <!--start top-->
-                <div class="top">
-                    <button id="menu_bar" @click="openMenu">
-                        <span class="material-icons">menu</span>
-                    </button>
-                    <div
-                        class="theme-toggler"
-                        ref="themeToggler"
-                        @click="toggleTheme"
-                    >
-                        <span class="material-icons active">light_mode</span>
-                        <span class="material-icons">dark_mode</span>
-                    </div>
-                    <div class="profile">
-                        <div class="info">
-                            <p><b>Babar</b></p>
-                            <p>Admin</p>
-                        </div>
-                        <div class="profile-photo">
-                            <img src="@/assets/busss.png" alt="Profile" />
-                        </div>
-                    </div>
-                </div>
+
                 <!--end top-->
 
                 <!--start recent_updates-->
@@ -185,7 +164,7 @@ body {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 14rem;
+    grid-template-columns: 14rem auto 16rem;
     margin-left: 0;
     height: 100vh;
     overflow-y: auto;
@@ -277,7 +256,7 @@ aside .logo {
     padding: 1rem;
     background-color: #f6f6f9;
     grid-column: span 1;
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
+    overflow-y: auto;
 }
 
 .right .top {
@@ -334,8 +313,7 @@ aside .logo {
 
 /***recent update */
 .right .recent_updates {
-    margin-top: 1rem;
-    margin-left: -20px;
+    margin-top: 3.9rem;
 }
 .right .recent_updates h2 {
     color: #363949;

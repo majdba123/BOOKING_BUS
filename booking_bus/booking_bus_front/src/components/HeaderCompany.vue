@@ -44,7 +44,7 @@ export default {
             x: store.state.x,
             showProfileMenu: false,
             profileImage: "",
-            isDarkMode: false, // حالة الوضع الداكن
+            isDarkMode: false,
         };
     },
     methods: {
@@ -79,7 +79,7 @@ export default {
             this.profileImage = userDataFrame.image;
         },
         toggleTheme() {
-            this.isDarkMode = !this.isDarkMode; // تبديل الحالة
+            this.isDarkMode = !this.isDarkMode;
             document.body.classList.toggle(
                 "dark-theme-variables",
                 this.isDarkMode
@@ -92,7 +92,6 @@ export default {
     },
     mounted() {
         this.fetchProfileInfo();
-        // التحقق من وجود الوضع الداكن عند التحميل
         if (document.body.classList.contains("dark-theme-variables")) {
             this.isDarkMode = true;
             const themeToggler = this.$refs.themeToggler;
@@ -128,8 +127,8 @@ export default {
     --clr-light: rgba(0, 0, 0, 0.4);
     --clr-dark: #edeffd;
     --clr-dark-variant: #677483;
-    --clr-primary: #bb86fc; /* لون أساسي مختلف للوضع الداكن */
-    --clr-danger: #cf6679; /* لون الخطر للوضع الداكن */
+    --clr-primary: #bb86fc;
+    --clr-danger: #cf6679;
 }
 
 * {

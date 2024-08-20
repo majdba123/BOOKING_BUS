@@ -94,7 +94,6 @@ export default {
     methods: {
         fetchCompanyInfo() {
             const access_token = window.localStorage.getItem("access_token");
-            console.log(access_token);
             axios
                 .get("http://127.0.0.1:8000/api/company/my_info", {
                     headers: { Authorization: `Bearer ${access_token}` },
