@@ -20,17 +20,7 @@
         <div class="main-content">
             <main>
                 <h1>{{ x }}</h1>
-                <div class="top-bar">
-                    <div class="date">
-                        <input
-                            type="text"
-                            placeholder="Search In..."
-                            aria-label="Search"
-                            v-model="searchQuery"
-                        />
-                        <button @click="search">Search</button>
-                    </div>
-                </div>
+
                 <ProfileCompanys ref="ProfileCompanys" />
             </main>
         </div>

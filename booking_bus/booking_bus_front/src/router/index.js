@@ -20,6 +20,7 @@ import PrivateTrip from "../views/Company/PrivateTrip/PrivateTrip.vue";
 import AllRating from "../views/Company/Rating/AllRating.vue";
 import AllFavourite from "../views/Company/Favourite/AllFavourite.vue";
 import AllPolices from "../views/Company/Polices/AllPolices.vue";
+import AllReservation from "../views/Company/Reservation/AllReservation.vue";
 
 const routes = [
     {
@@ -31,6 +32,11 @@ const routes = [
         path: "/AllPolices",
         name: "AllPolices",
         component: AllPolices,
+    },
+    {
+        path: "/AllReservation",
+        name: "AllReservation",
+        component: AllReservation,
     },
     {
         path: "/AllFavourite",

@@ -101,6 +101,24 @@
                     Finished
                 </button>
                 <div class="modal-body">
+                    <button
+                        class="status-btn"
+                        @click="fetchBusStatus('pending')"
+                    >
+                        Pending
+                    </button>
+                    <button
+                        class="status-btn"
+                        @click="fetchBusStatus('available')"
+                    >
+                        Available
+                    </button>
+                    <button
+                        class="status-btn"
+                        @click="fetchBusStatus('completed')"
+                    >
+                        Complated
+                    </button>
                     <table>
                         <thead>
                             <tr>
@@ -264,8 +282,9 @@ export default {
                 url: `http://127.0.0.1:8000/api/company/update_bus/${busId}`,
                 headers: { Authorization: `Bearer ${access_token}` },
                 data: {
-                    number_bus: this.editedBus.number_bus,
-                    number_passenger: this.editedBus.number_passenger,
+                    number_bus: this.editedBus.number_bus.toString(),
+                    number_passenger:
+                        this.editedBus.number_passenger.toString(),
                 },
             })
                 .then((response) => {
@@ -277,10 +296,13 @@ export default {
                         number_passenger: "",
                     };
                     console.log(response);
+
                     this.toast.success("Bus updated successfully!");
                     this.showEditModal = false;
                 })
                 .catch((error) => {
+                    console.log(this.editedBus);
+
                     this.toast.error("Error updating bus.");
                     console.error(error);
                 });
@@ -333,7 +355,7 @@ export default {
                 .then(() => {
                     this.Bus = this.Bus.filter((busItem) => busItem.id !== id);
                     this.toast.success("Bus deleted successfully!");
-                })
+                }, this.AllBus())
                 .catch((error) => {
                     this.toast.error("Error deleting bus.");
                     console.error(error);

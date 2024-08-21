@@ -230,6 +230,7 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
+                    this.AllPaths();
                 })
                 .catch((error) => {
                     this.toast.error("Error Deleting Path", {

@@ -37,3 +37,11 @@ app.component('example-component', ExampleComponent);
  */
 
 app.mount('#app');
+
+
+Echo.private('charge-balance-private-notification-{{ auth()->id() }}')
+.listen('PrivateNotification', (e) => {
+    console.log(e.message);
+    // display the notification in the #notifications div
+    $('#notifications').append('<p>' + e.message + '</p>');
+});

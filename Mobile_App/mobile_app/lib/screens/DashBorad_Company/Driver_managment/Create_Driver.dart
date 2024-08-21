@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:provider/provider.dart';
+
+
 class RegistrationForm extends StatefulWidget {
   @override
   _RegistrationFormState createState() => _RegistrationFormState();
@@ -16,6 +21,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
     _passwordController.dispose();
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +70,6 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 if (value!.isEmpty) {
                   return 'Please enter your email';
                 }
-                // Add more email validation logic if needed
                 return null;
               },
             ),
@@ -81,26 +87,51 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 if (value!.isEmpty) {
                   return 'Please enter a password';
                 }
-                // Add more password validation logic if needed
                 return null;
               },
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (_validateInputs()) {
-                  // Perform registration logic here
-                  String name = _nameController.text;
-                  String email = _emailController.text;
-                  String password = _passwordController.text;
+            Consumer<DriverProvider>(
+              builder: (context, driverProvider, child) {
+                return driverProvider.isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                        onPressed: () async {
 
-                  // For demonstration, print values to console
-                  print('Name: $name, Email: $email, Password: $password');
 
-                  // Optionally, navigate to another screen or perform registration API call
-                }
+                          if (_validateInputs()) {
+                            await driverProvider.addDriver(
+                             Provider.of<AuthProvider>(context,listen: false).accessToken,
+                                _nameController.text,
+                              _emailController.text,
+                            
+                              _passwordController.text,
+                            );
+
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Registration Status'),
+                                content: Text(driverProvider.message),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      _nameController.text="";
+                                        _emailController.text="";
+                                        _passwordController.text="";
+                                       
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                        child: Text('Register'),
+                      );
               },
-              child: Text('Register'),
             ),
           ],
         ),

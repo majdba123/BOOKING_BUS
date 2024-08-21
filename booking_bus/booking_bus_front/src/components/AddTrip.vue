@@ -503,7 +503,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
+                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=available",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -607,6 +607,22 @@ export default {
                     });
                     console.error(error);
                     console.log(this.date);
+                });
+        },
+        fetchAllDriverWithBus() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/company/all_driver_with_bus/avalibale",
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.driverWithBusData = response.data;
+                    console.log(this.driverWithBusData);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching drivers with bus.");
+                    console.error(error);
                 });
         },
         AllTrips() {
@@ -814,6 +830,9 @@ export default {
                         .toLowerCase()
                         .includes(store.state.searchQuery.toLowerCase()) ||
                     (trip.area_name || "")
+                        .toLowerCase()
+                        .includes(store.state.searchQuery.toLowerCase()) ||
+                    trip.status
                         .toLowerCase()
                         .includes(store.state.searchQuery.toLowerCase())
                 );

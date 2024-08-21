@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Events\PrivateNotification;
 class ChargeBalanceController extends Controller
 {
     /**
@@ -178,7 +179,10 @@ class ChargeBalanceController extends Controller
 
         $user->point += $points; // add the points to the user's points
         $user->save();
+        $user_id =$user->id;
+        $massage = "your status of charage balance update to  : $chargeBalance->status";
 
+        event(new PrivateNotification($user_id , $massage));
         return response()->json(['message' => 'Charge balance status updated to completed and points added to user'], 200);
     }
 
@@ -190,6 +194,8 @@ class ChargeBalanceController extends Controller
         }
         $chargeBalance->status = 'cancelled';
         $chargeBalance->save();
+        $massage = "your status of charage balance update to  : $chargeBalance->status";
+        event(new PrivateNotification($user_id , $massage));
         return response()->json(['message' => 'Charge balance status updated to cancelled'], 200);
 
     }

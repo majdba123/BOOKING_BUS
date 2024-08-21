@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\pusherCntroller;
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +18,26 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/seat', function () {
+    return view('seat');
+});
+
+Route::get('/notification', function () {
+    return view('notification');
+});
+
+Route::get('/foruser', function () {
+    return view('foruser');
+})->middleware('auth');
+
+
+Route::get('/breaktrip', function () {
+    return view('breakTrip');
+})->middleware('auth');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+
