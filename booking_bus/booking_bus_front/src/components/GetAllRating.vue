@@ -86,7 +86,7 @@
         <!-- Start ratings tables -->
         <div v-if="showTripRatings" class="recent_orders">
             <h1>Trip Ratings</h1>
-            <div class="table-container">
+            <div class="table-container" v-if="showTripRatings.lenght">
                 <table>
                     <thead>
                         <tr>
@@ -121,11 +121,14 @@
                     </tbody>
                 </table>
             </div>
+            <div v-else class="modal-content">
+                <p>No Trip Ratings.</p>
+            </div>
         </div>
 
         <div v-if="showDriverRatings" class="recent_orders">
             <h1>Driver Ratings</h1>
-            <div class="table-container">
+            <div class="table-container" v-if="showDriverRatings.lenght">
                 <table>
                     <thead>
                         <tr>
@@ -155,6 +158,9 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div v-else class="modal-content">
+                <p>No Driver Ratings.</p>
             </div>
         </div>
 
@@ -587,11 +593,14 @@ select:focus {
 
 .modal-content {
     background: #fff;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
+    max-width: 400px;
+    width: 70%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    text-align: center;
+    margin-top: 2rem;
+    margin-left: 10rem;
 }
 
 .modal-header {

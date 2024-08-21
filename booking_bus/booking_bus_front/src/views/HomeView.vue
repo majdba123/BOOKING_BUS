@@ -114,11 +114,13 @@ export default {
                 .then((response) => {
                     if (response.status === 200) {
                         console.log(response);
+
                         window.alert("Login successful");
                         window.localStorage.setItem(
                             "access_token",
                             response.data.access_token
                         );
+                        console.log(response.data.access_token);
 
                         const userType = response.data.type_user;
                         if (userType === "admin") {

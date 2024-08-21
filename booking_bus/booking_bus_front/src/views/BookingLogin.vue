@@ -46,24 +46,19 @@ import MainCompany from "@/components/MainCompany.vue";
 import DashboardCharts from "@/components/DashboardCharts.vue";
 export default {
     mounted() {
-        // استدعاء الدالة عند تحميل الصفحة لأول مرة
         this.handleResize();
 
-        // إضافة مستمع للحدث لتتبع تغييرات حجم الشاشة
         window.addEventListener("resize", this.handleResize);
     },
     beforeUnmount() {
-        // إزالة مستمع الحدث عند تدمير المكون لتجنب تسريب الذاكرة
         window.removeEventListener("resize", this.handleResize);
     },
     methods: {
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {
-                // فتح الشريط الجانبي إذا كانت الشاشة كبيرة
                 sideMenu.style.display = "block";
             } else {
-                // إخفاء الشريط الجانبي إذا كانت الشاشة صغيرة
                 sideMenu.style.display = "none";
             }
         },

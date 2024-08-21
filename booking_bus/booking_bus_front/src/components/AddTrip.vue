@@ -63,15 +63,17 @@
             <form @submit.prevent="handleSubmit" class="form-containerd">
                 <div class="form-groupd">
                     <label for="path">Path</label>
-                    <select v-model="path" class="input">
-                        <option
-                            v-for="(pathItem, index) in paths"
-                            :key="index"
-                            :value="pathItem.id"
-                        >
-                            {{ pathItem.from }} >> {{ pathItem.to }}
-                        </option>
-                    </select>
+                    <div class="select-container">
+                        <select v-model="path" id="path">
+                            <option
+                                v-for="(pathItem, index) in paths"
+                                :key="index"
+                                :value="pathItem.id"
+                            >
+                                {{ pathItem.from }} >> {{ pathItem.to }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-groupd">
                     <label for="price">Price</label>
@@ -79,31 +81,36 @@
                 </div>
                 <div class="form-groupd">
                     <label for="area">Area</label>
-                    <select v-model="area" class="input" @change="fetchBreak">
-                        <option
-                            v-for="(areaItem, index) in Government"
-                            :key="index"
-                            :value="areaItem.id"
-                        >
-                            {{ areaItem.name }}
-                        </option>
-                    </select>
+                    <div class="select-container">
+                        <select v-model="area" id="area" @change="fetchBreak">
+                            <option
+                                v-for="(areaItem, index) in Government"
+                                :key="index"
+                                :value="areaItem.id"
+                            >
+                                {{ areaItem.name }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-groupd">
                     <label for="search_break_areas">Search Break Areas</label>
-                    <select
-                        v-model="search_break_areas"
-                        class="input multi-select"
-                        multiple
-                    >
-                        <option
-                            v-for="(breakItem, index) in breaks"
-                            :key="index"
-                            :value="breakItem.id"
+                    <div class="select-container">
+                        <select
+                            v-model="search_break_areas"
+                            id="search_break_areas"
+                            class="multi-select"
+                            multiple
                         >
-                            {{ breakItem.name }}
-                        </option>
-                    </select>
+                            <option
+                                v-for="(breakItem, index) in breaks"
+                                :key="index"
+                                :value="breakItem.id"
+                            >
+                                {{ breakItem.name }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-groupd">
                     <label for="bus">Bus</label>
@@ -112,20 +119,24 @@
                         :key="index"
                         class="bus-field"
                     >
-                        <select v-model="bus.bus_id" class="input">
-                            <option
-                                v-for="(busItem, i) in availableBuses"
-                                :key="i"
-                                :value="busItem.id"
-                            >
-                                {{ busItem.number_bus }}
-                            </option>
-                        </select>
+                        <div class="select-container">
+                            <select v-model="bus.bus_id">
+                                <option
+                                    v-for="(busItem, i) in availableBuses"
+                                    :key="i"
+                                    :value="busItem.id"
+                                >
+                                    {{ busItem.number_bus }}
+                                </option>
+                            </select>
+                        </div>
                         <span>Type</span>
-                        <select v-model="bus.type" class="input">
-                            <option value="all">All</option>
-                            <option value="going">Going</option>
-                        </select>
+                        <div class="select-container">
+                            <select v-model="bus.type">
+                                <option value="all">All</option>
+                                <option value="going">Going</option>
+                            </select>
+                        </div>
                         <span>Start Time</span>
                         <input
                             v-model="bus.start_time"
@@ -219,24 +230,24 @@
                 <span class="close" @click="closeDetails">&times;</span>
                 <h2>Trip Details</h2>
                 <div class="detail-section">
-                    <p><strong>ID:</strong> {{ selectedTrip.id }}</p>
-                    <p><strong>Status:</strong> {{ selectedTrip.status }}</p>
-                    <p><strong>Price:</strong> {{ selectedTrip.price }}</p>
+                    <p><strong>ID :</strong> {{ selectedTrip.id }}</p>
+                    <p><strong>Status :</strong> {{ selectedTrip.status }}</p>
+                    <p><strong>Price :</strong> {{ selectedTrip.price }}</p>
                     <p>
-                        <strong>Company ID:</strong>
+                        <strong>Company ID : </strong>
                         {{ selectedTrip.company_id }}
                     </p>
                     <p>
-                        <strong>Created At:</strong>
+                        <strong>Created At : </strong>
                         {{ selectedTrip.created_at }}
                     </p>
                     <p>
-                        <strong>Updated At:</strong>
+                        <strong>Updated At : </strong>
                         {{ selectedTrip.updated_at }}
                     </p>
                 </div>
                 <div class="detail-section">
-                    <h3>Breaks</h3>
+                    <h3>Breaks :</h3>
                     <ul>
                         <li
                             v-for="breakItem in selectedTrip.breaks_trip"
@@ -247,7 +258,7 @@
                     </ul>
                 </div>
                 <div class="detail-section">
-                    <h3>Buses</h3>
+                    <h3>Buses :</h3>
                     <ul>
                         <li v-for="bus in selectedTrip.bus_trip" :key="bus.id">
                             Bus ID: {{ bus.bus_id }}, Type: {{ bus.type }},
@@ -359,26 +370,27 @@
                     <button @click="addBus" class="Button add-bus-button">
                         Add Another Bus
                     </button>
-                </div>
-                <div class="form-groupd">
-                    <label for="date">Date</label>
-                    <input type="date" id="date" v-model="date" />
-                </div>
-                <div class="submit-btnnd">
-                    <button
-                        type="submit"
-                        @click="saveChanges()"
-                        class="submit-btnd"
-                    >
-                        Save Changes
-                    </button>
-                    <button
-                        @click="cancelEdit"
-                        class="submit-btnd"
-                        type="button"
-                    >
-                        Cancel
-                    </button>
+
+                    <div class="form-groupd">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" v-model="date" />
+                    </div>
+                    <div class="submit-btnnd">
+                        <button
+                            type="submit"
+                            @click="saveChanges()"
+                            class="submit-btnd"
+                        >
+                            Save Changes
+                        </button>
+                        <button
+                            @click="cancelEdit"
+                            class="submit-btnd"
+                            type="button"
+                        >
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -528,7 +540,7 @@ export default {
         },
         fetchBreakk(areaId) {
             const access_token = window.localStorage.getItem("access_token");
-            console.log("Fetching breaks for area ID:", areaId); // لطباعة ID المنطقة في الconsole
+            console.log("Fetching breaks for area ID:", areaId);
 
             axios({
                 method: "get",
@@ -537,10 +549,10 @@ export default {
             })
                 .then((response) => {
                     this.breaks = response.data;
-                    console.log("Breaks fetched successfully:", this.breaks); // طباعة البيانات المجلوبة
+                    console.log("Breaks fetched successfully:", this.breaks);
                 })
                 .catch((error) => {
-                    console.error("Error getting breaks:", error); // طباعة الخطأ في الconsole
+                    console.error("Error getting breaks:", error);
                     window.alert("Error getting breaks");
                 });
         },
@@ -947,14 +959,6 @@ select:focus {
     outline: none;
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #363949;
-    font-size: 16px;
-}
-
 /* Adjusted Button styling */
 .edit-btn.material-icons,
 .delete-btn.material-icons,
@@ -971,7 +975,7 @@ label {
     align-items: center;
     justify-content: center;
     height: 20px;
-    width: 30px;
+    width: 25px;
     cursor: pointer;
 }
 
@@ -1095,12 +1099,52 @@ label {
 .form-groupd {
     margin-bottom: 20px;
 }
+.select-container {
+    position: relative;
+    width: 100%;
+}
 
+.select-container select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #007bff;
+    background-color: #fff;
+    box-sizing: border-box;
+    appearance: none;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.select-container select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.select-container select:hover {
+    background-color: #f0f0f0;
+    border-color: #007bff;
+}
+
+.select-container::after {
+    content: "▼";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #007bff;
+    pointer-events: none;
+}
+.bus-field span,
 label {
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
-    color: #363949;
+    color: #007bff;
     font-size: 16px;
 }
 
@@ -1110,10 +1154,11 @@ input {
     border: 2px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
-    color: #363949;
+    color: #007bff;
     background-color: #fff;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
+    text-align: center;
 }
 
 input:focus {
@@ -1440,27 +1485,33 @@ input:focus {
     margin-bottom: 20px;
 }
 
-.detail-section h3 {
-    margin-bottom: 10px;
-    color: #176b87;
-}
-
 .detail-section p {
     margin: 5px 0;
-    color: black;
+    color: #444;
+}
+
+.detail-section h3 {
+    margin-bottom: 10px;
+    color: #555;
 }
 
 .detail-section ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
 .detail-section ul li {
-    background: #f1f1f1;
+    background: #f9f9f9;
     padding: 10px;
     margin-bottom: 5px;
     border-radius: 5px;
-    color: black;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+.detail-section ul li:hover {
+    background-color: #eaeaea;
 }
 
 /* Responsive Design */
