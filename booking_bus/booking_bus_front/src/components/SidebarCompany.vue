@@ -96,7 +96,16 @@
             <span class="material-icons" aria-label="Products">person</span>
             <h3>Reservation</h3>
         </router-link>
-
+        <router-link
+            to="AllPolices"
+            @click="selectOption('AllPolices')"
+            :class="{ active: selectedOption === 'AllPolices' }"
+        >
+            <span class="material-icons" aria-label="Analytics"
+                >description</span
+            >
+            <h3>Polices</h3>
+        </router-link>
         <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">
             <span class="material-icons" aria-label="Logout">logout</span>
             <h3>Logout</h3>
@@ -113,7 +122,7 @@ export default {
     name: "SideBarCompany",
     data() {
         return {
-            selectedOption: "Dashboard", // Set default selected option to Dashboard
+            selectedOption: "Dashboard",
         };
     },
     methods: {
@@ -305,7 +314,7 @@ aside .sidebar a {
     align-items: center;
     margin-left: 2rem;
     color: #7d8da1;
-    height: 3.2rem;
+    height: 2.7rem;
     text-decoration: none;
     gap: 1rem;
     transition: all 0.1s ease-in;
