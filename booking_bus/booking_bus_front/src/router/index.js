@@ -19,12 +19,18 @@ import AllBreak from "../views/Company/Break/AllBreak.vue";
 import PrivateTrip from "../views/Company/PrivateTrip/PrivateTrip.vue";
 import AllRating from "../views/Company/Rating/AllRating.vue";
 import AllFavourite from "../views/Company/Favourite/AllFavourite.vue";
+import AllPolices from "../views/Company/Polices/AllPolices.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/AllPolices",
+        name: "AllPolices",
+        component: AllPolices,
     },
     {
         path: "/AllFavourite",
