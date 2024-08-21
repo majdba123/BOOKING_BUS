@@ -10,7 +10,7 @@ class BusApiService {
     final url = Uri.parse(name_domain_server + "company/store_bus");
     final headers = {
       'Authorization': 'Bearer $accessToken',
-      // 'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
     };
     final body = jsonEncode({
       'number_bus': number_bus,
