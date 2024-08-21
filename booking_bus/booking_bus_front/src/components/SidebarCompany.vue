@@ -88,16 +88,13 @@
             <span class="material-icons" aria-label="Products">person</span>
             <h3>Profile</h3>
         </router-link>
-        <router-link
-            to="AllPolices"
-            @click="selectOption('AllPolices')"
-            :class="{ active: selectedOption === 'AllPolices' }"
-        >
+        <router-link>
             <span class="material-icons" aria-label="Analytics"
                 >description</span
             >
             <h3>Polices</h3>
         </router-link>
+
         <router-link
             to="AllReservation"
             @click="selectOption('Reservation')"
