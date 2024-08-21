@@ -100,8 +100,67 @@
                             </div>
                         </div>
 
-                        <div class="submit-btn">
-                            <button type="submit">Save Cancel</button>
+                        <div class="button-group">
+                            <button type="submit" class="nav-btnd">
+                                Save Cancel
+                            </button>
+                            <button
+                                type="button"
+                                class="nav-btnd"
+                                @click="showCompensationModal = true"
+                            >
+                                Financial compensation
+                            </button>
+                        </div>
+
+                        <div class="modal" v-if="showCompensationModal">
+                            <div class="modal-content">
+                                <button
+                                    class="close-btn"
+                                    @click="showCompensationModal = false"
+                                >
+                                    &times;
+                                </button>
+                                <h3>Financial compensation</h3>
+
+                                <div class="form-group">
+                                    <label for="compensation-percentage"
+                                        >Satisfaction Rate</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="compensation-percentage"
+                                        v-model="compensationData.percentage"
+                                        placeholder="Enter the compensation percentage"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="compensation-description"
+                                        >description</label
+                                    >
+                                    <textarea
+                                        id="compensation-description"
+                                        v-model="compensationData.description"
+                                        placeholder="Enter compensation description"
+                                    ></textarea>
+                                </div>
+
+                                <div class="modal-actions">
+                                    <button
+                                        @click="saveCompensation"
+                                        class="nav-btnd"
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        @click="showCompensationModal = false"
+                                        class="nav-btnd"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -124,6 +183,11 @@ export default {
             formData: {
                 description: "",
                 fields: [{ value: "" }],
+            },
+            showCompensationModal: false,
+            compensationData: {
+                percentage: "",
+                description: "",
             },
             showCancelForm: true,
             isDarkMode: false,
@@ -171,6 +235,11 @@ export default {
         submitForm() {
             // Handle form submission
             console.log("Form submitted:", this.formData);
+        },
+        saveCompensation() {
+            // معالجة البيانات وحفظها هنا
+            console.log(this.compensationData);
+            this.showCompensationModal = false;
         },
         handleLogoUpload(event) {
             // Handle logo upload
@@ -340,7 +409,7 @@ body {
 }
 
 .input-with-buttons button {
-    height: 40px; /* جعل الأزرار بنفس ارتفاع حقل الإدخال */
+    height: 40px;
     width: 40px;
     padding: 5px;
     display: flex;
@@ -548,6 +617,96 @@ textarea:focus {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transition: 0.3s;
 }
+/* Styles for the modal (popup) */
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background: var(--clr-white);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 80%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    position: relative;
+}
+
+/* Close button styles */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--clr-dark);
+}
+
+.close-btn:hover {
+    color: var(--clr-danger);
+}
+
+.modal h3 {
+    text-align: center;
+    color: var(--clr-dark-variant);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal-actions button {
+    padding: 10px 20px;
+    border-radius: 25px;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
+    cursor: pointer;
+    font-size: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+}
+
+.modal-actions button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+.form-group label {
+    font-size: 1.1rem;
+    color: var(--clr-dark-variant);
+    font-weight: bold;
+    margin-top: 10px;
+}
+input::placeholder,
+textarea::placeholder {
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+    color: var(--clr-info-dark);
+    opacity: 1;
+}
+
+/* Input and Textarea styles to ensure consistency */
+input,
+textarea {
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+}
 
 /* Navigation Styles */
 .navd {
@@ -573,6 +732,12 @@ textarea:focus {
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
+}
+.button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
 }
 
 @keyframes gradientAnimation {
