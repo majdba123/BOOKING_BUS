@@ -293,6 +293,11 @@ class ReservationController extends Controller
 
             $hoursBefore = $departureDateTime->diffInHours(now());
 
+            if ($hoursBefore <= 0) {
+                return response()->json(['message' => 'The trip has already started and cannot be canceled.'], 422);
+            }
+            // print('the hours befor the trip is : ' . $hoursBefore);
+
             $cancellationRule = CancellationRule::where('company_id', $reservation->bus_trip->bus->company_id)
                 ->where('hours_before', '<=', $hoursBefore)
                 ->orderBy('hours_before', 'desc')
@@ -304,13 +309,11 @@ class ReservationController extends Controller
             }
 
             if ($cancellationRule) {
-                // Calculate the refund based on the rule's discount percentage
                 $refundAmount = $reservation->price - ($reservation->price * ($cancellationRule->discount_percentage / 100));
             } else {
-                // Default to no refund if somehow no rule is found
                 $refundAmount = $reservation->price;
             }
-
+            // print('the cancel rule apply is ' . $cancellationRule->discount_percentage);
 
 
             // $refundAmount = $reservation->price - ($reservation->price * ($cancellationRule->discount_percentage / 100));
