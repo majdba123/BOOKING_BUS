@@ -5,6 +5,7 @@ export default createStore({
         x: "Dashboard",
         Bus: {},
         Driver: {},
+        Company: {},
         Paths: {},
         Trips: {},
         searchQuery: "",

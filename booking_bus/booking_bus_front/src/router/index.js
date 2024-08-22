@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import CreateCompany from "../views/CreateCompany.vue";
+import AllCompany from "../views/AllCompany.vue";
 import AdminPage from "../views/AdminPage.vue";
 import EditBreak from "../views/EditBreak.vue";
 import AddGovernment from "../views/AddGovernment.vue";
@@ -135,9 +135,9 @@ const routes = [
         component: AdminPage,
     },
     {
-        path: "/CreateCompany",
-        name: "CreateCompany",
-        component: CreateCompany,
+        path: "/AllCompany",
+        name: "AllCompany",
+        component: AllCompany,
     },
     {
         path: "/about",

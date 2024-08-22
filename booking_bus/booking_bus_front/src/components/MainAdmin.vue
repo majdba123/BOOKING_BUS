@@ -1,67 +1,25 @@
 <template>
-    <div class="container">
-        <!-- Aside section start -->
-        <aside ref="sideMenu">
-            <!-- Start top -->
-            <div class="top">
-                <div class="logo">
-                    <h2>T<span class="danger">RAVEL</span></h2>
-                </div>
-                <div class="close" @click="closeMenu">
-                    <span class="material-icons" aria-label="Close">close</span>
-                </div>
-            </div>
-            <!-- End top -->
+    <main>
+        <HeaderCompany />
+        <StatisticsCompany />
+        <!-- End insights -->
 
-            <!-- Start sidebar -->
-            <SidebarAdmin />
-            <!-- End sidebar -->
-        </aside>
-
-        <div class="main-content">
-            <!-- زر القائمة -->
-            <button id="menu_bar" @click="openMenu" class="menu-button">
-                <span class="material-icons">menu</span>
-            </button>
-
-            <!-- Main content -->
-            <MainAdmin />
-
-            <!-- Dashboard Charts -->
-            <div class="charts-wrapper">
-                <DashboardChartsAdmin />
-            </div>
-        </div>
-
-        <!-- Main section end -->
-
-        <!-- Right section start -->
-
-        <!-- Right section end -->
-    </div>
+        <!-- Start recent orders -->
+    </main>
 </template>
 <script>
-import MainAdmin from "@/components/MainAdmin.vue";
-import DashboardChartsAdmin from "@/components/DashboardChartsAdmin.vue";
-import SidebarAdmin from "@/components/SidebarAdmin.vue";
-export default {
-    mounted() {
-        this.handleResize();
+import store from "@/store";
+import StatisticsCompany from "./StatisticsCompany.vue";
+import HeaderCompany from "./HeaderCompany.vue";
 
-        window.addEventListener("resize", this.handleResize);
-    },
-    beforeUnmount() {
-        window.removeEventListener("resize", this.handleResize);
+export default {
+    name: "MainCompany",
+    data() {
+        return {
+            x: store.state.x,
+        };
     },
     methods: {
-        handleResize() {
-            const sideMenu = this.$refs.sideMenu;
-            if (window.innerWidth > 768) {
-                sideMenu.style.display = "block";
-            } else {
-                sideMenu.style.display = "none";
-            }
-        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
@@ -86,11 +44,11 @@ export default {
             }
         },
     },
-
-    components: { MainAdmin, SidebarAdmin, DashboardChartsAdmin },
+    mounted() {},
+    components: { StatisticsCompany, HeaderCompany },
 };
 </script>
-<style scoped>
+<style>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 :root {
@@ -117,7 +75,6 @@ export default {
 
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
-
 .dark-theme-variables {
     --clr-color-background: #181a1e;
     --clr-white: #202528;
@@ -141,56 +98,75 @@ body {
     font-family: "Poppins", sans-serif;
     width: 100%;
     height: 100%;
+    overflow: hidden;
     font-size: 0.88rem;
     user-select: none;
     background: #f6f6f9;
-    overflow-y: auto;
 }
 
 .container {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto;
+    grid-template-columns: 14rem auto 14rem;
     margin-left: 0;
-    height: 100vh;
-    overflow-y: auto;
 }
 
 a {
     color: #363949;
 }
 
-.main-content {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow-y: auto;
-    padding: 20px;
+h1 {
+    font-weight: 800;
+    font-size: 1.8rem;
 }
 
-.charts-wrapper {
-    margin-top: 20px;
-    width: 100%;
+h2 {
+    font-size: 1.4rem;
 }
 
-.content-and-charts {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
+h3 {
+    font-size: 0.87rem;
 }
 
-.MainCompany {
-    flex: none;
-    width: 100%;
+h4 {
+    font-size: 0.8rem;
 }
 
-.DashboardCharts {
-    flex: none;
-    width: 100%;
+h5 {
+    font-size: 0.77rem;
 }
 
+small {
+    font-size: 0.75rem;
+}
+
+.profile-photo img {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.text-muted {
+    color: #7d8da1;
+}
+
+.primary {
+    color: #7380ec;
+}
+
+.success {
+    color: var(--clr-success);
+}
+
+.danger {
+    color: #ff7782;
+}
+
+.warning {
+    color: #ffbb55;
+}
 aside {
     height: 100vh;
     background-color: #fff;
@@ -210,122 +186,214 @@ aside .logo {
     display: flex;
     gap: 1rem;
 }
-
-.menu-button {
-    display: none;
-    background: transparent;
-    cursor: pointer;
-    color: #363949;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    border: none;
-    font-size: 24px;
-}
-
-.menu-button .material-icons {
-    font-size: 24px;
-    color: #363949;
-}
-
-/* Right section styles */
-.right {
+main {
     margin-top: 1.4rem;
-    padding: 1rem;
-    background-color: #f6f6f9;
-    grid-column: span 1;
-    overflow-y: auto;
+    width: 100%;
 }
 
-.right .top {
-    display: flex;
-    justify-content: space-between;
-    gap: 2rem;
+main input {
+    background-color: transparent;
+    border: 0;
+    outline: 0;
+    color: #363949;
 }
 
-.right .top button {
-    display: none;
-}
-
-.right .theme-toggler {
-    background-color: #fff;
-    display: flex;
-    justify-content: space-between;
-    height: 1.6rem;
-    width: 4.2rem;
-    cursor: pointer;
-    border-radius: 10px;
-}
-
-.right .theme-toggler span {
-    font-size: 1.2rem;
-    width: 50%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.right .theme-toggler span.active {
-    background-color: #7380ec;
-    color: #fff;
-    border-radius: 10px;
-}
-
-.right .profile {
+main .top-bar {
     display: flex;
     gap: 1rem;
     align-items: center;
 }
 
-.right .profile .info p {
-    margin: 0;
+main .date {
+    display: inline-block;
+    background-color: #fff;
+    border-radius: 0.9rem;
+    padding: 9px;
+    margin-top: 9px;
 }
 
-.right .profile .profile-photo img {
-    width: 2.8rem;
-    height: 2.8rem;
-    border-radius: 50%;
-    overflow: hidden;
+main .date button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 1rem;
+    cursor: pointer;
+    margin-left: 5px;
 }
 
-/***recent update */
-.right .recent_updates {
-    margin-top: 1rem;
-    margin-left: -20px;
+main .date button:hover {
+    background-color: #0056b3;
+    transition: 0.4s ease-in;
 }
 
-.right .recent_updates h2 {
-    color: #363949;
-    margin-bottom: 14px;
+main .insights {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.6rem;
 }
 
-.right .recent_updates .updates {
+main .insights > div {
     background-color: #fff;
     padding: 1.8rem;
     border-radius: 2rem;
+    margin-top: 1rem;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     transition: all 0.3s ease;
 }
 
-.right .recent_updates .updates:hover {
+main .insights > div:hover {
     box-shadow: none;
 }
 
-.right .recent_updates .update {
-    display: grid;
-    grid-template-columns: 2.6rem auto;
-    gap: 1rem;
-    margin-bottom: 1rem;
+main .insights > div span {
+    background: coral;
+    padding: 0.5rem;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 2rem;
 }
 
-/**********
-    media query
-    ********** */
+main .insights > div.expenses span {
+    background: #ff7782;
+}
+
+main .insights > div.income span {
+    background: #41f1b6;
+}
+
+main .insights > div .middle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+main .insights > div .middle h1 {
+    font-size: 1.6rem;
+}
+
+main h1 {
+    color: #363949;
+}
+
+main .insights h1 {
+    color: #363949;
+}
+
+main .insights h3 {
+    color: #363949;
+}
+
+main .insights p {
+    color: #363949;
+}
+
+main .insights .progress {
+    position: relative;
+    height: 68px;
+    width: 68px;
+    border-radius: 50px;
+}
+
+main .insights svg {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+main .insights svg circle.background-circle {
+    fill: none;
+    stroke: #e4e9f7;
+    stroke-width: 6;
+}
+
+main .insights svg circle.sales-circle {
+    fill: none;
+    stroke: #7380ec;
+    stroke-width: 5;
+    stroke-dasharray: 188.4;
+    stroke-dashoffset: 37.68;
+    transform: rotate(-90deg);
+    transform-origin: 34.5px 40px;
+}
+
+main .insights svg circle.expenses-circle {
+    fill: none;
+    stroke: #ff7782;
+    stroke-width: 5;
+    stroke-dasharray: 188.4;
+    stroke-dashoffset: 37.68;
+    transform: rotate(-90deg);
+    transform-origin: 34.5px 40px;
+}
+
+main .insights svg circle.income-circle {
+    fill: none;
+    stroke: #41f1b6;
+    stroke-width: 5;
+    stroke-dasharray: 188.4;
+    stroke-dashoffset: 37.68;
+    transform: rotate(-90deg);
+    transform-origin: 34.5px 40px;
+}
+
+main .insights .progress .number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    color: #363949;
+}
+
+main .recent_orders h1 {
+    margin: 18px;
+    color: #363949;
+}
+
+main .recent_orders table {
+    background-color: #fff;
+    width: 100%;
+    border-radius: 2rem;
+    padding: 1.8rem;
+    text-align: center;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    transition: all 0.3s ease;
+    color: #363949;
+}
+
+main .recent_orders table:hover {
+    box-shadow: none;
+}
+
+main table thead tr th {
+    padding: 15px;
+}
+
+main table tbody tr {
+    height: 3.8rem;
+    border-bottom: 1px solid #fff;
+    color: #677483;
+}
+
+main table tbody td {
+    height: 3.8rem;
+    border-bottom: 1px solid #363949;
+    color: #677483;
+}
+
+main table tbody tr:last-child td {
+    border: none;
+}
+
+main .recent_orders a {
+    text-align: center;
+    display: block;
+    margin: 1rem;
+}
 @media screen and (max-width: 1200px) {
-    .menu-button {
-        display: inline-block; /* إظهار الزر في الوضع المتجاوب */
-    }
     .container {
         width: 94%;
         grid-template-columns: 7rem auto 14rem;
@@ -362,13 +430,6 @@ aside .logo {
     .container {
         width: 100%;
         grid-template-columns: repeat(1, 1fr);
-    }
-
-    .content-and-charts {
-        flex-direction: column;
-    }
-    .charts-wrapper {
-        margin-top: 20px;
     }
 
     aside {
