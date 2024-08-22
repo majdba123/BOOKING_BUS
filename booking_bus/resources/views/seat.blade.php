@@ -11,8 +11,8 @@
       cluster: 'ap2'
     });
 
-    var channel = pusher.subscribe('seat-channel');
-    channel.bind('form-submitted', function(data) {
+    var channel = pusher.subscribe('private-seat-channel-{id}');
+    channel.bind('SeatEvent', function(data) {
       alert(JSON.stringify(data));
     });
   </script>

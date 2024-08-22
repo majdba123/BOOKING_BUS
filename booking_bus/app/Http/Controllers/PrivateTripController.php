@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Map\geolocation;
 use App\Models\Private_trip;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -38,20 +39,32 @@ class PrivateTripController extends Controller
             'to' => 'required',
             'date' => 'required',
             'start_time' => 'required',
+            'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'long' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+            'Distance' => 'required|numeric',
+
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->first();
             return response()->json(['error' => $errors], 422);
         }
         $user = Auth::user();
-
+        $lat = $request->input('lat');
+        $long =   $request->input('long');
+        $Location = geolocation::create([
+            'latitude' => $lat,
+            'longitude' => $long
+        ]);
         $private = new Private_trip();
         $private->user_id = $user->id;
         $private->from = $request->input('from');
         $private->to = $request->input('to');
+        $private->geolocation_id = $Location->id;
         $private->date = $request->input('date');
         $private->start_time = $request->input('start_time');
+        $private->Distance = $request->input('Distance');
         $private->save();
+
         return response()->json(['message' => 'Private trip created successfully'], 201);
     }
     /**
@@ -122,7 +135,6 @@ class PrivateTripController extends Controller
         }
         $private_trip->delete();
         return response()->json(['message' => 'Private trip deleted successfully'], 200);
-
     }
 
     public function getPrivateTripsByStatus(Request $request)
@@ -138,8 +150,8 @@ class PrivateTripController extends Controller
         }
         $user = Auth::user();
         $privateTrips = Private_trip::where('user_id', $user->id)
-                                    ->where('status', $request->input('status'))
-                                    ->get();
+            ->where('status', $request->input('status'))
+            ->get();
         return response()->json($privateTrips);
     }
 }

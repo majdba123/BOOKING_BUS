@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Bus_Trip extends Model
 {
     use HasFactory;
+    protected $table = 'bus__trips';
 
     protected $fillable = [
+        'id',
         'trip_id',
         'bus_id',
         'status',
@@ -29,11 +31,11 @@ class Bus_Trip extends Model
     }
     public function bus()
     {
-        return $this->belongsTo(Bus::class,'bus_id');
+        return $this->belongsTo(Bus::class, 'bus_id');
     }
 
     public function trip()
     {
-        return $this->belongsTo(Trip::class,'trip_id');
+        return $this->belongsTo(Trip::class, 'trip_id');
     }
 }

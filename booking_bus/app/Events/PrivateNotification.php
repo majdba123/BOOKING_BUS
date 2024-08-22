@@ -33,7 +33,7 @@ class PrivateNotification implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['charge-balance-private-notification-' . $this->user_id];
+        return ['private-notification-'. $this->user_id];
 
     }
 

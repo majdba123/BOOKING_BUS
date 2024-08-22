@@ -28,8 +28,8 @@
         cluster: 'ap2'
       });
 
-      var channel = pusher.subscribe('my-channel');
-      channel.bind('form-submitted', function(data) {
+      var channel = pusher.subscribe('trip_channel');
+      channel.bind('NewTrip', function(data) {
         alert(JSON.stringify(data));
       });
     </script>

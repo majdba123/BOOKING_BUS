@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,5 +20,24 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        $this->call(UserSeedres::class);
+        $this->call(AreaSeedres::class);
+        $this->call(CompanySeedres::class);
+        $this->call(DriverSeedres::class);
+        $this->call(BusSeedres::class);
+        $this->call(SeatSeedres::class);
+        $this->call(PathSeedres::class);
+        $this->call(TripSeedres::class);
+        $this->call(BreaksSeedres::class);
+        $this->call(Bus_DriverSeedres::class);
+        $this->call(Bus_TTripSeedres::class);
+        $this->call(Breaks_TripSeedres::class);
+        $this->call(PiSeedres::class);
+        $this->call(ReservationSeedres::class);
+        $this->call(Seat_ReservationSeedres::class);
+
+
+
     }
 }

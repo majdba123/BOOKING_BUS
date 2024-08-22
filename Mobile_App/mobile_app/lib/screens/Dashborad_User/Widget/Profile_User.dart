@@ -80,7 +80,8 @@ class ProfilePage extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 50,
-                              backgroundImage: AssetImage('assets/person.png'),
+                              backgroundImage:
+                                  NetworkImage(userInfo.profile['image']),
                             ),
                             SizedBox(height: 20),
                             Text(

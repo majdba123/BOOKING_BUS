@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Map\geolocation;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,9 +18,11 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('from');
             $table->string('to');
+            $table->foreignIdFor(geolocation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('date');
             $table->string('start_time');
             $table->string('status')->default('padding');
+            $table->integer('Distance');
             $table->timestamps();
         });
     }

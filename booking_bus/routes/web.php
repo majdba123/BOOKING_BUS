@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\pusherCntroller;
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,6 +28,11 @@ Route::get('/notification', function () {
 
 Route::get('/foruser', function () {
     return view('foruser');
+})->middleware('auth');
+
+
+Route::get('/breaktrip', function () {
+    return view('breakTrip');
 })->middleware('auth');
 
 Auth::routes();

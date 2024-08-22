@@ -27,13 +27,8 @@ use App\Http\Controllers\InquiresController;
 use App\Http\Controllers\DriverProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminDashBoardController;
-
-
-
-
-
-
-
+use App\Http\Controllers\CancellationRuleController;
+use App\Http\Controllers\RewardController;
 
 
 /*
@@ -51,23 +46,23 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('register',[UserApiController::class,'register']);
-Route::post('login',[UserApiController::class,'login']);
-Route::post('logout',[UserApiController::class,'logout'])->middleware('auth:sanctum');
+Route::post('register', [UserApiController::class, 'register']);
+Route::post('login', [UserApiController::class, 'login']);
+Route::post('logout', [UserApiController::class, 'logout'])->middleware('auth:sanctum');
 
 
-Route::post('register/company',[CompanyController::class,'register']);
+Route::post('register/company', [CompanyController::class, 'register']);
+
+
+Route::get('all_user', [AdminDashBoardController::class, 'all_user']);
 
 
 
-
-
-
-Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']], function () {
+Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']], function () {
 
     Route::get('/get_driver_by_status', [DriverController::class, 'get_driver_by_status']);
     Route::get('/all_driver', [DriverController::class, 'index']);
-    Route::post('register/driver',[DriverController::class,'register_driver']);
+    Route::post('register/driver', [DriverController::class, 'register_driver']);
     Route::delete('/delete_driver/{id}', [DriverController::class, 'destroy']);
 
 
@@ -102,6 +97,7 @@ Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']
     Route::post('/store_trip', [TripController::class, 'store']);
     Route::put('/update_trip/{id}', [TripController::class, 'update']);
     Route::delete('/delete_trip/{id}', [TripController::class, 'destroy']);
+    Route::post('/trips/cancel', [TripController::class, 'cancelTrip']); //hamza
 
     Route::get('/all_trip_rating', [RateTripsController::class, 'index']);
     Route::post('/all_trip_rating_by_trip_id/{trip_id}', [RateTripsController::class, 'rate_trip__by_id']);
@@ -147,15 +143,24 @@ Route::group(['prefix' => 'company' , 'middleware' => ['company','auth:sanctum']
     Route::post('/get_profit_trip/{bus_trip_id}', [DashboardController::class, 'get_profit_trip']);
     Route::post('/user_infomation_id/{user_id}', [DashboardController::class, 'user_info']);
 
-
-
-
-
-
+    Route::prefix('rewards')->group(function () {
+        Route::get('/', [RewardController::class, 'index']);
+        Route::get('/{id}', [RewardController::class, 'show']);
+        Route::post('/store', [RewardController::class, 'store']);
+        Route::put('/{id}', [RewardController::class, 'update']);
+        Route::delete('/{id}', [RewardController::class, 'destroy']);
+    });
+    Route::prefix('cancellation-rules')->group(function () {
+        Route::get('/', [CancellationRuleController::class, 'index']);
+        Route::get('/{id}', [CancellationRuleController::class, 'show']);
+        Route::post('/store', [CancellationRuleController::class, 'store']);
+        Route::put('/{id}', [CancellationRuleController::class, 'update']);
+        Route::delete('/{id}', [CancellationRuleController::class, 'destroy']);
+    });
 });
 
 
-Route::group(['prefix' => 'admin' , 'middleware' => ['checkAdmi','auth:sanctum']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum']], function () {
 
     Route::get('/all_government', [AreaController::class, 'index']);
     Route::post('/store_government', [AreaController::class, 'store']);
@@ -218,15 +223,13 @@ Route::group(['prefix' => 'admin' , 'middleware' => ['checkAdmi','auth:sanctum']
     Route::post('/company_all_info/{company_id}', [AdminDashBoardController::class, 'company_all_info']);
 
     Route::get('/dashboard_Admin', [AdminDashBoardController::class, 'statiesticle_dash']);
-
-
 });
 
 
 
 
 
-Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function () {
 
     Route::get('/trips', [TripController::class, 'index_user']);
     Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
@@ -235,7 +238,7 @@ Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function (
     Route::get('/get_bus_trip_fillter', [BusTripController::class, 'getBusTripsByFillter']);
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
-
+    Route::post('/cancel_Reservation/{id}', [ReservationController::class, 'cancelReservation']);
     Route::post('/rate_trip/{trip_id}', [RateTripsController::class, 'store']);
 
     Route::post('/store_private_trip', [PrivateTripController::class, 'store']);
@@ -286,17 +289,12 @@ Route::group(['prefix' => 'user' , 'middleware' => ['auth:sanctum']], function (
 
     Route::get('/get_all_company', [UserApiController::class, 'get_all_company']);
     Route::get('/get_all_driver', [UserApiController::class, 'get_all_driver']);
-
-
-
-
-
 });
 
 
 
 
-Route::group(['prefix' => 'driver' , 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum']], function () {
 
     Route::get('/my_bus', [DriverController::class, 'my_bus']);
     Route::get('/my_pending_trip', [DriverController::class, 'my_pending_trip']);
@@ -322,6 +320,4 @@ Route::group(['prefix' => 'driver' , 'middleware' => ['auth:sanctum']], function
 
     Route::get('/all_my_bus', [BusDriverController::class, 'bus_driveer']);
     Route::get('/all_my_rate', [RateDriverController::class, 'all_my_rate']);
-
-
 });

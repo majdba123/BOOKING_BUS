@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Policy\CancelTrip\CanceledTrip;
+use App\Models\Policy\CancelTrip\CancellationReason;
+use App\Models\Seat_Reservation;
 use App\Models\Trip;
 use App\Models\Breaks_trip;
 use App\Models\Bus_Driver;
@@ -10,10 +13,13 @@ use App\Models\Breaks;
 use App\Models\Pivoit;
 use App\Models\Bus;
 use App\Events\NewTrip;
+use App\Models\Policy\SatisfactionRate\SatisfactionRate;
+use App\Models\Policy\SatisfactionRate\UserSatisfactionRate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TripController extends Controller
 {
@@ -150,7 +156,7 @@ class TripController extends Controller
         }
         $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->find($trip->id);
         event(new NewTrip($trips1));
-        return response()->json($trips1);
+        return response()->json($trips1, 201);
     }
 
     /**
@@ -331,7 +337,7 @@ class TripController extends Controller
         ]);
     }
 
-
+    
     public function index_user()
     {
 
@@ -481,5 +487,156 @@ class TripController extends Controller
             ];
         }
         return response()->json($data);
+    }
+    //code by hamza
+    public function cancelTrip(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'trip_id' => 'required|exists:bus__trips,id',
+            'description' => 'required|string|max:100',
+            'reasons' => 'required|array',
+            'reasons.*' => 'string|max:50',
+            'rate' => 'numeric|min:0|max:100',
+            'satisfaction_rate_description' => 'string|max:255'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+
+        $user = Auth::user();
+        if (!$user->company) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $tripId = $request->input('trip_id');
+        $description = $request->input('description');
+        $reasons = $request->input('reasons');
+        $rate = $request->input('rate');
+        $satisfactionRateDescription = $request->input('satisfaction_rate_description');
+        DB::beginTransaction();
+        try {
+
+            $trip = Bus_Trip::findOrFail($tripId);
+            $tripStatus = Trip::findOrFail($tripId);
+
+
+            if ($trip->status === 'canceled') {
+                return response()->json(['error' => 'Trip is already canceled'], 400);
+            }
+
+
+            $canceledTrip = CanceledTrip::create([
+                'trip_id' => $trip->id,
+                'description' => $description,
+            ]);
+
+
+            foreach ($reasons as $reason) {
+                CancellationReason::create([
+                    'canceled_trip_id' => $canceledTrip->id,
+                    'reason' => $reason,
+                ]);
+            }
+
+            // tripsStatus VARIABLE => TRIP TABLE
+            // TRIP          => Bus trip table
+
+            $trip->status = 'canceled';
+            $tripStatus->status = 'canceled';
+
+            $trip->save();
+            $tripStatus->save();
+            $refundPoints = $tripStatus->price;
+            // print('refund point'.$refundPoints);
+            $buses = Bus::whereHas('bus_trip', function ($query) use ($trip) {
+                $query->where('id', $trip->id);
+            })->get();
+
+
+            foreach ($buses as $bus) {
+                $bus->status = 'available';
+                $bus->save();
+            }
+
+
+            $company = $trip->bus->company->user;
+            // print($company);
+            $satisfactionRate = null;
+            if ($rate !== null && $rate > 0) {
+                $satisfactionRate = SatisfactionRate::create([
+                    'company_id' => $trip->bus->company->id,
+                    'description' => $satisfactionRateDescription,
+                    'rate' => $rate,
+                ]);
+                $satisfactionRateValue = $satisfactionRate->rate;
+            }
+            $reservedSeats = Seat_Reservation::whereHas('seat', function ($query) use ($buses) {
+                $query->whereIn('bus_id', $buses->pluck('id'));
+            })->where('status', 'padding')->get();
+
+            foreach ($reservedSeats as $reservation) {
+
+                $seat = $reservation->seat;
+                $seat->status = 0;
+                $seat->save();
+
+                // Mark reservation as canceled
+                $reservationRecord = $reservation->reservation;
+                $reservationRecord->status = 'canceled';
+                $reservationRecord->save();
+
+
+                $pivoits = $reservationRecord->pivoit;
+
+                $pivoits->status = 'canceled';
+                $pivoits->save();
+
+
+
+                $reservation->status = 'canceled';
+                $reservation->save();
+
+                $user = $reservationRecord->user;
+
+                // print('user !' . $user);
+                // Calculate and apply satisfaction rate if not zero
+                if ($satisfactionRate !== null) {
+                    // Create or update the satisfaction rate record
+
+
+                    $pointsAwarded = ($refundPoints * $satisfactionRateValue) / 100;
+
+                    $user->point += $pointsAwarded;
+                    $user->save();
+
+                    // Store the user satisfaction rate record
+                    UserSatisfactionRate::create([
+                        'user_id' => $user->id,
+                        'satisfaction_rate_id' => $satisfactionRate->id,
+                    ]);
+                }
+                if ($company->point >= $refundPoints) {
+                    $company->point -= $refundPoints;
+                    $user->point += $refundPoints;
+
+                    $company->save();
+                    $user->save();
+                } else {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Company does not have enough points for refund'], 400);
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'message' => 'Trip has been successfully canceled',
+                'canceled_trip_id' => $canceledTrip->id,
+            ], 200);
+        } catch (\Exception $e) {
+
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
     }
 }

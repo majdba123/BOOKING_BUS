@@ -29,11 +29,11 @@ class NotificatinEvent  implements shouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['notification-channel'];
+        return ['notification-public-channel'];
     }
 
     public function broadcastAs()
     {
-        return 'form-submitted';
+        return 'NotificatinEvent';
     }
 }

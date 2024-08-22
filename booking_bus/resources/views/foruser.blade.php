@@ -21,7 +21,7 @@
         }
       });
 
-      var channel = pusher.subscribe('charge-balance-private-notification-{{ auth()->id() }}');
+      var channel = pusher.subscribe('private-notification-{{ auth()->id() }}');
       channel.bind('PrivateNotification', function(data) {
         alert(JSON.stringify(data));
       });
