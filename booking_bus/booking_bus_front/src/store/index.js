@@ -8,6 +8,7 @@ export default createStore({
         Company: {},
         Paths: {},
         Trips: {},
+        Government: {},
         searchQuery: "",
         Profile: "",
         start: null,

@@ -21,12 +21,12 @@
         </RouterLink>
 
         <router-link
-            to="AllPath2"
-            @click="selectOption('Path')"
-            :class="{ active: selectedOption === 'Path' }"
+            to="AllGovernment"
+            @click="selectOption('Government')"
+            :class="{ active: selectedOption === 'Government' }"
         >
             <span class="material-icons" aria-label="Analytics">timeline</span>
-            <h3>Path</h3>
+            <h3>Government</h3>
         </router-link>
 
         <router-link
