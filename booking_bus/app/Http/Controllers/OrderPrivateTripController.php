@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Order_Private_trip;
 use App\Models\Private_trip;
 use Illuminate\Support\Facades\Validator;
