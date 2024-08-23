@@ -27,6 +27,7 @@ use App\Http\Controllers\InquiresController;
 use App\Http\Controllers\DriverProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminDashBoardController;
+use App\Http\Controllers\CancellationRuleController;
 use App\Http\Controllers\RewardController;
 
 
@@ -93,7 +94,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
     Route::get('/all_trips', [TripController::class, 'index']);
     Route::get('/all_trips_by_status', [TripController::class, 'index_status']);
     Route::post('/show_trip/{id}', [TripController::class, 'show']);
-    Route::post('/store_trip', [TripController::class, 'store']);
+
     Route::put('/update_trip/{id}', [TripController::class, 'update']);
     Route::delete('/delete_trip/{id}', [TripController::class, 'destroy']);
     Route::post('/trips/cancel', [TripController::class, 'cancelTrip']); //hamza
@@ -148,6 +149,13 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
         Route::post('/store', [RewardController::class, 'store']);
         Route::put('/{id}', [RewardController::class, 'update']);
         Route::delete('/{id}', [RewardController::class, 'destroy']);
+    });
+    Route::prefix('cancellation-rules')->group(function () {
+        Route::get('/', [CancellationRuleController::class, 'index']);
+        Route::get('/{id}', [CancellationRuleController::class, 'show']);
+        Route::post('/store', [CancellationRuleController::class, 'store']);
+        Route::put('/{id}', [CancellationRuleController::class, 'update']);
+        Route::delete('/{id}', [CancellationRuleController::class, 'destroy']);
     });
 });
 
@@ -230,7 +238,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
     Route::get('/get_bus_trip_fillter', [BusTripController::class, 'getBusTripsByFillter']);
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
-
+    Route::post('/cancel_Reservation/{id}', [ReservationController::class, 'cancelReservation']);
     Route::post('/rate_trip/{trip_id}', [RateTripsController::class, 'store']);
 
     Route::post('/store_private_trip', [PrivateTripController::class, 'store']);

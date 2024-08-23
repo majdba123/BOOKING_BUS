@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Area;
+use App\Models\Map\geolocation;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
@@ -17,12 +18,14 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Area::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
+            $table->foreignIdFor(geolocation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
         DB::table('breaks')->insert([
             [
                 'area_id' => 1,
                 'name' => 'start',
+                'geolocation_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
 
@@ -30,6 +33,7 @@ return new class extends Migration
             [
                 'area_id' => 1,
                 'name' => 'end',
+                'geolocation_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
 

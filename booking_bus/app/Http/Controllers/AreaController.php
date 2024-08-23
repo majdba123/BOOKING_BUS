@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Map\geolocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
 class AreaController extends Controller
 {
     /**
@@ -31,23 +33,31 @@ class AreaController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string','unique:areas,name'],
+            'name' => ['required', 'string', 'unique:areas,name'],
         ], [
             'name.required' => 'Name is required',
+            'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'long' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 422);
         }
 
-        $area = New Area();
-        $area->name=$request->input('name');
+        $lat = $request->input('lat');
+        $long =   $request->input('long');
+        $Location = geolocation::create([
+            'latitude' => $lat,
+            'longitude' => $long
+        ]);
+        $area = new Area();
+        $area->name = $request->input('name');
+        $area->geolocation_id = $Location->id;
         $area->save();
 
         return response()->json([
             'message' => 'Area_Created ',
         ]);
-
     }
 
     /**
@@ -81,12 +91,27 @@ class AreaController extends Controller
             return response()->json(['error' => 'Area not found.'], 404);
         }
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'unique:areas,name,'. $area_id],
+            'name' => ['required', 'string', 'unique:areas,name,' . $area_id],
         ], [
             'name.required' => 'Name is required',
+            'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'long' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 422);
+        }
+
+        if ($request->has('lat') && $request->has('long')) {
+            $latFrom = $request->input('lat');
+            $longFrom = $request->input('long');
+
+
+            $Location = geolocation::updateOrCreate(
+                ['id' => $area->geolocation_id],
+                ['latitude' => $latFrom, 'longitude' => $longFrom]
+            );
+
+            $area->geolocation_id = $Location->id;
         }
         $area->name = $request->input('name');
         $area->save();

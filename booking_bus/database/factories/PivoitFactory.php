@@ -23,7 +23,7 @@ class PivoitFactory extends Factory
         return [
             'bus__trip_id' => Bus_Trip::factory(), // create a bus trip for each pivoit
             'breaks_trip_id' => Breaks_trip::factory(), // create a breaks trip for each pivoit
-            'status' => $this->faker->randomElement(['active', 'inactive']),
+            'status' => $this->faker->randomElement(['pending']),
 
         ];
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\PrivateNotification;
+use App\Models\Policy\CancellationRule\CancelReservation;
 use App\Models\Reservation;
 use App\Models\Trip;
 use App\Models\Breaks_trip;
@@ -17,7 +18,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Events\SeatEvent;
+use App\Models\Policy\CancellationRule\CancellationRule;
 use App\Models\Policy\Reward\Reward;
+use Carbon\Carbon;
+use FFI\Exception;
+use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
 {
@@ -258,5 +263,99 @@ class ReservationController extends Controller
     public function destroy(Reservation $reservation)
     {
         //
+    }
+
+    public function cancelReservation($reservationid)
+    {
+
+        $user_id = Auth::user()->id;
+
+
+        DB::beginTransaction();
+        try {
+            $reservation = Reservation::with('bus_trip')
+                ->where('id', $reservationid)
+                ->where('user_id', $user_id)
+                ->firstOrFail();
+
+
+            if ($reservation->status === 'canceled') {
+                return response()->json(['message' => 'Reservation already canceled'], 422);
+            }
+
+
+            // if (!$reservation->bus_trip) {
+            //     dd('Bus trip is null', $reservation->toArray());
+            // }
+            // print($reservation);
+            $departureDateTime = Carbon::parse($reservation->bus_trip->date . ' ' . $reservation->bus_trip->from_time);
+
+
+            $hoursBefore = $departureDateTime->diffInHours(now());
+
+            if ($hoursBefore <= 0) {
+                return response()->json(['message' => 'The trip has already started and cannot be canceled.'], 422);
+            }
+            // print('the hours befor the trip is : ' . $hoursBefore);
+
+            $cancellationRule = CancellationRule::where('company_id', $reservation->bus_trip->bus->company_id)
+                ->where('hours_before', '<=', $hoursBefore)
+                ->orderBy('hours_before', 'desc')
+                ->first();
+            if (!$cancellationRule) {
+                $cancellationRule = CancellationRule::where('company_id', $reservation->bus_trip->bus->company_id)
+                    ->orderBy('hours_before', 'asc')
+                    ->first();
+            }
+
+            if ($cancellationRule) {
+                $refundAmount = $reservation->price - ($reservation->price * ($cancellationRule->discount_percentage / 100));
+            } else {
+                $refundAmount = $reservation->price;
+            }
+            // print('the cancel rule apply is ' . $cancellationRule->discount_percentage);
+
+
+            // $refundAmount = $reservation->price - ($reservation->price * ($cancellationRule->discount_percentage / 100));
+            $user = $reservation->user;
+            $user->point += $refundAmount;
+            $user->save();
+
+            $reservation->status = 'canceled';
+            $reservation->save();
+
+
+            foreach ($reservation->seat_reservation as $seat_reservation) {
+                $seat = Seat::find($seat_reservation->seat_id);
+                if ($seat) {
+
+                    $seat->status = 0;
+                    $seat->save();
+                }
+
+
+                $seat_reservation->status = 'canceled';
+                $seat_reservation->save();
+            }
+
+            CancelReservation::create([
+                'reservation_id' => $reservationid,
+                'cancellation_rule_id' => $cancellationRule->id,
+                'refund_amount' => $refundAmount,
+            ]);
+
+            //notifcation Majd
+
+            DB::commit();
+            return response()->json([
+                'message' => 'Reservation canceled successfully',
+                'refund_amount' => $refundAmount,
+                'cancellation_rule' => $cancellationRule->description,
+            ]);
+        } catch (Exception $e) {
+
+            DB::rollBack();
+            return response()->json(['message' => 'An error occurred while canceling the reservation. Please try again later.'], 500);
+        }
     }
 }
