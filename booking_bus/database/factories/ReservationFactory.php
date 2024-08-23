@@ -25,7 +25,7 @@ class ReservationFactory extends Factory
             'pivoit_id' => Pivoit::factory(), // assuming you have 10 pivoits
             'bus__trip_id' => Bus_Trip::factory(), // assuming you have 10 bus trips
             'price' => $this->faker->randomFloat(1, 100),
-            'type' => $this->faker->randomElement(['type1', 'type2', 'type3']),
+            'type' => $this->faker->randomElement(['1', '2']),
             'status' => $this->faker->randomElement(['pending', 'confirmed', 'cancelled']),
         ];
     }
