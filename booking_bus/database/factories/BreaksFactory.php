@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Area;
 use App\Models\Breaks;
+use App\Models\Geolocation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,6 +24,7 @@ class BreaksFactory extends Factory
         return [
             'name' => $this->faker->word,
             'area_id' => Area::factory(), // create an area for each break
+            'geolocation_id' => Geolocation::factory(),
         ];
     }
 }

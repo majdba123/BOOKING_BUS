@@ -12,6 +12,7 @@ use App\Models\Bus_Trip;
 use App\Models\user;
 use App\Events\BreakTripEvent;
 use App\Events\CompanyNotification;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;

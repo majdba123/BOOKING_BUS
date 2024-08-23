@@ -1,20 +1,15 @@
 <?php
 
-namespace App\Models\Map;
+namespace App\Models;
 
-use App\Models\Area;
-use App\Models\Breaks;
-use App\Models\Path;
-use App\Models\Private_trip;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class geolocation extends Model
+class Geolocation extends Model
 {
     use HasFactory;
 
-
-    protected $fillable = [ 'latitude', 'longitude'];
+    protected $fillable = ['latitude', 'longitude'];
 
     public function area()
     {

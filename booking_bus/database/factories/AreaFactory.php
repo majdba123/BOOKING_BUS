@@ -1,7 +1,9 @@
 <?php
 
 namespace Database\Factories;
+
 use App\Models\Area;
+use App\Models\Geolocation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +21,9 @@ class AreaFactory extends Factory
         return [
 
             'name' => $this->faker->word,
+            'geolocation_id' => Geolocation::factory(),
+            'created_at' => now(),
+            'updated_at' => now(),
 
         ];
     }

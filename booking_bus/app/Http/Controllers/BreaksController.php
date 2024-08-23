@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Breaks;
 use App\Models\Area;
-use App\Models\Map\geolocation;
+use App\Models\Geolocation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;

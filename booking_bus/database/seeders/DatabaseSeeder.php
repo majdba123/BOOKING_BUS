@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 
+use App\Models\Map\geolocation;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -20,6 +21,7 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        $this->call(geolocationseeder::class);
 
         $this->call(UserSeedres::class);
         $this->call(AreaSeedres::class);
@@ -36,8 +38,5 @@ class DatabaseSeeder extends Seeder
         $this->call(PiSeedres::class);
         $this->call(ReservationSeedres::class);
         $this->call(Seat_ReservationSeedres::class);
-
-
-
     }
 }
