@@ -27,6 +27,7 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->firstName . ' ' . $this->faker->lastName,
             'email' => $this->faker->unique()->email,
+            'point' => $this->faker->randomFloat(100.00),
             'lang' => $this->faker->longitude, // generate a random longitude
             'lat' => $this->faker->latitude,
             'password' => Hash::make('password'), // generate a hashed password

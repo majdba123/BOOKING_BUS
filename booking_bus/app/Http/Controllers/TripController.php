@@ -337,7 +337,7 @@ class TripController extends Controller
         ]);
     }
 
-    
+
     public function index_user()
     {
 
@@ -639,4 +639,11 @@ class TripController extends Controller
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
+
+    public function sum($x ,$y)
+    {
+        return $x+$y ;
+    }
+
+
 }
