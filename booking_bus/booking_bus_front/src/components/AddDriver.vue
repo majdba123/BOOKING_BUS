@@ -233,7 +233,7 @@ export default {
             showDriverStatusModal: false,
             showDriverWithBusModal: false,
             toast: useToast(),
-            isDarkMode: false, // إدارة حالة الوضع الداكن
+            isDarkMode: false,
         };
     },
     mounted() {
@@ -245,9 +245,8 @@ export default {
         }
 
         this.$nextTick(() => {
-            this.createChart(); // إنشاء الرسم البياني بعد التأكد من جاهزية DOM
+            this.createChart();
 
-            // تحديث السائقين بالقيم المخزنة في localStorage
             this.Driver.forEach((driver) => {
                 const savedBusId = localStorage.getItem(
                     `driver_${driver.driver_id}_busId`
@@ -329,6 +328,7 @@ export default {
                     console.error(error);
                 });
         },
+
         DeleteDriver(driverId) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -361,33 +361,27 @@ export default {
                     console.error(error);
                 });
         },
-        methods: {
-            SelectDriver(event, userId) {
-                const busId = event.target.value;
-                const access_token =
-                    window.localStorage.getItem("access_token");
-                console.log("Selected Bus ID:", busId);
+        SelectDriver(event, userId) {
+            const busId = event.target.value;
+            const access_token = window.localStorage.getItem("access_token");
+            console.log("Selected Bus ID:", busId);
 
-                axios({
-                    method: "post",
-                    url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
-                    data: { driver_id: userId },
-                    headers: { Authorization: `Bearer ${access_token}` },
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
+                data: { driver_id: userId },
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then(() => {
+                    console.log("Selection Complete for Bus ID:", busId);
+                    this.toast.success("Driver assigned to bus successfully!");
+
+                    localStorage.setItem(`driver_${userId}_busId`, busId);
                 })
-                    .then(() => {
-                        console.log("Selection Complete for Bus ID:", busId);
-                        this.toast.success(
-                            "Driver assigned to bus successfully!"
-                        );
-
-                        // تحديث القيمة المحلية وتخزينها في localStorage
-                        localStorage.setItem(`driver_${userId}_busId`, busId);
-                    })
-                    .catch((error) => {
-                        this.toast.error("Error assigning driver to bus.");
-                        console.error("Error for Bus ID:", busId, error);
-                    });
-            },
+                .catch((error) => {
+                    this.toast.error("Error assigning driver to bus.");
+                    console.error("Error for Bus ID:", busId, error);
+                });
         },
 
         fetchDriverStatus(status) {
