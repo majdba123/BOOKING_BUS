@@ -93,6 +93,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
 
     Route::get('/all_trips', [TripController::class, 'index']);
     Route::get('/all_trips_by_status', [TripController::class, 'index_status']);
+    Route::post('/store_trip', [TripController::class, 'store']);
     Route::post('/show_trip/{id}', [TripController::class, 'show']);
 
     Route::put('/update_trip/{id}', [TripController::class, 'update']);
