@@ -140,7 +140,9 @@ class ReservationController extends Controller
             }
         }
         $price1 = $bus_trip->trip->price;
-        $price = $price1 * $count_seat_of_user;
+
+       // $price = $price1 * $count_seat_of_user;
+       $price = $this->calculatePrice($price1, $count_seat_of_user);
 
         $user = auth()->user();
         if ($user->point < $price) {
@@ -232,6 +234,15 @@ class ReservationController extends Controller
 
         return response()->json($responseData);
     }
+
+
+    public function calculatePrice($basePrice, $numberOfSeats)
+    {
+        return $basePrice * $numberOfSeats;
+    }
+
+
+
 
     /**
      * Display the specified resource.
