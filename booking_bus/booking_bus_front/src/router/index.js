@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import CreateCompany from "../views/CreateCompany.vue";
-import AdminPage from "../views/AdminPage.vue";
+import AllCompany from "../views/Admin/AllCompany/AllCompany.vue";
+import AdminPage from "../views/Admin/AdminPage.vue";
 import EditBreak from "../views/EditBreak.vue";
 import AddGovernment from "../views/AddGovernment.vue";
+import AllGovernment from "../views/Admin/AllGovernment/AllGovernment.vue";
 import EditGovernment from "../views/EditGovernment.vue";
 import UserPage from "../views/User/UserPage.vue";
 import AllTripUser from "../views/User/AllTripUser.vue";
@@ -27,6 +28,11 @@ const routes = [
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/AllGovernment",
+        name: "AllGovernment",
+        component: AllGovernment,
     },
     {
         path: "/AllReservation",
@@ -135,9 +141,9 @@ const routes = [
         component: AdminPage,
     },
     {
-        path: "/CreateCompany",
-        name: "CreateCompany",
-        component: CreateCompany,
+        path: "/AllCompany",
+        name: "AllCompany",
+        component: AllCompany,
     },
     {
         path: "/about",
