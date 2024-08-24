@@ -99,6 +99,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
     Route::put('/update_trip/{id}', [TripController::class, 'update']);
     Route::delete('/delete_trip/{id}', [TripController::class, 'destroy']);
     Route::post('/trips/cancel', [TripController::class, 'cancelTrip']); //hamza
+    Route::post('/replace-bus-trip', [BusTripController::class, 'replaceBusTrip']); //hamza
 
     Route::get('/all_trip_rating', [RateTripsController::class, 'index']);
     Route::post('/all_trip_rating_by_trip_id/{trip_id}', [RateTripsController::class, 'rate_trip__by_id']);
@@ -144,14 +145,14 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
     Route::post('/get_profit_trip/{bus_trip_id}', [DashboardController::class, 'get_profit_trip']);
     Route::post('/user_infomation_id/{user_id}', [DashboardController::class, 'user_info']);
 
-    Route::prefix('rewards')->group(function () {
+    Route::prefix('rewards')->group(function () {   //hamza
         Route::get('/', [RewardController::class, 'index']);
         Route::get('/{id}', [RewardController::class, 'show']);
         Route::post('/store', [RewardController::class, 'store']);
         Route::put('/{id}', [RewardController::class, 'update']);
         Route::delete('/{id}', [RewardController::class, 'destroy']);
     });
-    Route::prefix('cancellation-rules')->group(function () {
+    Route::prefix('cancellation-rules')->group(function () {    //hamza
         Route::get('/', [CancellationRuleController::class, 'index']);
         Route::get('/{id}', [CancellationRuleController::class, 'show']);
         Route::post('/store', [CancellationRuleController::class, 'store']);
