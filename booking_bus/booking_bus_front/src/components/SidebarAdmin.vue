@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar">
         <RouterLink
-            to="BookingLogin"
+            to="AdminPage"
             @click="selectOption('Dashboard')"
             :class="{ active: selectedOption === 'Dashboard' }"
         >
@@ -10,23 +10,23 @@
         </RouterLink>
 
         <RouterLink
-            to="AllDriver2"
-            @click="selectOption('Driver')"
-            :class="{ active: selectedOption === 'Driver' }"
+            to="AllCompany"
+            @click="selectOption('Company')"
+            :class="{ active: selectedOption === 'Company' }"
         >
             <span class="material-icons" aria-label="Customers"
                 >person_outline</span
             >
-            <h3>Driver</h3>
+            <h3>Company</h3>
         </RouterLink>
 
         <router-link
-            to="AllPath2"
-            @click="selectOption('Path')"
-            :class="{ active: selectedOption === 'Path' }"
+            to="AllGovernment"
+            @click="selectOption('Government')"
+            :class="{ active: selectedOption === 'Government' }"
         >
             <span class="material-icons" aria-label="Analytics">timeline</span>
-            <h3>Path</h3>
+            <h3>Government</h3>
         </router-link>
 
         <router-link
@@ -89,6 +89,14 @@
             <h3>Profile</h3>
         </router-link>
         <router-link
+            to="AllReservation"
+            @click="selectOption('Reservation')"
+            :class="{ active: selectedOption === 'Reservation' }"
+        >
+            <span class="material-icons" aria-label="Products">person</span>
+            <h3>Reservation</h3>
+        </router-link>
+        <router-link
             to="AllPolices"
             @click="selectOption('AllPolices')"
             :class="{ active: selectedOption === 'AllPolices' }"
@@ -98,16 +106,6 @@
             >
             <h3>Polices</h3>
         </router-link>
-
-        <router-link
-            to="AllReservation"
-            @click="selectOption('Reservation')"
-            :class="{ active: selectedOption === 'Reservation' }"
-        >
-            <span class="material-icons" aria-label="Products">person</span>
-            <h3>Reservation</h3>
-        </router-link>
-
         <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">
             <span class="material-icons" aria-label="Logout">logout</span>
             <h3>Logout</h3>
@@ -121,7 +119,7 @@ import store from "@/store";
 import axios from "axios";
 
 export default {
-    name: "SideBarCompany",
+    name: "SideBarAdmin",
     data() {
         return {
             selectedOption: "Dashboard",

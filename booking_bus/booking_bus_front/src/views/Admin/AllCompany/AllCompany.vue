@@ -14,7 +14,7 @@
             <!-- End top -->
 
             <!-- Start sidebar -->
-            <SidebarCompany />
+            <SidebarAdmin />
             <!-- End sidebar -->
         </aside>
         <div class="main-content">
@@ -32,7 +32,7 @@
                     </div>
                     <GoogleMap class="map-container" />
                 </div>
-                <PolicesCancel ref="PolicesCancel" />
+                <AddCompany ref="addCompany" />
             </main>
         </div>
         <!-- Right section start -->
@@ -64,13 +64,13 @@
 
             <!--start driver_chart-->
             <div class="driver_chart">
-                <h2>Driver Workload Status</h2>
+                <h2>Company Workload Status</h2>
                 <DriverChart :chartData="chartData" />
             </div>
 
             <!--start driver_status-->
             <div class="driver_status">
-                <h2>Driver Status</h2>
+                <h2>Company Status</h2>
                 <div class="statuses">
                     <div class="status">
                         <div class="info">
@@ -92,14 +92,14 @@
 
 <script>
 import axios from "axios";
-import SidebarCompany from "@/components/SidebarCompany.vue";
-import PolicesCancel from "@/components/PolicesCancel.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
+import SidebarAdmin from "@/components/SidebarAdmin.vue";
+import AddCompany from "@/components/AddCompany.vue";
 
 export default {
-    name: "AllPolices",
-    components: { SidebarCompany, PolicesCancel, DriverChart },
+    name: "AllCompany",
+    components: { DriverChart, SidebarAdmin, AddCompany },
     data() {
         return {
             x: store.state.x,
@@ -124,7 +124,7 @@ export default {
                     },
                 ],
             },
-            isDarkMode: false,
+            isDarkMode: false, // لإدارة حالة الوضع الداكن
         };
     },
     watch: {
@@ -147,7 +147,7 @@ export default {
             }
         },
         toggleTheme() {
-            this.isDarkMode = !this.isDarkMode;
+            this.isDarkMode = !this.isDarkMode; // تغيير حالة الوضع الداكن
             document.body.classList.toggle(
                 "dark-theme-variables",
                 this.isDarkMode
@@ -155,7 +155,7 @@ export default {
             localStorage.setItem(
                 "darkMode",
                 this.isDarkMode ? "enabled" : "disabled"
-            );
+            ); // حفظ الحالة في localStorage
 
             const themeToggler = this.$refs.themeToggler;
             themeToggler
@@ -165,7 +165,9 @@ export default {
                 .querySelector("span:nth-child(2)")
                 .classList.toggle("active", this.isDarkMode);
         },
-        search() {},
+        search() {
+            // هنا يمكنك تنفيذ وظيفة البحث
+        },
         DeleteDriver(x) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -219,6 +221,7 @@ export default {
         },
     },
     mounted() {
+        // التحقق من تفضيلات المستخدم المحفوظة في localStorage
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme === "enabled") {
             this.isDarkMode = true;
@@ -292,12 +295,12 @@ body {
     height: 100%;
     font-size: 0.88rem;
     user-select: none;
-    background: var(--clr-color-background);
+    background: var(--clr-color-background); /* هنا يتم ضبط الخلفية */
     overflow-y: auto;
 }
 
 .container {
-    background: var(--clr-color-background);
+    background: var(--clr-color-background); /* تأكد من ضبط الخلفية هنا أيضًا */
     display: grid;
     width: 100%;
     gap: 1.8rem;
@@ -420,32 +423,15 @@ aside .logo {
 .date button {
     padding: 0.5rem 1rem;
     border: none;
-    border-radius: 25px;
-    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    background-color: var(--clr-primary);
     color: var(--clr-white);
+    border-radius: 1rem;
     cursor: pointer;
-    font-size: 12px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    background-size: 200% 200%;
-    animation: gradientAnimation 5s ease infinite;
-}
-
-@keyframes gradientAnimation {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
 }
 
 .date button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    transition: 0.3s;
+    background-color: var(--clr-primary-variant);
+    transition: 0.4s ease-in;
 }
 
 /* Main section styles */

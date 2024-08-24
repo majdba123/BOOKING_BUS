@@ -3,10 +3,10 @@
         <!-- Header with buttons -->
         <header class="navd">
             <button class="nav-btnd" @click="showForm = true">
-                Add Driver
+                Add Government
             </button>
             <button class="nav-btnd" @click="showForm = false">
-                Edit Driver
+                Show Government
             </button>
             <button class="nav-btnd" @click="showDriverStatusModal = true">
                 Driver Status
@@ -19,7 +19,7 @@
         <div v-if="showForm" class="form-containerd">
             <form @submit.prevent="handleSubmit">
                 <div class="form-groupd">
-                    <label for="driverName">Driver Name</label>
+                    <label for="driverName">Government Name</label>
                     <input
                         type="text"
                         id="driverName"
@@ -27,24 +27,7 @@
                         required
                     />
                 </div>
-                <div class="form-groupd">
-                    <label for="driverEmail">Email</label>
-                    <input
-                        type="email"
-                        id="driverEmail"
-                        v-model="email"
-                        required
-                    />
-                </div>
-                <div class="form-groupd">
-                    <label for="driverPassword">Password</label>
-                    <input
-                        type="password"
-                        id="driverPassword"
-                        v-model="password"
-                        required
-                    />
-                </div>
+
                 <div class="submit-btnnd">
                     <button
                         type="submit"
@@ -58,49 +41,36 @@
         </div>
 
         <div v-else class="recent_orders">
-            <h1>All Drivers</h1>
+            <h1>All Government</h1>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Select Driver To Bus</th>
+                            <th>Breack</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
-                            v-for="(user, index) in filteredDrivers"
+                            v-for="(user, index) in filteredGovernment"
                             :key="index"
                         >
-                            <td>{{ user.driver_id }}</td>
+                            <td>{{ user.id }}</td>
                             <td>{{ user.name }}</td>
-                            <td>{{ user.email_driver }}</td>
-                            <td>{{ user.status }}</td>
                             <td>
-                                <select
-                                    :value="user.selectedBusId || ''"
-                                    @change="
-                                        SelectDriver($event, user.driver_id)
-                                    "
+                                <button
+                                    class="nav-btnd"
+                                    @click="openBreackModal(user.id)"
                                 >
-                                    <option value="">Select a bus</option>
-                                    <option
-                                        v-for="(bus, index) in Bus"
-                                        :key="index"
-                                        :value="bus.id"
-                                    >
-                                        {{ bus.number_bus }}
-                                    </option>
-                                </select>
+                                    Breack
+                                </button>
                             </td>
                             <td>
                                 <button
                                     class="delete-btn"
-                                    @click="DeleteDriver(user.driver_id)"
+                                    @click="DeleteGovernment(user.id)"
                                 >
                                     <span class="material-icons">delete</span>
                                 </button>
@@ -119,52 +89,33 @@
             </div>
         </div>
 
-        <div v-if="showDriverStatusModal" class="modal">
+        <div v-if="showGovernmentBreackModal" class="modal">
             <div class="modal-content">
-                <div class="modal-header">Driver Status</div>
+                <div class="modal-header">Breack</div>
                 <div class="modal-body">
-                    <button
-                        class="status-btn"
-                        @click="fetchDriverStatus('pending')"
-                    >
-                        Pending
-                    </button>
-                    <button
-                        class="status-btn"
-                        @click="fetchDriverStatus('available')"
-                    >
-                        Available
-                    </button>
-                    <button
-                        class="status-btn"
-                        @click="fetchDriverStatus('Completed')"
-                    >
-                        Completed
-                    </button>
                     <table>
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Email</th>
-                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr
-                                v-for="(driver, index) in driverStatusData"
+                                v-for="(driver, index) in GovernmentBreack"
                                 :key="index"
                             >
-                                <td>{{ driver.driver_id }}</td>
+                                <td>{{ driver.id }}</td>
                                 <td>{{ driver.name }}</td>
-                                <td>{{ driver.email_driver }}</td>
-                                <td>{{ driver.status }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button @click="closeDriverStatusModal" class="close-modal">
+                    <button
+                        @click="closeGovernmentBreackModal"
+                        class="close-modal"
+                    >
                         Close
                     </button>
                 </div>
@@ -226,18 +177,21 @@ export default {
             Driver: [],
             Bus: [],
             driverStatusData: [],
+            GovernmentBreack: [],
             driverWithBusData: [],
             name: "",
+            currentCompanyId: "",
             email: "",
             password: "",
             showDriverStatusModal: false,
+            showGovernmentBreackModal: false,
             showDriverWithBusModal: false,
             toast: useToast(),
-            isDarkMode: false,
+            isDarkMode: false, // إدارة حالة الوضع الداكن
         };
     },
     mounted() {
-        this.AllDriver();
+        this.AllGovernment();
         this.fetchBus();
         this.isDarkMode = localStorage.getItem("theme") === "dark";
         if (this.isDarkMode) {
@@ -245,8 +199,9 @@ export default {
         }
 
         this.$nextTick(() => {
-            this.createChart();
+            this.createChart(); // إنشاء الرسم البياني بعد التأكد من جاهزية DOM
 
+            // تحديث السائقين بالقيم المخزنة في localStorage
             this.Driver.forEach((driver) => {
                 const savedBusId = localStorage.getItem(
                     `driver_${driver.driver_id}_busId`
@@ -259,8 +214,18 @@ export default {
     },
 
     methods: {
+        openBreackModal(company_id) {
+            this.currentCompanyId = company_id;
+            // Set the current company ID
+            this.fetchGovernmentBreack(this.currentCompanyId);
+
+            this.showGovernmentBreackModal = true;
+        },
         closeDriverStatusModal() {
             this.showDriverStatusModal = false;
+        },
+        closeGovernmentBreackModal() {
+            this.showGovernmentBreackModal = false;
         },
         closeDriverWithBusModal() {
             this.showDriverWithBusModal = false;
@@ -273,25 +238,21 @@ export default {
 
             axios({
                 method: "post",
-                url: "http://127.0.0.1:8000/api/company/register/driver",
+                url: "http://127.0.0.1:8000/api/admin/store_government",
                 data: {
                     name: this.name,
-                    email: this.email,
-                    password: this.password,
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
                 .then((response) => {
                     if (response.status == 200) {
                         console.log(response);
-                        this.toast.success(
-                            "Driver account created successfully!"
-                        );
-                        this.AllDriver();
+                        this.toast.success("Government created successfully!");
+                        this.AllGovernment();
                     }
                 })
                 .catch((error) => {
-                    this.toast.error("Email is already registered.");
+                    this.toast.error("Government is already registered.");
                     console.log(error);
                 });
         },
@@ -304,23 +265,23 @@ export default {
             })
                 .then(() => {
                     this.toast.success("Driver cancelled successfully!");
-                    this.AllDriver();
+                    this.AllGovernment();
                 })
                 .catch((error) => {
                     this.toast.error("Error cancelling driver.");
                     console.error(error);
                 });
         },
-        AllDriver() {
+        AllGovernment() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_driver",
+                url: "http://127.0.0.1:8000/api/admin/all_government",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     this.Driver = response.data;
-                    store.state.Driver = response.data;
+                    store.state.Government = response.data;
                     console.log(response.data);
                 })
                 .catch((error) => {
@@ -328,20 +289,19 @@ export default {
                     console.error(error);
                 });
         },
-
-        DeleteDriver(driverId) {
+        DeleteGovernment(driverId) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "delete",
-                url: `http://127.0.0.1:8000/api/company/delete_driver/${driverId}`,
+                url: `http://127.0.0.1:8000/api/admin/delete_government/${driverId}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
-                    this.toast.success("Driver deleted successfully!");
-                    this.AllDriver();
+                    this.toast.success("Government deleted successfully!");
+                    this.AllGovernment();
                 })
                 .catch((error) => {
-                    this.toast.error("Error deleting driver.");
+                    this.toast.error("Error deleting Government.");
                     console.error(error);
                 });
         },
@@ -361,6 +321,7 @@ export default {
                     console.error(error);
                 });
         },
+
         SelectDriver(event, userId) {
             const busId = event.target.value;
             const access_token = window.localStorage.getItem("access_token");
@@ -376,6 +337,7 @@ export default {
                     console.log("Selection Complete for Bus ID:", busId);
                     this.toast.success("Driver assigned to bus successfully!");
 
+                    // تحديث القيمة المحلية وتخزينها في localStorage
                     localStorage.setItem(`driver_${userId}_busId`, busId);
                 })
                 .catch((error) => {
@@ -384,15 +346,15 @@ export default {
                 });
         },
 
-        fetchDriverStatus(status) {
+        fetchGovernmentBreack(status) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
-                method: "get",
-                url: `http://127.0.0.1:8000/api/company/get_driver_by_status?status=${status}`,
+                method: "post",
+                url: `http://127.0.0.1:8000/api/admin/show_goverment/${status}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.driverStatusData = response.data;
+                    this.GovernmentBreack = response.data.breaks;
                     console.log(response.data);
                 })
                 .catch((error) => {
@@ -474,8 +436,8 @@ export default {
         },
     },
     computed: {
-        filteredDrivers() {
-            return store.state.Driver.filter((driver) => {
+        filteredGovernment() {
+            return store.state.Government.filter((driver) => {
                 return (
                     driver.name
                         .toLowerCase()
