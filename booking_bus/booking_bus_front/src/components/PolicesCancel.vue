@@ -344,7 +344,7 @@
             </div>
 
             <!-- Table displaying all rules -->
-            <div class="table-container">
+            <div class="table-container" v-if="showAllRules">
                 <table>
                     <thead>
                         <tr>
