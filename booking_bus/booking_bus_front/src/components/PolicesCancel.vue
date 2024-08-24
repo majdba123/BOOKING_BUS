@@ -348,7 +348,6 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Rule ID</th>
                             <th>Hours Before</th>
                             <th>Discount Percentage</th>
                             <th>Description</th>
@@ -361,7 +360,6 @@
                             v-for="(rule, index) in cancellationRules"
                             :key="rule.id"
                         >
-                            <td>{{ rule.id }}</td>
                             <td>{{ rule.hours_before }}</td>
                             <td>{{ rule.discount_percentage }}%</td>
                             <td>{{ rule.description }}</td>
@@ -454,6 +452,7 @@
 </template>
 <script>
 import axios from "axios";
+import { useToast } from "vue-toastification";
 
 export default {
     name: "PolicesCancel",
@@ -486,6 +485,7 @@ export default {
             showAllRules: false,
             cancellationRules: [],
             selectedRuleId: null,
+            toast: useToast(),
         };
     },
     methods: {
@@ -505,7 +505,15 @@ export default {
         showDriverStatusModal() {
             this.showCancelForm = false;
             this.showAllRewards = false;
-            this.showAllRules = true; // Show rules section
+            this.showAllRules = true;
+        },
+        closeRuleModal() {
+            this.showModal = false;
+            // Clear form fields (optional, if you want to clear when closing)
+            this.ruleHoursBefore = "";
+            this.ruleDiscountPercentage = "";
+            this.ruleDescription = "";
+            this.selectedRuleId = null;
         },
         AllRewards() {
             const access_token = window.localStorage.getItem("access_token");
@@ -522,7 +530,7 @@ export default {
                         "Error Getting Rewards:",
                         error.response?.data || error.message
                     );
-                    alert("Error Getting Rewards", "error");
+                    this.toast.error("Error Getting Rewards");
                 });
         },
 
@@ -572,10 +580,10 @@ export default {
                     this.Rewards[this.editingIndex] = response.data;
                     this.closeModal();
                     this.AllRewards();
-                    alert("Reward Update Successfully");
+                    this.toast.success("Reward Updated Successfully");
                 })
                 .catch((error) => {
-                    alert("Reward Update Successfully");
+                    this.toast.error("Error Updating Reward");
                     console.error(error);
                 });
         },
@@ -595,11 +603,11 @@ export default {
                 .then((response) => {
                     this.Rewards.push(response.data);
                     this.closeModal();
-                    alert("Reward Added Successfully", "success");
+                    this.toast.success("Reward Added Successfully");
                     this.AllRewards();
                 })
                 .catch((error) => {
-                    alert("Error Adding Reward", "error");
+                    this.toast.error("Error Adding Reward");
                     console.error(error);
                 });
         },
@@ -615,11 +623,11 @@ export default {
                     this.Rewards = this.Rewards.filter(
                         (rewardItem) => rewardItem.id !== id
                     );
-                    alert("Reward Deleted Successfully");
+                    this.toast.success("Reward Deleted Successfully");
                     this.AllRewards();
                 })
                 .catch((error) => {
-                    alert("Error Deleting Reward");
+                    this.toast.error("Error Deleting Reward");
                     console.error(error);
                 });
         },
@@ -652,7 +660,7 @@ export default {
                         "Error fetching trips data:",
                         error.response?.data || error.message
                     );
-                    alert("Error fetching trips data", "error");
+                    this.toast.error("Error fetching trips data");
                 });
         },
 
@@ -666,7 +674,7 @@ export default {
         submitForm() {
             const accessToken = window.localStorage.getItem("access_token");
             if (!this.formData.trip_id || !this.formData.description) {
-                alert("Please fill in all required fields.");
+                this.toast.error("Please fill in all required fields.");
                 return;
             }
 
@@ -689,7 +697,7 @@ export default {
                 )
                 .then(() => {
                     this.showCancelForm = false;
-                    alert("Trip cancellation successful!");
+                    this.toast.success("Trip cancellation successful!");
                 })
                 .catch((error) => {
                     console.error("Error cancelling trip:", error);
@@ -698,16 +706,7 @@ export default {
                               error.response.data.message || error.response.data
                           }`
                         : `Error cancelling trip: ${error.message}`;
-                    alert(errorMessage);
-
-                    // For debugging purposes, you can log more details:
-                    console.log("Error details:", {
-                        message: error.message,
-                        code: error.code,
-                        config: error.config,
-                        request: error.request,
-                        response: error.response,
-                    });
+                    this.toast.error(errorMessage);
                 });
         },
 
@@ -724,6 +723,7 @@ export default {
                 this.formData.reasons.splice(index, 1);
             }
         },
+
         loadCancellationRules() {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -735,9 +735,10 @@ export default {
                 })
                 .catch((error) => {
                     console.error("Error fetching cancellation rules:", error);
-                    alert("Error fetching cancellation rules.");
+                    this.toast.error("Error fetching cancellation rules");
                 });
         },
+
         addRule() {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -752,16 +753,16 @@ export default {
                         headers: { Authorization: `Bearer ${accessToken}` },
                     }
                 )
-                .then((response) => {
-                    this.cancellationRules.push(response.data);
-                    this.closeRuleModal();
-                    alert("Cancellation Rule Added Successfully");
+                .then(() => {
+                    this.loadCancellationRules();
+                    this.toast.success("Cancellation Rule Added Successfully");
                 })
                 .catch((error) => {
                     console.error("Error adding cancellation rule:", error);
-                    alert("Error adding cancellation rule.");
+                    this.toast.error("Error adding cancellation rule");
                 });
         },
+
         updateRule() {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -776,19 +777,19 @@ export default {
                         headers: { Authorization: `Bearer ${accessToken}` },
                     }
                 )
-                .then((response) => {
-                    const index = this.cancellationRules.findIndex(
-                        (rule) => rule.id === this.selectedRuleId
-                    );
-                    this.cancellationRules[index] = response.data;
+                .then(() => {
+                    this.loadCancellationRules();
                     this.closeRuleModal();
-                    alert("Cancellation Rule Updated Successfully");
+                    this.toast.success(
+                        "Cancellation Rule Updated Successfully"
+                    );
                 })
                 .catch((error) => {
                     console.error("Error updating cancellation rule:", error);
-                    alert("Error updating cancellation rule.");
+                    this.toast.error("Error updating cancellation rule");
                 });
         },
+
         deleteRule(id) {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -799,16 +800,17 @@ export default {
                     }
                 )
                 .then(() => {
-                    this.cancellationRules = this.cancellationRules.filter(
-                        (rule) => rule.id !== id
+                    this.loadCancellationRules();
+                    this.toast.success(
+                        "Cancellation Rule Deleted Successfully"
                     );
-                    alert("Cancellation Rule Deleted Successfully");
                 })
                 .catch((error) => {
                     console.error("Error deleting cancellation rule:", error);
-                    alert("Error deleting cancellation rule.");
+                    this.toast.error("Error deleting cancellation rule");
                 });
         },
+
         editRule(index, id) {
             this.editingIndex = index;
             this.selectedRuleId = id;
@@ -818,6 +820,7 @@ export default {
             this.ruleDescription = rule.description;
             this.showModal = true;
         },
+
         openAddRuleModal() {
             this.editingIndex = null;
             this.selectedRuleId = null;
@@ -827,9 +830,9 @@ export default {
             this.showModal = true;
         },
     },
-
     mounted() {
         this.fetchTripsData();
+        this.loadCancellationRules();
     },
     computed: {
         limitedOptions() {

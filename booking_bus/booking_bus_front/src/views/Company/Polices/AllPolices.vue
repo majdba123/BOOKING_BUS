@@ -219,7 +219,6 @@ export default {
         },
     },
     mounted() {
-        // التحقق من تفضيلات المستخدم المحفوظة في localStorage
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme === "enabled") {
             this.isDarkMode = true;
@@ -293,12 +292,12 @@ body {
     height: 100%;
     font-size: 0.88rem;
     user-select: none;
-    background: var(--clr-color-background); /* هنا يتم ضبط الخلفية */
+    background: var(--clr-color-background);
     overflow-y: auto;
 }
 
 .container {
-    background: var(--clr-color-background); /* تأكد من ضبط الخلفية هنا أيضًا */
+    background: var(--clr-color-background);
     display: grid;
     width: 100%;
     gap: 1.8rem;
