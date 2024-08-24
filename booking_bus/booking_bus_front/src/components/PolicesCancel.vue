@@ -344,7 +344,7 @@
             </div>
 
             <!-- Table displaying all rules -->
-            <div class="table-container" v-if="showAllRules">
+            <div class="table-container">
                 <table>
                     <thead>
                         <tr>
@@ -492,24 +492,22 @@ export default {
         showCancelTripPage() {
             this.showCancelForm = true;
             this.showAllRewards = false;
+            this.showAllRules = false; // إخفاء صفحة القواعد
         },
         showAllRewardsPage() {
             this.showCancelForm = false;
             this.showAllRewards = true;
+            this.showAllRules = false; // إخفاء صفحة القواعد
             this.AllRewards();
-        },
-        hideAllRewardsPage() {
-            this.showAllRewards = false;
-            this.showCancelForm = true;
         },
         showDriverStatusModal() {
             this.showCancelForm = false;
             this.showAllRewards = false;
-            this.showAllRules = true;
+            this.showAllRules = true; // عرض صفحة القواعد
         },
         closeRuleModal() {
             this.showModal = false;
-            // Clear form fields (optional, if you want to clear when closing)
+            // مسح الحقول في النموذج عند إغلاق المودال (اختياري)
             this.ruleHoursBefore = "";
             this.ruleDiscountPercentage = "";
             this.ruleDescription = "";
