@@ -31,7 +31,6 @@ class BusTripControllerTest extends TestCase
     use CreatesApplication;
 
     public function calculatePrice_returns_correct_price()
-
     {
 
         $controller = new ReservationController();

@@ -29,6 +29,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminDashBoardController;
 use App\Http\Controllers\CancellationRuleController;
 use App\Http\Controllers\RewardController;
+use App\Events\tripgeolocationEvent;
+
 
 
 /*
@@ -321,4 +323,14 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum']], function 
 
     Route::get('/all_my_bus', [BusDriverController::class, 'bus_driveer']);
     Route::get('/all_my_rate', [RateDriverController::class, 'all_my_rate']);
+
+
+    Route::post('/geolocation/{bus_trip_id}', function (Request $request ,$busTripId) {
+
+        $lang = $request->input('lang');
+        $lat = $request->input('lat');
+
+        event(new tripgeolocationEvent($lang, $lat, $busTripId));
+        return response()->json(['message' => 'Geolocation updated successfully']);
+    });
 });
