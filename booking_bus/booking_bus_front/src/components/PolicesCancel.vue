@@ -492,22 +492,22 @@ export default {
         showCancelTripPage() {
             this.showCancelForm = true;
             this.showAllRewards = false;
-            this.showAllRules = false; // إخفاء صفحة القواعد
+            this.showAllRules = false;
         },
         showAllRewardsPage() {
             this.showCancelForm = false;
             this.showAllRewards = true;
-            this.showAllRules = false; // إخفاء صفحة القواعد
+            this.showAllRules = false;
             this.AllRewards();
         },
         showDriverStatusModal() {
             this.showCancelForm = false;
             this.showAllRewards = false;
-            this.showAllRules = true; // عرض صفحة القواعد
+            this.showAllRules = true;
         },
         closeRuleModal() {
             this.showModal = false;
-            // مسح الحقول في النموذج عند إغلاق المودال (اختياري)
+          
             this.ruleHoursBefore = "";
             this.ruleDiscountPercentage = "";
             this.ruleDescription = "";
