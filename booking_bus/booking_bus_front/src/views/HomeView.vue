@@ -146,14 +146,13 @@ export default {
 <style scoped>
 .login-container {
     display: flex;
-    justify-content: center;
     align-items: center;
     height: 100vh;
-    background: url("@/assets/busss.png") no-repeat center center;
+    background: url("@/assets/buz.jpeg") no-repeat center center;
     background-size: cover;
 }
 .login-box {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.7);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -161,6 +160,8 @@ export default {
     width: 100%;
     max-width: 400px;
     opacity: 0;
+    margin-left: 60px;
+    margin-top: 10px;
 }
 
 .login-box .logo {
@@ -222,6 +223,12 @@ export default {
 @media (max-width: 600px) {
     .login-box {
         width: 90%;
+        margin: 0;
+    }
+    .login-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 </style>

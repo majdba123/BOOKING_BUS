@@ -507,7 +507,6 @@ export default {
         },
         closeRuleModal() {
             this.showModal = false;
-          
             this.ruleHoursBefore = "";
             this.ruleDiscountPercentage = "";
             this.ruleDescription = "";
