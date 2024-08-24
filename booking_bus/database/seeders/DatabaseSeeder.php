@@ -22,11 +22,12 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call(geolocationseeder::class);
-
         $this->call(UserSeedres::class);
         $this->call(AreaSeedres::class);
         $this->call(CompanySeedres::class);
         $this->call(DriverSeedres::class);
+        $this->call(Private_tripseeder::class);
+
         $this->call(BusSeedres::class);
         $this->call(SeatSeedres::class);
         $this->call(PathSeedres::class);

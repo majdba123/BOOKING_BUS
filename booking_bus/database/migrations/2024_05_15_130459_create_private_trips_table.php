@@ -17,8 +17,11 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('from');
+            $table->unsignedBigInteger('from_location');
+            $table->foreign('from_location')->references('id')->on('geolocations')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('to');
-            $table->foreignIdFor(Geolocation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->unsignedBigInteger('to_location');
+            $table->foreign('to_location')->references('id')->on('geolocations')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('date');
             $table->string('start_time');
             $table->string('status')->default('padding');
