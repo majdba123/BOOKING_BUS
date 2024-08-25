@@ -3,9 +3,7 @@ import HomeView from "../views/HomeView.vue";
 import AllCompany from "../views/Admin/AllCompany/AllCompany.vue";
 import AdminPage from "../views/Admin/AdminPage.vue";
 import EditBreak from "../views/EditBreak.vue";
-import AddGovernment from "../views/AddGovernment.vue";
 import AllGovernment from "../views/Admin/AllGovernment/AllGovernment.vue";
-import EditGovernment from "../views/EditGovernment.vue";
 import UserPage from "../views/User/UserPage.vue";
 import AllTripUser from "../views/User/AllTripUser.vue";
 import AddPrivateTrip from "../views/User/AddPrivateTrip.vue";
@@ -16,7 +14,7 @@ import AllPath2 from "../views/Company/Path/AllPath.vue";
 import AllBus2 from "../views/Company/Bus/AllBus.vue";
 import AllTrip2 from "../views/Company/Trip/AllTrip.vue";
 import ProfileCompany from "../views/Company/Profile/ProfilCompany.vue";
-import AllBreak from "../views/Company/Break/AllBreak.vue";
+import AllBreak from "../views/Admin/Break/AllBreak.vue";
 import PrivateTrip from "../views/Company/PrivateTrip/PrivateTrip.vue";
 import AllRating from "../views/Company/Rating/AllRating.vue";
 import AllFavourite from "../views/Company/Favourite/AllFavourite.vue";
@@ -113,16 +111,6 @@ const routes = [
         path: "/BookingLogin",
         name: "BookingLogin",
         component: BookingLogin,
-    },
-    {
-        path: "/AddGovernment",
-        name: "AddGovernment",
-        component: AddGovernment,
-    },
-    {
-        path: "/EditGovernment",
-        name: "EditGovernment",
-        component: EditGovernment,
     },
     {
         path: "/EditBreak",

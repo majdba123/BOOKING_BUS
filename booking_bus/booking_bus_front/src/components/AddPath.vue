@@ -53,6 +53,7 @@
                             <th>ID</th>
                             <th>Name Start</th>
                             <th>Name End</th>
+                            <th>Distance</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -61,6 +62,7 @@
                             <td>{{ path.id }}</td>
                             <td>{{ path.from }}</td>
                             <td>{{ path.to }}</td>
+                            <td>{{ path.Distance }}</td>
                             <td>
                                 <button
                                     class="edit-btn"
@@ -154,6 +156,11 @@ export default {
                 data: {
                     from: this.StartPath,
                     to: this.EndPath,
+                    lat_from: store.state.startLat,
+                    long_from: store.state.startLng,
+                    lat_to: store.state.endLat,
+                    long_to: store.state.endLng,
+                    Distance: store.state.distance,
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
@@ -263,6 +270,11 @@ export default {
                 data: {
                     from: this.editedPath.from,
                     to: this.editedPath.to,
+                    lat_from: store.state.startLat,
+                    long_from: store.state.startLng,
+                    lat_to: store.state.endLat,
+                    long_to: store.state.endLng,
+                    Distance: store.state.distance,
                 },
             })
                 .then((response) => {
@@ -280,6 +292,7 @@ export default {
                         draggablePercent: 0.6,
                     });
                     this.showEditModal = false;
+                    this.AllPaths;
                 })
                 .catch((error) => {
                     this.toast.error("Error Updating Path", {
