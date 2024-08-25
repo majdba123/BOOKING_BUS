@@ -28,6 +28,10 @@
             <span class="material-icons" aria-label="Analytics">timeline</span>
             <h3>Government</h3>
         </router-link>
+        <router-link to="AllBreak">
+            <span class="material-icons" aria-label="Analytics">pin_drop</span>
+            <h3>Break</h3>
+        </router-link>
 
         <router-link
             to="AllBus2"

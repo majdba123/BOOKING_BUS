@@ -14,7 +14,7 @@
             <!-- End top -->
 
             <!-- Start sidebar -->
-            <SidebarCompany />
+            <SidebarAdmin />
             <!-- End sidebar -->
         </aside>
         <div class="main-content">
@@ -63,13 +63,13 @@
 
             <!--start driver_chart-->
             <div class="driver_chart">
-                <h2>Bus Workload Status</h2>
+                <h2>Breack Workload Status</h2>
                 <DriverChart :chartData="chartData" />
             </div>
 
             <!--start driver_status-->
             <div class="driver_status">
-                <h2>Bus Status</h2>
+                <h2>Breack Status</h2>
                 <div class="statuses">
                     <div class="status">
                         <div class="info">
@@ -91,14 +91,14 @@
 
 <script>
 import axios from "axios";
-import SidebarCompany from "@/components/SidebarCompany.vue";
+import SidebarAdmin from "@/components/SidebarAdmin.vue";
 import AddBreak from "@/components/AddBreak.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 
 export default {
     name: "AllBus",
-    components: { SidebarCompany, AddBreak, DriverChart },
+    components: { SidebarAdmin, AddBreak, DriverChart },
     data() {
         return {
             x: store.state.x,

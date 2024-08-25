@@ -8,36 +8,15 @@
             <button class="nav-btnd" @click="showForm = false">
                 Show Government
             </button>
-            <button class="nav-btnd" @click="showDriverStatusModal = true">
-                Driver Status
-            </button>
-            <button class="nav-btnd" @click="fetchAllDriverWithBus">
-                Drivers with Bus
-            </button>
         </header>
 
-        <div v-if="showForm" class="form-containerd">
-            <form @submit.prevent="handleSubmit">
-                <div class="form-groupd">
-                    <label for="driverName">Government Name</label>
-                    <input
-                        type="text"
-                        id="driverName"
-                        v-model="name"
-                        required
-                    />
-                </div>
-
-                <div class="submit-btnnd">
-                    <button
-                        type="submit"
-                        @click="CreateDriver"
-                        class="submit-btnd"
-                    >
-                        Submit
-                    </button>
-                </div>
-            </form>
+        <div v-if="showForm" class="form-map-container">
+            <div class="map-container">
+                <GoogleMap />
+                <button type="submit" @click="CreateDriver" class="submit-btnd">
+                    Submit
+                </button>
+            </div>
         </div>
 
         <div v-else class="recent_orders">
@@ -49,7 +28,8 @@
                             <th>ID</th>
                             <th>Name</th>
                             <th>Breack</th>
-                            <th>Actions</th>
+                            <th>ِActions</th>
+                            <th>Display In Map</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,17 +55,38 @@
                                     <span class="material-icons">delete</span>
                                 </button>
                                 <button
-                                    class="cancel-btn"
-                                    @click="CancelDriver(user.driver_id)"
+                                    class="edit-btn"
+                                    @click="openEditModal(user, id)"
                                 >
-                                    <span class="material-icons"
-                                        >close_small</span
-                                    >
+                                    <span class="material-icons">edit</span>
+                                </button>
+                            </td>
+                            <td>
+                                <button
+                                    class="nav-btnd"
+                                    @click="openMapModal(user.id)"
+                                >
+                                    Display
                                 </button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div v-if="showMapModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Location on Map</div>
+                <div class="modal-body">
+                    <div class="map-containers">
+                        <DisplayMap :lat="mapLat" :lng="mapLng" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeMapModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -121,7 +122,24 @@
                 </div>
             </div>
         </div>
-
+        <div v-if="showEditModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Edit Path</div>
+                <div class="modal-body">
+                    <div class="map-containers">
+                        <UpdateMapGovernment />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="update-btn" @click="updateGovernment">
+                        Update
+                    </button>
+                    <button @click="closeEditModal" class="close-modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
         <div v-if="showDriverWithBusModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">All Drivers with Bus</div>
@@ -168,11 +186,18 @@ import axios from "axios";
 import store from "@/store";
 import { useToast } from "vue-toastification";
 import { Chart } from "chart.js";
+import GoogleMap from "./MapGovernment.vue";
+import UpdateMapGovernment from "./UpdateMapGovernment.vue";
+import DisplayMap from "./DisplayMap.vue";
 
 export default {
     name: "AddDriver",
     data() {
         return {
+            showEditModal: false,
+            showMapModal: false,
+            mapLat: null,
+            mapLng: null,
             showForm: true,
             Driver: [],
             Bus: [],
@@ -183,11 +208,11 @@ export default {
             currentCompanyId: "",
             email: "",
             password: "",
-            showDriverStatusModal: false,
             showGovernmentBreackModal: false,
             showDriverWithBusModal: false,
             toast: useToast(),
             isDarkMode: false, // إدارة حالة الوضع الداكن
+            editedGovernment: { name: "" },
         };
     },
     mounted() {
@@ -197,10 +222,8 @@ export default {
         if (this.isDarkMode) {
             document.body.classList.add("dark-theme-variables");
         }
-
         this.$nextTick(() => {
             this.createChart(); // إنشاء الرسم البياني بعد التأكد من جاهزية DOM
-
             // تحديث السائقين بالقيم المخزنة في localStorage
             this.Driver.forEach((driver) => {
                 const savedBusId = localStorage.getItem(
@@ -212,18 +235,35 @@ export default {
             });
         });
     },
-
     methods: {
+        openMapModal(id) {
+            const government = this.Driver.find((driver) => driver.id === id);
+            if (government) {
+                this.mapLat = government.latitude;
+                this.mapLng = government.longitude;
+                this.showMapModal = true;
+                console.log(this.mapLat, this.mapLng);
+            }
+        },
+        closeMapModal() {
+            this.showMapModal = false;
+        },
+
+        openEditModal(Government, index) {
+            this.editedGovernment = { ...Government };
+            this.editingIndex = index;
+            this.showEditModal = true;
+        },
         openBreackModal(company_id) {
             this.currentCompanyId = company_id;
             // Set the current company ID
             this.fetchGovernmentBreack(this.currentCompanyId);
-
             this.showGovernmentBreackModal = true;
         },
-        closeDriverStatusModal() {
-            this.showDriverStatusModal = false;
+        closeEditModal() {
+            this.showEditModal = false;
         },
+
         closeGovernmentBreackModal() {
             this.showGovernmentBreackModal = false;
         },
@@ -233,14 +273,57 @@ export default {
         handleSubmit() {
             console.log("Form Submitted", this.name, this.email, this.password);
         },
+        updateGovernment() {
+            const access_token = window.localStorage.getItem("access_token");
+            const pathId = this.editedGovernment.id;
+            axios({
+                method: "put",
+                url: `http://127.0.0.1:8000/api/admin/update_government/${pathId}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+                data: {
+                    name: store.state.placeName,
+                    lat: store.state.lat,
+                    long: store.state.lng,
+                },
+            })
+                .then((response) => {
+                    this.editingIndex = null;
+                    this.editedGovernment = { name: "" };
+                    console.log(response);
+                    this.toast.success("Government Updated Successfully", {
+                        transition: "Vue-Toastification__bounce",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
+                    this.showEditModal = false;
+                    this.AllGovernment();
+                })
+                .catch((error) => {
+                    this.toast.error("Error Updating Government", {
+                        transition: "Vue-Toastification__shake",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
+                    console.error(error);
+                });
+        },
         CreateDriver() {
             const token = window.localStorage.getItem("access_token");
-
             axios({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/admin/store_government",
                 data: {
-                    name: this.name,
+                    name: store.state.placeName,
+                    lat: store.state.lat,
+                    long: store.state.lng,
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
@@ -321,12 +404,10 @@ export default {
                     console.error(error);
                 });
         },
-
         SelectDriver(event, userId) {
             const busId = event.target.value;
             const access_token = window.localStorage.getItem("access_token");
             console.log("Selected Bus ID:", busId);
-
             axios({
                 method: "post",
                 url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
@@ -336,7 +417,6 @@ export default {
                 .then(() => {
                     console.log("Selection Complete for Bus ID:", busId);
                     this.toast.success("Driver assigned to bus successfully!");
-
                     // تحديث القيمة المحلية وتخزينها في localStorage
                     localStorage.setItem(`driver_${userId}_busId`, busId);
                 })
@@ -345,7 +425,6 @@ export default {
                     console.error("Error for Bus ID:", busId, error);
                 });
         },
-
         fetchGovernmentBreack(status) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -362,23 +441,7 @@ export default {
                     console.error(error);
                 });
         },
-        fetchAllDriverWithBus() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_driver_with_bus",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.driverWithBusData = response.data;
-                    console.log(this.driverWithBusData);
-                    this.showDriverWithBusModal = true;
-                })
-                .catch((error) => {
-                    window.alert("Error fetching drivers with bus.");
-                    console.error(error);
-                });
-        },
+
         toggleTheme() {
             this.isDarkMode = !this.isDarkMode;
             document.body.classList.toggle(
@@ -391,7 +454,7 @@ export default {
             // هنا يمكنك إنشاء الرسم البياني الخاص بك باستخدام Chart.js
             const ctx = document.getElementById("myChart").getContext("2d");
             new Chart(ctx, {
-                type: "bar", // نوع الرسم البياني
+                type: "bar",
                 data: {
                     labels: [
                         "Red",
@@ -452,50 +515,26 @@ export default {
             });
         },
     },
+    components: { GoogleMap, UpdateMapGovernment, DisplayMap },
 };
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
-
 :root {
     --clr-primary: #7380ec;
     --clr-danger: #ff7782;
     --clr-success: #41f1b6;
     --clr-white: #fff;
-    --clr-info-dark: #7d8da1;
-    --clr-info-light: #e4e9f7;
     --clr-dark: #363949;
-    --clr-warning: #ffbb55;
     --clr-light: rgba(132, 139, 200, 0.18);
     --clr-primary-variant: #111e88;
     --clr-dark-variant: #677483;
     --clr-color-background: #f6f6f9;
-
-    --card-border-radius: 2rem;
     --border-radius-1: 0.4rem;
     --border-radius-2: 0.8rem;
-    --border-radius-3: 1.2rem;
-
-    --card-padding: 1.8rem;
     --padding-1: 1.2rem;
 
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-}
-
-.dark-theme-variables {
-    --clr-primary: #bb86fc;
-    --clr-danger: #cf6679;
-    --clr-success: #03dac6;
-    --clr-white: #121212;
-    --clr-info-dark: #bb86fc;
-    --clr-info-light: #292929;
-    --clr-dark: #f6f6f9;
-    --clr-warning: #ffbb55;
-    --clr-light: rgba(255, 255, 255, 0.2);
-    --clr-primary-variant: #3700b3;
-    --clr-dark-variant: #1f1f1f;
-    --clr-color-background: #121212;
 }
 
 * {
@@ -513,13 +552,17 @@ body {
     width: 100%;
     height: 100%;
     font-size: 0.88rem;
-    user-select: none;
-    background: var(--clr-color-background);
+    background: #f6f6f9;
+    overflow-y: auto;
 }
 
-.recent_orders h1 {
-    margin: 18px;
-    color: var(--clr-dark);
+h1 {
+    font-weight: 800;
+    font-size: 1.8rem;
+}
+
+h2 {
+    font-size: 1.4rem;
 }
 
 .recent_orders {
@@ -534,13 +577,13 @@ body {
 }
 
 .recent_orders table {
-    background-color: var(--clr-white);
+    background-color: #fff;
     width: 100%;
     border-radius: 1rem;
     padding: 1rem;
     text-align: center;
     box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: var(--clr-dark);
+    color: #363949;
     max-width: none;
     font-size: 0.85rem;
 }
@@ -556,19 +599,14 @@ table thead tr th {
 
 table tbody tr {
     height: 3rem;
-    border-bottom: 1px solid var(--clr-white);
-    color: var(--clr-dark-variant);
-    transition: background-color 0.3s ease;
-}
-
-table tbody tr:hover {
-    background-color: var(--clr-light);
+    border-bottom: 1px solid #fff;
+    color: #677483;
 }
 
 table tbody td {
     height: 3rem;
-    border-bottom: 1px solid var(--clr-dark);
-    color: var(--clr-dark-variant);
+    border-bottom: 1px solid #363949;
+    color: #677483;
 }
 
 table tbody tr:last-child td {
@@ -585,47 +623,54 @@ table tbody tr:last-child td {
 /* Select styling */
 select {
     padding: 8px;
-    border: 1px solid var(--clr-primary);
+    border: 1px solid #7380ec;
     border-radius: 4px;
-    background-color: var(--clr-white);
-    color: var(--clr-dark);
-    font-size: 0.85rem;
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: #fff;
+    color: #363949;
 }
 
 select:focus {
-    border-color: var(--clr-primary);
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    border-color: #007bff;
 }
 
-/* Delete button styling */
-
-.delete-btn.material-icons,
-.cancel-btn.material-icons {
-    padding: 0;
-    border: none;
+/* Button styling */
+.edit-btns {
+    color: #f1f1f1;
+    background-color: #4caf50;
+    border-radius: 9px;
+    padding: 10px;
     margin: 5px;
-    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+.edit-btns:hover {
+    background-color: #3a8d3c;
+}
+.edit-btn.material-icons,
+.delete-btn.material-icons,
+.status-btn.material-icons {
+    padding: 2px 6px;
+    border: none;
+    margin: 8px;
+    border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.3s;
-    font-size: 14px;
+    font-size: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 20px;
     width: 20px;
+    cursor: pointer;
 }
 
-.cancel-btn {
+.edit-btn {
     color: #4caf50;
     background-color: #f1f1f1;
     border-radius: 9px;
-    width: 29px;
-    padding: 2px;
+    padding: 3px;
     margin: 5px;
 }
-.cancel-btn:hover {
+.edit-btn:hover {
     color: #fff;
     background-color: #4caf50;
 }
@@ -648,7 +693,7 @@ select:focus {
     justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
-    background-color: var(--clr-white);
+    background-color: #fff;
     border-radius: 10px;
     width: 100%;
 }
@@ -658,8 +703,8 @@ select:focus {
     margin: 10px;
     border: none;
     border-radius: 25px;
-    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
-    color: var(--clr-white);
+    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
+    color: white;
     cursor: pointer;
     font-size: 12px;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -685,33 +730,42 @@ select:focus {
     transition: 0.3s ease;
 }
 
-/* Form styling */
+/* Form and Map styling */
+.form-map-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+    height: 350px;
+}
 .form-containerd {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    height: 100%;
     padding: 20px;
-    background-color: var(--clr-info-light);
+    background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
-    margin-top: 50px;
-    transition: background-color 0.3s ease;
+    text-align: center;
 }
-.dark-theme-variables .form-containerd {
-    background-color: var(--clr-dark-variant);
+h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #333;
 }
-
 .form-groupd {
-    margin-bottom: 15px;
     width: 100%;
+    margin-bottom: 15px;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
+    text-align: left;
     font-weight: bold;
 }
 
@@ -728,6 +782,7 @@ input:focus {
 }
 
 .submit-btnnd {
+    margin-top: auto;
     display: flex;
     justify-content: center;
 }
@@ -735,19 +790,44 @@ input:focus {
 .submit-btnd {
     padding: 10px 20px;
     border: none;
-    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
-    color: var(--clr-white);
+    background-color: #007bff;
+    color: white;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s;
 }
 
 .submit-btnd:hover {
-    background-color: var(--clr-primary-variant);
-    transform: translateY(-3px);
+    background-color: #0056b3;
 }
 
-/* Modal styling */
+.map-container {
+    flex: 1;
+    margin-left: 10px;
+    min-width: 400px;
+    border-radius: 20px;
+}
+.map-containers {
+    flex: 1;
+    margin-top: 20px;
+    min-width: 400px;
+    border-radius: 20px;
+}
+
+@media screen and (max-width: 1200px) {
+    .form-map-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-containerd,
+    .map-container {
+        width: 100%;
+        margin-top: 20px;
+    }
+}
+
+/* Edit Modal Styling */
 .modal {
     display: flex;
     justify-content: center;
@@ -762,12 +842,14 @@ input:focus {
 }
 
 .modal-content {
-    background: var(--clr-white);
+    background: #fff;
     padding: 20px;
     border-radius: 10px;
     max-width: 500px;
-    width: 80%;
+    width: 50%;
+    height: 85%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    overflow: scroll;
 }
 
 .modal-header,
@@ -777,56 +859,21 @@ input:focus {
 }
 
 .modal-header {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: bold;
+    display: flex;
+    justify-content: center;
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
 }
-.modal-body table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.modal-body table th,
-.modal-body table td {
-    text-align: center;
-    vertical-align: middle;
-    padding: 8px;
-}
-
-.modal-body table tbody tr {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-body table thead {
-    display: flex;
-    justify-content: center;
-}
-
-.modal-body table tbody {
-    display: flex;
-    flex-direction: column;
-}
-
-.modal-body table tr {
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.modal-body table td {
-    flex: 1;
-}
 
 .close-modal {
     padding: 8px 16px;
     background-color: #d9534f;
-    color: var(--clr-white);
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -836,84 +883,16 @@ input:focus {
     background-color: #c9302c;
 }
 
-.status-btn {
+.update-btn {
     padding: 8px 16px;
-    margin: 5px;
-    border-radius: 4px;
-    cursor: pointer;
+    background-color: #5cb85c;
+    color: white;
     border: none;
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    transition: background-color 0.3s;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
 }
-
-.status-btn:hover {
-    background-color: var(--clr-primary-variant);
-}
-
-/* Responsive Design */
-@media screen and (max-width: 768px) {
-    .container {
-        width: 100%;
-    }
-
-    .recent_orders {
-        padding: 30px;
-        margin: 0 auto;
-    }
-
-    .right .profile {
-        position: absolute;
-        left: 70%;
-    }
-
-    .right .recent_updates {
-        padding: 30px;
-    }
-
-    .right .top button {
-        display: inline-block;
-        background: transparent;
-        cursor: pointer;
-        color: #363949;
-        position: absolute;
-        left: 1rem;
-    }
-
-    .theme-toggler {
-        display: flex;
-        justify-content: space-between;
-        height: 1.6rem;
-        width: 4.2rem;
-        cursor: pointer;
-        border-radius: 10px;
-    }
-
-    .theme-toggler span {
-        font-size: 1.2rem;
-        width: 50%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .theme-toggler span.active {
-        background-color: var(--clr-primary);
-        color: var(--clr-white);
-        border-radius: 10px;
-    }
-}
-
-.containerd {
-    width: 100%;
-    margin-left: 20px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-size: cover;
-    min-height: 100vh;
-    background: var(--clr-color-background);
+.update-btn:hover {
+    background-color: #489248;
 }
 </style>

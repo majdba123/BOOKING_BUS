@@ -13,21 +13,52 @@ export default createStore({
         Profile: "",
         start: null,
         end: null,
+        startLat: null,
+        startLng: null,
+        endLat: null,
+        endLng: null,
+        distance: null,
+        placeName: null,
+        lat: null,
+        lng: null,
     },
     getters: {},
     mutations: {
-        updateSearchQuery(state, newQuery) {
-            state.searchQuery = newQuery;
+        setPlaceData(state, { name, lat, lng }) {
+            state.placeName = name;
+            state.lat = lat;
+            state.lng = lng;
         },
-        setStart(state, location) {
-            state.start = location;
+        resetPlaceData(state) {
+            state.placeName = null;
+            state.lat = null;
+            state.lng = null;
         },
-        setEnd(state, location) {
-            state.end = location;
+        setPointCoordinates(state, { lat, lng }) {
+            state.pointLat = lat;
+            state.pointLng = lng;
         },
-        resetPoints(state) {
-            state.start = null;
-            state.end = null;
+        setDistance(state, distance) {
+            state.distance = distance;
+        },
+        resetPoint(state) {
+            state.pointLat = null;
+            state.pointLng = null;
+            state.distance = null;
+        },
+        setStartCoordinates(state, payload) {
+            state.startLat = payload.lat;
+            state.startLng = payload.lng;
+        },
+        setEndCoordinates(state, payload) {
+            state.endLat = payload.lat;
+            state.endLng = payload.lng;
+        },
+        resetCoordinates(state) {
+            state.startLat = null;
+            state.startLng = null;
+            state.endLat = null;
+            state.endLng = null;
         },
     },
     actions: {},
