@@ -18,10 +18,9 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 
-Broadcast::channel('private-notification-{id}', function () {
+Broadcast::channel('notification-private-channel-{id}', function () {
     return true;
 });
-
 
 
 Broadcast::channel('trip-break-private-channel-{id}', function () {
@@ -29,11 +28,18 @@ Broadcast::channel('trip-break-private-channel-{id}', function () {
 });
 
 
-Broadcast::channel('private-seat-channel-{id}', function () {
+Broadcast::channel('seat-private-channel-{id}', function () {
     return true;
 });
 
 
-Broadcast::channel('private-company-notification-{id}', function () {
+Broadcast::channel('company-notification-private-channel-{id}', function () {
+    return true;
+});
+
+
+
+
+Broadcast::channel('trip-geolocation-private-channel-{id}', function () {
     return true;
 });

@@ -10,22 +10,22 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PrivateNotification implements ShouldBroadcast
+class tripgeolocationEvent implements shouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    public $lang;
+    public $lat;
+    public $bus_trip_id;
     /**
      * Create a new event instance.
      */
+    public function __construct($lang ,$lat ,$bus_trip_id)
+    {
+        $this->lang = $lang;
+        $this->lat = $lat;
+        $this->bus_trip_id = $bus_trip_id;
+    }
 
-     public $user_id;
-     public $message;
-
-     public function __construct($user_id ,$message)
-     {
-         $this->user_id = $user_id;
-         $this->message = $message;
-     }
     /**
      * Get the channels the event should broadcast on.
      *
@@ -33,13 +33,12 @@ class PrivateNotification implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['notification-private-channel-' . $this->user_id];
+        return ['trip-geolocation-private-channel-' . $this->bus_trip_id];
 
     }
 
-
     public function broadcastAs()
     {
-        return 'PrivateNotification';
+        return 'tripgeolocationEvent';
     }
 }
