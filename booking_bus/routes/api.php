@@ -300,6 +300,8 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum']], function 
 
     Route::get('/my_bus', [DriverController::class, 'my_bus']);
     Route::get('/my_pending_trip', [DriverController::class, 'my_pending_trip']);
+    Route::get('/specificPendingTrip/{bus_trip_id}', [DriverController::class, 'specificPendingTrip']);
+    Route::get('/history', [DriverController::class, 'history']);
 
     Route::get('/start_trip', [DriverController::class, 'start_trip']);
     Route::post('/finish_breaks/{id}', [DriverController::class, 'finish_breaks']);
@@ -322,4 +324,9 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum']], function 
 
     Route::get('/all_my_bus', [BusDriverController::class, 'bus_driveer']);
     Route::get('/all_my_rate', [RateDriverController::class, 'all_my_rate']);
+
+    /*!! Hamza!! */
+
+    Route::get('/first-trip', [BusDriverController::class, 'getFirstTrip']);
+    Route::get('/point', [BusDriverController::class, 'getPointofDriver']);
 });

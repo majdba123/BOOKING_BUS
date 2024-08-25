@@ -12,14 +12,15 @@ class Rate_Driver extends Model
         'user_id',
         'driver_id',
         'rating',
+        'rating_speed'
 
     ];
     public function user()
     {
-        return $this->belongsTo(User::class , 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function driver()
     {
-        return $this->belongsTo(Driver::class , 'driver_id');
+        return $this->belongsTo(Driver::class, 'driver_id');
     }
 }
