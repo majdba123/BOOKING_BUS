@@ -194,7 +194,7 @@ class _DashboardUserState extends State<DashboardUser> {
                                 .map((company) => CardfavoriteCompany(
                                       name_of_company: company.nameCompany,
                                       image_link:
-                                          'https://alkadmous.com/SD08/msf/1481723158_57034255.jpg',
+                                          'https://t3.ftcdn.net/jpg/02/51/59/46/360_F_251594672_c7xertPrElSFJ5eTd6V0CmQE1CyGC6Ke.jpg',
                                       company_id: company.id,
                                     ))
                                 .toList(),

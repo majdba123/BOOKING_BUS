@@ -12,7 +12,7 @@
 import store from "@/store";
 
 export default {
-    name:"UpdateMapGovernmente.vue",
+    name: "UpdateMapGovernmente.vue",
     data() {
         return {
             map: null,
@@ -147,7 +147,8 @@ export default {
     top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000; /* لضمان ظهورها فوق الخريطة */
+    z-index: 1000;
+    /* لضمان ظهورها فوق الخريطة */
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 3px;

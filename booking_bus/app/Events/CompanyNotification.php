@@ -31,7 +31,7 @@ class CompanyNotification
      */
     public function broadcastOn(): array
     {
-        return ['private-company-notification-'. $this->company->id];
+        return ['company-notification-private-channel-' . $this->company->id];
 
     }
 

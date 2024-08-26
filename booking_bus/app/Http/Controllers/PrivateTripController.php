@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Map\geolocation;
+use App\Models\Geolocation;
 use App\Models\Private_trip;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
 class RateDriverController extends Controller
 {
     /**
@@ -42,7 +43,7 @@ class RateDriverController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request ,$driver_id)
+    public function store(Request $request, $driver_id)
     {
         $user = auth()->user();
         // Get the rating value from the request (1-5)
@@ -77,12 +78,27 @@ class RateDriverController extends Controller
      */
     public function all_my_rate()
     {
-        $driver =Auth::user()->Driver;
+        $driver = Auth::user()->Driver;
 
-        $rating = Rate_Driver::where('driver_id',  $driver->id)
-                        ->all();
+        $ratings  = Rate_Driver::where('driver_id',  $driver->id)
+            ->get();
 
-        return response()->json($rating);
+        if ($ratings->isEmpty()) {
+            return response()->json(['Driving_Rateing' => 0, 'Speed_Rateing' => 0], 200);
+        }
+
+        //  average rating
+        $averageRating = $ratings->avg('rating');
+        $speedRating = $ratings->avg('rating_speed');
+
+        // Calculate the percentage based on a maximum rating of 5
+        $percentage = ($averageRating / 5);
+        $SpeedRating = ($speedRating / 5);
+
+        return response()->json([
+            'Driving_Rateing' => $percentage,
+            'Speed_Rateing' => $SpeedRating
+        ], 200);
     }
 
     /**

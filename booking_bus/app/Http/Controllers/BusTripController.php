@@ -8,10 +8,14 @@ use App\Models\Breaks_trip;
 use App\Models\Bus_Driver;
 use App\Models\Pivoit;
 use App\Models\Bus;
+use App\Models\Reservation;
+use App\Models\Seat;
+use App\Models\Seat_Reservation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BusTripController extends Controller
 {
@@ -288,5 +292,107 @@ class BusTripController extends Controller
             $busTripsData[] = $busTripData;
         }
         return response()->json($busTripsData);
+    }
+
+
+    //code by hamza !!
+
+    public function replaceBusTrip(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'bus_trip_id' => 'required|integer|exists:bus_trips,id',
+            'new_bus_id' => 'required|integer|exists:buses,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
+
+
+        DB::beginTransaction();
+        $bus_trip_id = $request->input('bus_trip_id');
+        $new_bus_id = $request->input('new_bus_id');
+        try {
+            // Find the existing bus trip
+            $busTrip = Bus_Trip::findOrFail($bus_trip_id);
+
+            $oldBus = $busTrip->bus;
+
+            if ($oldBus->status !== 'available') {
+                return response()->json(['error' => 'The old bus is not available for replacement'], 422);
+            }
+
+            $newBus = Bus::findOrFail($new_bus_id);
+
+            if ($newBus->status !== 'available') {
+                return response()->json(['error' => 'The new bus is not available'], 422);
+            }
+
+            if ($newBus->number_passenger != $oldBus->number_passenger) {
+                return response()->json(['error' => 'The new bus does not match the number of seats of the old bus'], 422);
+            }
+
+            $oldBus->status = 'moved';
+            $oldBus->save();
+
+            $newBusTrip = $busTrip->replicate();
+            $newBusTrip->bus_id = $newBus->id;
+            $newBusTrip->save();
+
+            $reservations = Reservation::where('bus__trip_id', $bus_trip_id)->get();
+            foreach ($reservations as $reservation) {
+                $reservation->bus__trip_id = $newBusTrip->id;
+                $reservation->save();
+
+                // Update seat reservations
+                $seatReservations = Seat_Reservation::where('reservation_id', $reservation->id)->get();
+                foreach ($seatReservations as $seatReservation) {
+                    $seat = Seat::find($seatReservation->seat_id);
+                    if (!$seat) {
+                        return response()->json(['error' => 'Seat not found'], 404);
+                    }
+
+                    // Transfer seat status to the new bus
+                    if ($seat->bus_id == $oldBus->id) {
+                        $newSeat = Seat::where('bus_id', $newBus->id)
+                            ->where('number_seat', $seat->number_seat)
+                            ->first();
+
+                        if ($newSeat) {
+                            $newSeat->status = $seat->status; // Set the new seat status to match the old seat status
+                            $newSeat->save();
+                        }
+                    }
+
+                    $seatReservation->save();
+                }
+            }
+
+
+            $oldBusSeats = Seat::where('bus_id', $oldBus->id)->get();
+            foreach ($oldBusSeats as $oldSeat) {
+                $oldSeat->status = 0; //  seat as available
+                $oldSeat->save();
+            }
+
+            $newBus->status = 'assigned';
+            $newBus->save();
+
+            // Commit the transaction
+            DB::commit();
+
+            //  notification Majdd!!!!!
+            // driver: "Your trip has been canceled due to bus replacement. Please contact company management."
+            // user: "The bus you booked has been changed. Please check the details of your trip."
+
+            return response()->json([
+                'message' => 'The new bus has been successfully added to the trip',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['error' => 'An error occurred during the bus replacement process'], 500);
+        }
     }
 }

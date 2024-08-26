@@ -6,16 +6,20 @@ use App\Models\Bus_Driver;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Bus;
+use App\Models\Bus_Trip;
 use App\Models\user;
 use App\Models\Driver;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
 class BusDriverController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+
     public function index()
     {
         $company = Auth::user()->Company;
@@ -61,7 +65,7 @@ class BusDriverController extends Controller
             return response()->json(['error' => 'Driver not found'], 404);
         }
 
-        if ($driver->status!== 'pending') {
+        if ($driver->status !== 'pending') {
             return response()->json(['error' => 'Driver is not available'], 422);
         }
 
@@ -71,7 +75,7 @@ class BusDriverController extends Controller
             return response()->json(['error' => 'Bus not found'], 404);
         }
 
-        if ($bus->status!== 'pending') {
+        if ($bus->status !== 'pending') {
             return response()->json(['error' => 'bus is not available'], 422);
         }
         // Create a new record in the bus_driver table
@@ -142,10 +146,69 @@ class BusDriverController extends Controller
 
     public function bus_driveer()
     {
-        $driver=Auth::user()->Driver;
+        $driver = Auth::user()->Driver;
         $busDriver = Bus_Driver::where('driver_id', $driver->id)->all();
         if (!$busDriver) {
             return response()->json(['error' => 'Assignment not found'], 404);
+        }
+    }
+
+
+
+    public function getFirstTrip()
+    {
+
+        $user = Auth::user();
+
+        $busDriver = Bus_Driver::where('driver_id', $user->Driver->id)->firstOrFail();
+
+        $firstTrip = Bus_Trip::where('bus_id', $busDriver->bus_id)
+            ->where('status', 'pending')
+            ->orderBy('date', 'asc')
+            ->orderBy('from_time', 'asc')
+            ->first();
+        if ($firstTrip) {
+
+            $firstTrip->load(['trip.path']);
+            $fromTime = new \DateTime($firstTrip->from_time);
+            $toTime = new \DateTime($firstTrip->to_time);
+            $interval = $fromTime->diff($toTime);
+            $tripDuration = $interval->format('%H:%I');
+            return response()->json([
+                'id' => $firstTrip->id,
+                'bus_id' => $firstTrip->bus_id,
+                'from' => $firstTrip->trip->path->from ?? null,
+                'to' => $firstTrip->trip->path->to ?? null,
+                'Distance' => $firstTrip->trip->path->Distance ?? null,
+                'from_time' => $firstTrip->from_time,
+                // 'date' => $firstTrip->date,
+                'to_time' => $firstTrip->to_time,
+                'Passengers' =>  $firstTrip->bus->getNumberOfReservationsAttribute(),
+                'Stops' =>  $firstTrip->Pivoit->count(),
+                'trip_duration' => $tripDuration,
+                'status' => $firstTrip->status,
+                // 'type' => $firstTrip->type,
+                // 'event' => $firstTrip->event,
+
+            ], 200);
+        } else {
+            return response()->json(['message' => 'No trips found for this driver.'], 404);
+        }
+    }
+
+
+    public function getPointofDriver()
+    {
+
+        $user = Auth::user();
+
+        $busDriverPoint = User::where('id', $user->id)->firstOrFail();
+
+        if ($busDriverPoint) {
+
+            return response()->json(['point' => $busDriverPoint->point], 200);
+        } else {
+            return response()->json(['message' => 'No Point found for this driver.'], 404);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Map\geolocation;
+use App\Models\Geolocation;
 use App\Models\Path;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
