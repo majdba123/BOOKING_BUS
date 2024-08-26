@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/widget/buildDetailColumn.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/widget/buildIconWithText.dart';
+import 'package:provider/provider.dart';
 
 class BusHeader extends StatelessWidget {
-  final String companyName;
-  final String from;
-  final String to;
-  final String fromTime;
-  final String toTime;
-
-  const BusHeader({
-    Key? key,
-    required this.companyName,
-    required this.from,
-    required this.to,
-    required this.fromTime,
-    required this.toTime,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
+    final providerSpecificBusTrip =
+        Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -51,7 +42,7 @@ class BusHeader extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            companyName,
+            providerSpecificBusTrip.companyName,
             style: TextStyle(
               color: Colors.white,
               fontSize: 22,
@@ -63,48 +54,25 @@ class BusHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildDetailColumn(Icons.place, from),
-              _buildDetailColumn(Icons.access_time, '$fromTime - $toTime'),
-              _buildDetailColumn(Icons.place, to),
+              buildDetailColumn(Icons.place, providerSpecificBusTrip.from),
+              buildDetailColumn(Icons.access_time,
+                  'S : ${providerSpecificBusTrip.fromTime} - E : ${providerSpecificBusTrip.toTime}'),
+              buildDetailColumn(Icons.place, providerSpecificBusTrip.to),
             ],
           ),
           SizedBox(height: 12.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildIconWithText(Icons.timer, '5 min'),
+              buildIconWithText(Icons.access_time,
+                  ' T :  ${providerSpecificBusTrip.Duration} H'),
               SizedBox(width: 12.0),
-              _buildIconWithText(Icons.wb_sunny, '24°C'),
+              buildIconWithText(Icons.linear_scale_sharp,
+                  'D : ${providerSpecificBusTrip.Ditacnce}Km'),
             ],
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDetailColumn(IconData icon, String label) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white, size: 24),
-        SizedBox(height: 2.0),
-        Text(
-          label,
-          style: TextStyle(color: Colors.white, fontSize: 14),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildIconWithText(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.white, size: 16),
-        SizedBox(width: 4.0),
-        Text(
-          text,
-          style: TextStyle(color: Colors.white, fontSize: 14),
-        ),
-      ],
     );
   }
 }

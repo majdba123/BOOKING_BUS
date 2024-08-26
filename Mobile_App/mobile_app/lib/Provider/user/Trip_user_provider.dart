@@ -3,6 +3,7 @@ import 'package:http/http.dart'
     as http; // Assuming you're using the http package for API calls
 import 'package:mobile_app/Api_Services/User/User_profile.dart';
 import 'package:mobile_app/Data_Models/AlltripsModelUser.dart';
+import 'package:mobile_app/Data_Models/Breack_place.dart';
 import 'package:mobile_app/Data_Models/My_Reservation.dart';
 import 'package:mobile_app/Data_Models/Reservation_Success_model.dart';
 import 'dart:convert';
@@ -158,13 +159,13 @@ class TripuserProvider with ChangeNotifier {
 
   Future<void> getTripsByPath(
       String accessToken, String from, String to, var companyName) async {
-    final response = await http.get(
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-        },
-        Uri.parse(name_domain_server +
-            'user/trip_by_path?from=$from&to=$to&company_name=$companyName'));
+    final response = await http.get(headers: {
+      'Authorization': 'Bearer $accessToken',
+    }, Uri.parse(name_domain_server + 'user/trip_by_path?from=$from&to=$to'));
 
+    print(response.statusCode);
+    print('here in serach trip by path');
+    print(response.body);
     if (response.statusCode == 200) {
       final List<dynamic> tripList = json.decode(response.body);
       _trips = tripList.map((json) => TripByPath.fromJson(json)).toList();

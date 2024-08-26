@@ -8,6 +8,7 @@ use App\Models\Bus;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
 class SeatController extends Controller
 {
     /**
@@ -23,7 +24,7 @@ class SeatController extends Controller
         $company_id = $bus->company->id;
         $auth_company_id = auth()->user()->Company->id;
 
-        if ($company_id!== $auth_company_id) {
+        if ($company_id !== $auth_company_id) {
             return response()->json(['error' => 'You are not authorized to view seats for this bus.'], 403);
         }
 
@@ -49,17 +50,15 @@ class SeatController extends Controller
         if (!$bus) {
 
             return response()->json(['error' => 'Bus not found.'], 404);
-
         }
 
         $company_id = $bus->company->id;
 
         $auth_company_id = auth()->user()->Company->id;
 
-        if ($company_id!== $auth_company_id) {
+        if ($company_id !== $auth_company_id) {
 
             return response()->json(['error' => 'You are not authorized to create a seat for this bus.'], 403);
-
         }
         $number_passenger = $bus->number_passenger;
 
@@ -124,7 +123,7 @@ class SeatController extends Controller
             return response()->json(['error' => $errors], 422);
         }
 
-        $seat = Seat::where('bus_id' , $request->input('bus_id'))->find($seat_id);
+        $seat = Seat::where('bus_id', $request->input('bus_id'))->find($seat_id);
         if (!$seat) {
             return response()->json(['error' => 'Seat not found.'], 404);
         }
@@ -135,7 +134,7 @@ class SeatController extends Controller
         $company_id = $bus->company->id;
         $auth_company_id = auth()->user()->Company->id;
 
-        if ($company_id!== $auth_company_id) {
+        if ($company_id !== $auth_company_id) {
             return response()->json(['error' => 'You are not authorized to update this seat.'], 403);
         }
 
@@ -151,7 +150,7 @@ class SeatController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy( Request $request ,$seat_id)
+    public function destroy(Request $request, $seat_id)
     {
         $validator = Validator::make($request->all(), [
             'bus_id'  => 'required|integer'
@@ -162,7 +161,7 @@ class SeatController extends Controller
             return response()->json(['error' => $errors], 422);
         }
 
-        $seat = Seat::where('bus_id' , $request->input('bus_id'))->find($seat_id);
+        $seat = Seat::where('bus_id', $request->input('bus_id'))->find($seat_id);
         if (!$seat) {
             return response()->json(['error' => 'Seat not found.'], 404);
         }
@@ -175,7 +174,7 @@ class SeatController extends Controller
         $company_id = $bus->Company->id;
         $auth_company_id = auth()->user()->company->id;
 
-        if ($company_id!== $auth_company_id) {
+        if ($company_id !== $auth_company_id) {
             return response()->json(['error' => 'You are not authorized to delete this seat.'], 403);
         }
 
@@ -184,5 +183,20 @@ class SeatController extends Controller
         return response()->json([
             'message' => 'Seat deleted successfully',
         ]);
+    }
+
+
+    //hamza
+
+    public function seatOfBus($bus_id)
+    {
+        $bus = Bus::find($bus_id);
+        if (!$bus) {
+            return response()->json(['error' => 'Bus not found.'], 404);
+        }
+
+        $seats = Seat::where('bus_id', $bus_id)->get(['id', 'status']);
+
+        return response()->json($seats);
     }
 }
