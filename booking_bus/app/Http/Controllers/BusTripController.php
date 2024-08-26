@@ -94,14 +94,23 @@ class BusTripController extends Controller
         $busTripsData = [];
 
         foreach ($busTrips as $busTrip) {
+            $fromTime = new \DateTime($busTrip->from_time);
+            $toTime = new \DateTime($busTrip->to_time);
+            $interval = $fromTime->diff($toTime);
+            $tripDuration = $interval->format('%H:%I');
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
+                'nameCompany' => $trip->company->name_company,
                 'from' => $trip->path->from,
                 'to' => $trip->path->to,
+                'price' => (int) $trip->price,
                 'from_time' => $busTrip->from_time,
                 'to_time' => $busTrip->to_time,
+                'Distance' => $trip->path->Distance,
+                'tripDuration' => $tripDuration,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
+                'seats' => $busTrip->bus->seat->count()
             ];
 
             $breaksData = [];
@@ -110,23 +119,26 @@ class BusTripController extends Controller
                     'break_id' => $pivot->id,
                     'government' => $pivot->break_trip->break->area->name,
                     'name_break' => $pivot->break_trip->break->name,
+                    'latitude' => $pivot->break_trip->break->latitude,
+                    'longitude' => $pivot->break_trip->break->longitude,
                     'status' => $pivot->status,
+
                 ];
                 $breaksData[] = $breakData;
             }
 
             $busTripData['breaks'] = $breaksData;
 
-            $seats = $busTrip->bus->seat;
-            $seatsData = [];
-            foreach ($seats as $seat) {
-                $seatsData[] = [
-                    'id' => $seat->id,
-                    'status' => $seat->status,
-                    // Add any other columns you want to include from the seats table
-                ];
-            }
-            $busTripData['seats'] = $seatsData;
+            // $seats = $busTrip->bus->seat;
+            // $seatsData = [];
+            // foreach ($seats as $seat) {
+            //     $seatsData[] = [
+            //         'id' => $seat->id,
+            //         'status' => $seat->status,
+            //         // Add any other columns you want to include from the seats table
+            //     ];
+            // }
+            // $busTripData['seats'] = $seatsData;
 
             $busTripsData[] = $busTripData;
         }

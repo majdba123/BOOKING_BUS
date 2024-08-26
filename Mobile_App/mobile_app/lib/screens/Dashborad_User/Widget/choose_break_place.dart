@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/Data_Models/Breack_place.dart';
 import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Payment_page.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/break_point.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/payment/payment_page.dart';
 import 'package:provider/provider.dart';
 
 class PassengerDetailsPage extends StatefulWidget {

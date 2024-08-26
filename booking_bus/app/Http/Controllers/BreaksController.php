@@ -24,7 +24,29 @@ class BreaksController extends Controller
         }
         return response()->json($breaks);
     }
+    public function allbreaks()
+    {
+        $breaks = Breaks::with('area')->get();
 
+        if ($breaks->isEmpty()) {
+            return response()->json(['message' => 'No breaks found for this area.'], 404);
+        }
+        $formattedBreaks = $breaks->map(function ($break) {
+            return [
+                'id' => $break->id,
+                'area_id' => $break->area_id,
+                'break_name' => $break->name,
+                'latitude' => $break->latitude,
+                'longitude' => $break->longitude,
+                'area_name' => $break->area->name,
+                'area_latitude' => $break->area ? $break->area->latitude : null,
+                'area_longitude' => $break->area ? $break->area->longitude : null,
+            ];
+        });
+
+        // Return the result as a JSON response (if you're using API)
+        return response()->json($formattedBreaks);
+    }
     /**
      * Show the form for creating a new resource.
      */

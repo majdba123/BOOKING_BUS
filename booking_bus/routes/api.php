@@ -227,6 +227,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum']
     Route::post('/company_all_info/{company_id}', [AdminDashBoardController::class, 'company_all_info']);
 
     Route::get('/dashboard_Admin', [AdminDashBoardController::class, 'statiesticle_dash']);
+
+    //hamza
+
+    Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
 });
 
 
@@ -239,6 +243,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
     Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
 
     Route::post('/get_bus_trip/{id}', [BusTripController::class, 'getBusTripsByTripId']);
+    Route::post('/seatOfBus/{id}', [SeatController::class, 'seatOfBus']);
     Route::get('/get_bus_trip_fillter', [BusTripController::class, 'getBusTripsByFillter']);
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
