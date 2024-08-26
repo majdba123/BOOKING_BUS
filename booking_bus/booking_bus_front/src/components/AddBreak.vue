@@ -9,7 +9,10 @@
         <div class="content">
             <div class="form-map-container" v-if="showForm">
                 <div class="form-container">
-                    <form @submit.prevent="handleSubmit" class="break-form">
+                    <form
+                        @submit.prevent="handleSubmit(Idgovernment)"
+                        class="break-form"
+                    >
                         <div class="form-group">
                             <label for="breakName">Name Break</label>
                             <input
@@ -29,7 +32,8 @@
                             </label>
                             <select
                                 id="government"
-                                v-model="government"
+                                v-model="Idgovernment"
+                                @change="updateMapLocation"
                                 required
                                 class="custom-select"
                             >
@@ -45,19 +49,6 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="description">
-                                <span class="material-icons">description</span>
-                                Description
-                            </label>
-                            <textarea
-                                id="description"
-                                placeholder="Enter a brief description"
-                                v-model="description"
-                                rows="3"
-                                required
-                            ></textarea>
-                        </div>
 
                         <div class="submit-btn">
                             <button type="submit">ADD</button>
@@ -65,7 +56,7 @@
                     </form>
                 </div>
                 <div class="map-container">
-                    <MapPath />
+                    <MapBreack :lat="mapLat" :lng="mapLng" />
                 </div>
             </div>
             <div v-else class="recent_orders">
@@ -171,13 +162,18 @@
 
 <script>
 import axios from "axios";
-import MapPath from "./MapPath.vue";
+import MapBreack from "./MapBreack.vue";
+import store from "@/store"; // تأكد من تحديث المسار بناءً على موقع store الخاص بك
 
 export default {
     name: "AddBreak",
-    components: { MapPath },
+    components: { MapBreack },
     data() {
         return {
+            name: "",
+            mapLat: 30.033333, // Default latitude for Cairo, Egypt
+            mapLng: 31.233334, // Defau
+            Idgovernment: "",
             showForm: true,
             showEditModal: false,
             break: {
@@ -200,7 +196,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "127.0.0.1:8000/api/company/all_government",
+                url: "http://127.0.0.1:8000/api/admin/all_government",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -227,11 +223,18 @@ export default {
                 });
         },
         handleSubmit() {
+            console.log(store.state.breacklat, store.state.breacklong);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: "http://127.0.0.1:8000/api/admin/store_breaks",
-                data: this.break,
+                url:
+                    "http://127.0.0.1:8000/api/admin/store_breaks/" +
+                    this.Idgovernment,
+                data: {
+                    name: this.name,
+                    lat: store.state.breacklat, // استخدام القيمة المخزنة في Vuex Store
+                    long: store.state.breacklong, // استخدام القيم
+                },
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
@@ -244,7 +247,17 @@ export default {
                     console.error(error);
                 });
         },
-
+        updateMapLocation() {
+            const selectedGov = this.governments.find(
+                (gov) => gov.id === this.Idgovernment
+            );
+            if (selectedGov) {
+                console.log(selectedGov);
+                this.mapLat = selectedGov.latitude;
+                this.mapLng = selectedGov.longitude;
+                console.log(selectedGov.latitude);
+            }
+        },
         openEditModal(breakItem, index) {
             this.editedBreak = { ...breakItem };
             this.editingIndex = index;
@@ -275,6 +288,7 @@ export default {
         resetForm() {
             this.break = { name: "", government: "", description: "" };
         },
+
         DeleteBreak(breakId) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
