@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
-import 'package:mobile_app/Data_Models/seat_model.dart';
+import 'package:mobile_app/Data_Models/SeatModel.dart';
 
 class BusLayout extends StatelessWidget {
   final List<SeatModel> seats;
@@ -19,7 +18,7 @@ class BusLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     int totalSeats = 40;
     int columns = 5;
-    int rows = totalSeats ~/ columns;
+    int rows = totalSeats ~/ (columns - 1); // Adjust rows for the aisle
 
     // Create a 2D list to represent the bus seats layout
     List<List<SeatModel?>> arrangedSeats = List.generate(
@@ -27,11 +26,18 @@ class BusLayout extends StatelessWidget {
       (_) => List.generate(columns, (_) => null),
     );
 
-    // Allocate seats column by column
-    for (int i = 0; i < seats.length; i++) {
-      int rowIndex = i % rows;
-      int columnIndex = i ~/ rows;
-      arrangedSeats[rowIndex][columnIndex] = seats[i];
+    // Allocate seats, skipping the aisle column (column 2)
+    int seatIndex = 0;
+    for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
+      for (int columnIndex = 0; columnIndex < columns; columnIndex++) {
+        if (columnIndex == 2) {
+          continue; // Skip the aisle column
+        }
+        if (seatIndex < seats.length) {
+          arrangedSeats[rowIndex][columnIndex] = seats[seatIndex];
+          seatIndex++;
+        }
+      }
     }
 
     return Container(
@@ -83,16 +89,19 @@ class BusLayout extends StatelessWidget {
               childAspectRatio: 1.0,
             ),
             itemBuilder: (context, index) {
-              int rowIndex = index % rows;
-              int columnIndex = index ~/ rows;
+              int rowIndex = index ~/ columns;
+              int columnIndex = index % columns;
+
+              // Determine if this position should be an aisle
+              if (columnIndex == 2) {
+                return Container(); // Represents the aisle
+              }
+
               SeatModel? seat = arrangedSeats[rowIndex][columnIndex];
+
               bool isActualSeat = seat != null;
               bool isSelected =
                   isActualSeat && selectedSeats.contains(seat!.id);
-
-              if (index % columns == 2) {
-                return Container(); // Represents the aisle
-              }
 
               return InkWell(
                 onTap: isActualSeat ? () => onSeatTap(seat!.id) : null,
@@ -118,7 +127,7 @@ class BusLayout extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      isActualSeat ? '${index + 1}' : '',
+                      isActualSeat ? '${seat!.id}' : '', // Display seat ID
                       style: TextStyle(
                         color: isActualSeat ? Colors.white : Colors.grey[600],
                         fontSize: 14,

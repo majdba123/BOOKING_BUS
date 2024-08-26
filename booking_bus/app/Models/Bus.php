@@ -30,5 +30,14 @@ class Bus extends Model
     {
         return $this->belongsTo(Company::class, 'company_id');
     }
-  
+
+    //hamza!!!!
+    public function reservations()
+    {
+        return $this->hasManyThrough(Reservation::class, Bus_Trip::class);
+    }
+    public function getNumberOfReservationsAttribute()
+    {
+        return $this->reservations()->count();
+    }
 }

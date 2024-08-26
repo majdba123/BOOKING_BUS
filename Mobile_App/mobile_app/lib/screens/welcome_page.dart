@@ -2,14 +2,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile_app/colors.dart';
-import 'package:mobile_app/screens/register_page.dart';
 import 'package:mobile_app/screens/signin_page.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    void initState() {
+      super.initState();
+      precacheImage(AssetImage("assets/images/background_mappp.png"), context);
+      precachePicture(
+        ExactAssetPicture(
+            SvgPicture.svgStringDecoderBuilder, "assets/images/logo_bus.svg"),
+        null,
+      );
+    }
 
     return Scaffold(
       body: Stack(
@@ -18,7 +31,7 @@ class WelcomePage extends StatelessWidget {
           Container(
             width: screenWidth,
             height: screenHeight,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
                   "assets/images/background_mappp.png", // Path to your PNG background image
@@ -33,25 +46,21 @@ class WelcomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Top content (logo, title, and description)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
                   child: Column(
                     children: [
-                      // Bus Logo at the top
                       SizedBox(height: screenHeight * 0.12),
                       Container(
                         width: screenWidth * 0.4,
                         height: screenHeight * 0.2,
                         child: SvgPicture.asset(
-                          "assets/images/logo_bus.svg", // Path to your logo image
+                          "assets/images/logo_bus.svg",
                           fit: BoxFit.contain,
                           color: AppColors.primaryColor,
                         ),
                       ),
                       SizedBox(height: screenHeight * 0.04),
-
-                      // Welcome Title
                       Text(
                         "Welcome to BusX",
                         style: TextStyle(
@@ -62,8 +71,6 @@ class WelcomePage extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: screenHeight * 0.03),
-
-                      // Description
                       Text(
                         "Plan your trip, book your seat, and track your bus in real-time with BusX. Your seamless travel experience starts here.",
                         style: TextStyle(
@@ -76,19 +83,24 @@ class WelcomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                // Bottom content (Create account and Sign In)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
                   child: Column(
                     children: [
-                      // Sign In Button with hover effect
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (context) => SignInPage(),
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      SignInPage(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                );
+                              },
                             ),
                           );
                         },
@@ -102,18 +114,6 @@ class WelcomePage extends StatelessWidget {
                           ),
                           minimumSize:
                               Size(double.infinity, 50), // Full-width button
-                        ).copyWith(
-                          elevation: ButtonStyleButton.allOrNull(0),
-                          backgroundColor:
-                              MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
-                              if (states.contains(MaterialState.hovered)) {
-                                return AppColors.primaryColor
-                                    .withOpacity(0.9); // Darker yellow on hover
-                              }
-                              return AppColors.primaryColor; // Default color
-                            },
-                          ),
                         ),
                         child: Text(
                           'ENTER',

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_of_spsecfic_trip.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Trip_of_Specifc_Trip/Bus_of_spsecfic_trip.dart';
 import 'package:provider/provider.dart';
 
 class RouteCard extends StatelessWidget {
@@ -20,9 +21,12 @@ class RouteCard extends StatelessWidget {
     required this.companyName,
     required this.imageUrl,
   });
-
   @override
   Widget build(BuildContext context) {
+    var tripUserProvider =
+        Provider.of<TripuserProvider>(context, listen: false);
+    var busOfSpecficTrip =
+        Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     double cardWidth = MediaQuery.of(context).size.width * 0.85;
     double cardHeight =
         100.0; // Adjusted height to accommodate the company name
@@ -34,14 +38,13 @@ class RouteCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Provider.of<TripuserProvider>(context, listen: false)
-            .save_price_from_Trip(int.parse(price));
+        tripUserProvider.save_price_from_Trip(int.parse(price));
+        busOfSpecficTrip.setTripid(tripId);
+        busOfSpecficTrip.setcompanyName(companyName);
+
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => BusCardofSpecicTrip(
-              companyName: companyName,
-              tripId: tripId,
-            ),
+            builder: (context) => BusCardofSpecicTrip(),
           ),
         );
       },

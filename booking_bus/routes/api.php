@@ -29,6 +29,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminDashBoardController;
 use App\Http\Controllers\CancellationRuleController;
 use App\Http\Controllers\RewardController;
+use App\Events\tripgeolocationEvent;
+
 
 
 /*
@@ -93,11 +95,13 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
 
     Route::get('/all_trips', [TripController::class, 'index']);
     Route::get('/all_trips_by_status', [TripController::class, 'index_status']);
+    Route::post('/store_trip', [TripController::class, 'store']);
     Route::post('/show_trip/{id}', [TripController::class, 'show']);
 
     Route::put('/update_trip/{id}', [TripController::class, 'update']);
     Route::delete('/delete_trip/{id}', [TripController::class, 'destroy']);
     Route::post('/trips/cancel', [TripController::class, 'cancelTrip']); //hamza
+    Route::post('/replace-bus-trip', [BusTripController::class, 'replaceBusTrip']); //hamza
 
     Route::get('/all_trip_rating', [RateTripsController::class, 'index']);
     Route::post('/all_trip_rating_by_trip_id/{trip_id}', [RateTripsController::class, 'rate_trip__by_id']);
@@ -143,14 +147,14 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
     Route::post('/get_profit_trip/{bus_trip_id}', [DashboardController::class, 'get_profit_trip']);
     Route::post('/user_infomation_id/{user_id}', [DashboardController::class, 'user_info']);
 
-    Route::prefix('rewards')->group(function () {
+    Route::prefix('rewards')->group(function () {   //hamza
         Route::get('/', [RewardController::class, 'index']);
         Route::get('/{id}', [RewardController::class, 'show']);
         Route::post('/store', [RewardController::class, 'store']);
         Route::put('/{id}', [RewardController::class, 'update']);
         Route::delete('/{id}', [RewardController::class, 'destroy']);
     });
-    Route::prefix('cancellation-rules')->group(function () {
+    Route::prefix('cancellation-rules')->group(function () {    //hamza
         Route::get('/', [CancellationRuleController::class, 'index']);
         Route::get('/{id}', [CancellationRuleController::class, 'show']);
         Route::post('/store', [CancellationRuleController::class, 'store']);
@@ -223,6 +227,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum']
     Route::post('/company_all_info/{company_id}', [AdminDashBoardController::class, 'company_all_info']);
 
     Route::get('/dashboard_Admin', [AdminDashBoardController::class, 'statiesticle_dash']);
+
+    //hamza
+
+    Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
 });
 
 
@@ -235,6 +243,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
     Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
 
     Route::post('/get_bus_trip/{id}', [BusTripController::class, 'getBusTripsByTripId']);
+    Route::post('/seatOfBus/{id}', [SeatController::class, 'seatOfBus']);
     Route::get('/get_bus_trip_fillter', [BusTripController::class, 'getBusTripsByFillter']);
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
@@ -298,6 +307,8 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum']], function 
 
     Route::get('/my_bus', [DriverController::class, 'my_bus']);
     Route::get('/my_pending_trip', [DriverController::class, 'my_pending_trip']);
+    Route::get('/specificPendingTrip/{bus_trip_id}', [DriverController::class, 'specificPendingTrip']);
+    Route::get('/history', [DriverController::class, 'history']);
 
     Route::get('/start_trip', [DriverController::class, 'start_trip']);
     Route::post('/finish_breaks/{id}', [DriverController::class, 'finish_breaks']);
@@ -320,4 +331,19 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum']], function 
 
     Route::get('/all_my_bus', [BusDriverController::class, 'bus_driveer']);
     Route::get('/all_my_rate', [RateDriverController::class, 'all_my_rate']);
+
+
+    Route::post('/geolocation/{bus_trip_id}', function (Request $request, $busTripId) {
+
+        $lang = $request->input('lang');
+        $lat = $request->input('lat');
+
+        event(new tripgeolocationEvent($lang, $lat, $busTripId));
+        return response()->json(['message' => 'Geolocation updated successfully']);
+    });
+
+    /*!! Hamza!! */
+
+    Route::get('/first-trip', [BusDriverController::class, 'getFirstTrip']);
+    Route::get('/point', [BusDriverController::class, 'getPointofDriver']);
 });

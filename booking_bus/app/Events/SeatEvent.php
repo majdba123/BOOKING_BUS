@@ -29,7 +29,7 @@ class SeatEvent implements shouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['private-seat-channel-'. $this->bus_trip->id];
+        return ['seat-private-channel-' . $this->bus_trip->id];
 
     }
 

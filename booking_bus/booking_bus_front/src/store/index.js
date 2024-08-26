@@ -2,6 +2,8 @@ import { createStore } from "vuex";
 
 export default createStore({
     state: {
+        breacklat: null,
+        breacklong: null,
         x: "Dashboard",
         Bus: {},
         Driver: {},
@@ -13,23 +15,65 @@ export default createStore({
         Profile: "",
         start: null,
         end: null,
+        startLat: null,
+        startLng: null,
+        endLat: null,
+        endLng: null,
+        distance: null,
+        placeName: null,
+        lat: null,
+        lng: null,
     },
     getters: {},
     mutations: {
-        updateSearchQuery(state, newQuery) {
-            state.searchQuery = newQuery;
+        setBreakLat(state, lat) {
+            state.breacklat = lat;
         },
-        setStart(state, location) {
-            state.start = location;
+        setBreakLong(state, lng) {
+            state.breacklong = lng;
         },
-        setEnd(state, location) {
-            state.end = location;
+        setPlaceData(state, { name, lat, lng }) {
+            state.placeName = name;
+            state.lat = lat;
+            state.lng = lng;
         },
-        resetPoints(state) {
-            state.start = null;
-            state.end = null;
+        resetPlaceData(state) {
+            state.placeName = null;
+            state.lat = null;
+            state.lng = null;
+        },
+        setPointCoordinates(state, { lat, lng }) {
+            state.pointLat = lat;
+            state.pointLng = lng;
+        },
+        setDistance(state, distance) {
+            state.distance = distance;
+        },
+        resetPoint(state) {
+            state.pointLat = null;
+            state.pointLng = null;
+            state.distance = null;
+        },
+        setStartCoordinates(state, payload) {
+            state.startLat = payload.lat;
+            state.startLng = payload.lng;
+        },
+        setEndCoordinates(state, payload) {
+            state.endLat = payload.lat;
+            state.endLng = payload.lng;
+        },
+        resetCoordinates(state) {
+            state.startLat = null;
+            state.startLng = null;
+            state.endLat = null;
+            state.endLng = null;
         },
     },
-    actions: {},
+    actions: {
+        updateBreakLocation({ commit }, { lat, lng }) {
+            commit('setBreakLat', lat);
+            commit('setBreakLong', lng);
+        },
+    },
     modules: {},
 });

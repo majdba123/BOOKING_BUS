@@ -148,17 +148,15 @@ class BusSearchScreen extends StatelessWidget {
                                               listen: false)
                                           .select_price_tikect(
                                               int.parse(trip.price));
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SeatsGridPage(
-                                                    companyName: trip.companyId,
-                                                    from: trip.from,
-                                                    to: trip.to,
-                                                    fromTime: busTrip.fromTime,
-                                                    toTime: busTrip.toTime,
-                                                    seats: busTrip.seats,
-                                                  )));
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) => SeatsGridPage(
+                                              // companyName: trip.companyId,
+                                              // from: trip.from,
+                                              // to: trip.to,
+                                              // fromTime: busTrip.fromTime,
+                                              // toTime: busTrip.toTime,
+                                              // seats: busTrip.seats,
+                                              )));
                                     },
                                   );
                                 }).toList();

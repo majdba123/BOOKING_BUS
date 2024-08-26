@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Company;
-use App\Models\Map\geolocation;
+use App\Models\Geolocation;
 
 return new class extends Migration
 {

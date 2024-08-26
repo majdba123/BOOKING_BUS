@@ -18,9 +18,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('/trip', function () {
+    return view('trip');
+});
+
+
 Route::get('/seat', function () {
     return view('seat');
-});
+})->middleware('auth');
+
+Route::get('/geolocation', function () {
+    return view('geolocation');
+})->middleware('auth');
 
 Route::get('/notification', function () {
     return view('notification');

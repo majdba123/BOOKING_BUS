@@ -20,6 +20,7 @@ export default {
             startMarker: null,
             endMarker: null,
             toast: useToast(),
+            distance: null, // Variable to store the distance
         };
     },
     mounted() {
@@ -41,68 +42,118 @@ export default {
                 this.handleMapClick(event.latLng);
             });
 
-            if (store.state.start && store.state.end) {
+            if (
+                store.state.startLat !== null &&
+                store.state.startLng !== null
+            ) {
                 this.startMarker = new google.maps.Marker({
-                    position: store.state.start,
+                    position: {
+                        lat: store.state.startLat,
+                        lng: store.state.startLng,
+                    },
                     map: this.map,
                     label: "A",
                 });
+                this.map.setCenter({
+                    lat: store.state.startLat,
+                    lng: store.state.startLng,
+                });
+            }
 
+            if (store.state.endLat !== null && store.state.endLng !== null) {
                 this.endMarker = new google.maps.Marker({
-                    position: store.state.end,
+                    position: {
+                        lat: store.state.endLat,
+                        lng: store.state.endLng,
+                    },
                     map: this.map,
                     label: "B",
                 });
+            }
 
+            if (this.startMarker && this.endMarker) {
                 this.calculateAndDisplayRoute();
             }
         },
         handleMapClick(location) {
+            const latitude = location.lat();
+            const longitude = location.lng();
+
             if (!this.startMarker) {
                 this.startMarker = new google.maps.Marker({
-                    position: location,
+                    position: { lat: latitude, lng: longitude },
                     map: this.map,
                     label: "A",
                 });
-                store.commit("setStart", location);
+
+                store.commit("setStartCoordinates", {
+                    lat: latitude,
+                    lng: longitude,
+                });
+
                 this.toast.success(
                     "Start point selected! Now click to set the end point."
                 );
-                console.log("Start point selected:", location.toString());
             } else if (!this.endMarker) {
                 this.endMarker = new google.maps.Marker({
-                    position: location,
+                    position: { lat: latitude, lng: longitude },
                     map: this.map,
                     label: "B",
                 });
-                store.commit("setEnd", location);
+
+                store.commit("setEndCoordinates", {
+                    lat: latitude,
+                    lng: longitude,
+                });
+
                 this.toast.success("End point selected!");
                 this.calculateAndDisplayRoute();
-                console.log("End point selected:", location.toString());
             } else {
-                // Remove old markers if both markers are already set
                 this.resetMarkers();
-                this.handleMapClick(location); // Set new start marker
+                this.handleMapClick(location);
             }
         },
         calculateAndDisplayRoute() {
+            const start = {
+                lat: store.state.startLat,
+                lng: store.state.startLng,
+            };
+            const end = {
+                lat: store.state.endLat,
+                lng: store.state.endLng,
+            };
+
             this.directionsService.route(
                 {
-                    origin: store.state.start,
-                    destination: store.state.end,
+                    origin: start,
+                    destination: end,
                     travelMode: google.maps.TravelMode.DRIVING,
                 },
                 (response, status) => {
                     if (status === google.maps.DirectionsStatus.OK) {
                         this.directionsRenderer.setDirections(response);
+
+                        const route = response.routes[0];
+                        if (route.legs.length > 0) {
+                            const distanceText = route.legs[0].distance.text;
+                            // استخراج الرقم فقط من النص
+                            this.distance = parseFloat(distanceText);
+
+                            this.toast.success(`Distance: ${this.distance} km`);
+                            store.state.distance = this.distance;
+                        }
                     } else {
                         console.error(
                             "Directions request failed due to " + status
+                        );
+                        this.toast.error(
+                            "Could not calculate route. Please try again."
                         );
                     }
                 }
             );
         },
+
         resetMarkers() {
             if (this.startMarker) {
                 this.startMarker.setMap(null);
@@ -112,12 +163,31 @@ export default {
                 this.endMarker.setMap(null);
                 this.endMarker = null;
             }
-            store.commit("resetPoints");
+            store.commit("resetCoordinates");
             this.directionsRenderer.setDirections({ routes: [] });
             this.toast.info(
                 "Points have been reset! Click on the map to set the start point."
             );
-            console.log("Points have been reset!");
+        },
+        // Additional methods for user interface enhancements
+        resetMap() {
+            this.resetMarkers();
+            this.toast.info("Map reset. Select new start and end points.");
+        },
+        validateCoordinates(lat, lng) {
+            // Example validation: Ensure coordinates are within Syria's boundaries
+            if (lat >= 32 && lat <= 37 && lng >= 35 && lng <= 43) {
+                return true;
+            }
+            this.toast.error(
+                "Invalid coordinates! Please select within Syria."
+            );
+            return false;
+        },
+        handleConnectionError() {
+            this.toast.error(
+                "Connection to Google Maps failed. Check your internet connection."
+            );
         },
     },
 };

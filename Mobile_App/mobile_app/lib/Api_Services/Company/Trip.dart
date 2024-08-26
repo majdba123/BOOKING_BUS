@@ -82,7 +82,7 @@ class TripBusApi {
       },
     );
     print('this status code ${response.statusCode}');
-    // print(response.body);
+    print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
 

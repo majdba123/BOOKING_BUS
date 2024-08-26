@@ -10,14 +10,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Events\PrivateNotification;
+
 class ChargeBalanceController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-/**
- * Display a listing of the resource.
- */
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         $chargeBalances = Charge_Balance::where('status', 'padding')->get();
@@ -70,7 +71,7 @@ class ChargeBalanceController extends Controller
             return response()->json(['error' => $errors], 422);
         }
         try {
-            $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();
+            $imageName = Str::random(32) . "." . $request->image->getClientOriginalExtension();
             $imageUrl = asset('storage/order_balance/' . $imageName);
             $user = auth()->user();
             // Create Post
@@ -86,12 +87,12 @@ class ChargeBalanceController extends Controller
             // Return Json Response
             return response()->json([
                 'message' => "Post successfully created."
-            ],200);
+            ], 200);
         } catch (\Exception $e) {
             // Return Json Response
             return response()->json([
                 'message' => "Something went really wrong!"
-            ],500);
+            ], 500);
         }
     }
     /**
@@ -123,7 +124,7 @@ class ChargeBalanceController extends Controller
     {
         $user = Auth::user();
 
-        $chargeBalance = Charge_Balance::where('user_id' , $user->id)->get();
+        $chargeBalance = Charge_Balance::where('user_id', $user->id)->get();
         if (!$chargeBalance) {
             return response()->json(['error' => 'Not found'], 404);
         }
@@ -135,17 +136,17 @@ class ChargeBalanceController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:padding,completed',
-          ]);
+        ]);
 
         if ($validator->fails()) {
-              $errors = $validator->errors()->first();
-              return response()->json(['error' => $errors], 422);
-          }
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
+        }
         $user = Auth::user();
 
-        $chargeBalance = Charge_Balance::where('user_id' , $user->id)
-                                        ->where('status' , $request->input('status'))
-                                        ->get();
+        $chargeBalance = Charge_Balance::where('user_id', $user->id)
+            ->where('status', $request->input('status'))
+            ->get();
         if (!$chargeBalance) {
             return response()->json(['error' => 'Not found'], 404);
         }
@@ -156,10 +157,7 @@ class ChargeBalanceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Charge_Balance $charge_Balance)
-    {
-
-    }
+    public function update(Request $request, Charge_Balance $charge_Balance) {}
 
     /**
      * Remove the specified resource from storage.
@@ -179,10 +177,10 @@ class ChargeBalanceController extends Controller
 
         $user->point += $points; // add the points to the user's points
         $user->save();
-        $user_id =$user->id;
+        $user_id = $user->id;
         $massage = "your status of charage balance update to  : $chargeBalance->status";
 
-        event(new PrivateNotification($user_id , $massage));
+        event(new PrivateNotification($user_id, $massage));
         return response()->json(['message' => 'Charge balance status updated to completed and points added to user'], 200);
     }
 
@@ -192,11 +190,14 @@ class ChargeBalanceController extends Controller
         if (!$chargeBalance) {
             return response()->json(['error' => 'Not found'], 404);
         }
+        $user = $chargeBalance->user; // assuming you have a user relationship in Charge_Balance model
+
         $chargeBalance->status = 'cancelled';
         $chargeBalance->save();
-        $massage = "your status of charage balance update to  : $chargeBalance->status";
-        event(new PrivateNotification($user_id , $massage));
-        return response()->json(['message' => 'Charge balance status updated to cancelled'], 200);
+        $user_id = $user->id;
 
+        $massage = "your status of charage balance update to  : $chargeBalance->status";
+        event(new PrivateNotification($user_id, $massage));
+        return response()->json(['message' => 'Charge balance status updated to cancelled'], 200);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Map\geolocation;
+use App\Models\Geolocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -44,7 +44,7 @@ class Path extends Model
     public function geolocation()
     {
 
-        return $this->belongsTo(geolocation::class);
+        return $this->belongsTo(Geolocation::class);
     }
 
     /*

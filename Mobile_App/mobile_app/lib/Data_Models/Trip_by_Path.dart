@@ -1,6 +1,8 @@
 import 'package:flutter/src/material/radio_list_tile.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_app/Data_Models/BUS_Trip.dart';
+import 'package:mobile_app/Data_Models/Breack_place.dart';
+import 'package:mobile_app/Data_Models/SeatModel.dart';
 
 class TripByPath {
   final int tripId;
@@ -93,46 +95,5 @@ class BusTrip {
     int minutes = duration.inMinutes.remainder(60);
 
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
-  }
-}
-
-class BreakPlace {
-  final int breakId;
-  final String government;
-  final String nameBreak;
-  final String status;
-
-  BreakPlace({
-    required this.breakId,
-    required this.government,
-    required this.nameBreak,
-    required this.status,
-  });
-
-  factory BreakPlace.fromJson(Map<String, dynamic> json) {
-    return BreakPlace(
-      breakId: json['break_id'],
-      government: json['government'],
-      nameBreak: json['name_break'],
-      status: json['status'],
-    );
-  }
-
-  map(RadioListTile<Break> Function(dynamic point) param0) {}
-}
-
-class SeatModel {
-  final int status;
-  final int id;
-  SeatModel({
-    required this.status,
-    required this.id,
-  });
-
-  factory SeatModel.fromJson(Map<String, dynamic> json) {
-    return SeatModel(
-      status: json['status'],
-      id: json['id'],
-    );
   }
 }
