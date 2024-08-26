@@ -9,6 +9,7 @@ class PaymentDetails extends StatelessWidget {
     final ticketDetails = tripProvider.selectedTicketDetails;
 
     return Card(
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
