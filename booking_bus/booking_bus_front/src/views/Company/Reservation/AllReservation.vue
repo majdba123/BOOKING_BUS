@@ -277,7 +277,7 @@ aside .logo {
     padding: 1rem;
     background-color: #f6f6f9;
     grid-column: span 1;
-    overflow-y: auto; /* تأكد من أن التمرير الرأسي مسموح */
+    overflow-y: auto;
 }
 
 .right .top {
