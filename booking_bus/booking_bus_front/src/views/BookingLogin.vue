@@ -19,7 +19,6 @@
         </aside>
 
         <div class="main-content">
-            <!-- زر القائمة -->
             <button id="menu_bar" @click="openMenu" class="menu-button">
                 <span class="material-icons">menu</span>
             </button>
@@ -324,7 +323,7 @@ aside .logo {
     ********** */
 @media screen and (max-width: 1200px) {
     .menu-button {
-        display: inline-block; /* إظهار الزر في الوضع المتجاوب */
+        display: inline-block;
     }
     .container {
         width: 94%;

@@ -1,4 +1,3 @@
-<!-- src/components/DriverChart.vue -->
 <template>
     <div>
         <canvas ref="driverChart"></canvas>
@@ -7,6 +6,7 @@
 
 <script>
 import { Chart } from "chart.js/auto";
+import { nextTick } from "vue";
 
 export default {
     name: "DriverChart",
@@ -17,25 +17,36 @@ export default {
         },
     },
     mounted() {
-        this.createChart();
+        nextTick(() => {
+            this.createChart();
+        });
     },
     methods: {
         createChart() {
-            const ctx = this.$refs.driverChart.getContext("2d");
-            new Chart(ctx, {
-                type: "pie",
-                data: this.chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: "top",
+            const canvas = this.$refs.driverChart;
+            if (canvas) {
+                const ctx = canvas.getContext("2d");
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: "pie",
+                        data: this.chartData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: "top",
+                                },
+                            },
                         },
-                    },
-                },
-            });
+                    });
+                } else {
+                    console.error("Failed to get context of canvas.");
+                }
+            } else {
+                console.error("Canvas element not found.");
+            }
         },
     },
 };

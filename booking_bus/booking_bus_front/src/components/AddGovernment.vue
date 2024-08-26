@@ -184,18 +184,6 @@ export default {
         if (this.isDarkMode) {
             document.body.classList.add("dark-theme-variables");
         }
-        this.$nextTick(() => {
-            this.createChart(); // إنشاء الرسم البياني بعد التأكد من جاهزية DOM
-            // تحديث السائقين بالقيم المخزنة في localStorage
-            this.Driver.forEach((driver) => {
-                const savedBusId = localStorage.getItem(
-                    `driver_${driver.driver_id}_busId`
-                );
-                if (savedBusId) {
-                    driver.selectedBusId = savedBusId;
-                }
-            });
-        });
     },
     methods: {
         openMapModal(id) {
