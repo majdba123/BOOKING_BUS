@@ -328,7 +328,7 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum']], function 
     Route::get('/all_my_rate', [RateDriverController::class, 'all_my_rate']);
 
 
-    Route::post('/geolocation/{bus_trip_id}', function (Request $request ,$busTripId) {
+    Route::post('/geolocation/{bus_trip_id}', function (Request $request, $busTripId) {
 
         $lang = $request->input('lang');
         $lat = $request->input('lat');

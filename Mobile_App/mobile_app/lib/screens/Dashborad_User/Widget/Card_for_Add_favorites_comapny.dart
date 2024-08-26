@@ -63,9 +63,9 @@ class _CardfavoriteCompanyState extends State<CardfavoriteCompany> {
     // Adjust sizes based on screen width and height
     double cardWidth = screenWidth *
         0.45; // Adjust width to fit better on various screen sizes
-    double cardHeight = screenHeight * 0.25; // Adjust height
+    double cardHeight = screenHeight * 0.23; // Adjust height
     double imageHeight = cardHeight * 0.6; // Image takes 60% of the card height
-    double titleFontSize = screenWidth * 0.045; // Title font size
+    double titleFontSize = screenWidth * 0.031; // Title font size
     double subtitleFontSize = screenWidth * 0.035; // Subtitle font size
     double iconSize = screenWidth * 0.05; // Icon size
 

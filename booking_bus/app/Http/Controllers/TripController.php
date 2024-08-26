@@ -640,10 +640,8 @@ class TripController extends Controller
         }
     }
 
-    public function sum($x ,$y)
+    public function sum($x, $y)
     {
-        return $x+$y ;
+        return $x + $y;
     }
-
-
 }
