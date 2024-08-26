@@ -306,10 +306,11 @@ export default {
     background: url("@/assets/buz.jpeg") no-repeat center center;
     background-size: cover;
     position: relative;
+    padding: 20px;
 }
 
 .login-box {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.5);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -421,5 +422,64 @@ export default {
 .loading-animation {
     width: 200px;
     height: 200px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    .login-box {
+        padding: 15px;
+        margin-left: 0;
+        max-width: 300px;
+    }
+
+    .login-box h1 {
+        font-size: 24px;
+    }
+
+    .login-box input {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .login-box button {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .loading-animation {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 10px;
+        margin-left: 0;
+    }
+
+    .login-box {
+        padding: 10px;
+        max-width: 280px;
+    }
+
+    .login-box h1 {
+        font-size: 20px;
+    }
+
+    .login-box input {
+        padding: 7px;
+        font-size: 13px;
+    }
+
+    .login-box button {
+        padding: 7px;
+        font-size: 13px;
+    }
+
+    .loading-animation {
+        width: 120px;
+        height: 120px;
+    }
 }
 </style>
