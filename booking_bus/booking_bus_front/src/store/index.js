@@ -71,8 +71,8 @@ export default createStore({
     },
     actions: {
         updateBreakLocation({ commit }, { lat, lng }) {
-            commit('setBreakLat', lat);
-            commit('setBreakLong', lng);
+            commit("setBreakLat", lat);
+            commit("setBreakLong", lng);
         },
     },
     modules: {},
