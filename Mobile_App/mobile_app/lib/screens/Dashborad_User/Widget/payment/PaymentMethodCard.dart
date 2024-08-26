@@ -8,6 +8,7 @@ class PaymentMethodCard extends StatelessWidget {
     final tripProvider = Provider.of<TripuserProvider>(context);
 
     return Card(
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -22,8 +22,13 @@ class AdminDashBoardController extends Controller
 {
     public function all_user()
     {
-        $user=User::all()->load(['profile', 'address']);
-        return response()->json($user);
+        //hamza
+        $users = User::where('type', '!=', 1) // Exclude users with type 0
+            ->doesntHave('driver')
+            ->doesntHave('company')
+            ->with(['profile', 'address'])
+            ->get();
+        return response()->json($users);
     }
 
     public function user_details($id)
@@ -34,7 +39,6 @@ class AdminDashBoardController extends Controller
         }
         $user->load(['profile', 'address']);
         return response()->json($user);
-
     }
 
     public function fillter_user(Request $request)
@@ -70,10 +74,9 @@ class AdminDashBoardController extends Controller
     public function user_reservation($id)
     {
         $reservations = Reservation::where('user_id', $id)->get();
-        $data=[];
-        foreach($reservations  as $reservation)
-        {
-            $info=[
+        $data = [];
+        foreach ($reservations  as $reservation) {
+            $info = [
                 "user_name" => $reservation->user->name,
                 "reservation_id" => $reservation->id,
                 "area_name" => $reservation->pivoit->break_trip->break->area->name,
@@ -81,7 +84,7 @@ class AdminDashBoardController extends Controller
                 'pivoit_id' => $reservation->pivoit->id,
                 "reservation_status" => $reservation->status,
                 "reservation_type" => $reservation->type,
-                "seat" => $reservation->seat_reservation->map(function($seatReservation) {
+                "seat" => $reservation->seat_reservation->map(function ($seatReservation) {
                     return [
                         'seat_id' => $seatReservation->seat->id,
                         'status' => $seatReservation->status, // assuming SeatReservation model has a 'seat_type' column
@@ -89,7 +92,7 @@ class AdminDashBoardController extends Controller
                     ];
                 })->all(),
             ];
-            $data[]=$info;
+            $data[] = $info;
         }
         return response()->json($data);
     }
@@ -143,7 +146,7 @@ class AdminDashBoardController extends Controller
     public function all_trip_history_of_user($id)
     {
         $reservations = Reservation::where('user_id', $id)
-                        ->get();
+            ->get();
 
         $busTripIds = $reservations->pluck('bus__trip_id')->all();
 
@@ -164,181 +167,181 @@ class AdminDashBoardController extends Controller
                 ];
             })->all();
 
-            return response()->json($customBusTrips);
+        return response()->json($customBusTrips);
+    }
+
+    public function all_trip_history_of_user_fillter($id, Request $request)
+    {
+        $reservations = Reservation::where('user_id', $id)
+            ->get();
+
+        $busTripIds = $reservations->pluck('bus__trip_id')->all();
+
+        $customBusTrips = Bus_Trip::whereIn('id', $busTripIds);
+
+        // Filter by date range
+        if ($request->query('from_date') && $request->query('to_date')) {
+            $customBusTrips->whereBetween('date', [$request->query('from_date'), $request->query('to_date')]);
         }
 
-        public function all_trip_history_of_user_fillter($id, Request $request)
-        {
-            $reservations = Reservation::where('user_id', $id)
-                ->get();
+        // Filter by status
+        if ($request->query('status')) {
+            $customBusTrips->where('status', $request->query('status'));
+        }
 
-            $busTripIds = $reservations->pluck('bus__trip_id')->all();
+        // Filter by type
+        if ($request->query('type')) {
+            $customBusTrips->where('type', $request->query('type'));
+        }
 
-            $customBusTrips = Bus_Trip::whereIn('id', $busTripIds);
+        $customBusTrips = $customBusTrips->get()
+            ->map(function ($busTrip) {
+                return [
+                    'id' => $busTrip->id,
+                    'from' => $busTrip->trip->path->from,
+                    'to' => $busTrip->trip->path->to,
+                    'price_trip' => $busTrip->trip->price,
+                    'from_time' => $busTrip->from_time,
+                    'to_time' => $busTrip->to_time,
+                    'date' => $busTrip->date,
+                    'status' => $busTrip->status,
+                    'type' => $busTrip->type,
+                    'event' => $busTrip->event,
+                ];
+            })->all();
 
-            // Filter by date range
-            if ($request->query('from_date') && $request->query('to_date')) {
-                $customBusTrips->whereBetween('date', [$request->query('from_date'), $request->query('to_date')]);
-            }
+        return response()->json($customBusTrips);
+    }
 
-            // Filter by status
-            if ($request->query('status')) {
-                $customBusTrips->where('status', $request->query('status'));
-            }
+    public function favourite_company_of_user($user_id)
+    {
+        $favoutite = Favourite::where('user_id', $user_id)->get();
 
-            // Filter by type
-            if ($request->query('type')) {
-                $customBusTrips->where('type', $request->query('type'));
-            }
+        $response = [];
 
-            $customBusTrips = $customBusTrips->get()
-                ->map(function ($busTrip) {
+        foreach ($favoutite as $favourite) {
+            $company = $favourite->company;
+            $response[] = [
+                'id_favourite' => $favourite->id,
+                'name_user' => $favourite->user->name,
+                'user_id' => $favourite->user->id,
+                'name_company' => $company->name_company,
+                'company_id' => $company->id,
+                'email_company' => $company->user->email,
+                'image_company' => $company->user->profile->image,
+                'phone' => $company->user->profile->phone,
+            ];
+        }
+
+        return response()->json($response);
+    }
+
+    public function private_order_of_user($user_id)
+    {
+        $Private_trips = Private_trip::where('user_id', $user_id)->with('order_private_trip')->get();
+
+        $response = [];
+
+        foreach ($Private_trips as $Private_trip) {
+            $response[] = [
+                'Private_trip_id' => $Private_trip->id,
+                'user_id' => $Private_trip->user_id,
+                'user_name' => $Private_trip->user->name,
+                'user_email' => $Private_trip->user->email,
+                'from' => $Private_trip->from,
+                'to' => $Private_trip->to,
+                'date' => $Private_trip->date,
+                'start_time' => $Private_trip->start_time,
+                'status' => $Private_trip->status,
+                'order_private_trip' => $Private_trip->order_private_trip ? $Private_trip->order_private_trip->map(function ($orderPrivateTrip) {
                     return [
-                        'id' => $busTrip->id,
-                        'from' => $busTrip->trip->path->from,
-                        'to' => $busTrip->trip->path->to,
-                        'price_trip' => $busTrip->trip->price,
-                        'from_time' => $busTrip->from_time,
-                        'to_time' => $busTrip->to_time,
-                        'date' => $busTrip->date,
-                        'status' => $busTrip->status,
-                        'type' => $busTrip->type,
-                        'event' => $busTrip->event,
+                        'id' => $orderPrivateTrip->id,
+                        'company_id' => $orderPrivateTrip->company_id,
+                        'price' => $orderPrivateTrip->price,
+                        'payment_status' => $orderPrivateTrip->status,
                     ];
-                })->all();
-
-            return response()->json($customBusTrips);
+                })->all() : [],
+            ];
         }
 
-        public function favourite_company_of_user($user_id)
-        {
-            $favoutite = Favourite::where('user_id', $user_id)->get();
+        return response()->json($response);
+    }
+    public function private_order_of_user_fillter(Request $request, $user_id)
+    {
+        $validator = Validator::make($request->all(), [
+            'from' => 'nullable|string',
+            'to' => 'nullable|string',
+            'status' => 'nullable|string',
+            'start_time' => 'nullable|string',
+            'date' => 'nullable|string',
+        ]);
 
-            $response = [];
-
-            foreach ($favoutite as $favourite) {
-                $company = $favourite->company;
-                $response[] = [
-                    'id_favourite' => $favourite->id,
-                    'name_user' => $favourite->user->name,
-                    'user_id' => $favourite->user->id,
-                    'name_company' => $company->name_company,
-                    'company_id' => $company->id,
-                    'email_company' => $company->user->email,
-                    'image_company' => $company->user->profile->image,
-                    'phone' => $company->user->profile->phone,
-                ];
-            }
-
-            return response()->json($response);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 422);
         }
 
-        public function private_order_of_user($user_id)
-        {
-            $Private_trips = Private_trip::where('user_id', $user_id)->with('order_private_trip')->get();
-
-            $response = [];
-
-            foreach ($Private_trips as $Private_trip) {
-                $response[] = [
-                    'Private_trip_id' => $Private_trip->id,
-                    'user_id' => $Private_trip->user_id,
-                    'user_name' => $Private_trip->user->name,
-                    'user_email' => $Private_trip->user->email,
-                    'from' => $Private_trip->from,
-                    'to' => $Private_trip->to,
-                    'date' => $Private_trip->date,
-                    'start_time' => $Private_trip->start_time,
-                    'status' => $Private_trip->status,
-                    'order_private_trip' => $Private_trip->order_private_trip ? $Private_trip->order_private_trip->map(function ($orderPrivateTrip) {
-                        return [
-                            'id' => $orderPrivateTrip->id,
-                            'company_id' => $orderPrivateTrip->company_id,
-                            'price' => $orderPrivateTrip->price,
-                            'payment_status' => $orderPrivateTrip->status,
-                        ];
-                    })->all() : [],
-                ];
-            }
-
-            return response()->json($response);
-        }
-        public function private_order_of_user_fillter(Request $request, $user_id)
-        {
-            $validator = Validator::make($request->all(), [
-                'from' => 'nullable|string',
-                'to' => 'nullable|string',
-                'status' => 'nullable|string',
-                'start_time' => 'nullable|string',
-                'date' => 'nullable|string',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->messages()], 422);
-            }
-
-            $from = $request->input('from');
-            $to = $request->input('to');
-            $status = $request->input('status');
-            $start_time = $request->input('start_time');
-            $date = $request->input('date');
+        $from = $request->input('from');
+        $to = $request->input('to');
+        $status = $request->input('status');
+        $start_time = $request->input('start_time');
+        $date = $request->input('date');
 
 
-            if ($from) {
-                $Private_trips = Private_trip::where('user_id', $user_id)
-                                                ->where('from' ,$from )
-                                                ->with('order_private_trip')->get();
-            }
-
-            if ($to) {
-                $Private_trips = Private_trip::where('user_id', $user_id)
-                ->where('to' ,$to )
+        if ($from) {
+            $Private_trips = Private_trip::where('user_id', $user_id)
+                ->where('from', $from)
                 ->with('order_private_trip')->get();
-            }
+        }
 
-            if ($status) {
-                $Private_trips = Private_trip::where('user_id', $user_id)
-                ->where('status' ,$status )
+        if ($to) {
+            $Private_trips = Private_trip::where('user_id', $user_id)
+                ->where('to', $to)
                 ->with('order_private_trip')->get();
-            }
+        }
 
-            if ($start_time) {
-                $Private_trips = Private_trip::where('user_id', $user_id)
-                                                ->where('start_time' ,$start_time )
-                                                ->with('order_private_trip')->get();
-            }
+        if ($status) {
+            $Private_trips = Private_trip::where('user_id', $user_id)
+                ->where('status', $status)
+                ->with('order_private_trip')->get();
+        }
 
-            if ($date) {
-                $Private_trips = Private_trip::where('user_id', $user_id)
-                                                ->where('date' ,$date )
-                                                ->with('order_private_trip')->get();
-            }
+        if ($start_time) {
+            $Private_trips = Private_trip::where('user_id', $user_id)
+                ->where('start_time', $start_time)
+                ->with('order_private_trip')->get();
+        }
 
-            $response = [];
+        if ($date) {
+            $Private_trips = Private_trip::where('user_id', $user_id)
+                ->where('date', $date)
+                ->with('order_private_trip')->get();
+        }
 
-            foreach ($Private_trips as $Private_trip) {
-                $response[] = [
-                    'Private_trip_id' => $Private_trip->id,
-                    'user_id' => $Private_trip->user_id,
-                    'user_name' => $Private_trip->user->name,
-                    'user_email' => $Private_trip->user->email,
-                    'from' => $Private_trip->from,
-                    'to' => $Private_trip->to,
-                    'date' => $Private_trip->date,
-                    'start_time' => $Private_trip->start_time,
-                    'status' => $Private_trip->status,
-                    'order_private_trip' => $Private_trip->order_private_trip ? $Private_trip->order_private_trip->map(function ($orderPrivateTrip) {
-                        return [
-                            'id' => $orderPrivateTrip->id,
-                            'company_id' => $orderPrivateTrip->company_id,
-                            'price' => $orderPrivateTrip->price,
-                            'payment_status' => $orderPrivateTrip->status,
-                        ];
-                    })->all() : [],
-                ];
-            }
+        $response = [];
 
-            return response()->json($response);
+        foreach ($Private_trips as $Private_trip) {
+            $response[] = [
+                'Private_trip_id' => $Private_trip->id,
+                'user_id' => $Private_trip->user_id,
+                'user_name' => $Private_trip->user->name,
+                'user_email' => $Private_trip->user->email,
+                'from' => $Private_trip->from,
+                'to' => $Private_trip->to,
+                'date' => $Private_trip->date,
+                'start_time' => $Private_trip->start_time,
+                'status' => $Private_trip->status,
+                'order_private_trip' => $Private_trip->order_private_trip ? $Private_trip->order_private_trip->map(function ($orderPrivateTrip) {
+                    return [
+                        'id' => $orderPrivateTrip->id,
+                        'company_id' => $orderPrivateTrip->company_id,
+                        'price' => $orderPrivateTrip->price,
+                        'payment_status' => $orderPrivateTrip->status,
+                    ];
+                })->all() : [],
+            ];
+        }
+
+        return response()->json($response);
     }
 
     public function all_company()
@@ -392,7 +395,7 @@ class AdminDashBoardController extends Controller
 
     public function all_driver_by_id_company($company_id)
     {
-        $drivers = Driver::where('company_id' , $company_id)->with('user.profile' ,'user.address',)->get();
+        $drivers = Driver::where('company_id', $company_id)->with('user.profile', 'user.address',)->get();
         return response()->json($drivers);
     }
 
@@ -407,7 +410,7 @@ class AdminDashBoardController extends Controller
         }
 
         $drivers = Driver::where('company_id', $company_id);
-        $status =$request->input('status');
+        $status = $request->input('status');
 
         if ($status) {
             $drivers->where('status', $status);
@@ -418,7 +421,7 @@ class AdminDashBoardController extends Controller
 
     public function all_bus_by_id_company($company_id)
     {
-        $drivers = Bus::where('company_id' , $company_id)->with('seat' ,'company')->get();
+        $drivers = Bus::where('company_id', $company_id)->with('seat', 'company')->get();
         return response()->json($drivers);
     }
 
@@ -444,11 +447,11 @@ class AdminDashBoardController extends Controller
 
     public function all_trip_of_company($company_id)
     {
-        $trips=Trip::where('company_id' ,$company_id)->with(['bus_trip.Pivoit','breaks_trip.break.area','path'])->get();
+        $trips = Trip::where('company_id', $company_id)->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->get();
         return response()->json($trips);
     }
 
-    public function trip_by_status_of_company(Request $request , $company_id)
+    public function trip_by_status_of_company(Request $request, $company_id)
     {
         $validator = Validator::make($request->all(), [
             'status' => 'required|string',
@@ -457,97 +460,97 @@ class AdminDashBoardController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
-        $trips=Trip::where('company_id' ,$company_id)
-                    ->where('status',$request->input('status'))
-                    ->with(['bus_trip.Pivoit','breaks_trip.break.area','path'])->get();
+        $trips = Trip::where('company_id', $company_id)
+            ->where('status', $request->input('status'))
+            ->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->get();
         return response()->json($trips);
     }
 
     public function fillter_all_trip(Request $request)
     {
-            $path = $request->input('path_id');
-            $companyName = $request->input('company_name');
-            $name_break = $request->input('name_break');
+        $path = $request->input('path_id');
+        $companyName = $request->input('company_name');
+        $name_break = $request->input('name_break');
 
-            $tripsQuery = Trip::with('bus_trip');
+        $tripsQuery = Trip::with('bus_trip');
 
-            if ($path) {
-                $tripsQuery->whereHas('path', function ($query) use ($path) {
-                    $query->where('id', $path);
-                });
-            }
-
-
-            if ($companyName) {
-                $tripsQuery->whereHas('company', function ($query) use ($companyName) {
-                    $query->where('name_company', 'like', "%{$companyName}%");
-                });
-            }
+        if ($path) {
+            $tripsQuery->whereHas('path', function ($query) use ($path) {
+                $query->where('id', $path);
+            });
+        }
 
 
-            if ($name_break) {
-                $tripsQuery->whereHas('breaks_trip.break', function ($query) use ($name_break) {
-                    $query->where('name', 'like', "%{$name_break}%");
-                });
-            }
+        if ($companyName) {
+            $tripsQuery->whereHas('company', function ($query) use ($companyName) {
+                $query->where('name_company', 'like', "%{$companyName}%");
+            });
+        }
 
-            $trips = $tripsQuery->get();
-            $data = [];
-            foreach ($trips as $trip) {
-                $busTrips = $trip->bus_trip;
-                $busTripsData = [];
-                foreach ($busTrips as $busTrip) {
-                    $busTripData = [
 
-                        'bus_id' => $busTrip->bus_id,
-                        'from_time' => $busTrip->from_time,
-                        'to_time' => $busTrip->to_time,
-                        'type' => $busTrip->type,
-                        'event' => $busTrip->type,
-                    ];
+        if ($name_break) {
+            $tripsQuery->whereHas('breaks_trip.break', function ($query) use ($name_break) {
+                $query->where('name', 'like', "%{$name_break}%");
+            });
+        }
 
-                    $pivotData = $busTrip->Pivoit;
-                    $customPivotData = [];
-                    foreach ($pivotData as $pivot) {
-                        $customPivotData[] = [
-                            'break_id'  => $pivot->id,
-                            'government'  => $pivot->break_trip->break->area->name,
-                            'name_break' => $pivot->break_trip->break->name,
-                            'status' => $pivot->status,
+        $trips = $tripsQuery->get();
+        $data = [];
+        foreach ($trips as $trip) {
+            $busTrips = $trip->bus_trip;
+            $busTripsData = [];
+            foreach ($busTrips as $busTrip) {
+                $busTripData = [
 
-                        ];
-                    }
-                    $busTripData['pivot'] = $customPivotData;
-
-                    $seats = $busTrip->bus->seat; // Assuming you have a seats relationship on the bus_trip model
-                    $seatsData = [];
-                    foreach ($seats as $seat) {
-                        $seatsData[] = [
-                            'id' => $seat->id,
-                            'status' => $seat->status,
-                            // Add any other columns you want to include from the seats table
-                        ];
-                    }
-                    $busTripData['seats'] = $seatsData;
-
-                    $busTripsData[] = $busTripData;
-                }
-
-                $data[] = [
-                    'trip_id' => $trip->id,
-                    'company_id' => $trip->company->user->name,
-                    'from'  => $trip->path->from,
-                    'to'  => $trip->path->to,
-                    'price' => $trip->price,
-                    'bus_trips' => $busTripsData,
-
-                    // Add any other columns you want to include from the trips table
+                    'bus_id' => $busTrip->bus_id,
+                    'from_time' => $busTrip->from_time,
+                    'to_time' => $busTrip->to_time,
+                    'type' => $busTrip->type,
+                    'event' => $busTrip->type,
                 ];
+
+                $pivotData = $busTrip->Pivoit;
+                $customPivotData = [];
+                foreach ($pivotData as $pivot) {
+                    $customPivotData[] = [
+                        'break_id'  => $pivot->id,
+                        'government'  => $pivot->break_trip->break->area->name,
+                        'name_break' => $pivot->break_trip->break->name,
+                        'status' => $pivot->status,
+
+                    ];
+                }
+                $busTripData['pivot'] = $customPivotData;
+
+                $seats = $busTrip->bus->seat; // Assuming you have a seats relationship on the bus_trip model
+                $seatsData = [];
+                foreach ($seats as $seat) {
+                    $seatsData[] = [
+                        'id' => $seat->id,
+                        'status' => $seat->status,
+                        // Add any other columns you want to include from the seats table
+                    ];
+                }
+                $busTripData['seats'] = $seatsData;
+
+                $busTripsData[] = $busTripData;
             }
-            return response()->json($data);
+
+            $data[] = [
+                'trip_id' => $trip->id,
+                'company_id' => $trip->company->user->name,
+                'from'  => $trip->path->from,
+                'to'  => $trip->path->to,
+                'price' => $trip->price,
+                'bus_trips' => $busTripsData,
+
+                // Add any other columns you want to include from the trips table
+            ];
+        }
+        return response()->json($data);
     }
 
-    public function get_all_BusTripsByTripId(Request $request ,$companyId)
+    public function get_all_BusTripsByTripId(Request $request, $companyId)
     {
         $validator = Validator::make($request->all(), [
             'trip_id' => 'required|integer|exists:trips,id',
@@ -557,14 +560,14 @@ class AdminDashBoardController extends Controller
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
 
-        $tripId =$request->input('trip_id');
-        if($companyId){
-            $trip = Trip::where('company_id' , $companyId)->find($tripId);
+        $tripId = $request->input('trip_id');
+        if ($companyId) {
+            $trip = Trip::where('company_id', $companyId)->find($tripId);
             if (!$trip) {
                 // Return an error or a default response if the trip is not found
                 return response()->json(['error' => 'Trip not found'], 404);
             }
-        }else{
+        } else {
             $trip = Trip::find($tripId);
             if (!$trip) {
                 // Return an error or a default response if the trip is not found
@@ -649,9 +652,7 @@ class AdminDashBoardController extends Controller
             $busTrips->whereHas('trip.path', function ($query) use ($from) {
 
                 $query->where('from', $from);
-
             });
-
         }
 
 
@@ -660,9 +661,7 @@ class AdminDashBoardController extends Controller
             $busTrips->whereHas('trip.path', function ($query) use ($to) {
 
                 $query->where('to', $to);
-
             });
-
         }
 
         $busTrips = $busTrips->get();
@@ -730,7 +729,7 @@ class AdminDashBoardController extends Controller
                         'user_name' => $reservation->user->name,
                         'user_id' => $reservation->user_id,
                         'break' => $reservation->pivoit->break_trip->break->name,
-                        'from' =>$reservation->pivoit->bus_trip->trip->path->from,
+                        'from' => $reservation->pivoit->bus_trip->trip->path->from,
                         'to' => $reservation->pivoit->bus_trip->trip->path->from,
                         'seats' => $seats // array of seat names or properties
 
@@ -744,7 +743,7 @@ class AdminDashBoardController extends Controller
     }
 
 
-    public function all_reservation_of_company__by_status(Request $request , $company_id)
+    public function all_reservation_of_company__by_status(Request $request, $company_id)
     {
         $validator = Validator::make($request->all(), [
             'status' => 'required|string',
@@ -769,7 +768,7 @@ class AdminDashBoardController extends Controller
                             'type' => $reservation->type,
                             'status' => $reservation->status,
                             'break' => $reservation->pivoit->break_trip->break->name,
-                            'from' =>$reservation->pivoit->bus_trip->trip->path->from,
+                            'from' => $reservation->pivoit->bus_trip->trip->path->from,
                             'to' => $reservation->pivoit->bus_trip->trip->path->from,
                         ];
                         $reservations[] = $customReservation;
@@ -780,7 +779,7 @@ class AdminDashBoardController extends Controller
         return response()->json($reservations);
     }
 
-    public function all_reservation_by_bus_trip($id ,Request $request)
+    public function all_reservation_by_bus_trip($id, Request $request)
     {
 
         $company_id = Company::findOrfail($id);
@@ -792,7 +791,7 @@ class AdminDashBoardController extends Controller
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
 
-        $bus_trip_id =$request->input('bus_trip_id');
+        $bus_trip_id = $request->input('bus_trip_id');
         $reservations = Reservation::where('bus__trip_id', $bus_trip_id)
             ->whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company_id) {
                 $query->where('id', $company_id->id);
@@ -816,7 +815,7 @@ class AdminDashBoardController extends Controller
                 'type' => $reservation->type,
                 'status' => $reservation->status,
                 'break' => $reservation->pivoit->break_trip->break->name,
-                'from' =>$reservation->pivoit->bus_trip->trip->path->from,
+                'from' => $reservation->pivoit->bus_trip->trip->path->from,
                 'to' => $reservation->pivoit->bus_trip->trip->path->to,
                 'seats' => $seats // array of seat names or properties
 
@@ -829,7 +828,7 @@ class AdminDashBoardController extends Controller
 
     public function get_profit_bus_trip($id_bus_trip)
     {
-        $bus_trip=Bus_Trip::find($id_bus_trip);
+        $bus_trip = Bus_Trip::find($id_bus_trip);
         // Check if the bus trip belongs to the company that made the request
 
         // Get all completed and out reservations for the bus trip
@@ -871,7 +870,7 @@ class AdminDashBoardController extends Controller
 
     public function user_info($user_id)
     {
-        $user=User::find($user_id)->load(['profile', 'address']);
+        $user = User::find($user_id)->load(['profile', 'address']);
         return response()->json($user);
     }
 
@@ -883,44 +882,44 @@ class AdminDashBoardController extends Controller
         $reservationCounts = Reservation::whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company) {
             $query->where('id', $company->id);
         })
-        ->selectRaw('status, COUNT(*) as count')
-        ->groupBy('status')
-        ->get()
-        ->keyBy('status')
-        ->mapWithKeys(function ($item) {
-            return [$item->status => $item->count];
-        });
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status')
+            ->mapWithKeys(function ($item) {
+                return [$item->status => $item->count];
+            });
 
-        $trip_count =Trip::where('company_id' , $company->id )
-        ->selectRaw('status, COUNT(*) as count')
-        ->groupBy('status')
-        ->get()
-        ->keyBy('status')
-        ->mapWithKeys(function ($item) {
-            return [$item->status => $item->count];
-        });
+        $trip_count = Trip::where('company_id', $company->id)
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status')
+            ->mapWithKeys(function ($item) {
+                return [$item->status => $item->count];
+            });
 
         $bus_trip = Bus_Trip::whereHas('trip.company', function ($query) use ($company) {
             $query->where('id', $company->id);
         })
-        ->selectRaw('status, COUNT(*) as count')
-        ->groupBy('status')
-        ->get()
-        ->keyBy('status')
-        ->mapWithKeys(function ($item) {
-            return [$item->status => $item->count];
-        });
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status')
+            ->mapWithKeys(function ($item) {
+                return [$item->status => $item->count];
+            });
 
         $reservationSums = Reservation::whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company) {
             $query->where('id', $company->id);
         })
-        ->selectRaw('status, SUM(price) as sum')
-        ->groupBy('status')
-        ->get()
-        ->keyBy('status')
-        ->mapWithKeys(function ($item) {
-            return [$item->status => $item->sum];
-        });
+            ->selectRaw('status, SUM(price) as sum')
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status')
+            ->mapWithKeys(function ($item) {
+                return [$item->status => $item->sum];
+            });
 
         $driverCounts = Driver::where('company_id', $company->id)
 
@@ -958,7 +957,7 @@ class AdminDashBoardController extends Controller
             ->where('status', 'accepted')
             ->sum('price');
 
-        $favourite_count =Favourite::where('company_id' , $company->id)->count();
+        $favourite_count = Favourite::where('company_id', $company->id)->count();
 
         $dash = [
             'pending_reservations' => $reservationCounts->get('padding', 0),
@@ -1000,12 +999,12 @@ class AdminDashBoardController extends Controller
         $driver = Driver::count();
         $trip = Trip::count();
         $reservationCounts = Reservation::selectRaw('status, COUNT(*) as count')
-                ->groupBy('status')
-                ->get()
-                ->keyBy('status')
-                ->mapWithKeys(function ($item) {
-                    return [$item->status => $item->count];
-                });
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status')
+            ->mapWithKeys(function ($item) {
+                return [$item->status => $item->count];
+            });
 
 
         $trip_count = Trip::selectRaw('status, COUNT(*) as count')
@@ -1064,10 +1063,10 @@ class AdminDashBoardController extends Controller
             ->sum('price');
 
 
-        $favourite_count =Favourite::count();
+        $favourite_count = Favourite::count();
 
-        $all_user=User::count();
-        $all_company=Company::count();
+        $all_user = User::count();
+        $all_company = Company::count();
 
         $dash = [
             'pending_reservations' => $reservationCounts->get('padding', 0),
@@ -1102,9 +1101,5 @@ class AdminDashBoardController extends Controller
         ];
 
         return response()->json($dash);
-
     }
-
-
-
 }
