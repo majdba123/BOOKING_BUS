@@ -23,6 +23,7 @@ export default createStore({
         placeName: null,
         lat: null,
         lng: null,
+        Users: {},
     },
     getters: {},
     mutations: {
@@ -71,8 +72,8 @@ export default createStore({
     },
     actions: {
         updateBreakLocation({ commit }, { lat, lng }) {
-            commit('setBreakLat', lat);
-            commit('setBreakLong', lng);
+            commit("setBreakLat", lat);
+            commit("setBreakLong", lng);
         },
     },
     modules: {},

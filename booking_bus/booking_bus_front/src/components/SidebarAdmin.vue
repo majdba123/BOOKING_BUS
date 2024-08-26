@@ -34,14 +34,14 @@
         </router-link>
 
         <router-link
-            to="AllBus2"
-            @click="selectOption('Bus')"
-            :class="{ active: selectedOption === 'Bus' }"
+            to="AllUser"
+            @click="selectOption('Users')"
+            :class="{ active: selectedOption === 'Users' }"
         >
             <span class="material-icons" aria-label="Products"
                 >directions_bus</span
             >
-            <h3>Bus</h3>
+            <h3>Users</h3>
         </router-link>
 
         <router-link

@@ -20,12 +20,18 @@ import AllRating from "../views/Company/Rating/AllRating.vue";
 import AllFavourite from "../views/Company/Favourite/AllFavourite.vue";
 import AllReservation from "../views/Company/Reservation/AllReservation.vue";
 import AllPolices from "../views/Company/Polices/AllPolices.vue";
+import AllUser from "../views/Admin/Users/AllUser.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/AllUser",
+        name: "AllUser",
+        component: AllUser,
     },
     {
         path: "/AllGovernment",
