@@ -2,14 +2,6 @@
     <main>
         <h1>{{ x }}</h1>
         <div class="top-bar">
-            <div class="date">
-                <input
-                    type="text"
-                    placeholder="Search In..."
-                    aria-label="Search"
-                />
-                <button>Search</button>
-            </div>
             <div class="profile-menu">
                 <div
                     class="theme-toggler"
@@ -195,7 +187,7 @@ small {
     display: flex;
     gap: 1rem;
     align-items: center;
-    justify-content: space-between;
+    justify-content: end;
 }
 
 .date {
