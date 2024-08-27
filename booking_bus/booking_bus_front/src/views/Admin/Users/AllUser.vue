@@ -19,73 +19,58 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>{{ x }}</h1>
+                <div class="right">
+                    <!--start top-->
+                    <div class="top">
+                        <button id="menu_bar" @click="openMenu">
+                            <span class="material-icons">menu</span>
+                        </button>
+                        <div
+                            class="theme-toggler"
+                            ref="themeToggler"
+                            @click="toggleTheme"
+                        >
+                            <span class="material-icons active"
+                                >light_mode</span
+                            >
+                            <span class="material-icons">dark_mode</span>
+                        </div>
+                        <div class="profile">
+                            <div class="info">
+                                <p><b>Babar</b></p>
+                                <p>Admin</p>
+                            </div>
+                            <div class="profile-photo">
+                                <img src="@/assets/busss.png" alt="Profile" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--end top-->
+
+                    <!--start driver_chart-->
+
+                    <!--start driver_status-->
+
+                    <!--end driver_status-->
+                </div>
+                <h1>All Users</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input
                             type="text"
-                            placeholder="Search In..."
+                            placeholder="Search By Name OR Email ..."
                             aria-label="Search"
                             v-model="searchQuery"
                         />
                         <button @click="search">Search</button>
                     </div>
-                    <GoogleMap class="map-container" />
                 </div>
+
                 <ShowUsers ref="ShowUsers" />
             </main>
         </div>
         <!-- Right section start -->
-        <div class="right">
-            <!--start top-->
-            <div class="top">
-                <button id="menu_bar" @click="openMenu">
-                    <span class="material-icons">menu</span>
-                </button>
-                <div
-                    class="theme-toggler"
-                    ref="themeToggler"
-                    @click="toggleTheme"
-                >
-                    <span class="material-icons active">light_mode</span>
-                    <span class="material-icons">dark_mode</span>
-                </div>
-                <div class="profile">
-                    <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
-                    </div>
-                    <div class="profile-photo">
-                        <img src="@/assets/busss.png" alt="Profile" />
-                    </div>
-                </div>
-            </div>
-            <!--end top-->
 
-            <!--start driver_chart-->
-            <div class="driver_chart">
-                <h2>User Workload Status</h2>
-                <DriverChart :chartData="chartData" />
-            </div>
-
-            <!--start driver_status-->
-            <div class="driver_status">
-                <h2>User Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--end driver_status-->
-        </div>
         <!-- Right section end -->
     </div>
 </template>
@@ -93,14 +78,13 @@
 <script>
 import axios from "axios";
 import SidebarAdmin from "@/components/SidebarAdmin.vue";
-import DriverChart from "@/components/DriverChart.vue";
 import ShowUsers from "@/components/ShowUsers.vue";
 
 import store from "@/store";
 
 export default {
     name: "AllUser",
-    components: { SidebarAdmin, ShowUsers, DriverChart },
+    components: { SidebarAdmin, ShowUsers },
     data() {
         return {
             x: store.state.x,
@@ -305,7 +289,7 @@ body {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 19rem;
+    grid-template-columns: 14rem auto;
     margin-left: 0;
     height: 100vh;
     overflow-y: auto;
@@ -395,12 +379,6 @@ aside .logo {
     gap: 1rem;
 }
 
-.top-bar {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
 .map-container {
     margin: 10px;
     flex: 1;
@@ -418,6 +396,7 @@ aside .logo {
 }
 
 .date input {
+    width: 200%;
     flex: 1;
 }
 

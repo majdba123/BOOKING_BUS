@@ -122,6 +122,13 @@ export default {
             selectedOption: "Dashboard",
         };
     },
+    mounted() {
+        const savedOption = window.localStorage.getItem("selectedOption");
+        if (savedOption) {
+            this.selectedOption = savedOption; // استعادة الخيار المحدد من التخزين المحلي
+        }
+    },
+
     methods: {
         logout() {
             const token = window.localStorage.getItem("access_token");
@@ -133,10 +140,7 @@ export default {
                 if (response.status == 200) {
                     console.log(response);
                     window.alert("Logout successful");
-                    window.localStorage.setItem(
-                        "access_token",
-                        response.data.access_token
-                    );
+                    window.localStorage.removeItem("access_token");
                     router.push("/");
                 }
             });
@@ -144,14 +148,15 @@ export default {
 
         selectOption(option) {
             this.selectedOption = option;
-            console.log("Selected Option:", this.selectedOption);
+            window.localStorage.setItem("selectedOption", option);
+            // حفظ الخيار المحدد في التخزين المحلي
             store.state.x = this.selectedOption;
         },
     },
 };
 </script>
 
-<style>
+<style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 :root {
