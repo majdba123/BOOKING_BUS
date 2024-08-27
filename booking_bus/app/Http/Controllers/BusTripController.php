@@ -99,6 +99,7 @@ class BusTripController extends Controller
             $interval = $fromTime->diff($toTime);
             $tripDuration = $interval->format('%H:%I');
             $busTripData = [
+                'bus_trip_id' => $busTrip->id,
                 'bus_id' => $busTrip->bus_id,
                 'nameCompany' => $trip->company->name_company,
                 'from' => $trip->path->from,

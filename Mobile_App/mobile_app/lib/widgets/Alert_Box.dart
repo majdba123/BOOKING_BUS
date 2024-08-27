@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Colors.dart';
 
 void showCustomAlertDialog(BuildContext context, String content) {
   Widget okButton = ElevatedButton(
-    child: Text("OK"),
+    child: Text(
+      "OK",
+      style: TextStyle(color: Colors.white),
+    ),
     style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.green,
+      backgroundColor: AppColors.primaryColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
@@ -20,12 +24,11 @@ void showCustomAlertDialog(BuildContext context, String content) {
     ),
     title: Row(
       children: [
-        Icon(Icons.warning_amber_rounded, color: Colors.red),
         SizedBox(width: 10),
         Text(
           'Alert',
           style: TextStyle(
-            color: Colors.red,
+            // color: Colors.red,
             fontWeight: FontWeight.bold,
           ),
         ),

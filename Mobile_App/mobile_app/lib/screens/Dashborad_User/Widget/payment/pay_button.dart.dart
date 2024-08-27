@@ -11,14 +11,21 @@ Future<void> makeReservation(BuildContext context) async {
 
   final provider = Provider.of<TripuserProvider>(context, listen: false);
 
+  print(accessToken);
+  print(provider.trip_type);
+  print(provider.selectedSeat);
+  print(provider..selectedBoardingPoint!.breakId);
+  print(provider.busTripid);
   try {
     await provider.make_reservation(
       accessToken,
       provider.trip_type,
       provider.selectedSeat,
       provider.selectedBoardingPoint!.breakId,
-      provider.selectedBus!.busId,
+      provider.busTripid,
     );
+
+    // print(provider.trip_type);
 
     Navigator.push(
       context,

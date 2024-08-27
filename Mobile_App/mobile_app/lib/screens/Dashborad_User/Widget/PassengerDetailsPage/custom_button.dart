@@ -210,14 +210,9 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                              makeReservation(context);
+                          makeReservation(context);
 
                           // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(builder: (context) {
-                          //     return makeReservation();
-                          //   }),
-                          // );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[400],

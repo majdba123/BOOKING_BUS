@@ -44,6 +44,7 @@ class TripuserProvider with ChangeNotifier {
   int price_tiket = 0;
   int price_trip = 0;
   int totoal_price = 0;
+  late int _busTripid;
   BreakPlace? get selectedBoardingPoint => _selectedBoardingPoint;
   BreakPlace? get selectedDeboardingPoint => _selectedDeboardingPoint;
   Reservation? _reservation;
@@ -54,9 +55,15 @@ class TripuserProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
+  int get busTripid => _busTripid;
 
   void addTicketDetail(TicketDetail detail) {
     _selectedTicketDetails.add(detail);
+    notifyListeners();
+  }
+
+  void setBusTripid(Bustripid) {
+    _busTripid = Bustripid;
     notifyListeners();
   }
 

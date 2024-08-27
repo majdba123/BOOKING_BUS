@@ -39,8 +39,10 @@ class PrivateTripController extends Controller
             'to' => 'required',
             'date' => 'required',
             'start_time' => 'required',
-            'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
-            'long' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+            'lat_from' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'long_from' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+            'lat_to' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'long_to' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
             'Distance' => 'required|numeric',
 
         ]);
@@ -49,17 +51,26 @@ class PrivateTripController extends Controller
             return response()->json(['error' => $errors], 422);
         }
         $user = Auth::user();
-        $lat = $request->input('lat');
-        $long =   $request->input('long');
-        $Location = geolocation::create([
-            'latitude' => $lat,
-            'longitude' => $long
+        $lat_from = $request->input('lat_from');
+        $long_from =   $request->input('long_from');
+        $lat_to =  $request->input('lat_to');
+        $long_to =    $request->input('long_to');
+        $fromLocation = geolocation::create([
+            'latitude' => $lat_from,
+            'longitude' => $long_from
+        ]);
+
+        $toLocation = geolocation::create([
+            'latitude' => $lat_to,
+            'longitude' => $long_to
+
         ]);
         $private = new Private_trip();
         $private->user_id = $user->id;
         $private->from = $request->input('from');
         $private->to = $request->input('to');
-        $private->geolocation_id = $Location->id;
+        $private->from_location = $fromLocation->id;
+        $private->to_location = $toLocation->id;
         $private->date = $request->input('date');
         $private->start_time = $request->input('start_time');
         $private->Distance = $request->input('Distance');
