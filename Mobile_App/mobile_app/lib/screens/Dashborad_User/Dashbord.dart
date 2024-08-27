@@ -12,7 +12,7 @@ import 'package:mobile_app/screens/Dashborad_User/Widget/filtter_Bar_main_ui.dar
 import 'package:mobile_app/screens/Dashborad_User/Widget/route_card.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/search_Trip_form.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/section_title.dart';
-import 'package:mobile_app/screens/signin_page.dart';
+import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
@@ -92,56 +92,13 @@ class _DashboardUserState extends State<DashboardUser> {
       body: Stack(
         children: [
           SingleChildScrollView(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top +
+                  90.0, // Adjust the padding to prevent overlap
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  color: AppColors.primaryColor,
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top + 20.0,
-                    left: 16.0,
-                    right: 16.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'BusX',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.notifications,
-                                    color: Colors.white),
-                                onPressed: () {},
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.logout, color: Colors.white),
-                                onPressed: () => _logout(context),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 4.0),
-                      Text(
-                        'Book your bus!',
-                        style: TextStyle(
-                          color: Colors.greenAccent,
-                          fontSize: 14.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 Stack(
                   children: [
                     Container(
@@ -206,6 +163,58 @@ class _DashboardUserState extends State<DashboardUser> {
                   ),
                 ),
               ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              color: AppColors.primaryColor,
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 20.0,
+                left: 16.0,
+                right: 16.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'BusX',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon:
+                                Icon(Icons.notifications, color: Colors.white),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.logout, color: Colors.white),
+                            onPressed: () => _logout(context),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.0),
+                  Text(
+                    'Book your bus!',
+                    style: TextStyle(
+                      color: Colors.greenAccent,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           _buildBottomNavBar(),

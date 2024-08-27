@@ -1,7 +1,6 @@
 <template>
     <div :class="['containerd', { 'dark-theme-variables': isDarkMode }]">
         <div class="recent_orders">
-            <h1>All Users</h1>
             <div class="table-container">
                 <table>
                     <thead>
@@ -12,24 +11,27 @@
                             <th>Point</th>
                             <th>Email Verified At</th>
                             <th>Created At</th>
-                            <th>Updated At</th>
                             <th>Profile</th>
                             <th>All Reservation</th>
                             <th>All Trip History</th>
+                            <th>Favorite of Company</th>
+                            <th>Private Order</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(user, index) in Users" :key="index">
+                        <tr
+                            v-for="(user, index) in filteredGovernment"
+                            :key="index"
+                        >
                             <td>{{ user.id }}</td>
                             <td>{{ user.name }}</td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.point }}</td>
                             <td>{{ user.email_verified_at }}</td>
                             <td>{{ user.created_at }}</td>
-                            <td>{{ user.updated_at }}</td>
                             <td>
                                 <button
-                                    class="nav-btnd"
+                                    class="nav-btnd btn-primary"
                                     @click="openBreackModal(user.id)"
                                 >
                                     View
@@ -37,7 +39,7 @@
                             </td>
                             <td>
                                 <button
-                                    class="nav-btnd"
+                                    class="nav-btnd btn-success"
                                     @click="openReservationModal(user.id)"
                                 >
                                     View
@@ -45,8 +47,24 @@
                             </td>
                             <td>
                                 <button
-                                    class="nav-btnd"
+                                    class="nav-btnd btn-warning"
                                     @click="openTripModal(user.id)"
+                                >
+                                    View
+                                </button>
+                            </td>
+                            <td>
+                                <button
+                                    class="nav-btnd btn-info"
+                                    @click="openFavModal(user.id)"
+                                >
+                                    View
+                                </button>
+                            </td>
+                            <td>
+                                <button
+                                    class="nav-btnd btn-danger"
+                                    @click="openOrderModal(user.id)"
                                 >
                                     View
                                 </button>
@@ -71,7 +89,13 @@
                     <tbody>
                         <tr>
                             <td>{{ Profile.profile?.phone }}</td>
-                            <td>{{ Profile.profile?.image }}</td>
+                            <td>
+                                <img
+                                    :src="Profile.profile?.image"
+                                    alt="Profile Image"
+                                    class="profile-image"
+                                />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -83,6 +107,7 @@
             </div>
         </div>
     </div>
+
     <div v-if="showReservationModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">All Reservation</div>
@@ -164,6 +189,120 @@
             </div>
         </div>
     </div>
+    <div v-if="showFavModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">All Company Favorite</div>
+            <div class="modal-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Company</th>
+                            <th>Name</th>
+                            <th>Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(driver, index) in Fav" :key="index">
+                            <td>{{ driver.company_id }}</td>
+
+                            <td>{{ driver.name_company }}</td>
+                            <td>
+                                <img
+                                    :src="driver.image_company"
+                                    alt="Profile Image"
+                                    style="max-width: 100px; border-radius: 50%"
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeFavModal" class="close-modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    <div v-if="showOrderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Private Order</div>
+            <div class="modal-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>from</th>
+                            <th>to</th>
+                            <th>date</th>
+                            <th>start_time</th>
+                            <th>status</th>
+                            <th>Approved Company</th>
+
+                            <th>price</th>
+                            <th>status</th>
+                            <th>Trip In Map</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(driver, index) in Order" :key="index">
+                            <td>{{ driver.Private_trip_id }}</td>
+
+                            <td>{{ driver.from }}</td>
+                            <td>{{ driver.to }}</td>
+                            <td>{{ driver.date }}</td>
+                            <td>{{ driver.start_time }}</td>
+                            <td>{{ driver.status }}</td>
+                            <td>
+                                {{ driver.order_private_trip[0]?.company_name }}
+                            </td>
+
+                            <td>{{ driver.order_private_trip[0]?.price }}</td>
+
+                            <td>
+                                {{
+                                    driver.order_private_trip[0]?.payment_status
+                                }}
+                            </td>
+                            <td>
+                                <button
+                                    class="nav-btnd"
+                                    @click="openMapModal(driver.id)"
+                                >
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeOrderModal" class="close-modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    <div v-if="showMapModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Location on Map</div>
+            <div class="modal-body">
+                <div class="map-containers">
+                    <MapPrivate
+                        :fromlat="mapfromLat"
+                        :fromlng="mapfromLng"
+                        :tolat="maptoLat"
+                        :tolng="maptoLng"
+                    />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeMapModal" class="close-modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
     <div v-if="showSeatModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">All Seat</div>
@@ -193,6 +332,7 @@
 </template>
 
 <script>
+import MapPrivate from "./MapPrivate.vue";
 import axios from "axios";
 import store from "@/store";
 import { useToast } from "vue-toastification";
@@ -202,12 +342,20 @@ export default {
     name: "AddDriver",
     data() {
         return {
+            showMapModal: false,
+            Order: [],
+            Fav: [],
             Trip: [],
             showSeatModal: false,
             Seat: [],
             showReservationModal: false,
             showTripModal: false,
-
+            showFavModal: false,
+            showOrderModal: false,
+            mapfromLat: "",
+            maptoLat: "",
+            mapfromLng: "",
+            maptoLng: "",
             Users: [],
             Profile: [],
             Reservation: [],
@@ -237,6 +385,17 @@ export default {
         });
     },
     methods: {
+        openMapModal(id) {
+            const government = this.Order.find((breack) => breack.id === id);
+            if (government) {
+                this.mapfromLat = government.from_lat;
+                this.mapfromLng = government.from_long;
+                this.maptoLat = government.to_lat;
+                this.maptoLng = government.to_long;
+                this.showMapModal = true;
+                console.log(this.mapfromLat, this.mapfromLng);
+            }
+        },
         openBreackModal(company_id) {
             this.currentCompanyId = company_id;
             // Set the current company ID
@@ -255,10 +414,25 @@ export default {
             this.fetchTrip(this.currentCompanyId);
             this.showTripModal = true;
         },
+        openFavModal(company_id) {
+            this.currentCompanyId = company_id;
+            // Set the current company ID
+            this.fetchFav(this.currentCompanyId);
+            this.showFavModal = true;
+        },
+        openOrderModal(company_id) {
+            this.currentCompanyId = company_id;
+            // Set the current company ID
+            this.fetchOrder(this.currentCompanyId);
+            this.showOrderModal = true;
+        },
         openSeat(x) {
             // Set the current company ID
             this.fetchReservationSeat(x, this.currentCompanyId);
             this.showSeatModal = true;
+        },
+        closeMapModal() {
+            this.showMapModal = false;
         },
 
         closeSeatModal() {
@@ -269,6 +443,12 @@ export default {
         },
         closeTripModal() {
             this.showTripModal = false;
+        },
+        closeFavModal() {
+            this.showFavModal = false;
+        },
+        closeOrderModal() {
+            this.showOrderModal = false;
         },
         closeGovernmentBreackModal() {
             this.showGovernmentBreackModal = false;
@@ -283,7 +463,7 @@ export default {
             })
                 .then((response) => {
                     this.Users = response.data;
-                    store.state.Users = response.data;
+                    store.state.User = response.data;
                     console.log(response.data);
                 })
                 .catch((error) => {
@@ -335,6 +515,40 @@ export default {
             })
                 .then((response) => {
                     this.Reservation = response.data;
+
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching driver status");
+                    console.error(error);
+                });
+        },
+        fetchOrder(status) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/admin/private_order_of_user/${status}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.Order = response.data;
+
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching driver status");
+                    console.error(error);
+                });
+        },
+        fetchFav(status) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/admin/favourite_company_of_user/${status}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.Fav = response.data;
 
                     console.log(response.data);
                 })
@@ -419,22 +633,25 @@ export default {
     },
     computed: {
         filteredGovernment() {
-            return store.state.Government.filter((driver) => {
+            const users = this.$store.state.User;
+
+            if (!Array.isArray(users)) {
+                // إذا لم يتم تحميل البيانات بعد، إرجاع مصفوفة فارغة
+                return [];
+            }
+            return store.state.User.filter((driver) => {
                 return (
                     driver.name
                         .toLowerCase()
                         .includes(store.state.searchQuery.toLowerCase()) ||
-                    driver.email_driver
-                        .toLowerCase()
-                        .includes(store.state.searchQuery.toLowerCase()) ||
-                    driver.status
+                    driver.email
                         .toLowerCase()
                         .includes(store.state.searchQuery.toLowerCase())
                 );
             });
         },
     },
-    components: {},
+    components: { MapPrivate },
 };
 </script>
 
@@ -483,32 +700,29 @@ h1 {
 h2 {
     font-size: 1.4rem;
 }
+.btn-primary {
+    background: linear-gradient(90deg, #7380ec 0%, #4b6cb7 100%) !important;
+}
 
-.recent_orders {
-    width: 100%;
-    overflow-x: auto;
-    margin-top: 20px;
+.btn-success {
+    background: linear-gradient(90deg, #41f1b6 0%, #28a745 100%) !important;
+}
+
+.btn-warning {
+    background: linear-gradient(90deg, #ffc107 0%, #e0a800 100%) !important;
+}
+
+.btn-info {
+    background: linear-gradient(90deg, #17a2b8 0%, #117a8b 100%) !important;
+}
+
+.btn-danger {
+    background: linear-gradient(90deg, #ff7782 0%, #d9534f 100%) !important;
 }
 
 .table-container {
     width: 100%;
     overflow-x: auto;
-}
-
-.recent_orders table {
-    background-color: #fff;
-    width: 100%;
-    border-radius: 1rem;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
-    max-width: none;
-    font-size: 0.85rem;
-}
-
-.recent_orders table:hover {
-    box-shadow: none;
 }
 
 table thead tr th {
@@ -531,12 +745,159 @@ table tbody td {
 table tbody tr:last-child td {
     border: none;
 }
+.table-container {
+    width: 100% !important;
+    overflow-x: auto !important;
+}
 
-.recent_orders a {
+table thead tr th {
+    padding: 10px !important;
+    font-size: 0.9rem !important;
+}
+
+table tbody tr {
+    height: 3rem !important;
+    border-bottom: 1px solid #fff !important;
+    color: #677483 !important;
+}
+
+table tbody td {
+    height: 3rem !important;
+    border-bottom: 1px solid #363949 !important;
+    color: #677483 !important;
+}
+
+table tbody tr:last-child td {
+    border: none !important;
+}
+
+.nav-btnd:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2) !important;
+}
+.recent_orders {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.recent_orders table {
+    background-color: #fff;
+    width: 100%;
+    border-radius: var(--border-radius-2);
+    padding: 1rem;
     text-align: center;
-    display: block;
-    margin: 1rem;
+    box-shadow: var(--box-shadow);
+    color: var(--clr-dark);
     font-size: 0.85rem;
+    border-collapse: collapse; /* Ensure borders are collapsed */
+}
+
+.recent_orders thead {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
+
+.recent_orders th,
+.recent_orders td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.recent_orders tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.recent_orders td {
+    text-align: center;
+}
+
+.nav-btnd {
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--border-radius-2);
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.3s;
+}
+
+.nav-btnd.btn-primary {
+    background: #7380ec;
+}
+
+.nav-btnd.btn-success {
+    background: #4caf50;
+}
+
+.nav-btnd.btn-warning {
+    background: #ff9800;
+}
+
+.nav-btnd.btn-info {
+    background: #17a2b8;
+}
+
+.nav-btnd.btn-danger {
+    background: #f44336;
+}
+
+.nav-btnd:hover {
+    opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .recent_orders table {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .recent_orders table,
+    .recent_orders thead,
+    .recent_orders tbody,
+    .recent_orders th,
+    .recent_orders td,
+    .recent_orders tr {
+        display: block;
+    }
+
+    .recent_orders thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .recent_orders tr {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .recent_orders td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+
+    .recent_orders td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+        color: var(--clr-primary);
+    }
 }
 
 /* Select styling */
@@ -615,20 +976,6 @@ select:focus {
     background-color: #fff;
     border-radius: 10px;
     width: 100%;
-}
-
-.nav-btnd {
-    padding: 10px 20px;
-    margin: 10px;
-    border: none;
-    border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
-    cursor: pointer;
-    font-size: 12px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    background-size: 200% 200%;
-    animation: gradientAnimation 5s ease infinite;
 }
 
 @keyframes gradientAnimation {
@@ -747,6 +1094,7 @@ input:focus {
 }
 
 /* Edit Modal Styling */
+/* Modal Styles */
 .modal {
     display: flex;
     justify-content: center;
@@ -763,25 +1111,58 @@ input:focus {
 .modal-content {
     background: #fff;
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 50%;
-    height: 85%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    overflow: scroll;
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
 }
 
 .modal-header,
 .modal-body,
 .modal-footer {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .modal-header {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
+}
+
+.modal-body {
     display: flex;
     justify-content: center;
+    align-items: center;
+}
+
+.modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body th,
+.modal-body td {
+    padding: 12px;
+    text-align: left;
+}
+
+.modal-body th {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
+
+.modal-body td {
+    border-bottom: 1px solid #ddd;
+}
+
+.profile-image {
+    max-width: 100px;
+    border-radius: 50%;
 }
 
 .modal-footer {
@@ -790,16 +1171,33 @@ input:focus {
 }
 
 .close-modal {
-    padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    padding: 10px 20px;
+    background-color: var(--clr-danger);
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .close-modal:hover {
     background-color: #c9302c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        height: auto;
+    }
+
+    .modal-body {
+        flex-direction: column;
+    }
+
+    .profile-image {
+        max-width: 80px;
+    }
 }
 
 .update-btn {

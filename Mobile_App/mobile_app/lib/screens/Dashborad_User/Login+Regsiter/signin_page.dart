@@ -1,41 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mobile_app/colors.dart';
-import 'package:mobile_app/screens/signin_page.dart';
+import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/register_page.dart';
 import 'package:mobile_app/widgets/Alert_Box.dart';
-import '../widgets/widget.dart';
-import '../constants.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 
-class RegisterPage extends StatefulWidget {
+class SignInPage extends StatefulWidget {
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _SignInPageState createState() => _SignInPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  bool passwordVisibility = true;
+class _SignInPageState extends State<SignInPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-
-  Future<String> Register(var email, var name, var password) async {
-    String url = name_domain_server + "register";
-    var res = await http.post(
-      Uri.parse('$url'),
-      body: {'email': email, 'name': name, 'password': password},
-    );
-    if (res.statusCode == 200) {
-      Map<String, dynamic> parsedJson = json.decode(res.body);
-      String message = parsedJson['message'];
-      return message;
-    } else {
-      Map<String, dynamic> parsedJson = json.decode(res.body);
-      String error = parsedJson['error'];
-      return error;
-    }
-  }
+  bool isPasswordVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -45,21 +29,18 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Container(
             width: screenWidth,
             height: screenHeight,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                  "assets/images/background_mappp.png", // Path to your PNG background image
+                  "assets/images/background_mappp.png",
                 ),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-
-          // Overlay content
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -68,24 +49,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Logo
                       Container(
                         width: screenWidth * 0.4,
                         height: screenHeight * 0.2,
                         child: SvgPicture.asset(
-                          "assets/images/logo_bus.svg", // Path to your logo image
+                          "assets/images/logo_bus.svg",
                           fit: BoxFit.contain,
                           color: AppColors.primaryColor,
                         ),
                       ),
                       SizedBox(height: screenHeight * 0.04),
 
-                      // Welcome Text
                       Text(
-                        "Register to BUSX",
+                        "Sign to BusX",
                         style: TextStyle(
-                          fontSize:
-                              screenHeight * 0.04, // Adjusted for better fit
+                          fontSize: screenHeight * 0.04, //  for fit
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryColor,
                           letterSpacing: 1.2,
@@ -94,9 +72,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       SizedBox(height: screenHeight * 0.02),
 
-                      // Description Text
                       Text(
-                        "Create a new account to get started with BUSX.",
+                        "Plan your trip, book your seat, and track your bus in real-time with BUSX.",
                         style: TextStyle(
                           fontSize: screenHeight * 0.018,
                           color: Colors.black87,
@@ -105,44 +82,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       SizedBox(height: screenHeight * 0.04),
 
-                      // Name Input Field
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: TextField(
-                          controller: nameController,
-                          decoration: InputDecoration(
-                            labelText: 'Name',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Colors.white,
-                            prefixIcon: Icon(Icons.person),
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 18,
-                              horizontal: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: screenHeight * 0.02),
-
-                      // Email Input Field
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
+                            const BoxShadow(
                               color: Colors.black12,
                               blurRadius: 10,
                               offset: Offset(0, 4),
@@ -153,15 +97,17 @@ class _RegisterPageState extends State<RegisterPage> {
                           controller: emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            labelText: 'Email',
+                            labelStyle:
+                                const TextStyle(color: AppColors.primaryColor),
+                            labelText: 'Email or Username',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
                             fillColor: Colors.white,
-                            prefixIcon: Icon(Icons.email),
-                            contentPadding: EdgeInsets.symmetric(
+                            prefixIcon: const Icon(Icons.person),
+                            contentPadding: const EdgeInsets.symmetric(
                               vertical: 18,
                               horizontal: 12,
                             ),
@@ -170,12 +116,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       SizedBox(height: screenHeight * 0.02),
 
-                      // Password Input Field
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
-                            BoxShadow(
+                            const BoxShadow(
                               color: Colors.black12,
                               blurRadius: 10,
                               offset: Offset(0, 4),
@@ -184,27 +129,29 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         child: TextField(
                           controller: passwordController,
-                          obscureText: passwordVisibility,
+                          obscureText: isPasswordVisible,
                           decoration: InputDecoration(
                             labelText: 'Password',
+                            labelStyle:
+                                const TextStyle(color: AppColors.primaryColor),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
                             fillColor: Colors.white,
-                            prefixIcon: Icon(Icons.lock),
+                            prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
-                              icon: Icon(passwordVisibility
+                              icon: Icon(isPasswordVisible
                                   ? Icons.visibility_off
                                   : Icons.visibility),
                               onPressed: () {
                                 setState(() {
-                                  passwordVisibility = !passwordVisibility;
+                                  isPasswordVisible = !isPasswordVisible;
                                 });
                               },
                             ),
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                               vertical: 18,
                               horizontal: 12,
                             ),
@@ -213,33 +160,48 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       SizedBox(height: screenHeight * 0.04),
 
-                      // Register Button
                       InkWell(
                         onTap: () async {
                           showDialog(
                             context: context,
-                            builder: (context) => Center(
+                            builder: (context) => const Center(
                               child: CircularProgressIndicator(),
                             ),
                           );
-                          var message = await Register(
-                            emailController.text,
-                            nameController.text,
-                            passwordController.text,
-                          );
-                          Navigator.of(context)
-                              .pop(); // Close the progress indicator
 
-                          if (message == "User Created ") {
+                          AuthProvider authProvider =
+                              Provider.of<AuthProvider>(context, listen: false);
+                          await authProvider.setAuthData(
+                              emailController.text, passwordController.text);
+
+                          Navigator.of(context).pop();
+
+                          if (authProvider.accessToken.isNotEmpty) {
+                            Widget destinationPage;
+                            if (authProvider.userType == "company") {
+                              destinationPage = Dashbord();
+                            } else if (authProvider.userType == "user") {
+                              destinationPage = DashboardUser();
+                            } else if (authProvider.userType == "driver") {
+                              destinationPage = DashboardDriver();
+                            } else if (authProvider.userType == "admin") {
+                              destinationPage = DashbordAdmin();
+                            } else {
+                              showCustomAlertDialog(
+                                  context,
+                                  "Unexpected user type: ${authProvider.userType}",
+                                 );
+                              return;
+                            }
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SignInPage(),
-                              ),
+                                  builder: (context) => destinationPage),
                             );
-                            showAlertDialog(context, message);
                           } else {
-                            showAlertDialog(context, message);
+                            showCustomAlertDialog(context,
+                                "Invalid Credentials");
                           }
                         },
                         child: Container(
@@ -251,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             color: AppColors.primaryColor,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.black26,
                                 blurRadius: 10,
                                 offset: Offset(0, 4),
@@ -259,7 +221,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ],
                           ),
                           child: Text(
-                            'Register',
+                            'Sign In',
                             style: TextStyle(
                               fontSize: screenHeight * 0.025,
                               color: Colors.white, // White text
@@ -272,18 +234,18 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       SizedBox(height: screenHeight * 0.02),
 
-                      // Already have an account? Sign In
+                      // Register Link
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             CupertinoPageRoute(
-                              builder: (context) => SignInPage(),
+                              builder: (context) => RegisterPage(),
                             ),
                           );
                         },
                         child: Text(
-                          "Already have an account? Sign In",
+                          "Don't have an account? Register",
                           style: TextStyle(
                             fontSize: screenHeight * 0.018,
                             color: AppColors.primaryColor,
@@ -291,6 +253,17 @@ class _RegisterPageState extends State<RegisterPage> {
                             decoration: TextDecoration.underline,
                           ),
                         ),
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+
+                      // Terms and Privacy Policy Text
+                      Text(
+                        "By signing in, you agree to our Privacy Policy and Terms and Conditions",
+                        style: TextStyle(
+                          fontSize: screenHeight * 0.015,
+                          color: Colors.grey[600],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                       SizedBox(height: screenHeight * 0.04),
                     ],

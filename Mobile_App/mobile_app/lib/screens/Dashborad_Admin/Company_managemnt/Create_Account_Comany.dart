@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:mobile_app/constants.dart';
 
-import 'package:mobile_app/screens/signin_page.dart';
+import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:mobile_app/widgets/Alert_Box.dart';
@@ -125,10 +125,10 @@ class _RegisterPageCompany extends State<RegisterPageCompany> {
                             passwordController.text);
                         print('the res is $message');
                         if (message == "company Created ") {
-                          showAlertDialog(context, message as String);
+                          // showAlertDialog(context, message as String);
                           // Navigator.of(context).pop();
                         } else {
-                          showAlertDialog(context, message as String);
+                          // showAlertDialog(context, message as String);
                           Navigator.of(context).pop();
                           // Navigator.of(context).pop();
                         }

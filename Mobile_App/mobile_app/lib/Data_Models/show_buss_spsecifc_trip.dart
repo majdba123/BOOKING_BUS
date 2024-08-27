@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:mobile_app/Data_Models/Breack_place.dart';
 
 class BusResponse {
+  int bus_trip_id;
   int busId;
   String from;
   String to;
@@ -19,6 +20,7 @@ class BusResponse {
   int seats;
 
   BusResponse({
+    required this.bus_trip_id,
     required this.busId,
     required this.from,
     required this.to,
@@ -44,6 +46,7 @@ class BusResponse {
     //     seatsFromJson.map((i) => SeatModel.fromJson(i)).toList();
 
     return BusResponse(
+        bus_trip_id: json['bus_trip_id'],
         busId: json['bus_id'],
         from: json['from'],
         to: json['to'],

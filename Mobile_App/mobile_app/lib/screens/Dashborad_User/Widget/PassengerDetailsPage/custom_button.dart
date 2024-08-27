@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Breack_place.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/PaymentDetails.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/PaymentMethods.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/payment/pay_button.dart.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/payment_page.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
@@ -177,9 +178,6 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                           ),
                           SizedBox(height: 30),
                           PaymentDetails(),
-                          SizedBox(height: 20),
-                          PaymentMethods(),
-                          SizedBox(height: 20),
                         ],
                       ),
                     ),
@@ -202,7 +200,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Total\n£${busProvider.totoal_price}',
+                        'Total\n£${busProvider.totalAmount}',
                         style: TextStyle(
                           fontSize: isLargeScreen ? 20 : 18,
                           fontWeight: FontWeight.bold,
@@ -212,11 +210,9 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PaymentPage()),
-                          );
+                          makeReservation(context);
+
+                          // Navigator.push(
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[400],

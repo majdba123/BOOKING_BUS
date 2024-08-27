@@ -1,30 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/colors.dart';
-import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
-import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
-import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
-import 'package:mobile_app/screens/register_page.dart';
+import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
 import 'package:mobile_app/widgets/Alert_Box.dart';
 import 'package:provider/provider.dart';
-import 'package:mobile_app/Provider/Auth_provider.dart';
+import '../../../widgets/widget.dart';
+import '../../../constants.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class SignInPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   @override
-  _SignInPageState createState() => _SignInPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _RegisterPageState extends State<RegisterPage> {
+  bool passwordVisibility = true;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  bool isPasswordVisible = true;
+  TextEditingController nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    var Authprovider = Provider.of<AuthProvider>(context, listen: false);
 
     return Scaffold(
       body: Stack(
@@ -66,7 +68,7 @@ class _SignInPageState extends State<SignInPage> {
 
                       // Welcome Text
                       Text(
-                        "Sign to BusX",
+                        "Register to BUSX",
                         style: TextStyle(
                           fontSize:
                               screenHeight * 0.04, // Adjusted for better fit
@@ -80,7 +82,7 @@ class _SignInPageState extends State<SignInPage> {
 
                       // Description Text
                       Text(
-                        "Plan your trip, book your seat, and track your bus in real-time with BUSX.",
+                        "Create a new account to get started with BUSX.",
                         style: TextStyle(
                           fontSize: screenHeight * 0.018,
                           color: Colors.black87,
@@ -88,6 +90,38 @@ class _SignInPageState extends State<SignInPage> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: screenHeight * 0.04),
+
+                      // Name Input Field
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                            labelText: 'Name',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            prefixIcon: Icon(Icons.person),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 18,
+                              horizontal: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.02),
 
                       // Email Input Field
                       Container(
@@ -105,14 +139,14 @@ class _SignInPageState extends State<SignInPage> {
                           controller: emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            labelText: 'Email or Username',
+                            labelText: 'Email',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
                             fillColor: Colors.white,
-                            prefixIcon: Icon(Icons.person),
+                            prefixIcon: Icon(Icons.email),
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 18,
                               horizontal: 12,
@@ -136,7 +170,7 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         child: TextField(
                           controller: passwordController,
-                          obscureText: isPasswordVisible,
+                          obscureText: passwordVisibility,
                           decoration: InputDecoration(
                             labelText: 'Password',
                             border: OutlineInputBorder(
@@ -147,12 +181,12 @@ class _SignInPageState extends State<SignInPage> {
                             fillColor: Colors.white,
                             prefixIcon: Icon(Icons.lock),
                             suffixIcon: IconButton(
-                              icon: Icon(isPasswordVisible
+                              icon: Icon(passwordVisibility
                                   ? Icons.visibility_off
                                   : Icons.visibility),
                               onPressed: () {
                                 setState(() {
-                                  isPasswordVisible = !isPasswordVisible;
+                                  passwordVisibility = !passwordVisibility;
                                 });
                               },
                             ),
@@ -165,7 +199,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       SizedBox(height: screenHeight * 0.04),
 
-                      // Sign In Button
+                      // Register Button
                       InkWell(
                         onTap: () async {
                           showDialog(
@@ -174,40 +208,28 @@ class _SignInPageState extends State<SignInPage> {
                               child: CircularProgressIndicator(),
                             ),
                           );
-
-                          AuthProvider authProvider =
-                              Provider.of<AuthProvider>(context, listen: false);
-                          await authProvider.setAuthData(
-                              emailController.text, passwordController.text);
+                          await Authprovider.register(emailController.text,
+                              nameController.text, passwordController.text);
 
                           Navigator.of(context)
                               .pop(); // Close the progress indicator
 
-                          if (authProvider.accessToken.isNotEmpty) {
-                            // Determine which dashboard to navigate to based on user type
-                            Widget destinationPage;
-                            if (authProvider.userType == "company") {
-                              destinationPage = Dashbord();
-                            } else if (authProvider.userType == "user") {
-                              destinationPage = DashboardUser();
-                            } else if (authProvider.userType == "driver") {
-                              destinationPage = DashboardDriver();
-                            } else if (authProvider.userType == "admin") {
-                              destinationPage = DashbordAdmin();
-                            } else {
-                              // Handle unexpected user type
-                              showAlertDialog(context,
-                                  "Unexpected user type: ${authProvider.userType}");
-                              return;
-                            }
-
+                          if (Authprovider.message == "User Created ") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => destinationPage),
+                                builder: (context) => SignInPage(),
+                              ),
+                            );
+                            showCustomAlertDialog(
+                              context,
+                              Authprovider.message,
                             );
                           } else {
-                            showAlertDialog(context, "Invalid Credentials");
+                            showCustomAlertDialog(
+                              context,
+                              Authprovider.message,
+                            );
                           }
                         },
                         child: Container(
@@ -227,7 +249,7 @@ class _SignInPageState extends State<SignInPage> {
                             ],
                           ),
                           child: Text(
-                            'Sign In',
+                            'Register',
                             style: TextStyle(
                               fontSize: screenHeight * 0.025,
                               color: Colors.white, // White text
@@ -240,18 +262,18 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       SizedBox(height: screenHeight * 0.02),
 
-                      // Register Link
+                      // Already have an account? Sign In
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             CupertinoPageRoute(
-                              builder: (context) => RegisterPage(),
+                              builder: (context) => SignInPage(),
                             ),
                           );
                         },
                         child: Text(
-                          "Don't have an account? Register",
+                          "Already have an account? Sign In",
                           style: TextStyle(
                             fontSize: screenHeight * 0.018,
                             color: AppColors.primaryColor,
@@ -259,17 +281,6 @@ class _SignInPageState extends State<SignInPage> {
                             decoration: TextDecoration.underline,
                           ),
                         ),
-                      ),
-                      SizedBox(height: screenHeight * 0.03),
-
-                      // Terms and Privacy Policy Text
-                      Text(
-                        "By signing in, you agree to our Privacy Policy and Terms and Conditions",
-                        style: TextStyle(
-                          fontSize: screenHeight * 0.015,
-                          color: Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
                       ),
                       SizedBox(height: screenHeight * 0.04),
                     ],

@@ -133,6 +133,7 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                 child: InkWell(
                   onTap: () {
                     providerTripUser.selectBusTrip(busTrip);
+                    providerTripUser.setBusTripid(busTrip.bus_trip_id);
 
                     providerTripUser.selectTripType((busTrip.type == 'all')
                         ? 2
