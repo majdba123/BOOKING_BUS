@@ -23,6 +23,7 @@ export default createStore({
         placeName: null,
         lat: null,
         lng: null,
+        Users: {},
     },
     getters: {},
     mutations: {
