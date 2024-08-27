@@ -74,12 +74,12 @@
             <h3>Private Trip</h3>
         </router-link>
         <router-link
-            to="AllFavourite"
-            @click="selectOption('Favourite')"
-            :class="{ active: selectedOption === 'Favourite' }"
+            to="AllInquires"
+            @click="selectOption('AllInquires')"
+            :class="{ active: selectedOption === 'AllInquires' }"
         >
-            <span class="material-icons" aria-label="Products">favorite</span>
-            <h3>Favourite</h3>
+            <span class="material-icons" aria-label="Products">comment</span>
+            <h3>Inquires</h3>
         </router-link>
 
         <router-link
