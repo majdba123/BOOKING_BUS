@@ -9,7 +9,10 @@
         <div class="content">
             <div class="form-map-container" v-if="showForm">
                 <div class="form-container">
-                    <form @submit.prevent="handleSubmit" class="break-form">
+                    <form
+                        @submit.prevent="handleSubmit(Idgovernment)"
+                        class="break-form"
+                    >
                         <div class="form-group">
                             <label for="breakName">Name Break</label>
                             <input
@@ -29,7 +32,8 @@
                             </label>
                             <select
                                 id="government"
-                                v-model="government"
+                                v-model="Idgovernment"
+                                @change="updateMapLocation"
                                 required
                                 class="custom-select"
                             >
@@ -45,19 +49,6 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="description">
-                                <span class="material-icons">description</span>
-                                Description
-                            </label>
-                            <textarea
-                                id="description"
-                                placeholder="Enter a brief description"
-                                v-model="description"
-                                rows="3"
-                                required
-                            ></textarea>
-                        </div>
 
                         <div class="submit-btn">
                             <button type="submit">ADD</button>
@@ -65,7 +56,7 @@
                     </form>
                 </div>
                 <div class="map-container">
-                    <MapPath />
+                    <MapBreack :lat="mapLat" :lng="mapLng" />
                 </div>
             </div>
             <div v-else class="recent_orders">
@@ -74,29 +65,44 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Name Break</th>
-                                <th>Government</th>
+                                <th>ID</th>
+                                <th>Government Name</th>
+                                <th>Break Name</th>
+                                <th>Display IN Map</th>
 
-                                <th>Edit</th>
-                                <th>Delete</th>
+                                <th>ِActions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>ddddddddddddddddd</td>
-                                <td>d</td>
+                            <tr v-for="(breack, index) in breaks" :key="index">
+                                <td>{{ breack.id }}</td>
+                                <td>{{ breack.area_name }}</td>
+                                <td>{{ breack.break_name }}</td>
+
                                 <td>
                                     <button
-                                        class="edit-btn"
-                                        @click="openEditModal(breakItem, index)"
+                                        class="nav-btnd"
+                                        @click="openMapModal(breack.id)"
                                     >
-                                        <span class="material-icons">edit</span>
+                                        Display
                                     </button>
                                 </td>
                                 <td>
                                     <button
+                                        class="edit-btn"
+                                        @click="
+                                            openEditModal(
+                                                breack.area_id,
+                                                index,
+                                                breack.break_name
+                                            )
+                                        "
+                                    >
+                                        <span class="material-icons">edit</span>
+                                    </button>
+                                    <button
                                         class="delete-btn"
-                                        @click="DeleteBreak(breakItem.id)"
+                                        @click="DeleteBreak(breack.id)"
                                     >
                                         <span class="material-icons"
                                             >delete</span
@@ -118,42 +124,13 @@
                         <input
                             type="text"
                             id="editBreakName"
-                            v-model="editedBreak.name"
+                            v-model="name"
                             required
                         />
                     </div>
-                    <div class="form-group">
-                        <label for="editGovernment">
-                            <span class="material-icons">location_city</span>
-                            Select Government
-                        </label>
-                        <select
-                            id="editGovernment"
-                            v-model="editedBreak.government"
-                            required
-                            class="custom-select"
-                        >
-                            <option value="" disabled>Select Government</option>
-                            <option
-                                v-for="gov in governments"
-                                :key="gov.id"
-                                :value="gov.id"
-                            >
-                                {{ gov.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="editDescription">
-                            <span class="material-icons">description</span>
-                            Description
-                        </label>
-                        <textarea
-                            id="editDescription"
-                            v-model="editedBreak.description"
-                            rows="3"
-                            required
-                        ></textarea>
+
+                    <div class="map-container">
+                        <MapBreack :lat="mapLat" :lng="mapLng" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -167,17 +144,42 @@
             </div>
         </div>
     </div>
+    <div v-if="showMapModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Location on Map</div>
+            <div class="modal-body">
+                <div class="map-containers">
+                    <DisplayMap :lat="mapLat" :lng="mapLng" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeMapModal" class="close-modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
 import axios from "axios";
-import MapPath from "./MapPath.vue";
+import MapBreack from "./MapBreack.vue";
+import store from "@/store"; // تأكد من تحديث المسار بناءً على موقع store الخاص بك
+import DisplayMap from "./DisplayMap.vue";
 
 export default {
     name: "AddBreak",
-    components: { MapPath },
+    components: { MapBreack, DisplayMap },
     data() {
         return {
+            showMapModal: false,
+            areaid: "",
+
+            name: "",
+            mapLat: 30.033333, // Default latitude for Cairo, Egypt
+            mapLng: 31.233334, // Defau
+            Idgovernment: "",
+            name_break: "",
             showForm: true,
             showEditModal: false,
             break: {
@@ -196,11 +198,23 @@ export default {
         };
     },
     methods: {
+        openMapModal(id) {
+            const government = this.breaks.find((breack) => breack.id === id);
+            if (government) {
+                this.mapLat = government.latitude;
+                this.mapLng = government.longitude;
+                this.showMapModal = true;
+                console.log(this.mapLat, this.mapLng);
+            }
+        },
+        closeMapModal() {
+            this.showMapModal = false;
+        },
         fetchGovernment() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "127.0.0.1:8000/api/company/all_government",
+                url: "http://127.0.0.1:8000/api/admin/all_government",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -215,11 +229,12 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_breaks/{area_id}",
+                url: "http://127.0.0.1:8000/api/admin/all_breaks/",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     this.breaks = response.data;
+                    console.log(this.breaks);
                 })
                 .catch((error) => {
                     window.alert("Error getting Breaks");
@@ -227,11 +242,18 @@ export default {
                 });
         },
         handleSubmit() {
+            console.log(store.state.breacklat, store.state.breacklong);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: "http://127.0.0.1:8000/api/admin/store_breaks",
-                data: this.break,
+                url:
+                    "http://127.0.0.1:8000/api/admin/store_breaks/" +
+                    this.Idgovernment,
+                data: {
+                    name: this.name,
+                    lat: store.state.breacklat, // استخدام القيمة المخزنة في Vuex Store
+                    long: store.state.breacklong, // استخدام القيم
+                },
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
@@ -244,18 +266,37 @@ export default {
                     console.error(error);
                 });
         },
-
-        openEditModal(breakItem, index) {
-            this.editedBreak = { ...breakItem };
+        updateMapLocation() {
+            const selectedGov = this.governments.find(
+                (gov) => gov.id === this.Idgovernment
+            );
+            if (selectedGov) {
+                console.log(selectedGov);
+                this.mapLat = selectedGov.latitude;
+                this.mapLng = selectedGov.longitude;
+                console.log(selectedGov.latitude);
+            }
+        },
+        openEditModal(areaid, index, x) {
+            this.areaid = areaid;
             this.editingIndex = index;
             this.showEditModal = true;
+            this.name_break = x;
         },
         updateBreak() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "put",
-                url: `http://127.0.0.1:8000/api/admin/update_breaks/${this.editedBreak.id}`,
-                data: this.editedBreak,
+                url:
+                    "http://127.0.0.1:8000/api/admin/update_breaks/" +
+                    this.areaid +
+                    "?name=" +
+                    this.name_break,
+                data: {
+                    name: this.name,
+                    lat: store.state.breacklat, // استخدام القيمة المخزنة في Vuex Store
+                    long: store.state.breacklong, // استخدام القيم
+                },
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
@@ -275,6 +316,7 @@ export default {
         resetForm() {
             this.break = { name: "", government: "", description: "" };
         },
+
         DeleteBreak(breakId) {
             const access_token = window.localStorage.getItem("access_token");
             axios({

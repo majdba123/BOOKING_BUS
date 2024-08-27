@@ -1,72 +1,54 @@
 <template>
     <div :class="['containerd', { 'dark-theme-variables': isDarkMode }]">
-        <!-- Header with buttons -->
-        <header class="navd">
-            <button class="nav-btnd" @click="showForm = true">
-                Add Government
-            </button>
-            <button class="nav-btnd" @click="showForm = false">
-                Show Government
-            </button>
-        </header>
-
-        <div v-if="showForm" class="form-map-container">
-            <div class="map-container">
-                <GoogleMap />
-                <button type="submit" @click="CreateDriver" class="submit-btnd">
-                    Submit
-                </button>
-            </div>
-        </div>
-
-        <div v-else class="recent_orders">
-            <h1>All Government</h1>
+        <div class="recent_orders">
+            <h1>All Users</h1>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Breack</th>
-                            <th>ِActions</th>
-                            <th>Display In Map</th>
+                            <th>Email</th>
+                            <th>Point</th>
+                            <th>Email Verified At</th>
+                            <th>Created At</th>
+                            <th>Updated At</th>
+                            <th>Profile</th>
+                            <th>All Reservation</th>
+                            <th>All Trip History</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr
-                            v-for="(user, index) in filteredGovernment"
-                            :key="index"
-                        >
+                        <tr v-for="(user, index) in Users" :key="index">
                             <td>{{ user.id }}</td>
                             <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.point }}</td>
+                            <td>{{ user.email_verified_at }}</td>
+                            <td>{{ user.created_at }}</td>
+                            <td>{{ user.updated_at }}</td>
                             <td>
                                 <button
                                     class="nav-btnd"
                                     @click="openBreackModal(user.id)"
                                 >
-                                    Breack
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="delete-btn"
-                                    @click="DeleteGovernment(user.id)"
-                                >
-                                    <span class="material-icons">delete</span>
-                                </button>
-                                <button
-                                    class="edit-btn"
-                                    @click="openEditModal(user, id)"
-                                >
-                                    <span class="material-icons">edit</span>
+                                    View
                                 </button>
                             </td>
                             <td>
                                 <button
                                     class="nav-btnd"
-                                    @click="openMapModal(user.id)"
+                                    @click="openReservationModal(user.id)"
                                 >
-                                    Display
+                                    View
+                                </button>
+                            </td>
+                            <td>
+                                <button
+                                    class="nav-btnd"
+                                    @click="openTripModal(user.id)"
+                                >
+                                    View
                                 </button>
                             </td>
                         </tr>
@@ -74,70 +56,137 @@
                 </table>
             </div>
         </div>
-        <div v-if="showMapModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Location on Map</div>
-                <div class="modal-body">
-                    <div class="map-containers">
-                        <DisplayMap :lat="mapLat" :lng="mapLng" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button @click="closeMapModal" class="close-modal">
-                        Close
-                    </button>
-                </div>
+    </div>
+    <div v-if="showGovernmentBreackModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Profile</div>
+            <div class="modal-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phone</th>
+                            <th>Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ Profile.profile?.phone }}</td>
+                            <td>{{ Profile.profile?.image }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeGovernmentBreackModal" class="close-modal">
+                    Close
+                </button>
             </div>
         </div>
-
-        <div v-if="showGovernmentBreackModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Breack</div>
-                <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(driver, index) in GovernmentBreack"
-                                :key="index"
-                            >
-                                <td>{{ driver.id }}</td>
-                                <td>{{ driver.name }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button
-                        @click="closeGovernmentBreackModal"
-                        class="close-modal"
-                    >
-                        Close
-                    </button>
-                </div>
+    </div>
+    <div v-if="showReservationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">All Reservation</div>
+            <div class="modal-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>area_name</th>
+                            <th>break_name</th>
+                            <th>reservation_status</th>
+                            <th>reservation_type</th>
+                            <th>Seat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(driver, index) in Reservation" :key="index">
+                            <td>{{ driver.area_name }}</td>
+                            <td>{{ driver.break_name }}</td>
+                            <td>{{ driver.reservation_status }}</td>
+                            <td>{{ driver.reservation_type }}</td>
+                            <td>
+                                <button
+                                    class="nav-btnd"
+                                    @click="openSeat(index)"
+                                >
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeReservationModal" class="close-modal">
+                    Close
+                </button>
             </div>
         </div>
-        <div v-if="showEditModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Edit Path</div>
-                <div class="modal-body">
-                    <div class="map-containers">
-                        <UpdateMapGovernment />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="update-btn" @click="updateGovernment">
-                        Update
-                    </button>
-                    <button @click="closeEditModal" class="close-modal">
-                        Cancel
-                    </button>
-                </div>
+    </div>
+    <div v-if="showTripModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">All Trip History</div>
+            <div class="modal-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Price Trip</th>
+                            <th>From Time</th>
+                            <th>To Time</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Type</th>
+                            <th>Event</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(driver, index) in Trip" :key="index">
+                            <td>{{ driver.id }}</td>
+                            <td>{{ driver.from }}</td>
+                            <td>{{ driver.to }}</td>
+                            <td>{{ driver.price_trip }}</td>
+                            <td>{{ driver.from_time }}</td>
+                            <td>{{ driver.to_time }}</td>
+                            <td>{{ driver.date }}</td>
+                            <td>{{ driver.status }}</td>
+                            <td>{{ driver.type }}</td>
+                            <td>{{ driver.event }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeTripModal" class="close-modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    <div v-if="showSeatModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">All Seat</div>
+            <div class="modal-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(driver, index) in Seat" :key="index">
+                            <td>{{ driver.seat_id }}</td>
+                            <td>{{ driver.status }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeSeatModal" class="close-modal">
+                    Close
+                </button>
             </div>
         </div>
     </div>
@@ -148,173 +197,93 @@ import axios from "axios";
 import store from "@/store";
 import { useToast } from "vue-toastification";
 import { Chart } from "chart.js";
-import GoogleMap from "./MapGovernment.vue";
-import UpdateMapGovernment from "./UpdateMapGovernment.vue";
-import DisplayMap from "./DisplayMap.vue";
 
 export default {
     name: "AddDriver",
     data() {
         return {
-            showEditModal: false,
-            showMapModal: false,
-            mapLat: null,
-            mapLng: null,
-            showForm: true,
-            Driver: [],
-            Bus: [],
-            driverStatusData: [],
-            GovernmentBreack: [],
-            driverWithBusData: [],
-            name: "",
+            Trip: [],
+            showSeatModal: false,
+            Seat: [],
+            showReservationModal: false,
+            showTripModal: false,
+
+            Users: [],
+            Profile: [],
+            Reservation: [],
             currentCompanyId: "",
-            email: "",
-            password: "",
             showGovernmentBreackModal: false,
-            showDriverWithBusModal: false,
             toast: useToast(),
             isDarkMode: false, // إدارة حالة الوضع الداكن
-            editedGovernment: { name: "" },
         };
     },
     mounted() {
-        this.AllGovernment();
-        this.fetchBus();
+        this.AllUsers();
         this.isDarkMode = localStorage.getItem("theme") === "dark";
         if (this.isDarkMode) {
             document.body.classList.add("dark-theme-variables");
         }
+        this.$nextTick(() => {
+            this.createChart(); // إنشاء الرسم البياني بعد التأكد من جاهزية DOM
+            // تحديث السائقين بالقيم المخزنة في localStorage
+            this.Driver.forEach((driver) => {
+                const savedBusId = localStorage.getItem(
+                    `driver_${driver.driver_id}_busId`
+                );
+                if (savedBusId) {
+                    driver.selectedBusId = savedBusId;
+                }
+            });
+        });
     },
     methods: {
-        openMapModal(id) {
-            const government = this.Driver.find((driver) => driver.id === id);
-            if (government) {
-                this.mapLat = government.latitude;
-                this.mapLng = government.longitude;
-                this.showMapModal = true;
-                console.log(this.mapLat, this.mapLng);
-            }
-        },
-        closeMapModal() {
-            this.showMapModal = false;
-        },
-
-        openEditModal(Government, index) {
-            this.editedGovernment = { ...Government };
-            this.editingIndex = index;
-            this.showEditModal = true;
-        },
         openBreackModal(company_id) {
             this.currentCompanyId = company_id;
             // Set the current company ID
-            this.fetchGovernmentBreack(this.currentCompanyId);
+            this.fetchProfile(this.currentCompanyId);
             this.showGovernmentBreackModal = true;
         },
-        closeEditModal() {
-            this.showEditModal = false;
+        openReservationModal(company_id) {
+            this.currentCompanyId = company_id;
+            // Set the current company ID
+            this.fetchReservation(this.currentCompanyId);
+            this.showReservationModal = true;
+        },
+        openTripModal(company_id) {
+            this.currentCompanyId = company_id;
+            // Set the current company ID
+            this.fetchTrip(this.currentCompanyId);
+            this.showTripModal = true;
+        },
+        openSeat(x) {
+            // Set the current company ID
+            this.fetchReservationSeat(x, this.currentCompanyId);
+            this.showSeatModal = true;
         },
 
+        closeSeatModal() {
+            this.showSeatModal = false;
+        },
+        closeReservationModal() {
+            this.showReservationModal = false;
+        },
+        closeTripModal() {
+            this.showTripModal = false;
+        },
         closeGovernmentBreackModal() {
             this.showGovernmentBreackModal = false;
         },
-        closeDriverWithBusModal() {
-            this.showDriverWithBusModal = false;
-        },
-        handleSubmit() {
-            console.log("Form Submitted", this.name, this.email, this.password);
-        },
-        updateGovernment() {
-            const access_token = window.localStorage.getItem("access_token");
-            const pathId = this.editedGovernment.id;
-            axios({
-                method: "put",
-                url: `http://127.0.0.1:8000/api/admin/update_government/${pathId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-                data: {
-                    name: store.state.placeName,
-                    lat: store.state.lat,
-                    long: store.state.lng,
-                },
-            })
-                .then((response) => {
-                    this.editingIndex = null;
-                    this.editedGovernment = { name: "" };
-                    console.log(response);
-                    this.toast.success("Government Updated Successfully", {
-                        transition: "Vue-Toastification__bounce",
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                    });
-                    this.showEditModal = false;
-                    this.AllGovernment();
-                })
-                .catch((error) => {
-                    this.toast.error("Error Updating Government", {
-                        transition: "Vue-Toastification__shake",
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                    });
-                    console.error(error);
-                });
-        },
-        CreateDriver() {
-            const token = window.localStorage.getItem("access_token");
-            axios({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/admin/store_government",
-                data: {
-                    name: store.state.placeName,
-                    lat: store.state.lat,
-                    long: store.state.lng,
-                },
-                headers: { Authorization: `Bearer ${token}` },
-            })
-                .then((response) => {
-                    if (response.status == 200) {
-                        console.log(response);
-                        this.toast.success("Government created successfully!");
-                        this.AllGovernment();
-                    }
-                })
-                .catch((error) => {
-                    this.toast.error("Government is already registered.");
-                    console.log(error);
-                });
-        },
-        CancelDriver(driverId) {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/cancelled_driver/${driverId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    this.toast.success("Driver cancelled successfully!");
-                    this.AllGovernment();
-                })
-                .catch((error) => {
-                    this.toast.error("Error cancelling driver.");
-                    console.error(error);
-                });
-        },
-        AllGovernment() {
+
+        AllUsers() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/admin/all_government",
+                url: "http://127.0.0.1:8000/api/admin/all_user",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.Driver = response.data;
-                    store.state.Government = response.data;
+                    this.Users = response.data;
+                    store.state.Users = response.data;
                     console.log(response.data);
                 })
                 .catch((error) => {
@@ -322,68 +291,68 @@ export default {
                     console.error(error);
                 });
         },
-        DeleteGovernment(driverId) {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "delete",
-                url: `http://127.0.0.1:8000/api/admin/delete_government/${driverId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    this.toast.success("Government deleted successfully!");
-                    this.AllGovernment();
-                })
-                .catch((error) => {
-                    this.toast.error("Error deleting Government.");
-                    console.error(error);
-                });
-        },
-        fetchBus() {
+
+        fetchProfile(status) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
+                url: `http://127.0.0.1:8000/api/admin/show_user_details/${status}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.Bus = response.data;
-                    console.log(this.Bus);
+                    this.Profile = response.data;
+                    console.log(response.data);
                 })
                 .catch((error) => {
-                    this.toast.error("Error getting buses.");
+                    window.alert("Error fetching Profile");
                     console.error(error);
                 });
         },
-        SelectDriver(event, userId) {
-            const busId = event.target.value;
-            const access_token = window.localStorage.getItem("access_token");
-            console.log("Selected Bus ID:", busId);
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
-                data: { driver_id: userId },
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    console.log("Selection Complete for Bus ID:", busId);
-                    this.toast.success("Driver assigned to bus successfully!");
-                    // تحديث القيمة المحلية وتخزينها في localStorage
-                    localStorage.setItem(`driver_${userId}_busId`, busId);
-                })
-                .catch((error) => {
-                    this.toast.error("Error assigning driver to bus.");
-                    console.error("Error for Bus ID:", busId, error);
-                });
-        },
-        fetchGovernmentBreack(status) {
+        fetchReservationSeat(x, status) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: `http://127.0.0.1:8000/api/admin/show_goverment/${status}`,
+                url: `http://127.0.0.1:8000/api/admin/user_reservation_info/${status}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.GovernmentBreack = response.data.breaks;
+                    this.Reservation = response.data;
+                    this.Seat = response.data[x].seat;
+
+                    console.log(this.Seat);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching driver status");
+                    console.error(error);
+                });
+        },
+        fetchReservation(status) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/admin/user_reservation_info/${status}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.Reservation = response.data;
+
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    window.alert("Error fetching driver status");
+                    console.error(error);
+                });
+        },
+        fetchTrip(status) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/admin/all_trip_history_of_user/${status}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.Trip = response.data;
+
                     console.log(response.data);
                 })
                 .catch((error) => {
@@ -465,7 +434,7 @@ export default {
             });
         },
     },
-    components: { GoogleMap, UpdateMapGovernment, DisplayMap },
+    components: {},
 };
 </script>
 

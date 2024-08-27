@@ -14,7 +14,7 @@
             <!-- End top -->
 
             <!-- Start sidebar -->
-            <SidebarCompany />
+            <SidebarAdmin />
             <!-- End sidebar -->
         </aside>
         <div class="main-content">
@@ -32,7 +32,7 @@
                     </div>
                     <GoogleMap class="map-container" />
                 </div>
-                <AddDriver ref="addDriver" />
+                <ShowUsers ref="ShowUsers" />
             </main>
         </div>
         <!-- Right section start -->
@@ -64,13 +64,13 @@
 
             <!--start driver_chart-->
             <div class="driver_chart">
-                <h2>Driver Workload Status</h2>
+                <h2>User Workload Status</h2>
                 <DriverChart :chartData="chartData" />
             </div>
 
             <!--start driver_status-->
             <div class="driver_status">
-                <h2>Driver Status</h2>
+                <h2>User Status</h2>
                 <div class="statuses">
                     <div class="status">
                         <div class="info">
@@ -92,14 +92,15 @@
 
 <script>
 import axios from "axios";
-import SidebarCompany from "@/components/SidebarCompany.vue";
-import AddDriver from "@/components/AddDriver.vue";
+import SidebarAdmin from "@/components/SidebarAdmin.vue";
 import DriverChart from "@/components/DriverChart.vue";
+import ShowUsers from "@/components/ShowUsers.vue";
+
 import store from "@/store";
 
 export default {
-    name: "AllDriver",
-    components: { SidebarCompany, AddDriver, DriverChart },
+    name: "AllUser",
+    components: { SidebarAdmin, ShowUsers, DriverChart },
     data() {
         return {
             x: store.state.x,
@@ -124,7 +125,7 @@ export default {
                     },
                 ],
             },
-            isDarkMode: false,
+            isDarkMode: false, // لإدارة حالة الوضع الداكن
         };
     },
     watch: {
@@ -147,7 +148,7 @@ export default {
             }
         },
         toggleTheme() {
-            this.isDarkMode = !this.isDarkMode;
+            this.isDarkMode = !this.isDarkMode; // تغيير حالة الوضع الداكن
             document.body.classList.toggle(
                 "dark-theme-variables",
                 this.isDarkMode
@@ -155,7 +156,7 @@ export default {
             localStorage.setItem(
                 "darkMode",
                 this.isDarkMode ? "enabled" : "disabled"
-            );
+            ); // حفظ الحالة في localStorage
 
             const themeToggler = this.$refs.themeToggler;
             themeToggler
@@ -165,7 +166,9 @@ export default {
                 .querySelector("span:nth-child(2)")
                 .classList.toggle("active", this.isDarkMode);
         },
-        search() {},
+        search() {
+            // هنا يمكنك تنفيذ وظيفة البحث
+        },
         DeleteDriver(x) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -219,6 +222,7 @@ export default {
         },
     },
     mounted() {
+        // التحقق من تفضيلات المستخدم المحفوظة في localStorage
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme === "enabled") {
             this.isDarkMode = true;
@@ -292,12 +296,12 @@ body {
     height: 100%;
     font-size: 0.88rem;
     user-select: none;
-    background: var(--clr-color-background);
+    background: var(--clr-color-background); /* هنا يتم ضبط الخلفية */
     overflow-y: auto;
 }
 
 .container {
-    background: var(--clr-color-background);
+    background: var(--clr-color-background); /* تأكد من ضبط الخلفية هنا أيضًا */
     display: grid;
     width: 100%;
     gap: 1.8rem;

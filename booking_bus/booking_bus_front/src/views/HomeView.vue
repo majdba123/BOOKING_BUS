@@ -48,7 +48,7 @@
                     success.password
                 }}</span>
 
-                <button type="submit" :disabled="!formIsValid">
+                <button type="submit" :disabled="!formIsValid || isLoading">
                     {{ isLogin ? "Login" : "Register" }}
                 </button>
                 <button type="button" @click="toggleForm" class="toggle-btn">
@@ -59,6 +59,11 @@
                 >Forgot Password?</a
             >
         </div>
+
+        <!-- Animation Container -->
+        <div v-if="isLoading" class="loading-overlay">
+            <div class="loading-animation" ref="lottieContainer"></div>
+        </div>
     </div>
 </template>
 
@@ -66,9 +71,15 @@
 import axios from "axios";
 import router from "@/router";
 import anime from "animejs";
+import lottie from "lottie-web";
+import { useToast } from "vue-toastification";
 
 export default {
     name: "HomeView",
+    setup() {
+        const toast = useToast();
+        return { toast };
+    },
     data() {
         return {
             email: "",
@@ -83,6 +94,8 @@ export default {
                 username: null,
             },
             formIsValid: false,
+            isLoading: false,
+            lottieAnimation: null,
         };
     },
     watch: {
@@ -108,6 +121,32 @@ export default {
         });
     },
     methods: {
+        startLoadingAnimation() {
+            this.isLoading = true;
+            this.$nextTick(() => {
+                if (this.$refs.lottieContainer) {
+                    this.lottieAnimation = lottie.loadAnimation({
+                        container: this.$refs.lottieContainer,
+                        renderer: "svg",
+                        loop: true,
+                        autoplay: true,
+                        animationData: require("@/assets/ani/Animation.json"),
+                    });
+                } else {
+                    console.error("Lottie container is not available.");
+                }
+            });
+        },
+        stopLoadingAnimation() {
+            console.log("Stopping loading animation");
+            this.isLoading = false;
+            if (this.lottieAnimation) {
+                this.lottieAnimation.stop();
+                this.lottieAnimation.destroy();
+                this.lottieAnimation = null;
+            }
+        },
+
         clearSuccessMessage(field) {
             if (this.typingTimeouts[field]) {
                 clearTimeout(this.typingTimeouts[field]);
@@ -127,16 +166,16 @@ export default {
                     this.clearSuccessMessage("email");
                 }
             } else {
-                this.errors.email = "Email is required.";
+                this.errors.email = "";
                 this.success.email = "";
             }
             this.updateFormValidity();
         },
         validatePassword() {
             if (this.password) {
-                if (this.password.length < 6) {
+                if (this.password.length < 8) {
                     this.errors.password =
-                        "Password must be at least 6 characters.";
+                        "Password must be at least 8 characters.";
                     this.success.password = "";
                 } else {
                     this.errors.password = "";
@@ -144,7 +183,7 @@ export default {
                     this.clearSuccessMessage("password");
                 }
             } else {
-                this.errors.password = "Password is required.";
+                this.errors.password = "";
                 this.success.password = "";
             }
             this.updateFormValidity();
@@ -155,7 +194,7 @@ export default {
                 this.success.username = "Username looks good!";
                 this.clearSuccessMessage("username");
             } else {
-                this.errors.username = "Username is required.";
+                this.errors.username = "";
                 this.success.username = "";
             }
             this.updateFormValidity();
@@ -179,6 +218,7 @@ export default {
         },
         register() {
             if (this.validateForm()) {
+                this.startLoadingAnimation();
                 axios
                     .post("http://127.0.0.1:8000/api/register", {
                         name: this.username,
@@ -195,13 +235,17 @@ export default {
                         }
                     })
                     .catch((error) => {
-                        alert("Error during registration");
+                        this.toast.error("Error during registration");
                         console.log(error);
+                    })
+                    .finally(() => {
+                        this.stopLoadingAnimation();
                     });
             }
         },
         login() {
             if (this.validateForm()) {
+                this.startLoadingAnimation();
                 axios
                     .post("http://127.0.0.1:8000/api/login", {
                         email: this.email,
@@ -226,8 +270,11 @@ export default {
                         }
                     })
                     .catch((error) => {
-                        alert("Invalid email or password");
+                        this.toast.error("Invalid email or password");
                         console.log(error);
+                    })
+                    .finally(() => {
+                        this.stopLoadingAnimation();
                     });
             }
         },
@@ -248,11 +295,6 @@ export default {
             });
         },
     },
-    clearAllMessages() {
-        this.errors = {};
-        this.success = {};
-        this.formIsValid = false;
-    },
 };
 </script>
 
@@ -263,9 +305,12 @@ export default {
     height: 100vh;
     background: url("@/assets/buz.jpeg") no-repeat center center;
     background-size: cover;
+    position: relative;
+    padding: 20px;
 }
+
 .login-box {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.5);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -276,15 +321,18 @@ export default {
     margin-left: 60px;
     margin-top: 10px;
 }
+
 .login-box .logo {
     max-width: 150px;
     margin-bottom: 20px;
 }
+
 .login-box h1 {
     font-size: 28px;
     margin-bottom: 20px;
     color: #333;
 }
+
 .login-box input {
     width: 95%;
     padding: 10px;
@@ -293,6 +341,7 @@ export default {
     border-radius: 5px;
     font-size: 16px;
 }
+
 .login-box button {
     width: 100%;
     padding: 10px;
@@ -304,48 +353,133 @@ export default {
     font-size: 16px;
     cursor: pointer;
 }
+
 .login-box button:hover {
     background-color: #00628c;
     transition: all ease 0.9s;
 }
+
 .toggle-btn {
     background-color: #008cba;
 }
+
 .toggle-btn:hover {
     background-color: #007bb5;
 }
+
 .forgot-password {
     display: block;
     margin-top: 10px;
     color: #007bb5;
     text-decoration: none;
 }
+
 .forgot-password:hover {
     text-decoration: underline;
 }
-.error {
-    color: red;
-    font-size: 14px;
-    margin-top: 4px;
-    margin-bottom: 10px;
-    display: block;
-}
+
 .success {
     color: green;
     font-size: 14px;
     margin-top: 4px;
     margin-bottom: 10px;
     display: block;
+    opacity: 1;
+    transition: opacity 2s ease-out;
 }
-@media (max-width: 600px) {
+.success.hide {
+    opacity: 0;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    display: block;
+    opacity: 1;
+    transition: opacity 2s ease-out;
+}
+
+.error.hide {
+    opacity: 0;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.loading-animation {
+    width: 200px;
+    height: 200px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
     .login-box {
-        width: 90%;
-        margin: 0;
+        padding: 15px;
+        margin-left: 0;
+        max-width: 300px;
     }
+
+    .login-box h1 {
+        font-size: 24px;
+    }
+
+    .login-box input {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .login-box button {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .loading-animation {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
     .login-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 10px;
+        margin-left: 0;
+    }
+
+    .login-box {
+        padding: 10px;
+        max-width: 280px;
+    }
+
+    .login-box h1 {
+        font-size: 20px;
+    }
+
+    .login-box input {
+        padding: 7px;
+        font-size: 13px;
+    }
+
+    .login-box button {
+        padding: 7px;
+        font-size: 13px;
+    }
+
+    .loading-animation {
+        width: 120px;
+        height: 120px;
     }
 }
 </style>

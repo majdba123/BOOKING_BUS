@@ -126,13 +126,52 @@ export default {
         fetchDashboardData() {
             const accessToken = window.localStorage.getItem("access_token");
             axios
-                .get("http://127.0.0.1:8000/api/company/dashboard_company", {
+                .get("http://127.0.0.1:8000/api/admin/dashboard_Admin", {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 })
                 .then((response) => {
-                    this.dashboardData = response.data;
+                    this.dashboardData = {
+                        pending_reservations:
+                            response.data.pending_reservations || 0,
+                        completed_reservations:
+                            response.data.completed_reservations || 0,
+                        out_reservation: response.data.out_reservation || 0,
+                        pending_trip: response.data.pending_trip || 0,
+                        finished_trip: response.data.finished_trip || 0,
+                        finished_going_trip:
+                            response.data.finished_going_trip || 0,
+                        pending_bus_trip: response.data.pending_bus_trip || 0,
+                        finished_bus_trip: response.data.finished_bus_trip || 0,
+                        finished_going_bus_trip:
+                            response.data.finished_going_bus_trip || 0,
+                        total_profit_pending:
+                            response.data.total_profit_pending || 0,
+                        total_profit_completed:
+                            response.data.total_profit_completed || 0,
+                        total_profit_out: response.data.total_profit_out || 0,
+                        all_drivers: response.data.all_drivers || 0,
+                        pending_drivers: response.data.pending_drivers || 0,
+                        available_drivers: response.data.available_drivers || 0,
+                        completed_driver: response.data.completed_driver || 0,
+                        allBuses: response.data.allBuses || 0,
+                        completed_Buses: response.data.completed_Buses || 0,
+                        availableBuses: response.data.availableBuses || 0,
+                        pending_Buses: response.data.pending_Buses || 0,
+                        inProgress_PrivateTrips:
+                            response.data.inProgress_PrivateTrips || 0,
+                        completed_PrivateTrips:
+                            response.data.completed_PrivateTrips || 0,
+                        canceled_PrivateTrips:
+                            response.data.canceled_PrivateTrips || 0,
+                        total_price_completed_PrivateTrips:
+                            response.data.total_price_completed_PrivateTrips ||
+                            0,
+                        count_favourite: response.data.count_favourite || 0,
+                        all_user: response.data.all_user || 0,
+                        all_company: response.data.all_company || 0,
+                    };
                     this.processProfitsData();
                     this.createCharts();
                 })
@@ -141,9 +180,21 @@ export default {
                 });
         },
         processProfitsData() {
-            this.dailyProfits = [100, 200, 150, 300, 250, 400, 350];
-            this.weeklyProfits = [1500, 2000, 1800, 2200, 1700];
-            this.monthlyProfits = [6000, 8000, 7000, 9000, 8500];
+            this.dailyProfits = [
+                this.dashboardData.total_profit_pending,
+                this.dashboardData.total_profit_completed,
+                this.dashboardData.total_profit_out,
+            ];
+            this.weeklyProfits = [
+                this.dashboardData.total_profit_pending,
+                this.dashboardData.total_profit_completed,
+                this.dashboardData.total_profit_out,
+            ];
+            this.monthlyProfits = [
+                this.dashboardData.total_profit_pending,
+                this.dashboardData.total_profit_completed,
+                this.dashboardData.total_profit_out,
+            ];
         },
         createCharts() {
             if (this.dashboardData) {
@@ -169,9 +220,9 @@ export default {
         },
         createTripStatusChart() {
             let data = [
-                this.dashboardData.pending_trip || 0,
-                this.dashboardData.finished_trip || 0,
-                this.dashboardData.finished_going_trip || 0,
+                this.dashboardData.pending_trip,
+                this.dashboardData.finished_trip,
+                this.dashboardData.finished_going_trip,
             ];
 
             if (data.every((val) => val === 0)) {
@@ -207,9 +258,9 @@ export default {
         },
         createBusStatusChart() {
             let data = [
-                this.dashboardData.pending_bus_trip || 0,
-                this.dashboardData.finished_bus_trip || 0,
-                this.dashboardData.finished_going_bus_trip || 0,
+                this.dashboardData.pending_bus_trip,
+                this.dashboardData.finished_bus_trip,
+                this.dashboardData.finished_going_bus_trip,
             ];
 
             if (data.every((val) => val === 0)) {
@@ -245,9 +296,9 @@ export default {
         },
         createDriverStatusChart() {
             let data = [
-                this.dashboardData.pending_drivers || 0,
-                this.dashboardData.available_drivers || 0,
-                this.dashboardData.completed_driver || 0,
+                this.dashboardData.pending_drivers,
+                this.dashboardData.available_drivers,
+                this.dashboardData.completed_driver,
             ];
 
             if (data.every((val) => val === 0)) {
@@ -283,9 +334,9 @@ export default {
         },
         createReservationChart() {
             let data = [
-                this.dashboardData.pending_reservations || 0,
-                this.dashboardData.completed_reservations || 0,
-                this.dashboardData.out_reservation || 0,
+                this.dashboardData.pending_reservations,
+                this.dashboardData.completed_reservations,
+                this.dashboardData.out_reservation,
             ];
 
             if (data.every((val) => val === 0)) {
@@ -327,9 +378,9 @@ export default {
         },
         createPrivateTripsChart() {
             let data = [
-                this.dashboardData.inProgress_PrivateTrips || 0,
-                this.dashboardData.completed_PrivateTrips || 0,
-                this.dashboardData.canceled_PrivateTrips || 0,
+                this.dashboardData.inProgress_PrivateTrips,
+                this.dashboardData.completed_PrivateTrips,
+                this.dashboardData.canceled_PrivateTrips,
             ];
 
             if (data.every((val) => val === 0)) {
@@ -370,24 +421,18 @@ export default {
                 .getElementById("dailyProfitsChart")
                 .getContext("2d");
             this.dailyProfitsChart = new Chart(ctx, {
-                type: "line",
+                type: "bar",
                 data: {
-                    labels: [
-                        "Day 1",
-                        "Day 2",
-                        "Day 3",
-                        "Day 4",
-                        "Day 5",
-                        "Day 6",
-                        "Day 7",
-                    ],
+                    labels: ["Pending", "Completed", "Out"],
                     datasets: [
                         {
                             label: "Daily Profits",
                             data: this.dailyProfits,
-                            borderColor: "#007bff",
-                            fill: false,
-                            tension: 0.1,
+                            backgroundColor: ["#007bff", "#28a745", "#ffc107"],
+                            borderWidth: 1,
+                            borderColor: "#333",
+                            hoverBorderWidth: 3,
+                            hoverOffset: 15,
                         },
                     ],
                 },
@@ -406,16 +451,18 @@ export default {
                 .getElementById("weeklyProfitsChart")
                 .getContext("2d");
             this.weeklyProfitsChart = new Chart(ctx, {
-                type: "line",
+                type: "bar",
                 data: {
-                    labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"],
+                    labels: ["Pending", "Completed", "Out"],
                     datasets: [
                         {
                             label: "Weekly Profits",
                             data: this.weeklyProfits,
-                            borderColor: "#28a745",
-                            fill: false,
-                            tension: 0.1,
+                            backgroundColor: ["#007bff", "#28a745", "#ffc107"],
+                            borderWidth: 1,
+                            borderColor: "#333",
+                            hoverBorderWidth: 3,
+                            hoverOffset: 15,
                         },
                     ],
                 },
@@ -434,22 +481,18 @@ export default {
                 .getElementById("monthlyProfitsChart")
                 .getContext("2d");
             this.monthlyProfitsChart = new Chart(ctx, {
-                type: "line",
+                type: "bar",
                 data: {
-                    labels: [
-                        "Month 1",
-                        "Month 2",
-                        "Month 3",
-                        "Month 4",
-                        "Month 5",
-                    ],
+                    labels: ["Pending", "Completed", "Out"],
                     datasets: [
                         {
                             label: "Monthly Profits",
                             data: this.monthlyProfits,
-                            borderColor: "#ffc107",
-                            fill: false,
-                            tension: 0.1,
+                            backgroundColor: ["#007bff", "#28a745", "#ffc107"],
+                            borderWidth: 1,
+                            borderColor: "#333",
+                            hoverBorderWidth: 3,
+                            hoverOffset: 15,
                         },
                     ],
                 },

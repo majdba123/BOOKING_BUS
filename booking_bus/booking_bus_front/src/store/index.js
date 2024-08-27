@@ -2,6 +2,8 @@ import { createStore } from "vuex";
 
 export default createStore({
     state: {
+        breacklat: null,
+        breacklong: null,
         x: "Dashboard",
         Bus: {},
         Driver: {},
@@ -21,9 +23,16 @@ export default createStore({
         placeName: null,
         lat: null,
         lng: null,
+        Users: {},
     },
     getters: {},
     mutations: {
+        setBreakLat(state, lat) {
+            state.breacklat = lat;
+        },
+        setBreakLong(state, lng) {
+            state.breacklong = lng;
+        },
         setPlaceData(state, { name, lat, lng }) {
             state.placeName = name;
             state.lat = lat;
@@ -61,6 +70,11 @@ export default createStore({
             state.endLng = null;
         },
     },
-    actions: {},
+    actions: {
+        updateBreakLocation({ commit }, { lat, lng }) {
+            commit("setBreakLat", lat);
+            commit("setBreakLong", lng);
+        },
+    },
     modules: {},
 });
