@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
-import 'package:mobile_app/constants.dart';
-import 'package:intl/intl.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 
 class TripTicketPage extends StatefulWidget {
@@ -14,6 +20,7 @@ class TripTicketPage extends StatefulWidget {
 
 class _TripTicketPageState extends State<TripTicketPage> {
   String qrData = '';
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -38,6 +45,101 @@ class _TripTicketPageState extends State<TripTicketPage> {
         qrData = data;
       });
     }
+  }
+
+  Future<void> _generatePdf() async {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+
+    // Request storage permission
+    if (await Permission.storage.request().isGranted) {
+      final reservation =
+          Provider.of<TripuserProvider>(context, listen: false).reservation;
+      final fromLocation =
+          Provider.of<TripuserProvider>(context, listen: false).from;
+      final toLocation =
+          Provider.of<TripuserProvider>(context, listen: false).to;
+      final currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+      final pdf = pw.Document();
+
+      // Load custom font
+      final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+      final ttf = pw.Font.ttf(fontData);
+
+      pdf.addPage(
+        pw.Page(
+          build: (pw.Context context) => pw.Center(
+            child: pw.Column(
+              mainAxisAlignment: pw.MainAxisAlignment.center,
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text('Bus Trip Ticket',
+                    style: pw.TextStyle(fontSize: 32, font: ttf)),
+                pw.SizedBox(height: 16),
+                pw.Text('Bus Trip ID: ${reservation?.busTripId ?? 'N/A'}',
+                    style: pw.TextStyle(font: ttf)),
+                pw.Text('From: ${fromLocation ?? 'N/A'}',
+                    style: pw.TextStyle(font: ttf)),
+                pw.Text('To: ${toLocation ?? 'N/A'}',
+                    style: pw.TextStyle(font: ttf)),
+                pw.Text('Date: $currentDate', style: pw.TextStyle(font: ttf)),
+                pw.Text(
+                    'Seats: ${reservation?.seats.map((seat) => seat.seatId).join(", ") ?? 'N/A'}',
+                    style: pw.TextStyle(font: ttf)),
+                pw.SizedBox(height: 16),
+                pw.Text('Price: \$${reservation?.price ?? 'N/A'}',
+                    style: pw.TextStyle(font: ttf)),
+                pw.SizedBox(height: 16),
+                pw.Text('Passenger: ${reservation?.userName ?? 'N/A'}',
+                    style: pw.TextStyle(font: ttf)),
+                pw.SizedBox(height: 16),
+                pw.Text(
+                    'Reservation ID: ${reservation?.reservationId ?? 'N/A'}',
+                    style: pw.TextStyle(fontSize: 10, font: ttf)),
+                pw.SizedBox(height: 16),
+                qrData.isNotEmpty
+                    ? pw.BarcodeWidget(
+                        barcode: pw.Barcode.qrCode(),
+                        data: qrData,
+                        width: 100,
+                        height: 100,
+                      )
+                    : pw.Text('No QR code available',
+                        style: pw.TextStyle(font: ttf)),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // Get the directory to save the PDF file
+      final directory = await getExternalStorageDirectory();
+      final downloadPath = "${directory?.path}/Download/ticket.pdf";
+
+      // Ensure the "Download" directory exists
+      final downloadDir = Directory("${directory?.path}/Download");
+      if (!await downloadDir.exists()) {
+        await downloadDir.create(recursive: true);
+      }
+
+      // Save the PDF file
+      final file = File(downloadPath);
+      await file.writeAsBytes(await pdf.save());
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('PDF saved to Downloads: ticket.pdf')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Storage permission denied')),
+      );
+    }
+
+    setState(() {
+      _isLoading = false; // Stop loading
+    });
   }
 
   @override
@@ -70,27 +172,19 @@ class _TripTicketPageState extends State<TripTicketPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: null,
         backgroundColor: AppColors.primaryColor,
         elevation: 0,
-        leading: Text(''),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(15),
-          child: Container(
-            padding: EdgeInsets.fromLTRB(0, 0, 32, 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Booking details',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
+        title: Text('Booking details',
+            style: TextStyle(fontSize: 18, color: Colors.white)),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            color: Colors.white,
+            icon: Icon(Icons.download),
+            onPressed: _generatePdf, // Call the method to generate PDF
           ),
-        ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -269,22 +363,18 @@ class _TripTicketPageState extends State<TripTicketPage> {
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (context) => DashboardUser()),
-                      (Route<dynamic> route) => false,
+                      (route) => false,
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF083B4C),
-                    padding: EdgeInsets.all(8.0),
-                    textStyle: TextStyle(fontSize: 16, color: Colors.white),
+                    backgroundColor: AppColors.primaryColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: Container(
-                    width: 160,
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: Text('Exit', style: TextStyle(color: Colors.white)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text('Go to Dashboard'),
                   ),
                 ),
               ),

@@ -44,6 +44,8 @@ class Reservation {
       'user_name': userName,
     };
   }
+
+  map(Function(dynamic seat) param0) {}
 }
 
 class Seat {

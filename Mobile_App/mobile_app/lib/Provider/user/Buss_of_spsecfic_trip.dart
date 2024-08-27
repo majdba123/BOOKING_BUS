@@ -27,7 +27,9 @@ class BussofSpsccifTripProvider with ChangeNotifier {
   late int _Distance;
   late int _busTripid;
   late String _Duration;
+  late int _busId;
   int get tripid => _tripid;
+  int get busId => _busId;
 
   int get BusTripid => _busTripid;
   String get companyName => _companyName;
@@ -39,6 +41,11 @@ class BussofSpsccifTripProvider with ChangeNotifier {
   String get to => _to;
   void setTripid(tripid) {
     _tripid = tripid;
+    notifyListeners();
+  }
+
+  void setBusid(busid) {
+    _busId = busid;
     notifyListeners();
   }
 
