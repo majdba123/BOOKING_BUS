@@ -9,6 +9,7 @@ class PaymentDetails extends StatelessWidget {
     final ticketDetails = tripProvider.selectedTicketDetails;
 
     return Card(
+      // margin: EdgeInsets.only(bottom: 50),
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -22,7 +23,7 @@ class PaymentDetails extends StatelessWidget {
             SizedBox(height: 10),
             ...ticketDetails.map((ticket) {
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                padding: const EdgeInsets.symmetric(vertical: 9.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[

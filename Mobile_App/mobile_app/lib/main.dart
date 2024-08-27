@@ -25,7 +25,7 @@ import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client.dart';
 import 'package:mobile_app/screens/Dashborad_User/user_info_profile.dart';
-import 'package:mobile_app/screens/welcome_page.dart';
+import 'package:mobile_app/screens/Dashborad_User/firstPageInApplication/welcome_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {

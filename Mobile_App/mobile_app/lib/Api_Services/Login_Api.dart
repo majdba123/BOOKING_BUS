@@ -7,13 +7,13 @@ import 'dart:convert';
 class LoginApi {
   Future<AuthResponse> lognIn(var email, var password) async {
     String url = name_domain_server + "login";
-    print(email);
-    print(password);
+    // print(email);
+    // print(password);
     var res = await http.post(
       Uri.parse('$url'),
       body: {'email': email, 'password': password},
     );
-    print(res.statusCode);
+    // print(res.statusCode);
     if (res.statusCode == 200) {
       Map<String, dynamic> parsedJson = json.decode(res.body);
       return AuthResponse.fromJson(parsedJson);
@@ -21,6 +21,23 @@ class LoginApi {
       Map<String, dynamic> parsedJson = json.decode(res.body);
       String message = parsedJson['message'];
       throw Exception(message);
+    }
+  }
+
+  Future<String> Register(var email, var name, var password) async {
+    String url = name_domain_server + "register";
+    var res = await http.post(
+      Uri.parse('$url'),
+      body: {'email': email, 'name': name, 'password': password},
+    );
+    if (res.statusCode == 200) {
+      Map<String, dynamic> parsedJson = json.decode(res.body);
+      String message = parsedJson['message'];
+      return message;
+    } else {
+      Map<String, dynamic> parsedJson = json.decode(res.body);
+      String error = parsedJson['error'];
+      return error;
     }
   }
 

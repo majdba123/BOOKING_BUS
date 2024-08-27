@@ -33,7 +33,7 @@ class PaymentPage extends StatelessWidget {
                 SizedBox(height: 20),
                 PaymentMethods(),
                 Spacer(),
-                PayButton(),
+                // PayButton(),
               ],
             ),
           );

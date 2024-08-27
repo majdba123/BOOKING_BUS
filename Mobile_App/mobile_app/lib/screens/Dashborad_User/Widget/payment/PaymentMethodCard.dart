@@ -12,25 +12,24 @@ class PaymentMethodCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text('E-wallet', style: TextStyle(fontSize: 16)),
-                Icon(Icons.keyboard_arrow_down),
               ],
             ),
-            SizedBox(height: 10),
-            Text('Using: E-wallet ', // Defaults to user's preferred wallet
-                style: TextStyle(color: Colors.green)),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Change wallet or payment method logic
-              },
-              child: Text('Change Wallet'),
-            ),
+            // SizedBox(height: 10),
+            // Text('Using: E-wallet ', // Defaults to user's preferred wallet
+            //     style: TextStyle(color: Colors.green)),
+            // SizedBox(height: 10),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     // Change wallet or payment method logic
+            //   },
+            //   child: Text('Change Wallet'),
+            // ),
           ],
         ),
       ),

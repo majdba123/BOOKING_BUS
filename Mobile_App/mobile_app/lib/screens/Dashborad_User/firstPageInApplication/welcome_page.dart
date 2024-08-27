@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile_app/colors.dart';
-import 'package:mobile_app/screens/signin_page.dart';
+import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
 
 class WelcomePage extends StatefulWidget {
   @override
@@ -34,7 +34,7 @@ class _WelcomePageState extends State<WelcomePage> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                  "assets/images/background_mappp.png", // Path to your PNG background image
+                  "assets/images/background_mappp.png",
                 ),
                 fit: BoxFit.cover,
               ),
