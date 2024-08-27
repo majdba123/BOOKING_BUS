@@ -28,7 +28,11 @@
             <span class="material-icons" aria-label="Analytics">timeline</span>
             <h3>Government</h3>
         </router-link>
-        <router-link to="AllBreak">
+        <router-link
+            to="AllBreak"
+            @click="selectOption('Break')"
+            :class="{ active: selectedOption === 'Break' }"
+        >
             <span class="material-icons" aria-label="Analytics">pin_drop</span>
             <h3>Break</h3>
         </router-link>
@@ -129,6 +133,13 @@ export default {
             selectedOption: "Dashboard",
         };
     },
+    mounted() {
+        const savedOption = window.localStorage.getItem("selectedOption");
+        if (savedOption) {
+            this.selectedOption = savedOption; // استعادة الخيار المحدد من التخزين المحلي
+        }
+    },
+
     methods: {
         logout() {
             const token = window.localStorage.getItem("access_token");
@@ -151,7 +162,8 @@ export default {
 
         selectOption(option) {
             this.selectedOption = option;
-            console.log("Selected Option:", this.selectedOption);
+            window.localStorage.setItem("selectedOption", option);
+            // حفظ الخيار المحدد في التخزين المحلي
             store.state.x = this.selectedOption;
         },
     },

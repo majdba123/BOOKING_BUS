@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 
 export default createStore({
     state: {
+        User: {},
         breacklat: null,
         breacklong: null,
         x: "Dashboard",
@@ -27,6 +28,9 @@ export default createStore({
     },
     getters: {},
     mutations: {
+        updateSearchQuery(state, newQuery) {
+            state.searchQuery = newQuery;
+        },
         setBreakLat(state, lat) {
             state.breacklat = lat;
         },
