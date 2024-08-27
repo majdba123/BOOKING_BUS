@@ -40,14 +40,23 @@
     </div>
 </template>
 <script>
+import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import MainCompany from "@/components/MainCompany.vue";
 import DashboardCharts from "@/components/DashboardCharts.vue";
+
 export default {
+    data() {
+        return {
+            trips: [], // Add a new data property for trips
+        };
+    },
     mounted() {
         this.handleResize();
-
         window.addEventListener("resize", this.handleResize);
+
+        // Fetch trips data when the component is mounted
+        this.fetchTrips();
     },
     beforeUnmount() {
         window.removeEventListener("resize", this.handleResize);
@@ -84,11 +93,26 @@ export default {
                     .classList.toggle("active");
             }
         },
+        fetchTrips() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios
+                .get("http://127.0.0.1:8000/api/company/all_trips", {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`,
+                    },
+                })
+                .then((response) => {
+                    this.trips = response.data; // Save trips data
+                })
+                .catch((error) => {
+                    console.error("Error fetching trips:", error);
+                });
+        },
     },
-
     components: { SidebarCompany, MainCompany, DashboardCharts },
 };
 </script>
+
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -158,6 +182,40 @@ body {
 
 a {
     color: #363949;
+}
+.advertisement-bar {
+    background-color: #7380ec;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    border-bottom: 2px solid #111e88;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.advertisement-bar ul {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    animation: scroll 20s linear infinite;
+}
+
+.advertisement-bar ul li {
+    flex: 0 0 auto;
+    font-size: 14px;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 .main-content {
