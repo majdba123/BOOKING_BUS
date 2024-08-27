@@ -14,17 +14,31 @@ class Private_trip extends Model
         'from',
         'to',
         'date',
-        'geolocation_id',
+        'from_location',
+        'to_location',
         'start_time',
         'status',
         'Distance'
     ];
-    protected $appends = ['latitude', 'longitude'];
-    protected $hidden = ['geolocation', 'geolocation_id'];
+    protected $appends = ['from_latitude', 'from_longitude', 'to_latitude', 'to_longitude'];
+    // protected $hidden = ['geolocation_id', 'from_location', 'to_location', 'from_geolocation'];
+    public function toArray()
+    {
+        $array = parent::toArray();
+        /*
+        مشان اخفي اوبجكت العلاقة تبع احداثيات
+        to , form
+        من response
+        */
+        unset($array['from_geolocation']);
+        unset($array['to_geolocation']);
+        return $array;
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
     public function order_private_trip()
     {
         return $this->hasMany(Order_Private_trip::class);
@@ -34,17 +48,40 @@ class Private_trip extends Model
         return $this->belongsTo(Geolocation::class);
     }
 
-    public function getlatitudeAttribute()
+    public function fromgeolocation()
     {
+        return $this->belongsTo(geolocation::class, 'from_location', 'id');
+    }
 
-        $geolocation = $this->geolocation;
+    public function togeolocation()
+    {
+        return $this->belongsTo(geolocation::class, 'to_location', 'id');
+    }
 
-        return $geolocation ? $geolocation->latitude : null;
+    public function getFromLatitudeAttribute()
+    {  /*
+        واصفة Latitude
+       from الخاصة بل
+
+       */
+        return $this->fromGeolocation ? $this->fromGeolocation->latitude : null;
     }
 
 
-    public function getlongitudeAttribute()
+    public function getFromLongitudeAttribute()
     {
-        return $this->geolocation ? $this->geolocation->longitude : null;
+        return $this->fromGeolocation ? $this->fromGeolocation->longitude : null;
+    }
+
+
+    public function getToLatitudeAttribute()
+    {
+        return $this->toGeolocation ? $this->toGeolocation->latitude : null;
+    }
+
+
+    public function getToLongitudeAttribute()
+    {
+        return $this->toGeolocation ? $this->toGeolocation->longitude : null;
     }
 }

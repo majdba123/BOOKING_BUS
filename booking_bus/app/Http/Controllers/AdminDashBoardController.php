@@ -250,6 +250,10 @@ class AdminDashBoardController extends Controller
                 'user_email' => $Private_trip->user->email,
                 'from' => $Private_trip->from,
                 'to' => $Private_trip->to,
+                'from_lat' => $Private_trip->from_latitude,
+                'from_long' => $Private_trip->from_longitude,
+                'to_lat' => $Private_trip->to_latitude,
+                'to_long' => $Private_trip->to_longitude,
                 'date' => $Private_trip->date,
                 'start_time' => $Private_trip->start_time,
                 'status' => $Private_trip->status,
@@ -257,6 +261,7 @@ class AdminDashBoardController extends Controller
                     return [
                         'id' => $orderPrivateTrip->id,
                         'company_id' => $orderPrivateTrip->company_id,
+                        'company_name' => $orderPrivateTrip->company->name_company,
                         'price' => $orderPrivateTrip->price,
                         'payment_status' => $orderPrivateTrip->status,
                     ];
