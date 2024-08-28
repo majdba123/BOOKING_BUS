@@ -42,9 +42,7 @@
             @click="selectOption('Users')"
             :class="{ active: selectedOption === 'Users' }"
         >
-            <span class="material-icons" aria-label="Products"
-                >directions_bus</span
-            >
+            <span class="material-icons" aria-label="Products">groups</span>
             <h3>Users</h3>
         </router-link>
 
@@ -57,12 +55,12 @@
             <h3>Trip</h3>
         </router-link>
         <router-link
-            to="AllRating"
-            @click="selectOption('Rate')"
-            :class="{ active: selectedOption === 'Rate' }"
+            to="AllChargebalnce"
+            @click="selectOption('AllChargebalnce')"
+            :class="{ active: selectedOption === 'AllChargebalnce' }"
         >
-            <span class="material-icons" aria-label="Rate">star</span>
-            <h3>Rate</h3>
+            <span class="material-icons" aria-label="Rate">payments</span>
+            <h3>Chargebalnce</h3>
             <span class="msg_count">14</span>
         </router-link>
 
@@ -80,12 +78,12 @@
             <h3>Private Trip</h3>
         </router-link>
         <router-link
-            to="AllFavourite"
-            @click="selectOption('Favourite')"
-            :class="{ active: selectedOption === 'Favourite' }"
+            to="AllInquires"
+            @click="selectOption('AllInquires')"
+            :class="{ active: selectedOption === 'AllInquires' }"
         >
-            <span class="material-icons" aria-label="Products">favorite</span>
-            <h3>Favourite</h3>
+            <span class="material-icons" aria-label="Products">comment</span>
+            <h3>Inquires</h3>
         </router-link>
 
         <router-link

@@ -164,7 +164,7 @@
 <script>
 import axios from "axios";
 import MapBreack from "./MapBreack.vue";
-import store from "@/store"; // تأكد من تحديث المسار بناءً على موقع store الخاص بك
+import store from "@/store";
 import DisplayMap from "./DisplayMap.vue";
 
 export default {

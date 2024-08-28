@@ -20,7 +20,10 @@ import AllRating from "../views/Company/Rating/AllRating.vue";
 import AllFavourite from "../views/Company/Favourite/AllFavourite.vue";
 import AllReservation from "../views/Company/Reservation/AllReservation.vue";
 import AllPolices from "../views/Company/Polices/AllPolices.vue";
+import AllChargebalnce from "../views/Admin/Chargebalnce/AllChargebalnce.vue";
+import AllInquires from "../views/Admin/Inquires/AllInquires.vue";
 import AllUser from "../views/Admin/Users/AllUser.vue";
+AllChargebalnce;
 
 const routes = [
     {
@@ -34,9 +37,19 @@ const routes = [
         component: AllUser,
     },
     {
+        path: "/AllInquires",
+        name: "AllInquires",
+        component: AllInquires,
+    },
+    {
         path: "/AllGovernment",
         name: "AllGovernment",
         component: AllGovernment,
+    },
+    {
+        path: "/AllChargebalnce",
+        name: "AllChargebalnce",
+        component: AllChargebalnce,
     },
     {
         path: "/AllReservation",
