@@ -767,10 +767,10 @@ input:focus {
 /* Seats styling */
 .seats-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 50px 1fr 1fr; /* عمودان للمقاعد، ممر في الوسط، وعمودان للمقاعد */
+    grid-template-columns: 1fr 1fr 50px 1fr 1fr;
     gap: 10px;
     justify-content: center;
-    width: 250px; /* عرض يكفي لتوزيع المقاعد مع الممر */
+    width: 250px;
     height: 300px;
     overflow-y: scroll;
     overflow-x: hidden;
