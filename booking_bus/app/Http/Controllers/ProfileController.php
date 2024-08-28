@@ -19,11 +19,26 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $user = auth()->user()->load(['profile', 'address']);
+        $user = auth()->user()->load('profile', 'address');
 
+        $profileImage = $user->profile ? $user->profile->image : null;
+        $phoneNumber = $user->profile ? $user->profile->phone : null;
 
-        return response()->json($user);
+        // Construct the response
+        $response = [
+            'id' => $user->id,
+            'name' => $user->name,
+            // 'type' => $user->type,
+            'email' => $user->email,
+            'point' => $user->point,
+            'profile_image' => $profileImage,
+            'phoneNumber' => $phoneNumber,
+            // 'address' => $user->address
+        ];
+
+        return response()->json($response);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -51,7 +66,7 @@ class ProfileController extends Controller
                     'type' => $reservation->type,
                     'status' => $reservation->status,
                     'break' => $reservation->pivoit->break_trip->break->name,
-                    'from' =>$busTrip->trip->path->from,
+                    'from' => $busTrip->trip->path->from,
                     'to' => $busTrip->trip->path->to,
                     'seats' => $seats // array of seat names or properties
                 ];
@@ -68,7 +83,7 @@ class ProfileController extends Controller
     public function my_reserva_by_status(Request $request)
     {
         $validator = Validator::make($request->all(), [
-          'status' => 'required|in:padding,finished,out',
+            'status' => 'required|in:padding,finished,out',
         ]);
 
         if ($validator->fails()) {
@@ -77,7 +92,7 @@ class ProfileController extends Controller
         }
         $user = Auth::user();
         $reservations = Reservation::where('user_id', $user->id)
-            ->where('status' ,$request->input('status'))
+            ->where('status', $request->input('status'))
             ->get();
         $data = [];
 
@@ -97,7 +112,7 @@ class ProfileController extends Controller
                     'type' => $reservation->type,
                     'status' => $reservation->status,
                     'break' => $reservation->pivoit->break_trip->break->name,
-                    'from' =>$busTrip->trip->path->from,
+                    'from' => $busTrip->trip->path->from,
                     'to' => $busTrip->trip->path->to,
                     'seats' => $seats // array of seat names or properties
                 ];
@@ -128,7 +143,7 @@ class ProfileController extends Controller
         }
 
         try {
-            $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
+            $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
             $user = auth()->user();
             if ($user->profile) {
                 return response()->json([
@@ -202,18 +217,17 @@ class ProfileController extends Controller
             if ($request->hasFile('image')) {
                 // Delete old image
                 if ($profile->image) {
-                    Storage::delete('public/profile_image/'. $profile->image);
+                    Storage::delete('public/profile_image/' . $profile->image);
                 }
 
-                $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
-                $imageUrl = asset('storage/profile_image/'. $imageName);
+                $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
+                $imageUrl = asset('storage/profile_image/' . $imageName);
                 $request->image->storeAs('public/profile_image', $imageName);
                 $profile->image = $imageUrl;
             }
 
             if ($request->filled('name')) {
-                if($user->Company)
-                {
+                if ($user->Company) {
                     $user->Company->name_company = $request->input('name');
                 }
                 $user->name = $request->input('name');

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mobile_app/Api_Services/Company/Bus_sataus.dart';
 import 'package:mobile_app/Provider/Admin/Area_Provider.dart';
 import 'package:mobile_app/Provider/Admin/Break_Area_Provider.dart';
@@ -23,8 +24,10 @@ import 'package:mobile_app/Provider/user/Wallet_provider.dart';
 import 'package:mobile_app/Provider/user/inquiry_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
+import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client.dart';
-import 'package:mobile_app/screens/Dashborad_User/user_info_profile.dart';
+import 'package:mobile_app/Provider/user/user_info_profile.dart';
 import 'package:mobile_app/screens/Dashborad_User/firstPageInApplication/welcome_page.dart';
 import 'package:provider/provider.dart';
 
@@ -32,34 +35,38 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   PusherService(); // Initialize PusherService
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => PathProvider()),
-        ChangeNotifierProvider(create: (BuildContext context) => BusProvider()),
-        ChangeNotifierProvider(create: (_) => DriverProvider()),
-        ChangeNotifierProvider(create: (_) => SeatProvider()),
-        ChangeNotifierProvider(create: (_) => areaProvider()),
-        ChangeNotifierProvider(create: (_) => BreakAreaProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => BusStatusProvider()),
-        ChangeNotifierProvider(create: (_) => AssingBusProvider()),
-        ChangeNotifierProvider(create: (_) => TripBusProvider()),
-        ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
-        ChangeNotifierProvider(create: (_) => TripuserProvider()),
-        ChangeNotifierProvider(create: (_) => PrivateTripuserProvider()),
-        ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),
-        ChangeNotifierProvider(create: (_) => WalletUserProvider()),
-        ChangeNotifierProvider(create: (_) => ChargeRequestProvider()),
-        ChangeNotifierProvider(create: (_) => AddressProvider()),
-        ChangeNotifierProvider(create: (_) => PasswordProvider()),
-        ChangeNotifierProvider(create: (_) => updateProfileProvider()),
-        ChangeNotifierProvider(create: (_) => UserInfoProvider()),
-        ChangeNotifierProvider(create: (_) => PrivateTripProvider()),
-        ChangeNotifierProvider(create: (_) => RatingUserProvider()),
-        ChangeNotifierProvider(create: (_) => CompanyInfoProvider()),
-        ChangeNotifierProvider(create: (_) => InquiryProvider()),
-      ],
-      child: MyApp(),
+    KeyboardDismissOnTap(
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => PathProvider()),
+          ChangeNotifierProvider(
+              create: (BuildContext context) => BusProvider()),
+          ChangeNotifierProvider(create: (_) => DriverProvider()),
+          ChangeNotifierProvider(create: (_) => SeatProvider()),
+          ChangeNotifierProvider(create: (_) => areaProvider()),
+          ChangeNotifierProvider(create: (_) => BreakAreaProvider()),
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => BusStatusProvider()),
+          ChangeNotifierProvider(create: (_) => AssingBusProvider()),
+          ChangeNotifierProvider(create: (_) => TripBusProvider()),
+          ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
+          ChangeNotifierProvider(create: (_) => TripuserProvider()),
+          ChangeNotifierProvider(create: (_) => PrivateTripuserProvider()),
+          ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),
+          ChangeNotifierProvider(create: (_) => WalletUserProvider()),
+          ChangeNotifierProvider(create: (_) => ChargeRequestProvider()),
+          ChangeNotifierProvider(create: (_) => AddressProvider()),
+          ChangeNotifierProvider(create: (_) => PasswordProvider()),
+          ChangeNotifierProvider(create: (_) => updateProfileProvider()),
+          ChangeNotifierProvider(create: (_) => UserInfoProvider()),
+          ChangeNotifierProvider(create: (_) => PrivateTripProvider()),
+          ChangeNotifierProvider(create: (_) => RatingUserProvider()),
+          ChangeNotifierProvider(create: (_) => CompanyInfoProvider()),
+          ChangeNotifierProvider(create: (_) => InquiryProvider()),
+          // ChangeNotifierProvider(create: (_) => SuggestionsProvider()),
+        ],
+        child: MyApp(),
+      ),
     ),
   );
 }
@@ -68,11 +75,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsFlutterBinding.ensureInitialized();
+    // KeyboardVisibilityService keyboardVisibilityService =
+    //     KeyboardVisibilityService(context);
 
     return MaterialApp(
         routes: {
           '/BusDash': (context) => Bus_management_Page(),
-          // Other routes...
+          '/mainPageUser': (context) => DashboardUser(),
+          '/ProfilePage': (context) => ProfilePage(),
         },
         debugShowCheckedModeBanner: false,
         title: 'Flutter Sign In Sign Up Ui',

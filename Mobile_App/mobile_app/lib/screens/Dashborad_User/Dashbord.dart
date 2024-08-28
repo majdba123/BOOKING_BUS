@@ -7,15 +7,18 @@ import 'package:mobile_app/screens/Dashborad_User/Auto_Scroll_list_horizental_Tr
 import 'package:mobile_app/screens/Dashborad_User/Horizental_list_Fav_company.dart';
 import 'package:mobile_app/screens/Dashborad_User/HorizontalList.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/Complete_info_profile.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/card_for_add_favorites_comapny.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/filtter_Bar_main_ui.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/route_card.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/search_Trip_form.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/section_title.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
+import 'package:mobile_app/Provider/user/user_info_profile.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardUser extends StatefulWidget {
   @override
@@ -26,12 +29,14 @@ class _DashboardUserState extends State<DashboardUser> {
   Map<String, String> _eventData = {};
   bool _isSubscribed = false; // Track subscription status
   bool _dataLoaded = false; // Track if data has been loaded
-
+  var accessToken;
   @override
   void initState() {
     super.initState();
     _subscribeToPusher();
-    _loadData(); // Load data once on initialization
+    // accessToken = Provider.of<AuthProvider>(context, listen: false).accessToken;
+    // _checkProfileStatus();
+    // _loadData(); // Load data once on initialization
   }
 
   @override
@@ -60,21 +65,21 @@ class _DashboardUserState extends State<DashboardUser> {
     }
   }
 
-  void _loadData() {
-    if (!_dataLoaded) {
-      // Only load data if it hasn't been loaded yet
-      final tripProvider =
-          Provider.of<TripuserProvider>(context, listen: false);
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+  // void _loadData() {
+  //   if (!_dataLoaded) {
+  //     // Only load data if it hasn't been loaded yet
+  //     final tripProvider =
+  //         Provider.of<TripuserProvider>(context, listen: false);
+  //     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-      tripProvider.getallTrips(authProvider.accessToken);
-      tripProvider.getAllcompanies(authProvider.accessToken);
+  //     tripProvider.getallTrips(authProvider.accessToken);
+  //     tripProvider.getAllcompanies(authProvider.accessToken);
 
-      setState(() {
-        _dataLoaded = true; // Mark data as loaded
-      });
-    }
-  }
+  //     setState(() {
+  //       _dataLoaded = true; // Mark data as loaded
+  //     });
+  //   }
+  // }
 
   void _logout(BuildContext context) {
     _unsubscribeFromPusher(); // Unsubscribe on logout

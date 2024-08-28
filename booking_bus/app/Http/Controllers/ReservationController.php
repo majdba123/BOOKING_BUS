@@ -61,17 +61,17 @@ class ReservationController extends Controller
         }
         $user_id = Auth::user()->id;
 
-        $number_seattt = $bus_trip->bus->seat->count();
+        $number_seattt = $bus_trip->bus->seat->count(); // يجيب عدد المقاعد للباص
 
-        $number_seat_complete = $bus_trip->bus->seat->where('status', 3)->count();
+        $number_seat_complete = $bus_trip->bus->seat->where('status', 3)->count(); // يجيب
 
-        if ($number_seat_complete == $number_seattt) {
+        if ($number_seat_complete == $number_seattt) {      // الباص مليان
             return response()->json([
                 'message' => "trip has completed can not",
             ]);
         }
 
-        if ($bus_trip->status == 'finished_going' && $request->input('type') == 1) {
+        if ($bus_trip->status == 'finished_going' && $request->input('type') == 1) {   
             return response()->json([
                 'massage' => 'trip finished going trips'
             ]);
@@ -80,12 +80,13 @@ class ReservationController extends Controller
         $pivoit1 = Pivoit::where('bus__trip_id', $bus_trip->id)
             ->where('id', $request->input('break_id'))
             ->first();
-
+        // ما فيك تطلع من من موقف البداية في حالة الرجعة
         if ($pivoit1->break_trip->break->name == "start" &&  $request->input('type') == 2) {
             return response()->json([
                 'massage' => 'can not this is the las breake_start'
             ]);
         }
+        //  ما فيك تطلع من موقف النهاية في حالة الروحة
         if ($pivoit1->break_trip->break->name == 'end' &&  $request->input('type') == 1) {
             return response()->json([
                 'massage' => 'can not this is the last breake_end'

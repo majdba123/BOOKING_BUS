@@ -3,7 +3,6 @@ import 'package:mobile_app/Api_Services/User/Private_trip.dart';
 import 'package:mobile_app/Data_Models/Private_Trip.dart';
 import 'package:mobile_app/Data_Models/Private_Trip_accepted_By_Comapny_.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Private_trip_user.dart';
 import 'package:provider/provider.dart';
 
 class PrivateTripuserProvider with ChangeNotifier {

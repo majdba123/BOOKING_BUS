@@ -6,7 +6,8 @@ import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/JourneyCard.dart
 import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/journeys_screen.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Main_Ui_private_Trip.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Profile_User.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/MY_Reservation.dart';
 
 class FilterBarUserUi extends StatelessWidget {
   final double height;
@@ -51,8 +52,7 @@ class FilterBarUserUi extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => MainUiPrivateTripPage()),
+                MaterialPageRoute(builder: (context) => BookingsScreen()),
               );
             },
           ),
