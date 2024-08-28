@@ -2,76 +2,91 @@
     <div :class="['containerd', { 'dark-theme-variables': isDarkMode }]">
         <div class="recent_orders">
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Point</th>
-                            <th>Email Verified At</th>
-                            <th>Created At</th>
-                            <th>Profile</th>
-                            <th>All Reservation</th>
-                            <th>All Trip History</th>
-                            <th>Favorite of Company</th>
-                            <th>Private Order</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="(user, index) in filteredGovernment"
-                            :key="index"
-                        >
-                            <td>{{ user.id }}</td>
-                            <td>{{ user.name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.point }}</td>
-                            <td>{{ user.email_verified_at }}</td>
-                            <td>{{ user.created_at }}</td>
-                            <td>
-                                <button
-                                    class="nav-btnd btn-primary"
-                                    @click="openBreackModal(user.id)"
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div
+                        v-if="!filteredGovernment.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Point</th>
+                                    <th>Email Verified At</th>
+                                    <th>Created At</th>
+                                    <th>Profile</th>
+                                    <th>All Reservation</th>
+                                    <th>All Trip History</th>
+                                    <th>Favorite of Company</th>
+                                    <th>Private Order</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(user, index) in filteredGovernment"
+                                    :key="index"
                                 >
-                                    View
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="nav-btnd btn-success"
-                                    @click="openReservationModal(user.id)"
-                                >
-                                    View
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="nav-btnd btn-warning"
-                                    @click="openTripModal(user.id)"
-                                >
-                                    View
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="nav-btnd btn-info"
-                                    @click="openFavModal(user.id)"
-                                >
-                                    View
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="nav-btnd btn-danger"
-                                    @click="openOrderModal(user.id)"
-                                >
-                                    View
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.point }}</td>
+                                    <td>{{ user.email_verified_at }}</td>
+                                    <td>{{ user.created_at }}</td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-primary"
+                                            @click="openBreackModal(user.id)"
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-success"
+                                            @click="
+                                                openReservationModal(user.id)
+                                            "
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-warning"
+                                            @click="openTripModal(user.id)"
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-info"
+                                            @click="openFavModal(user.id)"
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-danger"
+                                            @click="openOrderModal(user.id)"
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -79,26 +94,36 @@
         <div class="modal-content">
             <div class="modal-header">Profile</div>
             <div class="modal-body">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Phone</th>
-                            <th>Image</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ Profile.profile?.phone }}</td>
-                            <td>
-                                <img
-                                    :src="Profile.profile?.image"
-                                    alt="Profile Image"
-                                    class="profile-image"
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div v-if="loading1" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Profile.profile" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Phone</th>
+                                    <th>Image</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ Profile.profile?.phone }}</td>
+                                    <td>
+                                        <img
+                                            :src="Profile.profile?.image"
+                                            alt="Profile Image"
+                                            class="profile-image"
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button @click="closeGovernmentBreackModal" class="close-modal">
@@ -112,33 +137,46 @@
         <div class="modal-content">
             <div class="modal-header">All Reservation</div>
             <div class="modal-body">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>area_name</th>
-                            <th>break_name</th>
-                            <th>reservation_status</th>
-                            <th>reservation_type</th>
-                            <th>Seat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(driver, index) in Reservation" :key="index">
-                            <td>{{ driver.area_name }}</td>
-                            <td>{{ driver.break_name }}</td>
-                            <td>{{ driver.reservation_status }}</td>
-                            <td>{{ driver.reservation_type }}</td>
-                            <td>
-                                <button
-                                    class="nav-btnd"
-                                    @click="openSeat(index)"
+                <div v-if="loading2" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Reservation.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Area Name</th>
+                                    <th>Break Name</th>
+                                    <th>Reservation Status</th>
+                                    <th>Reservation Type</th>
+                                    <th>Seat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(driver, index) in Reservation"
+                                    :key="index"
                                 >
-                                    View
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <td>{{ driver.area_name }}</td>
+                                    <td>{{ driver.break_name }}</td>
+                                    <td>{{ driver.reservation_status }}</td>
+                                    <td>{{ driver.reservation_type }}</td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd"
+                                            @click="openSeat(index)"
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button @click="closeReservationModal" class="close-modal">
@@ -151,36 +189,49 @@
         <div class="modal-content">
             <div class="modal-header">All Trip History</div>
             <div class="modal-body">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Price Trip</th>
-                            <th>From Time</th>
-                            <th>To Time</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Type</th>
-                            <th>Event</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(driver, index) in Trip" :key="index">
-                            <td>{{ driver.id }}</td>
-                            <td>{{ driver.from }}</td>
-                            <td>{{ driver.to }}</td>
-                            <td>{{ driver.price_trip }}</td>
-                            <td>{{ driver.from_time }}</td>
-                            <td>{{ driver.to_time }}</td>
-                            <td>{{ driver.date }}</td>
-                            <td>{{ driver.status }}</td>
-                            <td>{{ driver.type }}</td>
-                            <td>{{ driver.event }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div v-if="loading3" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Trip.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Price Trip</th>
+                                    <th>From Time</th>
+                                    <th>To Time</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Type</th>
+                                    <th>Event</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(driver, index) in Trip"
+                                    :key="index"
+                                >
+                                    <td>{{ driver.id }}</td>
+                                    <td>{{ driver.from }}</td>
+                                    <td>{{ driver.to }}</td>
+                                    <td>{{ driver.price_trip }}</td>
+                                    <td>{{ driver.from_time }}</td>
+                                    <td>{{ driver.to_time }}</td>
+                                    <td>{{ driver.date }}</td>
+                                    <td>{{ driver.status }}</td>
+                                    <td>{{ driver.type }}</td>
+                                    <td>{{ driver.event }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button @click="closeTripModal" class="close-modal">
@@ -193,29 +244,42 @@
         <div class="modal-content">
             <div class="modal-header">All Company Favorite</div>
             <div class="modal-body">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Company</th>
-                            <th>Name</th>
-                            <th>Image</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(driver, index) in Fav" :key="index">
-                            <td>{{ driver.company_id }}</td>
+                <div v-if="loading4" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Fav.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID Company</th>
+                                    <th>Name</th>
+                                    <th>Image</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(driver, index) in Fav" :key="index">
+                                    <td>{{ driver.company_id }}</td>
 
-                            <td>{{ driver.name_company }}</td>
-                            <td>
-                                <img
-                                    :src="driver.image_company"
-                                    alt="Profile Image"
-                                    style="max-width: 100px; border-radius: 50%"
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <td>{{ driver.name_company }}</td>
+                                    <td>
+                                        <img
+                                            :src="driver.image_company"
+                                            alt="Profile Image"
+                                            style="
+                                                max-width: 100px;
+                                                border-radius: 50%;
+                                            "
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button @click="closeFavModal" class="close-modal">
@@ -228,53 +292,74 @@
         <div class="modal-content">
             <div class="modal-header">Private Order</div>
             <div class="modal-body">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>from</th>
-                            <th>to</th>
-                            <th>date</th>
-                            <th>start_time</th>
-                            <th>status</th>
-                            <th>Approved Company</th>
+                <div v-if="loading5" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Order.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>from</th>
+                                    <th>to</th>
+                                    <th>date</th>
+                                    <th>start_time</th>
+                                    <th>status</th>
+                                    <th>Approved Company</th>
 
-                            <th>price</th>
-                            <th>status</th>
-                            <th>Trip In Map</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(driver, index) in Order" :key="index">
-                            <td>{{ driver.Private_trip_id }}</td>
-
-                            <td>{{ driver.from }}</td>
-                            <td>{{ driver.to }}</td>
-                            <td>{{ driver.date }}</td>
-                            <td>{{ driver.start_time }}</td>
-                            <td>{{ driver.status }}</td>
-                            <td>
-                                {{ driver.order_private_trip[0]?.company_name }}
-                            </td>
-
-                            <td>{{ driver.order_private_trip[0]?.price }}</td>
-
-                            <td>
-                                {{
-                                    driver.order_private_trip[0]?.payment_status
-                                }}
-                            </td>
-                            <td>
-                                <button
-                                    class="nav-btnd"
-                                    @click="openMapModal(driver.id)"
+                                    <th>price</th>
+                                    <th>status</th>
+                                    <th>Trip In Map</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(driver, index) in Order"
+                                    :key="index"
                                 >
-                                    View
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <td>{{ driver.Private_trip_id }}</td>
+
+                                    <td>{{ driver.from }}</td>
+                                    <td>{{ driver.to }}</td>
+                                    <td>{{ driver.date }}</td>
+                                    <td>{{ driver.start_time }}</td>
+                                    <td>{{ driver.status }}</td>
+                                    <td>
+                                        {{
+                                            driver.order_private_trip[0]
+                                                ?.company_name
+                                        }}
+                                    </td>
+
+                                    <td>
+                                        {{
+                                            driver.order_private_trip[0]?.price
+                                        }}
+                                    </td>
+
+                                    <td>
+                                        {{
+                                            driver.order_private_trip[0]
+                                                ?.payment_status
+                                        }}
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd"
+                                            @click="openMapModal(driver.id)"
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button @click="closeOrderModal" class="close-modal">
@@ -287,14 +372,12 @@
         <div class="modal-content">
             <div class="modal-header">Location on Map</div>
             <div class="modal-body">
-                <div class="map-containers">
-                    <MapPrivate
-                        :fromlat="mapfromLat"
-                        :fromlng="mapfromLng"
-                        :tolat="maptoLat"
-                        :tolng="maptoLng"
-                    />
-                </div>
+                <MapPrivate
+                    :fromlat="mapfromLat"
+                    :fromlng="mapfromLng"
+                    :tolat="maptoLat"
+                    :tolng="maptoLng"
+                />
             </div>
             <div class="modal-footer">
                 <button @click="closeMapModal" class="close-modal">
@@ -307,20 +390,33 @@
         <div class="modal-content">
             <div class="modal-header">All Seat</div>
             <div class="modal-body">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(driver, index) in Seat" :key="index">
-                            <td>{{ driver.seat_id }}</td>
-                            <td>{{ driver.status }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div v-if="loading6" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Seat.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(driver, index) in Seat"
+                                    :key="index"
+                                >
+                                    <td>{{ driver.seat_id }}</td>
+                                    <td>{{ driver.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button @click="closeSeatModal" class="close-modal">
@@ -342,6 +438,14 @@ export default {
     name: "AddDriver",
     data() {
         return {
+            loading: true,
+            loading1: true,
+            loading2: true,
+            loading3: true,
+            loading4: true,
+            loading5: true,
+            loading6: true,
+
             showMapModal: false,
             Order: [],
             Fav: [],
@@ -367,6 +471,7 @@ export default {
     },
     mounted() {
         this.AllUsers();
+
         this.isDarkMode = localStorage.getItem("theme") === "dark";
         if (this.isDarkMode) {
             document.body.classList.add("dark-theme-variables");
@@ -464,6 +569,7 @@ export default {
                 .then((response) => {
                     this.Users = response.data;
                     store.state.User = response.data;
+                    this.loading = false;
                     console.log(response.data);
                 })
                 .catch((error) => {
@@ -481,12 +587,15 @@ export default {
             })
                 .then((response) => {
                     this.Profile = response.data;
+                    this.loading1 = false;
+
                     console.log(response.data);
                 })
                 .catch((error) => {
                     window.alert("Error fetching Profile");
                     console.error(error);
                 });
+            this.loading1 = true;
         },
         fetchReservationSeat(x, status) {
             const access_token = window.localStorage.getItem("access_token");
@@ -497,14 +606,16 @@ export default {
             })
                 .then((response) => {
                     this.Reservation = response.data;
-                    this.Seat = response.data[x].seat;
 
+                    this.Seat = response.data[x].seat;
+                    this.loading6 = false;
                     console.log(this.Seat);
                 })
                 .catch((error) => {
                     window.alert("Error fetching driver status");
                     console.error(error);
                 });
+            this.loading6 = true;
         },
         fetchReservation(status) {
             const access_token = window.localStorage.getItem("access_token");
@@ -515,6 +626,7 @@ export default {
             })
                 .then((response) => {
                     this.Reservation = response.data;
+                    this.loading2 = false;
 
                     console.log(response.data);
                 })
@@ -522,6 +634,7 @@ export default {
                     window.alert("Error fetching driver status");
                     console.error(error);
                 });
+            this.loading2 = true;
         },
         fetchOrder(status) {
             const access_token = window.localStorage.getItem("access_token");
@@ -532,6 +645,7 @@ export default {
             })
                 .then((response) => {
                     this.Order = response.data;
+                    this.loading5 = false;
 
                     console.log(response.data);
                 })
@@ -539,6 +653,7 @@ export default {
                     window.alert("Error fetching driver status");
                     console.error(error);
                 });
+            this.loading5 = true;
         },
         fetchFav(status) {
             const access_token = window.localStorage.getItem("access_token");
@@ -549,6 +664,7 @@ export default {
             })
                 .then((response) => {
                     this.Fav = response.data;
+                    this.loading4 = false;
 
                     console.log(response.data);
                 })
@@ -556,6 +672,7 @@ export default {
                     window.alert("Error fetching driver status");
                     console.error(error);
                 });
+            this.loading4 = true;
         },
         fetchTrip(status) {
             const access_token = window.localStorage.getItem("access_token");
@@ -566,6 +683,7 @@ export default {
             })
                 .then((response) => {
                     this.Trip = response.data;
+                    this.loading3 = false;
 
                     console.log(response.data);
                 })
@@ -573,6 +691,7 @@ export default {
                     window.alert("Error fetching driver status");
                     console.error(error);
                 });
+            this.loading3 = true;
         },
 
         toggleTheme() {
@@ -771,19 +890,10 @@ table tbody tr:last-child td {
     border: none !important;
 }
 
-.nav-btnd:hover {
-    transform: scale(1.05) !important;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2) !important;
-}
 .recent_orders {
     width: 100%;
     overflow-x: auto;
     margin-top: 20px;
-}
-
-.table-container {
-    width: 100%;
-    overflow-x: auto;
 }
 
 .recent_orders table {
@@ -807,6 +917,31 @@ table tbody tr:last-child td {
 .recent_orders td {
     padding: 10px;
     border-bottom: 1px solid #ddd;
+}
+/* أنيميشن الـ Spinner */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .recent_orders tbody tr:hover {
@@ -899,7 +1034,18 @@ table tbody tr:last-child td {
         color: var(--clr-primary);
     }
 }
-
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* Adjust as needed */
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
 /* Select styling */
 select {
     padding: 8px;
@@ -1107,7 +1253,6 @@ input:focus {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
     background: #fff;
     padding: 20px;
@@ -1134,29 +1279,29 @@ input:focus {
     border-bottom: 2px solid var(--clr-primary);
 }
 
-.modal-body {
+.modal-body div div {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.modal-body table {
+.modal-body div table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.modal-body th,
-.modal-body td {
+.modal-body div th,
+.modal-body div td {
     padding: 12px;
     text-align: left;
 }
 
-.modal-body th {
+.modal-body div th {
     background-color: var(--clr-primary);
     color: #fff;
 }
 
-.modal-body td {
+.modal-body div td {
     border-bottom: 1px solid #ddd;
 }
 
