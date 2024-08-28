@@ -28,7 +28,6 @@ import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client.dart';
 import 'package:mobile_app/Provider/user/user_info_profile.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Map_in_private_trip/SuggestionsProvider.dart';
 import 'package:mobile_app/screens/Dashborad_User/firstPageInApplication/welcome_page.dart';
 import 'package:provider/provider.dart';
 
@@ -64,7 +63,7 @@ void main() {
           ChangeNotifierProvider(create: (_) => RatingUserProvider()),
           ChangeNotifierProvider(create: (_) => CompanyInfoProvider()),
           ChangeNotifierProvider(create: (_) => InquiryProvider()),
-          ChangeNotifierProvider(create: (_) => SuggestionsProvider()),
+          // ChangeNotifierProvider(create: (_) => SuggestionsProvider()),
         ],
         child: MyApp(),
       ),

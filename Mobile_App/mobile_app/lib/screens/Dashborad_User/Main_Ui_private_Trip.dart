@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Private_trip_user.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Map_in_private_trip/CreatePrivateTrip.dart';
 import 'package:mobile_app/Colors.dart';
 
 class MainUiPrivateTripPage extends StatelessWidget {
