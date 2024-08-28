@@ -310,7 +310,7 @@ export default {
 }
 
 .login-box {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.7);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -318,7 +318,7 @@ export default {
     width: 100%;
     max-width: 400px;
     opacity: 0;
-    margin-left: 60px;
+    margin-left: 5rem;
     margin-top: 10px;
 }
 

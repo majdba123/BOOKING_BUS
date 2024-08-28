@@ -306,60 +306,89 @@ h2 {
     padding: 15px;
     border-radius: 8px;
 }
+.chart-trio,
+.chart-pair {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.chart-container {
+    flex: 1;
+    max-width: 300px;
+    min-width: 150px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #fff;
+    margin-bottom: 15px;
+}
 
 .recent-orders {
     margin-top: 40px;
     width: 100%;
     overflow-x: auto;
 }
+.recent-orders h1 {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+.recent-orders table {
     background-color: #fff;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
+    width: 90%;
+    border-radius: 1rem;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    color: #363949;
+    margin-bottom: 20px;
 }
 
-th,
-td {
+.recent-orders table:hover {
+    box-shadow: none;
+}
+
+.recent-orders table thead tr th {
     padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background-color: #f4f4f4;
-}
-
-tr:hover {
-    background-color: #f1f1f1;
-}
-
-.warning {
-    color: #ffc107;
+    color: #007bff;
     font-weight: bold;
 }
 
-.primary {
-    color: #28a745;
+.recent-orders table tbody tr {
+    height: 3rem;
+    border-bottom: 1px solid #f1f1f1;
+    color: #677483;
+}
+
+.recent-orders table tbody td {
+    padding: 8px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.recent-orders table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.recent-orders table tbody td.warning {
+    color: #ffbb55;
     font-weight: bold;
 }
 
-@media (max-width: 768px) {
-    h2 {
-        font-size: 18px;
-    }
+.recent-orders table tbody td.primary {
+    color: #007bff;
+    cursor: pointer;
+}
 
-    .charts-grid {
-        grid-template-columns: 1fr;
+@media screen and (max-width: 768px) {
+    .chart-trio,
+    .chart-pair {
+        flex-direction: column;
+        align-items: center;
     }
-
-    table,
-    th,
-    td {
-        font-size: 14px;
+    .chart-container {
+        max-width: 100%;
     }
 }
 </style>
