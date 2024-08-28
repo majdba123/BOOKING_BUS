@@ -2,10 +2,10 @@
     <div :class="['containerd', { 'dark-theme-variables': isDarkMode }]">
         <!-- Header with buttons -->
         <header class="navd">
-            <button class="nav-btnd" @click="showForm = true">
+            <button class="nav-btnddd" @click="showForm = true">
                 Add Government
             </button>
-            <button class="nav-btnd" @click="showForm = false">
+            <button class="nav-btnddd" @click="showForm = false">
                 Show Government
             </button>
         </header>
@@ -662,13 +662,44 @@ select:focus {
     background-color: #f44336;
 }
 /* Navigation styling */
+.nav-btnddd:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+.nav-btnddd {
+    padding: 10px 20px;
+    margin: 0 10px; /* مسافة صغيرة بين الأزرار */
+    border: none;
+    border-radius: 5px; /* تقليل نصف القطر */
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+    flex-grow: 1;
+    text-align: center;
+}
+.navd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--clr-white);
+    border-radius: 5px;
+    width: 100%;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 .navd {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
-    background-color: #fff;
+    background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
 }

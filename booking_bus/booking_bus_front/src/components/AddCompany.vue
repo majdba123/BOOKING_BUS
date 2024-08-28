@@ -1165,16 +1165,6 @@ select:focus {
     background-color: #f44336;
 }
 /* Navigation styling */
-.navd {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
-    background-color: var(--clr-white);
-    border-radius: 10px;
-    width: 100%;
-}
 
 .nav-btnd.btn-primary {
     background: #7380ec;

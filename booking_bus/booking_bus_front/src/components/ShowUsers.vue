@@ -20,7 +20,6 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Point</th>
-                                    <th>Email Verified At</th>
                                     <th>Created At</th>
                                     <th>Profile</th>
                                     <th>All Reservation</th>
@@ -38,7 +37,6 @@
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.point }}</td>
-                                    <td>{{ user.email_verified_at }}</td>
                                     <td>{{ user.created_at }}</td>
                                     <td>
                                         <button
