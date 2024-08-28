@@ -561,6 +561,7 @@ export default {
                     this.toast.error("Error getting drivers.");
                     console.error(error);
                 });
+            this.loading = true;
         },
 
         fetchProfile(status) {
@@ -800,10 +801,6 @@ table tbody td {
 
 table tbody tr:last-child td {
     border: none;
-}
-.table-container {
-    width: 100% !important;
-    overflow-x: auto !important;
 }
 
 table thead tr th {
