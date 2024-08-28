@@ -1,266 +1,286 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
-import 'package:intl/intl.dart';
-import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:mobile_app/Provider/Auth_provider.dart';
-import 'package:mobile_app/Colors.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:location/location.dart'; // For accessing the current location
 
-class PrivateTripPage extends StatefulWidget {
+class MyHomePage extends StatefulWidget {
   @override
-  _PrivateTripPageState createState() => _PrivateTripPageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _PrivateTripPageState extends State<PrivateTripPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _fromController = TextEditingController();
-  final _toController = TextEditingController();
-  final _dateController = TextEditingController();
-  final _startTimeController = TextEditingController();
+class _MyHomePageState extends State<MyHomePage> {
+  final _originController = TextEditingController();
+  final _destinationController = TextEditingController();
+  GoogleMapController? _mapController;
+  Set<Marker> _markers = {};
+  Set<Polyline> _polylines = {};
+  LatLng? _origin;
+  LatLng? _destination;
+  final String _apiKey = 'AIzaSyAeLUpyozCjrCIxNBNmwVfCERYrHZh3MbU';
+  LocationData? _currentLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  // Get the user's current location
+  void _getCurrentLocation() async {
+    Location location = new Location();
+    _currentLocation = await location.getLocation();
+    if (_currentLocation != null) {
+      setState(() {
+        _origin =
+            LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!);
+        _originController.text = 'Current Location';
+        _markers.add(Marker(
+          markerId: MarkerId('current_location'),
+          position: _origin!,
+          infoWindow: InfoWindow(title: 'Current Location'),
+        ));
+      });
+      _mapController?.animateCamera(CameraUpdate.newLatLng(_origin!));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
-        backgroundColor: AppColors.primaryColor,
-        elevation: 0,
-        title: Container(
-          alignment: Alignment.center,
-          child: Text(
-            'Private Trip',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22,
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(37.7749, -122.4194),
+              zoom: 10,
             ),
+            markers: _markers,
+            polylines: _polylines,
+            onMapCreated: (GoogleMapController controller) {
+              _mapController = controller;
+            },
           ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.fromLTRB(0, 0, 0, 32),
-          width: MediaQuery.of(context).size.width,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(26),
-                    margin: EdgeInsets.fromLTRB(26, 26, 26, 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 2,
-                          blurRadius: 4,
-                        )
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Image.asset(
-                            'assets/images/logo_bus.jpg', // Change to your bus logo
-                          ),
-                        ),
-                        SizedBox(height: 14),
-                        Center(
-                          child: Text(
-                            'Private Trip',
-                            style: TextStyle(
-                              fontSize: 32,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 28),
-                        TextFormField(
-                          controller: _fromController,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _originController,
+                          // readOnly: true, // Prevent user from manually editing
+                          onTap:
+                              _getCurrentLocation, // Use current location when tapped
                           decoration: InputDecoration(
                             labelText: 'From',
+                            prefixIcon: Icon(Icons.my_location),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a starting point';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 20),
-                        TextFormField(
-                          controller: _toController,
-                          decoration: InputDecoration(
-                            labelText: 'To',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a destination';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: () {
-                            _pickDate(context);
-                          },
-                          child: AbsorbPointer(
-                            child: TextFormField(
-                              controller: _dateController,
-                              decoration: InputDecoration(
-                                labelText: 'Date (dd/MM/yyyy)',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a date';
-                                }
-                                return null;
-                              },
+                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                         ),
-                        SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: () {
-                            _pickStartTime(context);
-                          },
-                          child: AbsorbPointer(
-                            child: TextFormField(
-                              controller: _startTimeController,
-                              decoration: InputDecoration(
-                                labelText: 'Start Time (HH:mm)',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a start time';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 28),
-                        Center(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(
-                                    0xFF002F40), // Set the background color
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 16.0), // Set vertical padding
-                              ),
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  final from = _fromController.text;
-                                  final to = _toController.text;
-                                  final date = _dateController.text;
-                                  final startTime = _startTimeController.text;
-                                  final accessToken = Provider.of<AuthProvider>(
-                                          context,
-                                          listen: false)
-                                      .accessToken;
-
-                                  try {
-                                    await Provider.of<PrivateTripuserProvider>(
-                                            context,
-                                            listen: false)
-                                        .storePrivateTrip(from, to, date,
-                                            startTime, accessToken);
-                                    final message =
-                                        Provider.of<PrivateTripuserProvider>(
-                                                context,
-                                                listen: false)
-                                            .message;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(message ??
-                                              'Private trip created successfully')),
-                                    );
-                                    Navigator.pop(context);
-                                  } catch (error) {
-                                    print(error);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              'Failed to create private trip')),
-                                    );
-                                  }
-                                }
-                              },
-                              child: Text(
-                                'Create Trip',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: _destinationController,
+                    decoration: InputDecoration(
+                      labelText: 'To',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: _searchRoute,
+                    child: Text('Search'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  void _pickDate(BuildContext context) {
-    DatePicker.showDatePicker(
-      context,
-      showTitleActions: true,
-      onConfirm: (date) {
-        setState(() {
-          _dateController.text = DateFormat('dd/MM/yyyy').format(date);
-        });
-      },
-      currentTime: DateTime.now(),
-      locale: LocaleType.en,
-    );
+  void _searchRoute() async {
+    if (_originController.text.isNotEmpty &&
+        _destinationController.text.isNotEmpty) {
+      final originPlaceId = _originController.text == 'Current Location'
+          ? await _getPlaceIdFromLatLng(_origin!)
+          : await _getPlaceIdFromAddress(_originController.text);
+      final destinationPlaceId =
+          await _getPlaceIdFromAddress(_destinationController.text);
+
+      if (originPlaceId != null && destinationPlaceId != null) {
+        await _fetchPlaceDetailsAndSetMarker(originPlaceId, true);
+        await _fetchPlaceDetailsAndSetMarker(destinationPlaceId, false);
+        _fetchAndDrawRoute();
+      }
+    }
   }
 
-  void _pickStartTime(BuildContext context) {
-    DatePicker.showTimePicker(
-      context,
-      showTitleActions: true,
-      onConfirm: (time) {
-        setState(() {
-          _startTimeController.text = DateFormat('HH:mm').format(time);
-        });
-      },
-      currentTime: DateTime.now(),
-      locale: LocaleType.en,
-    );
+  Future<String?> _getPlaceIdFromAddress(String address) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$address&inputtype=textquery&key=$_apiKey';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK' && data['candidates'].isNotEmpty) {
+        return data['candidates'][0]['place_id'];
+      }
+    }
+    return null;
   }
 
-  @override
-  void dispose() {
-    _fromController.dispose();
-    _toController.dispose();
-    _dateController.dispose();
-    _startTimeController.dispose();
-    super.dispose();
+  Future<String?> _getPlaceIdFromLatLng(LatLng latLng) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$_apiKey';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK' && data['results'].isNotEmpty) {
+        return data['results'][0]['place_id'];
+      }
+    }
+    return null;
+  }
+
+  Future<void> _fetchPlaceDetailsAndSetMarker(
+      String placeId, bool isOrigin) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$_apiKey';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK') {
+        final result = data['result'];
+        final location = result['geometry']['location'];
+        final latLng = LatLng(location['lat'], location['lng']);
+
+        setState(() {
+          if (isOrigin) {
+            _origin = latLng;
+            _markers.removeWhere((marker) => marker.markerId.value == 'origin');
+            _markers.add(Marker(
+              markerId: MarkerId('origin'),
+              position: latLng,
+              infoWindow: InfoWindow(title: 'From'),
+            ));
+          } else {
+            _destination = latLng;
+            _markers.removeWhere(
+                (marker) => marker.markerId.value == 'destination');
+            _markers.add(Marker(
+              markerId: MarkerId('destination'),
+              position: latLng,
+              infoWindow: InfoWindow(title: 'To'),
+            ));
+          }
+        });
+      }
+    }
+  }
+
+  Future<void> _fetchAndDrawRoute() async {
+    if (_origin == null || _destination == null) return;
+
+    final origin = '${_origin!.latitude},${_origin!.longitude}';
+    final destination = '${_destination!.latitude},${_destination!.longitude}';
+
+    final url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$origin&destination=$destination&mode=driving&key=$_apiKey';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK') {
+        final route = data['routes'][0];
+        final polylinePoints = route['overview_polyline']['points'];
+        final decodedPoints = _decodePolyline(polylinePoints);
+
+        setState(() {
+          _polylines.clear();
+          _polylines.add(Polyline(
+            polylineId: PolylineId('route'),
+            points: decodedPoints,
+            color: Colors.blue,
+            width: 5,
+          ));
+        });
+
+        // Adjust camera to show the route
+        LatLngBounds bounds = LatLngBounds(
+          southwest: LatLng(
+            _origin!.latitude < _destination!.latitude
+                ? _origin!.latitude
+                : _destination!.latitude,
+            _origin!.longitude < _destination!.longitude
+                ? _origin!.longitude
+                : _destination!.longitude,
+          ),
+          northeast: LatLng(
+            _origin!.latitude > _destination!.latitude
+                ? _origin!.latitude
+                : _destination!.latitude,
+            _origin!.longitude > _destination!.longitude
+                ? _origin!.longitude
+                : _destination!.longitude,
+          ),
+        );
+        _mapController?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+      }
+    }
+  }
+
+  List<LatLng> _decodePolyline(String encoded) {
+    List<LatLng> points = [];
+    int index = 0, len = encoded.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int b, shift = 0, result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+
+      points.add(LatLng((lat / 1E5).toDouble(), (lng / 1E5).toDouble()));
+    }
+    return points;
   }
 }

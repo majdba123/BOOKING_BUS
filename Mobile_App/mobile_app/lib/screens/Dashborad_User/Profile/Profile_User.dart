@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dart';
+import 'package:mobile_app/screens/Dashborad_User/Main_Ui_private_Trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/All_My_charage_Balance_By_Status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Help_Screen.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/MY_Reservation.dart';
@@ -143,24 +144,13 @@ class ProfilePage extends StatelessWidget {
                       },
                     ),
                     ProfileOption(
-                      icon: Icons.bus_alert_outlined,
-                      title: 'MY Private Trip',
+                      icon: Icons.calendar_month,
+                      title: ' private Trip',
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => PrivateTripByStatus()),
-                        );
-                      },
-                    ),
-                    ProfileOption(
-                      icon: Icons.calendar_month,
-                      title: 'MY Reservation',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BookingsScreen()),
                         );
                       },
                     ),

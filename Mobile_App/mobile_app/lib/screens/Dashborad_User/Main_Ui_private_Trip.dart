@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dart';
-import 'package:provider/provider.dart';
-import 'package:mobile_app/Provider/Auth_provider.dart';
-import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Private_trip_user.dart';
 import 'package:mobile_app/Colors.dart';
 
@@ -51,8 +48,7 @@ class MainUiPrivateTripPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => PrivateTripPage()),
+                        MaterialPageRoute(builder: (context) => MyHomePage()),
                       );
                     },
                     child: Text(

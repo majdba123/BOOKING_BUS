@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/user/Accpeted_private_trip_By_company.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Private_trip_user.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
@@ -10,6 +11,20 @@ class PrivateTripByStatus extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: null,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => MyHomePage(),
+                ),
+                // result: ModalRoute.withName('/mainPageUser'),
+              );
+            },
+            icon: Icon(Icons.add),
+          ),
+        ],
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         backgroundColor: AppColors.primaryColor,
