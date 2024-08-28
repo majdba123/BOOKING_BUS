@@ -221,7 +221,6 @@ export default {
         },
     },
     mounted() {
-        // التحقق من تفضيلات المستخدم المحفوظة في localStorage
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme === "enabled") {
             this.isDarkMode = true;
@@ -414,6 +413,7 @@ aside .logo {
     padding: 9px;
     margin-top: 15px;
     margin-left: 10px;
+    margin-bottom: 15px;
 }
 
 .date input {
