@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Provider/user/inquiry_by_status.dart';
+import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/All_My_charage_Balance_By_Status.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Complete_info_profile.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Add_company_To_Fav.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Help_Screen.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/InquiryForm.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/MY_Reservation.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Rate_Driver.dart';
-import 'package:mobile_app/screens/Dashborad_User/user_info_profile.dart';
+import 'package:mobile_app/Provider/user/user_info_profile.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/colors.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Address_list_page.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Charage_blance.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Update_Password.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Update_Profile.dart'; // Import the UpdateProfilePage
+import 'package:mobile_app/screens/Dashborad_User/Widget/Update_Profile.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -29,6 +26,17 @@ class ProfilePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => DashboardUser(),
+              ),
+              result: ModalRoute.withName('/mainPageUser'),
+            );
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         backgroundColor: AppColors.primaryColor,
@@ -53,18 +61,6 @@ class ProfilePage extends StatelessWidget {
               } else if (userInfoProvider.userInfo != null) {
                 final userInfo = userInfoProvider.userInfo!;
 
-                // Check if profile is incomplete
-                if (userInfo.profile == null) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CompleteProfilePage()),
-                    );
-                  });
-                  return Container(); // Return empty container while navigating
-                }
-
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -81,7 +77,7 @@ class ProfilePage extends StatelessWidget {
                             CircleAvatar(
                               radius: 50,
                               backgroundImage:
-                                  NetworkImage(userInfo.profile['image']),
+                                  NetworkImage(userInfo.profile_image),
                             ),
                             SizedBox(height: 20),
                             Text(
@@ -101,7 +97,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                             SizedBox(height: 5),
                             Text(
-                              userInfo.profile['phone'],
+                              userInfo.phoneNumber,
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey[600],

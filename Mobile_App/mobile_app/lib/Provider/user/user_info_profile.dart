@@ -26,7 +26,9 @@ class UserInfoProvider with ChangeNotifier {
 
     try {
       final response = await http.get(url, headers: headers);
-
+      print('in user info ');
+      print(response.statusCode);
+      print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _userInfo = UserInfomodel.fromJson(data);

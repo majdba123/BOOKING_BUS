@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mobile_app/colors.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/constants.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Profile_User.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
 import 'package:provider/provider.dart';
 
 class CompleteProfilePage extends StatefulWidget {

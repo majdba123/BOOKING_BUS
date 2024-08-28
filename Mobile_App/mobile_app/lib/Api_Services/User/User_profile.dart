@@ -7,12 +7,10 @@ import 'package:mobile_app/Data_Models/charge_balance.dart';
 import 'package:mobile_app/constants.dart';
 
 class UserProfile {
-  static const String baseUrl = 'http://127.0.0.1:8000/api/user';
-
   Future<void> chargeBalance(String accessToken, File image, int points) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('$baseUrl/charge_blance'),
+      Uri.parse(name_domain_server + 'user/charge_blance'),
     );
     request.headers['Authorization'] = 'Bearer $accessToken';
     request.fields['point'] = points.toString();
@@ -33,7 +31,7 @@ class UserProfile {
 
   Future<List<Address>> getAllAddresses(String accessToken) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/all_my_address'),
+      Uri.parse(name_domain_server + 'user/all_my_address'),
       headers: {
         'Authorization': 'Bearer $accessToken',
       },
@@ -49,7 +47,7 @@ class UserProfile {
   Future<void> storeAddress(
       String city, String area, String accessToken) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/store_address'),
+      Uri.parse(name_domain_server + 'user/store_address'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
@@ -66,7 +64,7 @@ class UserProfile {
   Future<void> updateAddress(
       String id, String city, String? area, String accessToken) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/update_address/$id'),
+      Uri.parse(name_domain_server + 'user/update_address/$id'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
