@@ -101,24 +101,6 @@
                     Finished
                 </button>
                 <div class="modal-body">
-                    <button
-                        class="status-btn"
-                        @click="fetchBusStatus('pending')"
-                    >
-                        Pending
-                    </button>
-                    <button
-                        class="status-btn"
-                        @click="fetchBusStatus('available')"
-                    >
-                        Available
-                    </button>
-                    <button
-                        class="status-btn"
-                        @click="fetchBusStatus('completed')"
-                    >
-                        Complated
-                    </button>
                     <table>
                         <thead>
                             <tr>
@@ -148,15 +130,22 @@
         </div>
 
         <div v-if="showSeatsModal" class="modal">
-            <div class="modal-content">
+            <div class="modal-contentseat">
                 <div class="modal-header">Bus Seats</div>
                 <div class="modal-body">
                     <div class="seats-container">
                         <div
-                            v-for="seat in seats"
+                            v-for="(seat, index) in seats"
                             :key="seat.seat_id"
-                            class="seat"
+                            :class="[
+                                'seat',
+                                seat.occupied ? 'occupied' : '',
+                                'seat' + (index + 1),
+                            ]"
                         >
+                            <span class="material-icons">
+                                airline_seat_recline_normal
+                            </span>
                             {{ seat.seat_number }}
                         </div>
                     </div>
@@ -778,22 +767,49 @@ input:focus {
 /* Seats styling */
 .seats-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr 1fr 50px 1fr 1fr; /* عمودان للمقاعد، ممر في الوسط، وعمودان للمقاعد */
     gap: 10px;
     justify-content: center;
+    width: 250px; /* عرض يكفي لتوزيع المقاعد مع الممر */
+    height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: none;
 }
-
+.modal-contentseat {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 350px;
+    width: 80%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
 .seat {
-    width: 50px;
-    height: 50px;
-    background-color: #007bff;
-    color: white;
+    width: 30px;
+    height: 30px;
+    color: #007bff;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: 0.8rem;
     transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.seat:nth-child(4n + 1) {
+    grid-column: 1;
+}
+
+.seat:nth-child(4n + 2) {
+    grid-column: 2;
+}
+
+.seat:nth-child(4n + 3) {
+    grid-column: 4;
+}
+
+.seat:nth-child(4n + 4) {
+    grid-column: 5;
 }
 
 .seat:hover {
@@ -803,6 +819,7 @@ input:focus {
 
 .seat.occupied {
     background-color: #d9534f;
+    color: #fff;
 }
 
 /* Responsive Design */

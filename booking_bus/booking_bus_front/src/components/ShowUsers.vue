@@ -430,7 +430,6 @@ import MapPrivate from "./MapPrivate.vue";
 import axios from "axios";
 import store from "@/store";
 import { useToast } from "vue-toastification";
-import { Chart } from "chart.js";
 
 export default {
     name: "AddDriver",
@@ -474,18 +473,6 @@ export default {
         if (this.isDarkMode) {
             document.body.classList.add("dark-theme-variables");
         }
-        this.$nextTick(() => {
-            this.createChart(); // إنشاء الرسم البياني بعد التأكد من جاهزية DOM
-            // تحديث السائقين بالقيم المخزنة في localStorage
-            this.Driver.forEach((driver) => {
-                const savedBusId = localStorage.getItem(
-                    `driver_${driver.driver_id}_busId`
-                );
-                if (savedBusId) {
-                    driver.selectedBusId = savedBusId;
-                }
-            });
-        });
     },
     methods: {
         openMapModal(id) {
@@ -700,60 +687,12 @@ export default {
             );
             localStorage.setItem("theme", this.isDarkMode ? "dark" : "light");
         },
-        createChart() {
-            // هنا يمكنك إنشاء الرسم البياني الخاص بك باستخدام Chart.js
-            const ctx = document.getElementById("myChart").getContext("2d");
-            new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: [
-                        "Red",
-                        "Blue",
-                        "Yellow",
-                        "Green",
-                        "Purple",
-                        "Orange",
-                    ],
-                    datasets: [
-                        {
-                            label: "# of Votes",
-                            data: [12, 19, 3, 5, 2, 3],
-                            backgroundColor: [
-                                "rgba(255, 99, 132, 0.2)",
-                                "rgba(54, 162, 235, 0.2)",
-                                "rgba(255, 206, 86, 0.2)",
-                                "rgba(75, 192, 192, 0.2)",
-                                "rgba(153, 102, 255, 0.2)",
-                                "rgba(255, 159, 64, 0.2)",
-                            ],
-                            borderColor: [
-                                "rgba(255, 99, 132, 1)",
-                                "rgba(54, 162, 235, 1)",
-                                "rgba(255, 206, 86, 1)",
-                                "rgba(75, 192, 192, 1)",
-                                "rgba(153, 102, 255, 1)",
-                                "rgba(255, 159, 64, 1)",
-                            ],
-                            borderWidth: 1,
-                        },
-                    ],
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                        },
-                    },
-                },
-            });
-        },
     },
     computed: {
         filteredGovernment() {
             const users = this.$store.state.User;
 
             if (!Array.isArray(users)) {
-                // إذا لم يتم تحميل البيانات بعد، إرجاع مصفوفة فارغة
                 return [];
             }
             return store.state.User.filter((driver) => {
@@ -897,13 +836,13 @@ table tbody tr:last-child td {
 .recent_orders table {
     background-color: #fff;
     width: 100%;
-    border-radius: var(--border-radius-2);
+    border-radius: 10px;
     padding: 1rem;
     text-align: center;
     box-shadow: var(--box-shadow);
     color: var(--clr-dark);
     font-size: 0.85rem;
-    border-collapse: collapse; /* Ensure borders are collapsed */
+    border-collapse: collapse;
 }
 
 .recent_orders thead {
@@ -954,6 +893,7 @@ table tbody tr:last-child td {
     padding: 8px 16px;
     border: none;
     border-radius: var(--border-radius-2);
+    background: #4caf50;
     color: #fff;
     cursor: pointer;
     font-size: 0.85rem;
@@ -1036,7 +976,7 @@ table tbody tr:last-child td {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px; /* Adjust as needed */
+    height: 150px;
     font-size: 1.2rem;
     color: #677483;
     text-align: center;

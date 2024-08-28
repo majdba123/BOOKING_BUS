@@ -1038,7 +1038,6 @@ table tbody tr {
     display: flex;
     align-items: center;
     justify-content: center;
-
     background-color: var(--clr-white);
     border-radius: 5px;
     width: 100%;
