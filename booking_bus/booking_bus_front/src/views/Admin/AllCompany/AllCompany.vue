@@ -19,12 +19,12 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>{{ x }}</h1>
+                <h1>Company</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input
                             type="text"
-                            placeholder="Search In..."
+                            placeholder="Search By Name OR Email"
                             aria-label="Search"
                             v-model="searchQuery"
                         />

@@ -10,15 +10,18 @@
 <script>
 /* global google */
 import store from "@/store";
+import { useToast } from "vue-toastification"; // استيراد استخدام التوست
 
 export default {
     data() {
         return {
             map: null,
             infoWindow: null,
+            toast: null, // لإدارة التوست
         };
     },
     mounted() {
+        this.toast = useToast(); // تهيئة التوست
         this.loadGoogleMapsScript();
     },
     methods: {
@@ -31,6 +34,7 @@ export default {
 
             script.onload = () => {
                 this.initAutocomplete();
+                this.toast.info("Please search for a Government."); // إشعار البحث عن Government
             };
 
             script.onerror = () => {
@@ -40,7 +44,6 @@ export default {
         },
         initAutocomplete() {
             if (typeof google !== "undefined") {
-                // ضبط مركز الخريطة ليكون في سوريا
                 this.map = new google.maps.Map(document.getElementById("map"), {
                     center: { lat: 34.8021, lng: 38.9968 }, // إحداثيات سوريا
                     zoom: 7, // مستوى التكبير المناسب لسوريا
@@ -81,23 +84,21 @@ export default {
                             map: this.map,
                             title: place.name,
                             position: place.geometry.location,
-                            icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png", // تغيير لون العلامة إلى الأحمر
+                            icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
                         });
 
-                        // إضافة الاستماع إلى حدث النقر على العلامة
                         marker.addListener("click", () => {
                             const contentString = `
-                        <div>
-                            <strong>${place.name}</strong>
-                            <br>
-                            تم اختيار المنطقة
-                        </div>
-                    `;
+                                <div>
+                                    <strong>${place.name}</strong>
+                                    <br>
+                                    تم اختيار المنطقة
+                                </div>
+                            `;
                             this.infoWindow.setContent(contentString);
                             this.infoWindow.open(this.map, marker);
 
                             // تخزين البيانات في store
-
                             store.state.placeName = place.name;
                             store.state.lat = place.geometry.location.lat();
                             store.state.lng = place.geometry.location.lng();
@@ -115,6 +116,8 @@ export default {
                         }
                     });
                     this.map.fitBounds(bounds);
+
+                    this.toast.success("Please select the region(Click)."); // إشعار اختيار المنطقة
                 });
             } else {
                 console.error("Google Maps not loaded yet");

@@ -2,16 +2,15 @@
     <div :class="['containerd', { 'dark-theme-variables': isDarkMode }]">
         <!-- Header with buttons -->
         <header class="navd">
-            <button class="nav-btnd" @click="showForm = true">
+            <button class="nav-btnddd" @click="showForm = true">
                 Add Company
             </button>
-            <button class="nav-btnd" @click="showForm = false">
+            <button class="nav-btnddd" @click="showForm = false">
                 Show All Company
             </button>
         </header>
-
         <div v-if="showForm" class="form-containerd">
-            <form @submit.prevent="handleSubmit">
+            <form @submit.prevent="handleSubmit" class="form-content">
                 <div class="form-groupd">
                     <label for="CompanyName">Company Name</label>
                     <input
@@ -54,66 +53,73 @@
         <div v-else class="recent_orders">
             <h1>All Company</h1>
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name Company</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Driver</th>
-                            <th>Bus</th>
-                            <th>Trip</th>
-                            <th>Reservation</th>
+                <div v-if="!filteredCompany.length > 0" class="no-data-message">
+                    No Data Available
+                </div>
+                <div v-else>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name Company</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Driver</th>
+                                <th>Bus</th>
+                                <th>Trip</th>
+                                <th>Reservation</th>
 
-                            <th>Created At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="(user, index) in filteredCompany"
-                            :key="index"
-                        >
-                            <td>{{ user.id }}</td>
-                            <td>{{ user.name_company }}</td>
-                            <td>{{ user.user.email }}</td>
-                            <td>{{ user.user.profile?.phone }}</td>
-                            <td>
-                                <button
-                                    class="nav-btnd"
-                                    @click="openDriverStatusModal(user.id)"
-                                >
-                                    Driver
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="nav-btnd"
-                                    @click="openBusModal(user.id)"
-                                >
-                                    Bus
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="nav-btnd"
-                                    @click="openTripModal(user.name_company)"
-                                >
-                                    Trip
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="nav-btnd"
-                                    @click="openReservationModal(user.id)"
-                                >
-                                    Reservation
-                                </button>
-                            </td>
-                            <td>{{ user.created_at }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(user, index) in filteredCompany"
+                                :key="index"
+                            >
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.name_company }}</td>
+                                <td>{{ user.user.email }}</td>
+                                <td>{{ user.user.profile?.phone }}</td>
+                                <td>
+                                    <button
+                                        class="nav-btnd btn-primary"
+                                        @click="openDriverStatusModal(user.id)"
+                                    >
+                                        Driver
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        class="nav-btnd btn-success"
+                                        @click="openBusModal(user.id)"
+                                    >
+                                        Bus
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        class="nav-btnd btn-warning"
+                                        @click="
+                                            openTripModal(user.name_company)
+                                        "
+                                    >
+                                        Trip
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        class="nav-btnd btn-info"
+                                        @click="openReservationModal(user.id)"
+                                    >
+                                        Reservation
+                                    </button>
+                                </td>
+                                <td>{{ user.created_at }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -142,27 +148,35 @@
                     >
                         Completed
                     </button>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(driver, index) in driverStatusData"
-                                :key="index"
-                            >
-                                <td>{{ driver.id }}</td>
-                                <td>{{ driver.user.name }}</td>
-                                <td>{{ driver.user.email }}</td>
-                                <td>{{ driver.status }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div
+                        v-if="!driverStatusData.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(driver, index) in driverStatusData"
+                                    :key="index"
+                                >
+                                    <td>{{ driver.id }}</td>
+                                    <td>{{ driver.user.name }}</td>
+                                    <td>{{ driver.user.email }}</td>
+                                    <td>{{ driver.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button @click="closeDriverStatusModal" class="close-modal">
@@ -175,24 +189,32 @@
             <div class="modal-content">
                 <div class="modal-header">All Bus</div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Number Bus</th>
-                                <th>Number Passenger</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(Bus, index) in BusData" :key="index">
-                                <td>{{ Bus.id }}</td>
-                                <td>{{ Bus.number_bus }}</td>
-                                <td>{{ Bus.number_passenger }}</td>
-                                <td>{{ Bus.status }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="!BusData.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Number Bus</th>
+                                    <th>Number Passenger</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(Bus, index) in BusData"
+                                    :key="index"
+                                >
+                                    <td>{{ Bus.id }}</td>
+                                    <td>{{ Bus.number_bus }}</td>
+                                    <td>{{ Bus.number_passenger }}</td>
+                                    <td>{{ Bus.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button @click="closeBusModal" class="close-modal">
@@ -205,33 +227,40 @@
             <div class="modal-content">
                 <div class="modal-header">Trip</div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>From</th>
-                                <th>To</th>
-                                <th>Price</th>
-                                <th>Bus</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(Trip, index) in Trips" :key="index">
-                                <td>{{ Trip.trip_id }}</td>
-                                <td>{{ Trip.from }}</td>
-                                <td>{{ Trip.to }}</td>
-                                <td>{{ Trip.price }}</td>
-                                <td>
-                                    <button
-                                        class="nav-btnd"
-                                        @click="openBusTripModal(Trip.trip_id)"
-                                    >
-                                        Bus
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="!Trips.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Price</th>
+                                    <th>Bus</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(Trip, index) in Trips" :key="index">
+                                    <td>{{ Trip.trip_id }}</td>
+                                    <td>{{ Trip.from }}</td>
+                                    <td>{{ Trip.to }}</td>
+                                    <td>{{ Trip.price }}</td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd"
+                                            @click="
+                                                openBusTripModal(Trip.trip_id)
+                                            "
+                                        >
+                                            Bus
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button @click="closeTripModal" class="close-modal">
@@ -262,47 +291,59 @@
                     >
                         Completed
                     </button>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Price</th>
-                                <th>Type</th>
-                                <th>Status</th>
-                                <th>User Name</th>
-                                <th>Break</th>
-                                <th>From</th>
-                                <th>To</th>
-                                <th>Seats</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(Trip, index) in ReversationStatusData"
-                                :key="index"
-                            >
-                                <td>{{ Trip.id }}</td>
-                                <td>{{ Trip.price }}</td>
-                                <td>{{ Trip.type }}</td>
-                                <td>{{ Trip.status }}</td>
-                                <td>{{ Trip.user_name }}</td>
-                                <td>{{ Trip.break }}</td>
-                                <td>{{ Trip.from }}</td>
-                                <td>{{ Trip.to }}</td>
+                    <div
+                        v-if="!ReversationStatusData.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Price</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>User Name</th>
+                                    <th>Break</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Seats</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(
+                                        Trip, index
+                                    ) in ReversationStatusData"
+                                    :key="index"
+                                >
+                                    <td>{{ Trip.id }}</td>
+                                    <td>{{ Trip.price }}</td>
+                                    <td>{{ Trip.type }}</td>
+                                    <td>{{ Trip.status }}</td>
+                                    <td>{{ Trip.user_name }}</td>
+                                    <td>{{ Trip.break }}</td>
+                                    <td>{{ Trip.from }}</td>
+                                    <td>{{ Trip.to }}</td>
 
-                                <td>
-                                    <button
-                                        class="nav-btnd"
-                                        @click="
-                                            openReservationSeatModal(Trip.id)
-                                        "
-                                    >
-                                        Seats
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    <td>
+                                        <button
+                                            class="nav-btnd"
+                                            @click="
+                                                openReservationSeatModal(
+                                                    Trip.id
+                                                )
+                                            "
+                                        >
+                                            Seats
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button @click="closeReservationModal" class="close-modal">
@@ -315,42 +356,50 @@
             <div class="modal-content">
                 <div class="modal-header">All BusTrip</div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Bus ID</th>
-                                <th>From Time</th>
-                                <th>To Time</th>
-                                <th>Type</th>
-                                <th>Pivot</th>
-                                <th>Seats</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(Bus, index) in BusTrip" :key="index">
-                                <td>{{ Bus.bus_id }}</td>
-                                <td>{{ Bus.from_time }}</td>
-                                <td>{{ Bus.to_time }}</td>
-                                <td>{{ Bus.type }}</td>
-                                <td>
-                                    <button
-                                        class="nav-btnd"
-                                        @click="openPivotModal(index)"
-                                    >
-                                        Pivot
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        class="nav-btnd"
-                                        @click="openSeatsModal(index)"
-                                    >
-                                        Seats
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="!BusTrip.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bus ID</th>
+                                    <th>From Time</th>
+                                    <th>To Time</th>
+                                    <th>Type</th>
+                                    <th>Pivot</th>
+                                    <th>Seats</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(Bus, index) in BusTrip"
+                                    :key="index"
+                                >
+                                    <td>{{ Bus.bus_id }}</td>
+                                    <td>{{ Bus.from_time }}</td>
+                                    <td>{{ Bus.to_time }}</td>
+                                    <td>{{ Bus.type }}</td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd"
+                                            @click="openPivotModal(index)"
+                                        >
+                                            Pivot
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd"
+                                            @click="openSeatsModal(index)"
+                                        >
+                                            Seats
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button @click="closeBusTripModal" class="close-modal">
@@ -363,23 +412,31 @@
             <div class="modal-content">
                 <div class="modal-header">All Seats</div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(Bus, index) in ReservationSeat"
-                                :key="index"
-                            >
-                                <td>{{ Bus.id }}</td>
-                                <td>{{ Bus.status }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div
+                        v-if="!ReservationSeat.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(Bus, index) in ReservationSeat"
+                                    :key="index"
+                                >
+                                    <td>{{ Bus.id }}</td>
+                                    <td>{{ Bus.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button
@@ -395,24 +452,29 @@
             <div class="modal-content">
                 <div class="modal-header">All Pivot</div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Break Id</th>
-                                <th>Government</th>
-                                <th>Name Break</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(Bus, index) in Pivot" :key="index">
-                                <td>{{ Bus.break_id }}</td>
-                                <td>{{ Bus.government }}</td>
-                                <td>{{ Bus.name_break }}</td>
-                                <td>{{ Bus.status }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="!Pivot.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Break Id</th>
+                                    <th>Government</th>
+                                    <th>Name Break</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(Bus, index) in Pivot" :key="index">
+                                    <td>{{ Bus.break_id }}</td>
+                                    <td>{{ Bus.government }}</td>
+                                    <td>{{ Bus.name_break }}</td>
+                                    <td>{{ Bus.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button @click="closePivotModal" class="close-modal">
@@ -425,20 +487,25 @@
             <div class="modal-content">
                 <div class="modal-header">All Seats</div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Seat ID</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(Bus, index) in Seats" :key="index">
-                                <td>{{ Bus.id }}</td>
-                                <td>{{ Bus.status }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="!Seats.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Seat ID</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(Bus, index) in Seats" :key="index">
+                                    <td>{{ Bus.id }}</td>
+                                    <td>{{ Bus.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button @click="closeSeatsModal" class="close-modal">
@@ -556,7 +623,6 @@ export default {
             console.log(this.currentCompanyId);
             console.log(x);
             if (x == undefined) {
-                console.log("sssssssss");
                 this.fetchReservation(this.currentCompanyId);
             }
             this.fetchReversationStatus(this.currentCompanyId, x);
@@ -620,8 +686,29 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    this.toast.error("Email is already registered.");
-                    console.log(error);
+                    if (
+                        error.response.data.error &&
+                        error.response.data.error.password
+                    ) {
+                        const x = error.response.data.error?.password[0];
+                        this.toast.error(x);
+                    }
+                    if (
+                        error.response.data.error &&
+                        error.response.data.error.email
+                    ) {
+                        const x = error.response.data.error?.email[0];
+                        this.toast.error(x);
+                    }
+                    if (
+                        error.response.data.error &&
+                        error.response.data.error.name
+                    ) {
+                        const x = error.response.data.error?.name[0];
+                        this.toast.error(x);
+                    }
+
+                    console.log(error.response.data.error);
                 });
         },
 
@@ -927,36 +1014,13 @@ body {
     background: var(--clr-color-background);
 }
 
-.recent_orders h1 {
-    margin: 18px;
-    color: var(--clr-dark);
-}
-
-.recent_orders {
-    width: 100%;
-    overflow-x: auto;
-    margin-top: 20px;
-}
-
 .table-container {
     width: 100%;
     overflow-x: auto;
 }
-
-.recent_orders table {
-    background-color: var(--clr-white);
-    width: 100%;
-    border-radius: 1rem;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: var(--clr-dark);
-    max-width: none;
-    font-size: 0.85rem;
-}
-
-.recent_orders table:hover {
-    box-shadow: none;
+.table-container {
+    width: 100% !important;
+    overflow-x: auto !important;
 }
 
 table thead tr th {
@@ -970,6 +1034,51 @@ table tbody tr {
     color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
 }
+.navd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--clr-white);
+    border-radius: 5px;
+    width: 100%;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-btnddd {
+    padding: 10px 20px;
+    margin: 0 10px; /* مسافة صغيرة بين الأزرار */
+    border: none;
+    border-radius: 5px; /* تقليل نصف القطر */
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.nav-btnddd:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
 
 table tbody tr:hover {
     background-color: var(--clr-light);
@@ -980,16 +1089,20 @@ table tbody td {
     border-bottom: 1px solid var(--clr-dark);
     color: var(--clr-dark-variant);
 }
-
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* Adjust as needed */
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
 table tbody tr:last-child td {
     border: none;
-}
-
-.recent_orders a {
-    text-align: center;
-    display: block;
-    margin: 1rem;
-    font-size: 0.85rem;
 }
 
 /* Select styling */
@@ -1052,15 +1165,25 @@ select:focus {
     background-color: #f44336;
 }
 /* Navigation styling */
-.navd {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
-    background-color: var(--clr-white);
-    border-radius: 10px;
-    width: 100%;
+
+.nav-btnd.btn-primary {
+    background: #7380ec;
+}
+
+.nav-btnd.btn-success {
+    background: #4caf50;
+}
+
+.nav-btnd.btn-warning {
+    background: #ff9800;
+}
+
+.nav-btnd.btn-info {
+    background: #17a2b8;
+}
+
+.nav-btnd.btn-danger {
+    background: #f44336;
 }
 
 .nav-btnd {
@@ -1096,27 +1219,9 @@ select:focus {
 }
 
 /* Form styling */
-.form-containerd {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 20px;
-    background-color: var(--clr-info-light);
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    border-radius: 10px;
-    max-width: 400px;
-    width: 100%;
-    margin-top: 50px;
-    transition: background-color 0.3s ease;
-}
+
 .dark-theme-variables .form-containerd {
     background-color: var(--clr-dark-variant);
-}
-
-.form-groupd {
-    margin-bottom: 15px;
-    width: 100%;
 }
 
 label {
@@ -1137,24 +1242,111 @@ input:focus {
     border-color: #007bff;
 }
 
+.submit-btnd:hover {
+    background-color: var(--clr-primary-variant);
+    transform: translateY(-3px);
+}
+
+.form-containerd {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    background: url("@/assets/Company.jpg") no-repeat center center; /* إضافة صورة خلفية */
+    background-size: cover; /* تغطية كاملة للكومبوننت */
+    border-radius: 15px; /* تحسين شكل الزوايا */
+    width: 100%;
+    transition: background-color 0.3s ease;
+    margin: 20px auto; /* لجعل الكومبوننت في المنتصف */
+}
+
+.form-content {
+    background-color: rgba(255, 255, 255, 0.8); /* خلفية شبه شفافة */
+    padding: 40px;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.5);
+    border-radius: 15px;
+    width: 100%;
+    max-width: 600px;
+    animation: slideIn 0.6s ease-in-out;
+}
+.form-groupd {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-groupd label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-groupd input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+}
+
+.form-groupd input:focus {
+    border-color: var(--clr-primary);
+    outline: none;
+}
+
 .submit-btnnd {
     display: flex;
     justify-content: center;
 }
 
 .submit-btnd {
-    padding: 10px 20px;
+    padding: 12px 24px;
+    background-color: var(--clr-primary);
+    color: #fff;
     border: none;
-    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
-    color: var(--clr-white);
-    cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .submit-btnd:hover {
-    background-color: var(--clr-primary-variant);
-    transform: translateY(-3px);
+    background-color: var(--clr-primary-dark);
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-content {
+        padding: 30px;
+    }
+
+    .form-groupd input {
+        padding: 10px;
+    }
+
+    .submit-btnd {
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-content {
+        padding: 20px;
+    }
+
+    .submit-btnd {
+        padding: 8px 16px;
+    }
 }
 
 /* Modal styling */
@@ -1170,80 +1362,88 @@ input:focus {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
-    background: var(--clr-white);
+    background: #fff;
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
 }
 
 .modal-header,
 .modal-body,
 .modal-footer {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .modal-header {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
+}
+
+.modal-body div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body th,
+.modal-body td {
+    padding: 12px;
+    text-align: left;
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
 }
-.modal-body table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.modal-body table th,
-.modal-body table td {
-    text-align: center;
-    vertical-align: middle;
-    padding: 8px;
-}
-
-.modal-body table tbody tr {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-body table thead {
-    display: flex;
-    justify-content: center;
-}
-
-.modal-body table tbody {
-    display: flex;
-    flex-direction: column;
-}
-
-.modal-body table tr {
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.modal-body table td {
-    flex: 1;
-}
 
 .close-modal {
-    padding: 8px 16px;
-    background-color: #d9534f;
-    color: var(--clr-white);
+    padding: 10px 20px;
+    background-color: var(--clr-danger);
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
+    transition: background-color 0.3s;
 }
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        height: auto;
+    }
 
+    .modal-body {
+        flex-direction: column;
+    }
+
+    .profile-image {
+        max-width: 80px;
+    }
+}
 .close-modal:hover {
     background-color: #c9302c;
+}
+
+.modal-body th {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
+
+.modal-body td {
+    border-bottom: 1px solid #ddd;
 }
 
 .status-btn {
@@ -1260,16 +1460,89 @@ input:focus {
 .status-btn:hover {
     background-color: var(--clr-primary-variant);
 }
+.recent_orders {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+.recent_orders thead {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
+.recent_orders th,
+.recent_orders td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+@media (max-width: 1200px) {
+    .recent_orders table {
+        font-size: 0.75rem;
+    }
+}
+@media (max-width: 768px) {
+    .recent_orders table,
+    .recent_orders thead,
+    .recent_orders tbody,
+    .recent_orders th,
+    .recent_orders td,
+    .recent_orders tr {
+        display: block;
+    }
+
+    .recent_orders thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .recent_orders tr {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .recent_orders td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+
+    .recent_orders td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+        color: var(--clr-primary);
+    }
+}
+.recent_orders tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.recent_orders td {
+    text-align: center;
+}
+.recent_orders table {
+    background-color: #fff;
+    width: 100%;
+    border-radius: var(--border-radius-2);
+    padding: 1rem;
+    text-align: center;
+    box-shadow: var(--box-shadow);
+    color: var(--clr-dark);
+    font-size: 0.85rem;
+    border-collapse: collapse; /* Ensure borders are collapsed */
+}
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .container {
         width: 100%;
-    }
-
-    .recent_orders {
-        padding: 30px;
-        margin: 0 auto;
     }
 
     .right .profile {
@@ -1313,17 +1586,5 @@ input:focus {
         color: var(--clr-white);
         border-radius: 10px;
     }
-}
-
-.containerd {
-    width: 100%;
-    margin-left: 20px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-size: cover;
-    min-height: 100vh;
-    background: var(--clr-color-background);
 }
 </style>

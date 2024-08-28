@@ -2,10 +2,10 @@
     <div :class="['containerd', { 'dark-theme-variables': isDarkMode }]">
         <!-- Header with buttons -->
         <header class="navd">
-            <button class="nav-btnd" @click="showForm = true">
+            <button class="nav-btnddd" @click="showForm = true">
                 Add Government
             </button>
-            <button class="nav-btnd" @click="showForm = false">
+            <button class="nav-btnddd" @click="showForm = false">
                 Show Government
             </button>
         </header>
@@ -22,65 +22,73 @@
         <div v-else class="recent_orders">
             <h1>All Government</h1>
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Breack</th>
-                            <th>ِActions</th>
-                            <th>Display In Map</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="(user, index) in filteredGovernment"
-                            :key="index"
-                        >
-                            <td>{{ user.id }}</td>
-                            <td>{{ user.name }}</td>
-                            <td>
-                                <button
-                                    class="nav-btnd"
-                                    @click="openBreackModal(user.id)"
-                                >
-                                    Breack
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="delete-btn"
-                                    @click="DeleteGovernment(user.id)"
-                                >
-                                    <span class="material-icons">delete</span>
-                                </button>
-                                <button
-                                    class="edit-btn"
-                                    @click="openEditModal(user, id)"
-                                >
-                                    <span class="material-icons">edit</span>
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="nav-btnd"
-                                    @click="openMapModal(user.id)"
-                                >
-                                    Display
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div
+                    v-if="!filteredGovernment.length > 0"
+                    class="no-data-message"
+                >
+                    No Data Available
+                </div>
+                <div v-else>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Breack</th>
+                                <th>ِActions</th>
+                                <th>Display In Map</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(user, index) in filteredGovernment"
+                                :key="index"
+                            >
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>
+                                    <button
+                                        class="nav-btnd btn-primary"
+                                        @click="openBreackModal(user.id)"
+                                    >
+                                        Breack
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        class="delete-btn"
+                                        @click="DeleteGovernment(user.id)"
+                                    >
+                                        <span class="material-icons"
+                                            >delete</span
+                                        >
+                                    </button>
+                                    <button
+                                        class="edit-btn"
+                                        @click="openEditModal(user, id)"
+                                    >
+                                        <span class="material-icons">edit</span>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        class="nav-btnd btn-primary"
+                                        @click="openMapModal(user.id)"
+                                    >
+                                        Display
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div v-if="showMapModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Location on Map</div>
                 <div class="modal-body">
-                    <div class="map-containers">
-                        <DisplayMap :lat="mapLat" :lng="mapLng" />
-                    </div>
+                    <DisplayMap :lat="mapLat" :lng="mapLng" />
                 </div>
                 <div class="modal-footer">
                     <button @click="closeMapModal" class="close-modal">
@@ -94,23 +102,31 @@
             <div class="modal-content">
                 <div class="modal-header">Breack</div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(driver, index) in GovernmentBreack"
-                                :key="index"
-                            >
-                                <td>{{ driver.id }}</td>
-                                <td>{{ driver.name }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div
+                        v-if="!GovernmentBreack.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(driver, index) in GovernmentBreack"
+                                    :key="index"
+                                >
+                                    <td>{{ driver.id }}</td>
+                                    <td>{{ driver.name }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button
@@ -126,9 +142,7 @@
             <div class="modal-content">
                 <div class="modal-header">Edit Path</div>
                 <div class="modal-body">
-                    <div class="map-containers">
-                        <UpdateMapGovernment />
-                    </div>
+                    <UpdateMapGovernment />
                 </div>
                 <div class="modal-footer">
                     <button class="update-btn" @click="updateGovernment">
@@ -161,17 +175,10 @@ export default {
             mapLat: null,
             mapLng: null,
             showForm: true,
-            Driver: [],
-            Bus: [],
-            driverStatusData: [],
             GovernmentBreack: [],
-            driverWithBusData: [],
             name: "",
             currentCompanyId: "",
-            email: "",
-            password: "",
             showGovernmentBreackModal: false,
-            showDriverWithBusModal: false,
             toast: useToast(),
             isDarkMode: false, // إدارة حالة الوضع الداكن
             editedGovernment: { name: "" },
@@ -179,7 +186,6 @@ export default {
     },
     mounted() {
         this.AllGovernment();
-        this.fetchBus();
         this.isDarkMode = localStorage.getItem("theme") === "dark";
         if (this.isDarkMode) {
             document.body.classList.add("dark-theme-variables");
@@ -285,26 +291,10 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    this.toast.error("Government is already registered.");
-                    console.log(error);
+                    this.toast.error(error.response.data.error.name[0]);
                 });
         },
-        CancelDriver(driverId) {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/cancelled_driver/${driverId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    this.toast.success("Driver cancelled successfully!");
-                    this.AllGovernment();
-                })
-                .catch((error) => {
-                    this.toast.error("Error cancelling driver.");
-                    console.error(error);
-                });
-        },
+
         AllGovernment() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -318,7 +308,7 @@ export default {
                     console.log(response.data);
                 })
                 .catch((error) => {
-                    this.toast.error("Error getting drivers.");
+                    this.toast.error("Error getting government.");
                     console.error(error);
                 });
         },
@@ -338,43 +328,7 @@ export default {
                     console.error(error);
                 });
         },
-        fetchBus() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.Bus = response.data;
-                    console.log(this.Bus);
-                })
-                .catch((error) => {
-                    this.toast.error("Error getting buses.");
-                    console.error(error);
-                });
-        },
-        SelectDriver(event, userId) {
-            const busId = event.target.value;
-            const access_token = window.localStorage.getItem("access_token");
-            console.log("Selected Bus ID:", busId);
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
-                data: { driver_id: userId },
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    console.log("Selection Complete for Bus ID:", busId);
-                    this.toast.success("Driver assigned to bus successfully!");
-                    // تحديث القيمة المحلية وتخزينها في localStorage
-                    localStorage.setItem(`driver_${userId}_busId`, busId);
-                })
-                .catch((error) => {
-                    this.toast.error("Error assigning driver to bus.");
-                    console.error("Error for Bus ID:", busId, error);
-                });
-        },
+
         fetchGovernmentBreack(status) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -387,7 +341,7 @@ export default {
                     console.log(response.data);
                 })
                 .catch((error) => {
-                    window.alert("Error fetching driver status");
+                    window.alert("Error fetching Break");
                     console.error(error);
                 });
         },
@@ -451,17 +405,9 @@ export default {
     computed: {
         filteredGovernment() {
             return store.state.Government.filter((driver) => {
-                return (
-                    driver.name
-                        .toLowerCase()
-                        .includes(store.state.searchQuery.toLowerCase()) ||
-                    driver.email_driver
-                        .toLowerCase()
-                        .includes(store.state.searchQuery.toLowerCase()) ||
-                    driver.status
-                        .toLowerCase()
-                        .includes(store.state.searchQuery.toLowerCase())
-                );
+                return driver.name
+                    .toLowerCase()
+                    .includes(store.state.searchQuery.toLowerCase());
             });
         },
     },
@@ -496,7 +442,24 @@ export default {
     list-style: none;
     appearance: none;
 }
-
+.nav-btnd.btn-primary {
+    background: #7380ec !important;
+}
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* Adjust as needed */
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
+.btn-primary {
+    background: linear-gradient(90deg, #7380ec 0%, #4b6cb7 100%) !important;
+}
 body {
     font-family: "Poppins", sans-serif;
     width: 100%;
@@ -525,21 +488,85 @@ h2 {
     width: 100%;
     overflow-x: auto;
 }
+.table-container {
+    width: 100% !important;
+    overflow-x: auto !important;
+}
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+.recent_orders th,
+.recent_orders td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+@media (max-width: 1200px) {
+    .recent_orders table {
+        font-size: 0.75rem;
+    }
+}
+@media (max-width: 768px) {
+    .recent_orders table,
+    .recent_orders thead,
+    .recent_orders tbody,
+    .recent_orders th,
+    .recent_orders td,
+    .recent_orders tr {
+        display: block;
+    }
 
+    .recent_orders thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .recent_orders tr {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .recent_orders td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+
+    .recent_orders td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+        color: var(--clr-primary);
+    }
+}
+.recent_orders tbody tr:hover {
+    background-color: #f1f1f1;
+}
+.recent_orders td {
+    text-align: center;
+}
+.recent_orders thead {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
 .recent_orders table {
     background-color: #fff;
     width: 100%;
-    border-radius: 1rem;
+    border-radius: var(--border-radius-2);
     padding: 1rem;
     text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
-    max-width: none;
+    box-shadow: var(--box-shadow);
+    color: var(--clr-dark);
     font-size: 0.85rem;
-}
-
-.recent_orders table:hover {
-    box-shadow: none;
+    border-collapse: collapse; /* Ensure borders are collapsed */
 }
 
 table thead tr th {
@@ -561,13 +588,6 @@ table tbody td {
 
 table tbody tr:last-child td {
     border: none;
-}
-
-.recent_orders a {
-    text-align: center;
-    display: block;
-    margin: 1rem;
-    font-size: 0.85rem;
 }
 
 /* Select styling */
@@ -624,7 +644,12 @@ select:focus {
     color: #fff;
     background-color: #4caf50;
 }
-
+.btn-success {
+    background: linear-gradient(90deg, #41f1b6 0%, #28a745 100%) !important;
+}
+.nav-btnd.btn-success {
+    background: #4caf50;
+}
 .delete-btn {
     color: #f44336;
     background-color: #f1f1f1;
@@ -637,13 +662,44 @@ select:focus {
     background-color: #f44336;
 }
 /* Navigation styling */
+.nav-btnddd:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+.nav-btnddd {
+    padding: 10px 20px;
+    margin: 0 10px; /* مسافة صغيرة بين الأزرار */
+    border: none;
+    border-radius: 5px; /* تقليل نصف القطر */
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+    flex-grow: 1;
+    text-align: center;
+}
+.navd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--clr-white);
+    border-radius: 5px;
+    width: 100%;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 .navd {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
-    background-color: #fff;
+    background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
 }
@@ -790,29 +846,61 @@ input:focus {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
     background: #fff;
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 50%;
-    height: 85%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    overflow: scroll;
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
 }
 
 .modal-header,
 .modal-body,
 .modal-footer {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .modal-header {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
+}
+
+.modal-body div {
     display: flex;
     justify-content: center;
+    align-items: center;
+}
+
+.modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body th,
+.modal-body td {
+    padding: 12px;
+    text-align: left;
+}
+
+.modal-body th {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
+
+.modal-body td {
+    border-bottom: 1px solid #ddd;
+}
+
+.profile-image {
+    max-width: 100px;
+    border-radius: 50%;
 }
 
 .modal-footer {
@@ -821,12 +909,13 @@ input:focus {
 }
 
 .close-modal {
-    padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    padding: 10px 20px;
+    background-color: var(--clr-danger);
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .close-modal:hover {
@@ -841,6 +930,20 @@ input:focus {
     border-radius: 5px;
     cursor: pointer;
     margin-right: 10px;
+}
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        height: auto;
+    }
+
+    .modal-body {
+        flex-direction: column;
+    }
+
+    .profile-image {
+        max-width: 80px;
+    }
 }
 .update-btn:hover {
     background-color: #489248;

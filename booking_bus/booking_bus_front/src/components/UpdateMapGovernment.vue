@@ -10,6 +10,7 @@
 <script>
 /* global google */
 import store from "@/store";
+import { useToast } from "vue-toastification"; // استيراد استخدام التوست
 
 export default {
     name: "UpdateMapGovernmente.vue",
@@ -17,9 +18,12 @@ export default {
         return {
             map: null,
             infoWindow: null,
+            toast: null, // لإدارة التوست
         };
     },
     mounted() {
+        this.toast = useToast(); // تهيئة التوست
+
         this.loadGoogleMapsScript();
     },
     methods: {
@@ -32,6 +36,7 @@ export default {
 
             script.onload = () => {
                 this.initAutocomplete();
+                this.toast.info("Please search for a Government."); // إشعار البحث عن Government
             };
 
             script.onerror = () => {
@@ -116,6 +121,7 @@ export default {
                         }
                     });
                     this.map.fitBounds(bounds);
+                    this.toast.success("Please select the region(Click)."); // إشعار اختيار المنطقة
                 });
             } else {
                 console.error("Google Maps not loaded yet");
