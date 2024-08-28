@@ -116,6 +116,7 @@
 </template>
 
 <script>
+import lottie from "lottie-web";
 import router from "@/router";
 import store from "@/store";
 import axios from "axios";
@@ -130,21 +131,47 @@ export default {
     mounted() {
         const savedOption = window.localStorage.getItem("selectedOption");
         if (savedOption) {
-            this.selectedOption = savedOption; // استعادة الخيار المحدد من التخزين المحلي
+            this.selectedOption = savedOption;
         }
     },
-
     methods: {
+        showAlertWithLottie(message) {
+            // قم بتحديد العنصر الذي سيحتوي على الحركة
+            const container = document.createElement("div");
+            container.style.width = "200px";
+            container.style.height = "200px";
+            container.style.margin = "0 auto";
+
+            // قم بإضافة العنصر إلى صفحة HTML
+            document.body.appendChild(container);
+
+            // قم بتشغيل حركة Lottie
+            lottie.loadAnimation({
+                container: container, // العنصر الذي سيحتوي الحركة
+                renderer: "svg",
+                loop: true,
+                autoplay: true,
+                path: "path_to_your_lottie_file.json", // مسار ملف Lottie
+            });
+
+            // عرض التنبيه التقليدي بعد فترة قصيرة من عرض الحركة
+            setTimeout(() => {
+                alert(message);
+                // إزالة الحركة بعد الانتهاء
+                document.body.removeChild(container);
+            }, 1000); // مدة الانتظار قبل عرض التنبيه (يمكنك تعديلها)
+        },
+
         logout() {
             const token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/logout",
                 headers: { Authorization: `Bearer ${token}` },
-            }).then(function (response) {
+            }).then((response) => {
                 if (response.status == 200) {
                     console.log(response);
-                    window.alert("Logout successful");
+                    this.showAlertWithLottie("Logout successful");
                     window.localStorage.removeItem("access_token");
                     router.push("/");
                 }
@@ -154,7 +181,6 @@ export default {
         selectOption(option) {
             this.selectedOption = option;
             window.localStorage.setItem("selectedOption", option);
-            // حفظ الخيار المحدد في التخزين المحلي
             store.state.x = this.selectedOption;
         },
     },

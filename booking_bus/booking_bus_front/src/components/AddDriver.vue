@@ -633,7 +633,7 @@ select:focus {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
+    border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;
@@ -891,5 +891,68 @@ input:focus {
     background-size: cover;
     min-height: 100vh;
     background: var(--clr-color-background);
+}
+@media screen and (max-width: 480px) {
+    .navd {
+        align-items: center;
+    }
+
+    .nav-btnd {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .form-containerd {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .recent_orders h1 {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .recent_orders table {
+        font-size: 0.75rem;
+    }
+
+    select {
+        padding: 6px;
+        font-size: 0.75rem;
+    }
+
+    .delete-btn,
+    .cancel-btn {
+        height: 16px;
+        width: 16px;
+        font-size: 12px;
+    }
+
+    .modal-content {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .modal-header {
+        font-size: 1rem;
+    }
+}
+@media screen and (max-width: 360px) {
+    .nav-btnd {
+        padding: 6px 8px;
+        font-size: 10px;
+    }
+
+    .recent_orders h1 {
+        font-size: 0.9rem;
+    }
+
+    .modal-content {
+        padding: 10px;
+    }
+
+    .modal-body table {
+        font-size: 0.7rem;
+    }
 }
 </style>

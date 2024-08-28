@@ -134,7 +134,7 @@ export default {
     mounted() {
         const savedOption = window.localStorage.getItem("selectedOption");
         if (savedOption) {
-            this.selectedOption = savedOption; // استعادة الخيار المحدد من التخزين المحلي
+            this.selectedOption = savedOption;
         }
     },
 
@@ -161,7 +161,6 @@ export default {
         selectOption(option) {
             this.selectedOption = option;
             window.localStorage.setItem("selectedOption", option);
-            // حفظ الخيار المحدد في التخزين المحلي
             store.state.x = this.selectedOption;
         },
     },
