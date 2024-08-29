@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Map_in_private_trip/CreatePrivateTrip.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Map_in_private_trip/mapWidget.dart';
 
 class MainUiPrivateTripPage extends StatelessWidget {
   @override
@@ -48,7 +49,7 @@ class MainUiPrivateTripPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MyHomePage()),
+                        MaterialPageRoute(builder: (context) => MapScreen()),
                       );
                     },
                     child: Text(
