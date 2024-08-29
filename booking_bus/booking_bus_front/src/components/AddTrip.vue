@@ -206,11 +206,12 @@
                             <td>
                                 <button
                                     class="delete-btn"
-                                    @click="DeleteTrip(trip.id)"
+                                    @click="openDeleteConfirmModal(trip)"
                                 >
                                     <span class="material-icons">delete</span>
                                 </button>
                             </td>
+
                             <td>
                                 <button
                                     class="delete-btn"
@@ -414,6 +415,23 @@
                 </div>
             </div>
         </div>
+        <div v-if="showDeleteConfirmModal" class="dialog-container">
+            <div class="dialog-box">
+                <div class="dialog-header">Confirm Delete</div>
+                <div class="dialog-body">
+                    Are you sure you want to delete the trip with ID
+                    {{ tripToDelete.id }}?
+                </div>
+                <div class="dialog-footer">
+                    <button @click="deleteConfirmedTrip" class="confirm-btn">
+                        Yes
+                    </button>
+                    <button @click="closeDeleteConfirmModal" class="cancel-btn">
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -472,7 +490,7 @@ export default {
             showTripStatusModal: false,
             tripStatusData: [],
             showDeleteConfirmModal: false,
-            tripToDelete: null, // Holds the trip selected for deletion
+            tripToDelete: null,
         };
     },
     mounted() {
@@ -681,7 +699,6 @@ export default {
             this.showDeleteConfirmModal = false;
             this.tripToDelete = null;
         },
-
         deleteConfirmedTrip() {
             if (this.tripToDelete && this.tripToDelete.id) {
                 this.DeleteTrip(this.tripToDelete.id);
@@ -690,7 +707,6 @@ export default {
             }
             this.closeDeleteConfirmModal();
         },
-
         DeleteTrip(id) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -726,6 +742,7 @@ export default {
                     console.error(error);
                 });
         },
+
         fetchTripDetails(tripId) {
             const access_token = window.localStorage.getItem("access_token");
 
@@ -927,7 +944,73 @@ h1 {
 h2 {
     font-size: 1.4rem;
 }
+/* Modal Styling delete*/
+.dialog-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
 
+.dialog-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 50%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.dialog-header,
+.dialog-body,
+.dialog-footer {
+    margin-bottom: 10px;
+}
+
+.dialog-header {
+    font-size: 1.3rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.confirm-btn {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background-color: #4cae4c;
+}
+
+.cancel-btn {
+    padding: 8px 16px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.cancel-btn:hover {
+    background-color: #c9302c;
+}
 .recent_orders {
     width: 100%;
     overflow-x: auto;
