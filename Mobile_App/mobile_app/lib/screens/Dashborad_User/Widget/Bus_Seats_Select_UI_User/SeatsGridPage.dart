@@ -30,7 +30,7 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
         Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     providerSpecificBusTrip.getSeatOfBusTrip(
-        providerSpecificBusTrip.tripid, authProvider.accessToken);
+        providerSpecificBusTrip.busId, authProvider.accessToken);
   }
 
   @override

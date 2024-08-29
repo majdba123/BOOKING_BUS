@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Book_Card_Resvartion_spsecfication.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Pill_Card_spsecfication/Book_Card_Resvartion_spsecfication.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 

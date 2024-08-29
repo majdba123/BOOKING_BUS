@@ -146,6 +146,8 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                     provider.setToTime(busTrip.toTime);
                     provider.setDuration(busTrip.tripDuration);
                     provider.setDistance(busTrip.Distance);
+                    provider.setBusid(busTrip.busId);
+
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => SeatsGridPage(),

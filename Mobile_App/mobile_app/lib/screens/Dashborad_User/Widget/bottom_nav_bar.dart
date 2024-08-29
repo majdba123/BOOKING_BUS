@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Api_Services/User/Private_trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Main_Ui_private_Trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Private_trip_user.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Profile_User.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
 
 class BottomNavBar extends StatelessWidget {
   @override

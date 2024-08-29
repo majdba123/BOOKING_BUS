@@ -4,45 +4,62 @@
             <div class="recent_orders">
                 <h1>Charge Balance Padding</h1>
                 <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>User ID</th>
-                                <th>Image</th>
-                                <th>Point</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(item, index) in items" :key="index">
-                                <td>{{ item.user_id }}</td>
-                                <td>
-                                    <img
-                                        :src="item.image"
-                                        alt="Image"
-                                        class="item-image"
-                                    />
-                                </td>
-                                <td>{{ item.point }}</td>
-                                <td>{{ item.status }}</td>
-                                <td>
-                                    <button
-                                        class="nav-btnd accept-btn"
-                                        @click="acceptOrder(item.user_id)"
+                    <div v-if="loading" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div v-else>
+                        <div v-if="!items.length > 0" class="no-data-message">
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Image</th>
+                                        <th>Point</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(item, index) in items"
+                                        :key="index"
                                     >
-                                        Accept
-                                    </button>
-                                    <button
-                                        class="nav-btnd cancel-btn"
-                                        @click="cancelOrder(item.user_id)"
-                                    >
-                                        Cancel
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                        <td>{{ item.user_id }}</td>
+                                        <td>
+                                            <img
+                                                :src="item.image"
+                                                alt="Image"
+                                                class="item-image"
+                                            />
+                                        </td>
+                                        <td>{{ item.point }}</td>
+                                        <td>{{ item.status }}</td>
+                                        <td>
+                                            <button
+                                                class="nav-btnd accept-btn"
+                                                @click="
+                                                    acceptOrder(item.user_id)
+                                                "
+                                            >
+                                                Accept
+                                            </button>
+                                            <button
+                                                class="nav-btnd cancel-btn"
+                                                @click="
+                                                    cancelOrder(item.user_id)
+                                                "
+                                            >
+                                                Cancel
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -77,6 +94,8 @@ export default {
     name: "ChargeBalanceComponent",
     data() {
         return {
+            loading: true,
+
             items: [],
             showItemModal: false,
             selectedItem: {},
@@ -94,11 +113,13 @@ export default {
                 .then((response) => {
                     this.items = response.data;
                     toast.success("Data fetched successfully");
+                    this.loading = false;
                 })
                 .catch((error) => {
                     toast.error("Error fetching data");
                     console.error(error);
                 });
+            this.loading = true;
         },
         acceptOrder(userId) {
             const toast = useToast();
@@ -219,11 +240,40 @@ export default {
         background-position: 0% 50%;
     }
 }
-
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
 .nav-btnd:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transition: 0.3s ease;
+}
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
+.table-container {
+    width: 100%;
+    overflow-x: auto;
 }
 
 .recent_orders {
@@ -232,21 +282,80 @@ export default {
     margin-top: 20px;
 }
 
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-}
-
 .recent_orders table {
     background-color: #fff;
     width: 100%;
-    border-radius: 1rem;
+    border-radius: 10px;
     padding: 1rem;
     text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
-    max-width: none;
+    box-shadow: var(--box-shadow);
+    color: var(--clr-dark);
     font-size: 0.85rem;
+    border-collapse: collapse;
+}
+.recent_orders tbody tr:hover {
+    background-color: #f1f1f1;
+}
+@media (max-width: 1200px) {
+    .recent_orders table {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .recent_orders table,
+    .recent_orders thead,
+    .recent_orders tbody,
+    .recent_orders th,
+    .recent_orders td,
+    .recent_orders tr {
+        display: block;
+    }
+
+    .recent_orders thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .recent_orders tr {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .recent_orders td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+
+    .recent_orders td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+        color: var(--clr-primary);
+    }
+}
+
+.recent_orders td {
+    text-align: center;
+}
+.recent_orders thead {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
+
+.recent_orders th,
+.recent_orders td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
 }
 
 table thead tr th {
@@ -281,7 +390,6 @@ table tbody tr:last-child td {
     object-fit: cover;
     border-radius: 5px;
 }
-
 .modal {
     display: flex;
     justify-content: center;
@@ -294,44 +402,95 @@ table tbody tr:last-child td {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
     background: #fff;
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    margin-bottom: 15px;
 }
 
 .modal-header {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
 }
 
-.modal-body img {
-    margin-top: 10px;
-    max-width: 100%;
-    border-radius: 10px;
+.modal-body div div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-body div table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body div th,
+.modal-body div td {
+    padding: 12px;
+    text-align: left;
+}
+
+.modal-body div th {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
+
+.modal-body div td {
+    border-bottom: 1px solid #ddd;
+}
+
+.profile-image {
+    max-width: 100px;
+    border-radius: 50%;
 }
 
 .modal-footer {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
 }
 
 .close-modal {
-    padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    padding: 10px 20px;
+    background-color: var(--clr-danger);
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
-    margin: 10px;
-    transition: all 0.1s ease;
+    transition: background-color 0.3s;
 }
 
 .close-modal:hover {
     background-color: #c9302c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        height: auto;
+    }
+
+    .modal-body {
+        flex-direction: column;
+    }
+
+    .profile-image {
+        max-width: 80px;
+    }
 }
 </style>

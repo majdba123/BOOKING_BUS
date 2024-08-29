@@ -4,33 +4,46 @@
             <div class="recent_orders">
                 <h1>Inquiries</h1>
                 <div class="navd">
-                    <button @click="fetchData('pending')" class="nav-btnd">
+                    <button @click="fetchData('pending')" class="nav-btnddd">
                         Pending
                     </button>
-                    <button @click="fetchData('completed')" class="nav-btnd">
+                    <button @click="fetchData('completed')" class="nav-btnddd">
                         Completed
                     </button>
                 </div>
                 <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>User ID</th>
-                                <th>Email</th>
-                                <th>Question</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(item, index) in items" :key="index">
-                                <td>{{ item.user_name }}</td>
-                                <td>{{ item.email_user }}</td>
-                                <td>{{ item.question }}</td>
+                    <div v-if="loading" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div v-else>
+                        <div v-if="!items.length > 0" class="no-data-message">
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Email</th>
+                                        <th>Question</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(item, index) in items"
+                                        :key="index"
+                                    >
+                                        <td>{{ item.user_name }}</td>
+                                        <td>{{ item.email_user }}</td>
+                                        <td>{{ item.question }}</td>
 
-                                <td>{{ item.status }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                        <td>{{ item.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,11 +52,13 @@
                 <div class="modal-header">Inquiry Details</div>
                 <div class="modal-body">
                     <p>
-                        <strong>User Name:</strong> {{ selectedItem.user_id }}
+                        <strong>User Name:</strong>
+                        {{ selectedItem.user_id }}
                     </p>
                     <p><strong>Email:</strong> {{ selectedItem.email }}</p>
                     <p>
-                        <strong>Question:</strong> {{ selectedItem.question }}
+                        <strong>Question:</strong>
+                        {{ selectedItem.question }}
                     </p>
                     <p><strong>Status:</strong> {{ selectedItem.status }}</p>
                 </div>
@@ -68,6 +83,7 @@ export default {
             items: [],
             showItemModal: false,
             selectedItem: {},
+            loading: true,
         };
     },
     methods: {
@@ -88,12 +104,13 @@ export default {
                 .then((response) => {
                     console.log(response.data);
                     this.items = response.data;
-                    toast.success("Data fetched successfully");
+                    this.loading = false;
                 })
                 .catch((error) => {
                     toast.error("Error fetching data");
                     console.error(error);
                 });
+            this.loading = true;
         },
 
         viewItem(item) {
@@ -136,18 +153,27 @@ export default {
     flex-direction: column;
     align-items: center;
 }
+.navd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
+    background-color: var(--clr-white);
+    border-radius: 5px;
+    width: 100%;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 .navd {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
-    background-color: #fff;
+    background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
 }
-
 .nav-btnd {
     padding: 10px 20px;
     margin: 10px;
@@ -185,24 +211,135 @@ export default {
     overflow-x: auto;
     margin-top: 20px;
 }
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
 
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
 .table-container {
     width: 100%;
     overflow-x: auto;
 }
+.nav-btnddd:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+.nav-btnddd {
+    padding: 10px 20px;
+    margin: 0 10px; /* مسافة صغيرة بين الأزرار */
+    border: none;
+    border-radius: 5px; /* تقليل نصف القطر */
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+    flex-grow: 1;
+    text-align: center;
+}
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* Adjust as needed */
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
+.recent_orders th,
+.recent_orders td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+@media (max-width: 1200px) {
+    .recent_orders table {
+        font-size: 0.75rem;
+    }
+}
+@media (max-width: 768px) {
+    .recent_orders table,
+    .recent_orders thead,
+    .recent_orders tbody,
+    .recent_orders th,
+    .recent_orders td,
+    .recent_orders tr {
+        display: block;
+    }
 
+    .recent_orders thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .recent_orders tr {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .recent_orders td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+
+    .recent_orders td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+        color: var(--clr-primary);
+    }
+}
+.recent_orders tbody tr:hover {
+    background-color: #f1f1f1;
+}
+.recent_orders td {
+    text-align: center;
+}
+.recent_orders thead {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
 .recent_orders table {
     background-color: #fff;
     width: 100%;
-    border-radius: 1rem;
+    border-radius: var(--border-radius-2);
     padding: 1rem;
     text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
-    max-width: none;
+    box-shadow: var(--box-shadow);
+    color: var(--clr-dark);
     font-size: 0.85rem;
+    border-collapse: collapse; /* Ensure borders are collapsed */
 }
 
+.recent_orders {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
 table thead tr th {
     padding: 10px;
     font-size: 0.9rem;
@@ -248,19 +385,46 @@ table tbody tr:last-child td {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
     background: #fff;
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
 }
 
 .modal-header {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
+}
+.modal-body th {
+    background-color: var(--clr-primary);
+    color: #fff;
+}
+
+.modal-body td {
+    border-bottom: 1px solid #ddd;
+}
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        height: auto;
+    }
+
+    .modal-body {
+        flex-direction: column;
+    }
+
+    .profile-image {
+        max-width: 80px;
+    }
 }
 
 .modal-body img {
@@ -268,7 +432,20 @@ table tbody tr:last-child td {
     max-width: 100%;
     border-radius: 10px;
 }
-
+.modal-body th,
+.modal-body td {
+    padding: 12px;
+    text-align: left;
+}
+.modal-header,
+.modal-body,
+.modal-footer {
+    margin-bottom: 15px;
+}
+.modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
 .modal-footer {
     display: flex;
     justify-content: center;

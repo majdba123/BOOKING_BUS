@@ -1,21 +1,27 @@
 class UserInfomodel {
+  final int id;
   final String name;
   final String email;
   final String points;
-  var profile;
+  var profile_image;
+  final String phoneNumber;
 
-  UserInfomodel(
-      {required this.name,
-      required this.email,
-      required this.points,
-      required this.profile});
+  UserInfomodel({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.points,
+    required this.profile_image,
+    required this.phoneNumber,
+  });
 
   factory UserInfomodel.fromJson(Map<String, dynamic> json) {
     return UserInfomodel(
-      name: json['name'],
-      email: json['email'],
-      points: json['point'],
-      profile: json['profile'],
-    );
+        id: json['id'],
+        name: json['name'],
+        email: json['email'],
+        points: json['point'],
+        profile_image: json['profile_image'],
+        phoneNumber: json['phoneNumber']);
   }
 }

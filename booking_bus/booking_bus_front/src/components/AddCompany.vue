@@ -53,72 +53,84 @@
         <div v-else class="recent_orders">
             <h1>All Company</h1>
             <div class="table-container">
-                <div v-if="!filteredCompany.length > 0" class="no-data-message">
-                    No Data Available
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
                 </div>
                 <div v-else>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name Company</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Driver</th>
-                                <th>Bus</th>
-                                <th>Trip</th>
-                                <th>Reservation</th>
+                    <div
+                        v-if="!filteredCompany.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name Company</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Driver</th>
+                                    <th>Bus</th>
+                                    <th>Trip</th>
+                                    <th>Reservation</th>
 
-                                <th>Created At</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(user, index) in filteredCompany"
-                                :key="index"
-                            >
-                                <td>{{ user.id }}</td>
-                                <td>{{ user.name_company }}</td>
-                                <td>{{ user.user.email }}</td>
-                                <td>{{ user.user.profile?.phone }}</td>
-                                <td>
-                                    <button
-                                        class="nav-btnd btn-primary"
-                                        @click="openDriverStatusModal(user.id)"
-                                    >
-                                        Driver
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        class="nav-btnd btn-success"
-                                        @click="openBusModal(user.id)"
-                                    >
-                                        Bus
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        class="nav-btnd btn-warning"
-                                        @click="
-                                            openTripModal(user.name_company)
-                                        "
-                                    >
-                                        Trip
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        class="nav-btnd btn-info"
-                                        @click="openReservationModal(user.id)"
-                                    >
-                                        Reservation
-                                    </button>
-                                </td>
-                                <td>{{ user.created_at }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    <th>Created At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(user, index) in filteredCompany"
+                                    :key="index"
+                                >
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.name_company }}</td>
+                                    <td>{{ user.user.email }}</td>
+                                    <td>{{ user.user.profile?.phone }}</td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-primary"
+                                            @click="
+                                                openDriverStatusModal(user.id)
+                                            "
+                                        >
+                                            Driver
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-success"
+                                            @click="openBusModal(user.id)"
+                                        >
+                                            Bus
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-warning"
+                                            @click="
+                                                openTripModal(user.name_company)
+                                            "
+                                        >
+                                            Trip
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-info"
+                                            @click="
+                                                openReservationModal(user.id)
+                                            "
+                                        >
+                                            Reservation
+                                        </button>
+                                    </td>
+                                    <td>{{ user.created_at }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -148,34 +160,41 @@
                     >
                         Completed
                     </button>
-                    <div
-                        v-if="!driverStatusData.length > 0"
-                        class="no-data-message"
-                    >
-                        No Data Available
+                    <div v-if="loading1" class="spinner-container">
+                        <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="(driver, index) in driverStatusData"
-                                    :key="index"
-                                >
-                                    <td>{{ driver.id }}</td>
-                                    <td>{{ driver.user.name }}</td>
-                                    <td>{{ driver.user.email }}</td>
-                                    <td>{{ driver.status }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div
+                            v-if="!driverStatusData.length > 0"
+                            class="no-data-message"
+                        >
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(
+                                            driver, index
+                                        ) in driverStatusData"
+                                        :key="index"
+                                    >
+                                        <td>{{ driver.id }}</td>
+                                        <td>{{ driver.user.name }}</td>
+                                        <td>{{ driver.user.email }}</td>
+                                        <td>{{ driver.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -189,31 +208,36 @@
             <div class="modal-content">
                 <div class="modal-header">All Bus</div>
                 <div class="modal-body">
-                    <div v-if="!BusData.length > 0" class="no-data-message">
-                        No Data Available
+                    <div v-if="loading2" class="spinner-container">
+                        <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Number Bus</th>
-                                    <th>Number Passenger</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="(Bus, index) in BusData"
-                                    :key="index"
-                                >
-                                    <td>{{ Bus.id }}</td>
-                                    <td>{{ Bus.number_bus }}</td>
-                                    <td>{{ Bus.number_passenger }}</td>
-                                    <td>{{ Bus.status }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div v-if="!BusData.length > 0" class="no-data-message">
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Number Bus</th>
+                                        <th>Number Passenger</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(Bus, index) in BusData"
+                                        :key="index"
+                                    >
+                                        <td>{{ Bus.id }}</td>
+                                        <td>{{ Bus.number_bus }}</td>
+                                        <td>{{ Bus.number_passenger }}</td>
+                                        <td>{{ Bus.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -227,39 +251,49 @@
             <div class="modal-content">
                 <div class="modal-header">Trip</div>
                 <div class="modal-body">
-                    <div v-if="!Trips.length > 0" class="no-data-message">
-                        No Data Available
+                    <div v-if="loading3" class="spinner-container">
+                        <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>From</th>
-                                    <th>To</th>
-                                    <th>Price</th>
-                                    <th>Bus</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(Trip, index) in Trips" :key="index">
-                                    <td>{{ Trip.trip_id }}</td>
-                                    <td>{{ Trip.from }}</td>
-                                    <td>{{ Trip.to }}</td>
-                                    <td>{{ Trip.price }}</td>
-                                    <td>
-                                        <button
-                                            class="nav-btnd"
-                                            @click="
-                                                openBusTripModal(Trip.trip_id)
-                                            "
-                                        >
-                                            Bus
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div v-if="!Trips.length > 0" class="no-data-message">
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Price</th>
+                                        <th>Bus</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(Trip, index) in Trips"
+                                        :key="index"
+                                    >
+                                        <td>{{ Trip.trip_id }}</td>
+                                        <td>{{ Trip.from }}</td>
+                                        <td>{{ Trip.to }}</td>
+                                        <td>{{ Trip.price }}</td>
+                                        <td>
+                                            <button
+                                                class="nav-btnd"
+                                                @click="
+                                                    openBusTripModal(
+                                                        Trip.trip_id
+                                                    )
+                                                "
+                                            >
+                                                Bus
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -291,58 +325,63 @@
                     >
                         Completed
                     </button>
-                    <div
-                        v-if="!ReversationStatusData.length > 0"
-                        class="no-data-message"
-                    >
-                        No Data Available
+                    <div v-if="loading4" class="spinner-container">
+                        <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Price</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>User Name</th>
-                                    <th>Break</th>
-                                    <th>From</th>
-                                    <th>To</th>
-                                    <th>Seats</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="(
-                                        Trip, index
-                                    ) in ReversationStatusData"
-                                    :key="index"
-                                >
-                                    <td>{{ Trip.id }}</td>
-                                    <td>{{ Trip.price }}</td>
-                                    <td>{{ Trip.type }}</td>
-                                    <td>{{ Trip.status }}</td>
-                                    <td>{{ Trip.user_name }}</td>
-                                    <td>{{ Trip.break }}</td>
-                                    <td>{{ Trip.from }}</td>
-                                    <td>{{ Trip.to }}</td>
+                        <div
+                            v-if="!ReversationStatusData.length > 0"
+                            class="no-data-message"
+                        >
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Price</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>User Name</th>
+                                        <th>Break</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Seats</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(
+                                            Trip, index
+                                        ) in ReversationStatusData"
+                                        :key="index"
+                                    >
+                                        <td>{{ Trip.id }}</td>
+                                        <td>{{ Trip.price }}</td>
+                                        <td>{{ Trip.type }}</td>
+                                        <td>{{ Trip.status }}</td>
+                                        <td>{{ Trip.user_name }}</td>
+                                        <td>{{ Trip.break }}</td>
+                                        <td>{{ Trip.from }}</td>
+                                        <td>{{ Trip.to }}</td>
 
-                                    <td>
-                                        <button
-                                            class="nav-btnd"
-                                            @click="
-                                                openReservationSeatModal(
-                                                    Trip.id
-                                                )
-                                            "
-                                        >
-                                            Seats
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                        <td>
+                                            <button
+                                                class="nav-btnd"
+                                                @click="
+                                                    openReservationSeatModal(
+                                                        Trip.id
+                                                    )
+                                                "
+                                            >
+                                                Seats
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -356,49 +395,54 @@
             <div class="modal-content">
                 <div class="modal-header">All BusTrip</div>
                 <div class="modal-body">
-                    <div v-if="!BusTrip.length > 0" class="no-data-message">
-                        No Data Available
+                    <div v-if="loading5" class="spinner-container">
+                        <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Bus ID</th>
-                                    <th>From Time</th>
-                                    <th>To Time</th>
-                                    <th>Type</th>
-                                    <th>Pivot</th>
-                                    <th>Seats</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="(Bus, index) in BusTrip"
-                                    :key="index"
-                                >
-                                    <td>{{ Bus.bus_id }}</td>
-                                    <td>{{ Bus.from_time }}</td>
-                                    <td>{{ Bus.to_time }}</td>
-                                    <td>{{ Bus.type }}</td>
-                                    <td>
-                                        <button
-                                            class="nav-btnd"
-                                            @click="openPivotModal(index)"
-                                        >
-                                            Pivot
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button
-                                            class="nav-btnd"
-                                            @click="openSeatsModal(index)"
-                                        >
-                                            Seats
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div v-if="!BusTrip.length > 0" class="no-data-message">
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Bus ID</th>
+                                        <th>From Time</th>
+                                        <th>To Time</th>
+                                        <th>Type</th>
+                                        <th>Pivot</th>
+                                        <th>Seats</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(Bus, index) in BusTrip"
+                                        :key="index"
+                                    >
+                                        <td>{{ Bus.bus_id }}</td>
+                                        <td>{{ Bus.from_time }}</td>
+                                        <td>{{ Bus.to_time }}</td>
+                                        <td>{{ Bus.type }}</td>
+                                        <td>
+                                            <button
+                                                class="nav-btnd"
+                                                @click="openPivotModal(index)"
+                                            >
+                                                Pivot
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button
+                                                class="nav-btnd"
+                                                @click="openSeatsModal(index)"
+                                            >
+                                                Seats
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -412,30 +456,35 @@
             <div class="modal-content">
                 <div class="modal-header">All Seats</div>
                 <div class="modal-body">
-                    <div
-                        v-if="!ReservationSeat.length > 0"
-                        class="no-data-message"
-                    >
-                        No Data Available
+                    <div v-if="loading6" class="spinner-container">
+                        <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="(Bus, index) in ReservationSeat"
-                                    :key="index"
-                                >
-                                    <td>{{ Bus.id }}</td>
-                                    <td>{{ Bus.status }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div
+                            v-if="!ReservationSeat.length > 0"
+                            class="no-data-message"
+                        >
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(Bus, index) in ReservationSeat"
+                                        :key="index"
+                                    >
+                                        <td>{{ Bus.id }}</td>
+                                        <td>{{ Bus.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -452,28 +501,36 @@
             <div class="modal-content">
                 <div class="modal-header">All Pivot</div>
                 <div class="modal-body">
-                    <div v-if="!Pivot.length > 0" class="no-data-message">
-                        No Data Available
+                    <div v-if="loading7" class="spinner-container">
+                        <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Break Id</th>
-                                    <th>Government</th>
-                                    <th>Name Break</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(Bus, index) in Pivot" :key="index">
-                                    <td>{{ Bus.break_id }}</td>
-                                    <td>{{ Bus.government }}</td>
-                                    <td>{{ Bus.name_break }}</td>
-                                    <td>{{ Bus.status }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div v-if="!Pivot.length > 0" class="no-data-message">
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Break Id</th>
+                                        <th>Government</th>
+                                        <th>Name Break</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(Bus, index) in Pivot"
+                                        :key="index"
+                                    >
+                                        <td>{{ Bus.break_id }}</td>
+                                        <td>{{ Bus.government }}</td>
+                                        <td>{{ Bus.name_break }}</td>
+                                        <td>{{ Bus.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -487,24 +544,32 @@
             <div class="modal-content">
                 <div class="modal-header">All Seats</div>
                 <div class="modal-body">
-                    <div v-if="!Seats.length > 0" class="no-data-message">
-                        No Data Available
+                    <div v-if="loading8" class="spinner-container">
+                        <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Seat ID</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(Bus, index) in Seats" :key="index">
-                                    <td>{{ Bus.id }}</td>
-                                    <td>{{ Bus.status }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div v-if="!Seats.length > 0" class="no-data-message">
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Seat ID</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(Bus, index) in Seats"
+                                        :key="index"
+                                    >
+                                        <td>{{ Bus.id }}</td>
+                                        <td>{{ Bus.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -526,6 +591,16 @@ export default {
     name: "AddCompany",
     data() {
         return {
+            loading: true,
+            loading4: true,
+            loading5: true,
+            loading6: true,
+            loading7: true,
+            loading8: true,
+            loading1: false,
+            loading2: true,
+            loading3: true,
+
             currentCompanyId: null,
             idd: "",
             showForm: true,
@@ -723,11 +798,13 @@ export default {
                     this.Company = response.data.data;
                     store.state.Company = response.data;
                     console.log(store.state.Company);
+                    this.loading = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting drivers.");
                     console.error(error);
                 });
+            this.loading = true;
         },
         fetchPivot(index, id, company_name) {
             console.log(company_name);
@@ -751,11 +828,13 @@ export default {
                     console.log("Updated filtered data:", filteredData);
 
                     this.updatedData = filteredData;
+                    this.loading7 = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting buses.");
                     console.error(error);
                 });
+            this.loading7 = true;
         },
         fetchBusTrip(id, company_name) {
             console.log(company_name);
@@ -782,11 +861,13 @@ export default {
                     // إذا كنت تريد تحديث مكون آخر أو عرض البيانات في واجهة المستخدم
                     // يمكنك تعيين filteredData إلى متغير آخر أو حالة (state) في Vue
                     this.updatedData = filteredData;
+                    this.loading5 = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting buses.");
                     console.error(error);
                 });
+            this.loading5 = true;
         },
         fetchTrip(company_name) {
             console.log(company_name);
@@ -799,11 +880,13 @@ export default {
                 .then((response) => {
                     this.Trips = response.data;
                     console.log(this.BusData);
+                    this.loading3 = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting buses.");
                     console.error(error);
                 });
+            this.loading3 = true;
         },
         fetchReservationSeat(id, company_name) {
             console.log(company_name);
@@ -817,11 +900,13 @@ export default {
                     // تحقق من وجود response.data[id] ووجود bus_trips
                     this.ReservationSeat = response.data[id - 1].seats;
                     console.log(this.ReservationSeat);
+                    this.loading6 = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting buses.");
                     console.error(error);
                 });
+            this.loading6 = true;
         },
         fetchReservation(company_name) {
             console.log(company_name);
@@ -835,11 +920,13 @@ export default {
                     this.Reservation = response.data;
                     this.ReversationStatusData = response.data;
                     console.log(this.Reservation);
+                    this.loading4 = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting buses.");
                     console.error(error);
                 });
+            this.loading4 = true;
         },
         fetchBus(company_id) {
             console.log(company_id);
@@ -852,11 +939,13 @@ export default {
                 .then((response) => {
                     this.BusData = response.data;
                     console.log(this.BusData);
+                    this.loading2 = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting buses.");
                     console.error(error);
                 });
+            this.loading2 = true;
         },
         AllDriver(company_id) {
             console.log(company_id);
@@ -870,11 +959,13 @@ export default {
                 .then((response) => {
                     this.driverStatusData = response.data;
                     console.log(response.data);
+                    this.loading1 = false;
                 })
                 .catch((error) => {
                     window.alert("Error fetching driver status");
                     console.error(error);
                 });
+            this.loading1 = true;
         },
         fetchReversationStatus(company_id, status) {
             console.log(company_id);
@@ -908,11 +999,13 @@ export default {
                 .then((response) => {
                     this.driverStatusData = response.data;
                     console.log(response.data);
+                    this.loading1 = false;
                 })
                 .catch((error) => {
                     window.alert("Error fetching driver status");
                     console.error(error);
                 });
+            this.loading1 = true;
         },
 
         toggleTheme() {
@@ -1138,7 +1231,21 @@ select:focus {
     height: 20px;
     width: 20px;
 }
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
 
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
 .cancel-btn {
     color: #4caf50;
     background-color: #f1f1f1;

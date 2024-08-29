@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Address_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Add_new_address.dart';
@@ -20,9 +21,22 @@ class AddressListPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text('My Addresses'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        centerTitle: true,
+        backgroundColor: AppColors.primaryColor,
+        title: Text(
+          'My Addresses',
+          style: TextStyle(color: Colors.white, fontSize: 22.0),
+        ),
         actions: [
           IconButton(
+            color: Colors.white,
             icon: Icon(Icons.add),
             onPressed: () {
               showDialog(
