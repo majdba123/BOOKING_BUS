@@ -1,503 +1,217 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
-import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/SeatsGridPage.dart';
 import 'package:provider/provider.dart';
+import 'package:lottie/lottie.dart'; // Import the Lottie package
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
-import 'package:intl/intl.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/route_card.dart';
+import 'package:mobile_app/Colors.dart';
 
-class BusSearchScreen extends StatelessWidget {
-  final Future<void> searchFuture;
+class BusSearchScreen extends StatefulWidget {
+  @override
+  _BusSearchScreenState createState() => _BusSearchScreenState();
+}
 
-  BusSearchScreen({required this.searchFuture});
+class _BusSearchScreenState extends State<BusSearchScreen>
+    with TickerProviderStateMixin {
+  TextEditingController searchController = TextEditingController();
+  String selectedFilter = 'All';
+  List<String> filters = ['All', 'By Company', 'By Price', 'By From', 'By To'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
-      body: Stack(
+      body: Column(
         children: [
-          FutureBuilder<void>(
-            future: searchFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else {
-                return Consumer<TripuserProvider>(
-                  builder: (context, tripProvider, child) {
-                    if (tripProvider.trips.isEmpty) {
-                      return Center(child: Text('No trips found.'));
-                    }
+          // Header with Search and Filter
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primaryColor,
+                  AppColors.primaryColor.withOpacity(0.8),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20.0),
+                bottomRight: Radius.circular(20.0),
+              ),
+            ),
+            padding: EdgeInsets.only(
+                top: 50.0, left: 20.0, right: 20.0, bottom: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'All Trips By path',
+                  style: TextStyle(
+                    fontSize: 28.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10.0),
+                TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search trips...',
+                    hintStyle: TextStyle(color: Colors.white70),
+                    prefixIcon: Icon(Icons.search, color: Colors.white70),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.3),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  style: TextStyle(color: Colors.white),
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                ),
+                SizedBox(height: 10.0),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: filters.map((filter) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: ChoiceChip(
+                          label: Text(filter),
+                          selected: selectedFilter == filter,
+                          onSelected: (selected) {
+                            setState(() {
+                              selectedFilter = filter;
+                            });
+                          },
+                          selectedColor: Colors.white,
+                          backgroundColor: Colors.white,
+                          labelStyle: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Content
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ),
+              child: Consumer<TripuserProvider>(
+                builder: (context, tripProvider, child) {
+                  if (tripProvider.isLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  }
 
-                    return SingleChildScrollView(
+                  // Apply search and filter logic
+                  List filteredTrips = tripProvider.AllTripsItems.where((trip) {
+                    if (selectedFilter == 'By Company') {
+                      return trip.companyName
+                          .toLowerCase()
+                          .contains(searchController.text.toLowerCase());
+                    } else if (selectedFilter == 'By Price') {
+                      return trip.price
+                          .toLowerCase()
+                          .contains(searchController.text.toLowerCase());
+                    } else if (selectedFilter == 'By From') {
+                      return trip.from
+                          .toLowerCase()
+                          .contains(searchController.text.toLowerCase());
+                    } else if (selectedFilter == 'By To') {
+                      return trip.to
+                          .toLowerCase()
+                          .contains(searchController.text.toLowerCase());
+                    } else {
+                      return trip.companyName
+                              .toLowerCase()
+                              .contains(searchController.text.toLowerCase()) ||
+                          trip.price
+                              .toLowerCase()
+                              .contains(searchController.text.toLowerCase()) ||
+                          trip.from
+                              .toLowerCase()
+                              .contains(searchController.text.toLowerCase()) ||
+                          trip.to
+                              .toLowerCase()
+                              .contains(searchController.text.toLowerCase());
+                    }
+                  }).toList();
+
+                  if (filteredTrips.isEmpty) {
+                    return Center(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          FractionallySizedBox(
-                            widthFactor: 1.0,
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * 0.26,
+                          Lottie.asset(
+                            'assets/images/no_result.json', // Use your Lottie file path here
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.fill,
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            'No trips found',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
                               color: AppColors.primaryColor,
-                              padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).padding.top + 23.0,
-                                bottom: 20.0,
-                                left: 16.0,
-                                right: 16.0,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.all(8.0),
-                                    child: IconButton(
-                                      icon: Icon(Icons.arrow_back,
-                                          color: Colors.white),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'FROM',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        'TO',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 16.0),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        tripProvider.trips.first.from,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        ' .......... ',
-                                        style: TextStyle(
-                                            color: Colors.grey, fontSize: 14),
-                                      ),
-                                      Icon(Icons.directions_bus,
-                                          color: Colors.grey),
-                                      Text(
-                                        ' .......... ',
-                                        style: TextStyle(
-                                            color: Colors.grey, fontSize: 18),
-                                      ),
-                                      Text(
-                                        tripProvider.trips.first.to,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Column(
-                              children: tripProvider.trips.expand((trip) {
-                                return trip.busTrips.map((busTrip) {
-                                  return BusCard(
-                                    trip: trip,
-                                    busTrip: busTrip,
-                                    onTap: () {
-                                      Provider.of<TripuserProvider>(context,
-                                              listen: false)
-                                          .selectBus(busTrip);
-
-                                      Provider.of<TripuserProvider>(context,
-                                              listen: false)
-                                          .selectTripType(
-                                              (busTrip.type == 'all')
-                                                  ? 2
-                                                  : (busTrip.type == 'going')
-                                                      ? 1
-                                                      : -1);
-                                      Provider.of<TripuserProvider>(context,
-                                              listen: false)
-                                          .select_from_name(trip.from);
-                                      Provider.of<TripuserProvider>(context,
-                                              listen: false)
-                                          .select_to_name(trip.to);
-                                      Provider.of<TripuserProvider>(context,
-                                              listen: false)
-                                          .select_price_tikect(
-                                              int.parse(trip.price));
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) => SeatsGridPage(
-                                              // companyName: trip.companyId,
-                                              // from: trip.from,
-                                              // to: trip.to,
-                                              // fromTime: busTrip.fromTime,
-                                              // toTime: busTrip.toTime,
-                                              // seats: busTrip.seats,
-                                              )));
-                                    },
-                                  );
-                                }).toList();
-                              }).toList(),
+                          SizedBox(height: 10),
+                          Text(
+                            'Try adjusting your filters or search term.',
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.grey,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
                     );
-                  },
-                );
-              }
-            },
-          ),
-          Positioned(
-            bottom: 20.0,
-            left: MediaQuery.of(context).size.width * 0.1,
-            right: MediaQuery.of(context).size.width * 0.1,
-            child: FilterBar(),
-          ),
-        ],
-      ),
-    );
-  }
-}
+                  }
 
-class FilterBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor,
-        borderRadius: BorderRadius.circular(30.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 6,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          FilterOption(icon: Icons.west_outlined, label: 'one way'),
-          FilterOption(
-              icon: Icons.assignment_return_rounded, label: 'Round Trip'),
-          FilterOption(icon: Icons.money_outlined, label: 'Chpiset'),
-          FilterOption(icon: Icons.star, label: 'fast'),
-          FilterIcon(icon: Icons.filter_list),
-        ],
-      ),
-    );
-  }
-}
-
-class FilterOption extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const FilterOption({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white),
-        SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(color: Colors.white, fontSize: 8),
-        ),
-      ],
-    );
-  }
-}
-
-class FilterIcon extends StatelessWidget {
-  final IconData icon;
-
-  const FilterIcon({required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white),
-        SizedBox(height: 4),
-        Text(
-          'Filter',
-          style: TextStyle(color: Colors.white, fontSize: 12),
-        ),
-      ],
-    );
-  }
-}
-
-class BusCard extends StatelessWidget {
-  final TripByPath trip;
-  final BusTrip busTrip;
-  final VoidCallback onTap;
-
-  BusCard({required this.trip, required this.busTrip, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double cardPadding = constraints.maxWidth * 0.04;
-        double imageWidth = constraints.maxWidth * 0.12;
-        double textFontSize = constraints.maxWidth * 0.045;
-        double smallTextFontSize = constraints.maxWidth * 0.035;
-        double iconSize = constraints.maxWidth * 0.05;
-
-        return Card(
-          margin: EdgeInsets.only(bottom: 16.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          child: InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: EdgeInsets.all(cardPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: imageWidth,
-                        height: imageWidth,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/logo_bus.jpg'),
-                            fit: BoxFit.cover,
+                  return AnimatedList(
+                    key: GlobalKey<AnimatedListState>(),
+                    initialItemCount: filteredTrips.length,
+                    itemBuilder: (context, index, animation) {
+                      final trip = filteredTrips[index];
+                      return SlideTransition(
+                        position: animation.drive(Tween(
+                          begin: Offset(1, 0),
+                          end: Offset(0, 0),
+                        ).chain(CurveTween(curve: Curves.easeInOut))),
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: RouteCard(
+                              imageUrl:
+                                  'https://t3.ftcdn.net/jpg/02/51/59/46/360_F_251594672_c7xertPrElSFJ5eTd6V0CmQE1CyGC6Ke.jpg',
+                              companyName: trip.companyName,
+                              tripId: trip.tripId,
+                              from: trip.from,
+                              to: trip.to,
+                              price: trip.price,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: cardPadding),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(trip.companyId,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: textFontSize)),
-                            SizedBox(height: 4.0),
-                            Text(
-                              'Bus Type: ${busTrip.type}',
-                              style: TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: smallTextFontSize),
-                            ),
-                            SizedBox(height: 4.0),
-                            Text(
-                              'Bus Event: ${busTrip.event}',
-                              style: TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: smallTextFontSize),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 4.0),
-                        decoration: BoxDecoration(
-                          color: Colors.green[100],
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Text('N.Bus :${busTrip.busId}',
-                            style: TextStyle(color: Colors.green)),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: cardPadding),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${busTrip.fromTime} Am',
-                              style: TextStyle(
-                                  fontSize: textFontSize,
-                                  color: AppColors.primaryColor)),
-                          SizedBox(height: 4.0),
-                          Text(trip.from,
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: smallTextFontSize)),
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('${busTrip.duration}hrs',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: smallTextFontSize)),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12.0),
-                            child: Row(
-                              children: [
-                                Text(
-                                  ' ------------ ',
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: smallTextFontSize),
-                                ),
-                                Icon(Icons.directions_bus,
-                                    color: Colors.grey, size: iconSize),
-                                Text(
-                                  ' ------------- ',
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: smallTextFontSize),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${busTrip.toTime} Am',
-                              style: TextStyle(
-                                  fontSize: textFontSize,
-                                  color: AppColors.primaryColor)),
-                          SizedBox(height: 4.0),
-                          Text(trip.to,
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: smallTextFontSize)),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Divider(
-                    height: 32.0,
-                    thickness: 1.5,
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.yellow, size: iconSize),
-                      SizedBox(width: 4.0),
-                      Text('Rating',
-                          style: TextStyle(
-                              color: Colors.grey, fontSize: smallTextFontSize)),
-                      Spacer(),
-                      Row(
-                        children: [
-                          Icon(Icons.person, size: iconSize),
-                          SizedBox(width: 4.0),
-                          Text('${busTrip.seatCount}',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: smallTextFontSize)),
-                        ],
-                      ),
-                      Spacer(),
-                      Text('${trip.price} \$',
-                          style: TextStyle(
-                              fontSize: textFontSize,
-                              fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  SizedBox(height: cardPadding),
-                  Divider(height: 25.0, thickness: 1.5),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Break Places',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: textFontSize)),
-                      ...busTrip.breaks.map((breakPlace) {
-                        String government = breakPlace.government;
-                        if (breakPlace.nameBreak == "start" &&
-                            breakPlace.government == "Nothing") {
-                          government = trip.from;
-                        } else if (breakPlace.nameBreak == "end" &&
-                            breakPlace.government == "Nothing") {
-                          government = trip.to;
-                        }
-                        Color statusColor;
-                        String statusText;
-                        switch (breakPlace.status) {
-                          case "done 1":
-                            statusColor = Colors.yellow;
-                            statusText = "Return Only";
-                            break;
-                          case "done 2":
-                            statusColor = Colors.red;
-                            statusText = "Finish Trip";
-                            break;
-                          default:
-                            statusColor = Colors.green;
-                            statusText = "Pending";
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            children: [
-                              Icon(Icons.place, color: AppColors.primaryColor),
-                              SizedBox(width: 8.0),
-                              Expanded(
-                                child: Text(
-                                    '${breakPlace.nameBreak}, $government',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: smallTextFontSize)),
-                              ),
-                              Text(
-                                statusText,
-                                style: TextStyle(
-                                    color: statusColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: smallTextFontSize),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ],
-                  ),
-                ],
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

@@ -24,6 +24,7 @@ class _MapViewState extends State<MapUI> {
   bool _isLoading = false;
   bool _showAcceptButton = false;
   bool _showDateTimeFields = false;
+  bool _isPlacesVisible = true;
 
   final startAddressController = TextEditingController();
   final destinationAddressController = TextEditingController();
@@ -35,7 +36,7 @@ class _MapViewState extends State<MapUI> {
   String _startAddress = '';
   String _destinationAddress = '';
   String? _placeDistance;
-
+  String? _timeduration;
   Set<Marker> markers = {};
 
   late PolylinePoints polylinePoints;
@@ -212,12 +213,15 @@ class _MapViewState extends State<MapUI> {
       final rows = distanceData['rows'] as List;
       if (rows.isNotEmpty) {
         final elements = rows[0]['elements'] as List;
+
         if (elements.isNotEmpty) {
           final distance =
               elements[0]['distance']['value']; // Distance in meters
+          final duration = elements[0]['duration']['text'];
           final distanceInKm = distance / 1000;
           setState(() {
             _placeDistance = distanceInKm.toStringAsFixed(2);
+            _timeduration = duration;
           });
         }
       }
@@ -247,158 +251,28 @@ class _MapViewState extends State<MapUI> {
     return false;
   }
 
-  double _calculateDistanceInMeters(
-    double startLat,
-    double startLng,
-    double destLat,
-    double destLng,
-  ) {
-    const double earthRadius = 6371000; // Earth's radius in meters
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        // shape: const RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+        // ),
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            var width = MediaQuery.of(context).size.width;
 
-    final double dLat = _toRadians(destLat - startLat);
-    final double dLng = _toRadians(destLng - startLng);
-
-    final double a = sin(dLat / 2) * sin(dLat / 2) +
-        cos(_toRadians(startLat)) *
-            cos(_toRadians(destLat)) *
-            sin(dLng / 2) *
-            sin(dLng / 2);
-
-    final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-    return earthRadius * c;
-  }
-
-  double _toRadians(double degrees) {
-    return degrees * pi / 180.0;
-  }
-
-  var from;
-  var to;
-  _createPolylines(
-    double startLatitude,
-    double startLongitude,
-    double destinationLatitude,
-    double destinationLongitude,
-  ) async {
-    polylinePoints = PolylinePoints();
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey:
-          "AIzaSyAeLUpyozCjrCIxNBNmwVfCERYrHZh3MbU", // Replace with your Google Maps API key
-      request: PolylineRequest(
-        origin: PointLatLng(startLatitude, startLongitude),
-        destination: PointLatLng(destinationLatitude, destinationLongitude),
-        mode: TravelMode.driving,
-      ),
-    );
-    from = PointLatLng(startLatitude, startLongitude);
-    to = PointLatLng(destinationLatitude, destinationLongitude);
-    polylineCoordinates.clear(); // Clear previous polyline coordinates
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-    }
-
-    PolylineId id = PolylineId('poly');
-    Polyline polyline = Polyline(
-      polylineId: id,
-      color: Colors.red,
-      points: polylineCoordinates,
-      width: 3,
-    );
-    setState(() {
-      polylines[id] = polyline;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-
-    return Container(
-      height: height,
-      width: width,
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: Stack(
-          children: <Widget>[
-            // Map View
-            GoogleMap(
-              markers: Set<Marker>.from(markers),
-              initialCameraPosition: _initialLocation,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: false,
-              mapType: MapType.normal,
-              zoomGesturesEnabled: true,
-              zoomControlsEnabled: false,
-              polylines: Set<Polyline>.of(polylines.values),
-              onMapCreated: (GoogleMapController controller) {
-                mapController = controller;
-              },
-            ),
-            // Show zoom buttons
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ClipOval(
-                      child: Material(
-                        color: Colors.blue.shade100, // button color
-                        child: InkWell(
-                          splashColor: Colors.blue, // inkwell color
-                          child: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: Icon(Icons.add),
-                          ),
-                          onTap: () {
-                            mapController.animateCamera(
-                              CameraUpdate.zoomIn(),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    ClipOval(
-                      child: Material(
-                        color: Colors.blue.shade100, // button color
-                        child: InkWell(
-                          splashColor: Colors.blue, // inkwell color
-                          child: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: Icon(Icons.remove),
-                          ),
-                          onTap: () {
-                            mapController.animateCamera(
-                              CameraUpdate.zoomOut(),
-                            );
-                          },
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white70, // The color for the bottom sheet content
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
               ),
-            ),
-            // Show the place input fields & button for showing the route
-            SafeArea(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+              child: SafeArea(
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  height: _isPlacesVisible ? null : 0,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white70,
@@ -412,6 +286,22 @@ class _MapViewState extends State<MapUI> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
+                          ClipOval(
+                            child: Material(
+                              color: Colors.blue.shade100,
+                              child: InkWell(
+                                splashColor: Colors.blue,
+                                child: SizedBox(
+                                  child: Icon(Icons.arrow_downward_rounded),
+                                  width: 50,
+                                  height: 50,
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                          ),
                           Text(
                             'Places',
                             style: TextStyle(fontSize: 20.0),
@@ -458,6 +348,17 @@ class _MapViewState extends State<MapUI> {
                             visible: _placeDistance == null ? false : true,
                             child: Text(
                               'DISTANCE: $_placeDistance km',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Visibility(
+                            visible: _placeDistance == null ? false : true,
+                            child: Text(
+                              'Time: $_timeduration ',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -519,14 +420,15 @@ class _MapViewState extends State<MapUI> {
                               child: Column(
                                 // alignment: Alignment.center,
                                 children: [
-                                  Text(
-                                    'Show Route'.toUpperCase(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20.0,
+                                  if (!_isLoading) // Show the text only if _isLoading is false
+                                    Text(
+                                      'Serach'.toUpperCase(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                      ),
                                     ),
-                                  ),
-                                  if (_isLoading)
+                                  if (_isLoading) // Show the loading spinner if _isLoading is true
                                     CircularProgressIndicator(
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                           AppColors.primaryColor),
@@ -686,7 +588,207 @@ class _MapViewState extends State<MapUI> {
                   ),
                 ),
               ),
+            );
+          });
+        });
+  }
+
+  double _calculateDistanceInMeters(
+    double startLat,
+    double startLng,
+    double destLat,
+    double destLng,
+  ) {
+    const double earthRadius = 6371000; // Earth's radius in meters
+
+    final double dLat = _toRadians(destLat - startLat);
+    final double dLng = _toRadians(destLng - startLng);
+
+    final double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_toRadians(startLat)) *
+            cos(_toRadians(destLat)) *
+            sin(dLng / 2) *
+            sin(dLng / 2);
+
+    final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return earthRadius * c;
+  }
+
+  double _toRadians(double degrees) {
+    return degrees * pi / 180.0;
+  }
+
+  var from;
+  var to;
+  _createPolylines(
+    double startLatitude,
+    double startLongitude,
+    double destinationLatitude,
+    double destinationLongitude,
+  ) async {
+    polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      googleApiKey:
+          "AIzaSyAeLUpyozCjrCIxNBNmwVfCERYrHZh3MbU", // Replace with your Google Maps API key
+      request: PolylineRequest(
+        origin: PointLatLng(startLatitude, startLongitude),
+        destination: PointLatLng(destinationLatitude, destinationLongitude),
+        mode: TravelMode.driving,
+      ),
+    );
+    from = PointLatLng(startLatitude, startLongitude);
+    to = PointLatLng(destinationLatitude, destinationLongitude);
+    polylineCoordinates.clear(); // Clear previous polyline coordinates
+
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+
+    PolylineId id = PolylineId('poly');
+    Polyline polyline = Polyline(
+      polylineId: id,
+      color: Colors.red,
+      points: polylineCoordinates,
+      width: 3,
+    );
+    setState(() {
+      polylines[id] = polyline;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // _getCurrentLocation();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+
+    return Container(
+      height: height,
+      width: width,
+      child: Scaffold(
+        // bottomNavigationBar: BottomNavigationBar(
+        //   items: [
+        //     BottomNavigationBarItem(
+        //       icon: Icon(
+        //           _isPlacesVisible ? Icons.list_outlined : Icons.arrow_upward),
+        //       label: '',
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(
+        //           _isPlacesVisible ? Icons.list_outlined : Icons.arrow_upward),
+        //       label: '',
+        //     ),
+        //   ],
+        //   onTap: (index) {
+        //     _showBottomSheet(context);
+        //   },
+        // ),
+        key: _scaffoldKey,
+        body: Stack(
+          children: <Widget>[
+            // Map View
+            GoogleMap(
+              markers: Set<Marker>.from(markers),
+              initialCameraPosition: _initialLocation,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              mapType: MapType.normal,
+              zoomGesturesEnabled: true,
+              zoomControlsEnabled: false,
+              polylines: Set<Polyline>.of(polylines.values),
+              onMapCreated: (GoogleMapController controller) {
+                mapController = controller;
+              },
             ),
+
+            // Show zoom buttons
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10.0, bottom: 30.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    ClipOval(
+                      child: Material(
+                        color: Colors.blue.shade100,
+                        child: InkWell(
+                          splashColor: Colors.blue,
+                          child: SizedBox(
+                            child: Icon(_isPlacesVisible
+                                ? Icons.list_outlined
+                                : Icons.arrow_upward),
+                            width: 50,
+                            height: 50,
+                          ),
+                          onTap: () {
+                            _showBottomSheet(context);
+                            setState(() {
+                              // _isPlacesVisible = !_isPlacesVisible;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    ClipOval(
+                      child: Material(
+                        color: Colors.blue.shade100, // button color
+                        child: InkWell(
+                          splashColor: Colors.blue, // inkwell color
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Icon(Icons.add),
+                          ),
+                          onTap: () {
+                            mapController.animateCamera(
+                              CameraUpdate.zoomIn(),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    ClipOval(
+                      child: Material(
+                        color: Colors.blue.shade100, // button color
+                        child: InkWell(
+                          splashColor: Colors.blue, // inkwell color
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Icon(Icons.remove),
+                          ),
+                          onTap: () {
+                            mapController.animateCamera(
+                              CameraUpdate.zoomOut(),
+                            );
+                          },
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            // Show the place input fields & button for showing the route
+
+            // SafeArea(
+            //   child: Align(
+            //     alignment: Alignment.topCenter,
+            //     child:
+            //   ),
+            // ),
             // Show current location button
             SafeArea(
               child: Align(

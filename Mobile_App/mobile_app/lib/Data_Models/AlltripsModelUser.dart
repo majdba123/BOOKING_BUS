@@ -1,6 +1,3 @@
-import 'package:flutter/src/material/radio_list_tile.dart';
-import 'package:intl/intl.dart';
-import 'package:mobile_app/Data_Models/BUS_Trip.dart';
 
 class AllTrips {
   final int tripId;

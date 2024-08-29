@@ -71,6 +71,8 @@ dependencies:
   geocoding: ^3.0.0
   flutter_polyline_points: ^2.0.0
   geocode: ^1.0.3
+  tap_debouncer: ^2.2.0
+  ticket_widget: ^1.0.2
 
 
 

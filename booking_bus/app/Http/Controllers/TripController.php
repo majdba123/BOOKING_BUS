@@ -459,52 +459,52 @@ class TripController extends Controller
         $trips = $tripsQuery->get();
         $data = [];
         foreach ($trips as $trip) {
-            $busTrips = $trip->bus_trip;
-            $busTripsData = [];
-            foreach ($busTrips as $busTrip) {
-                $busTripData = [
+            // $busTrips = $trip->bus_trip;
+            // $busTripsData = [];
+            // foreach ($busTrips as $busTrip) {
+            //     $busTripData = [
 
-                    'bus_id' => $busTrip->bus_id,
-                    'from_time' => $busTrip->from_time,
-                    'to_time' => $busTrip->to_time,
-                    'type' => $busTrip->type,
-                    'event' => $busTrip->type,
-                ];
+            //         'bus_id' => $busTrip->bus_id,
+            //         'from_time' => $busTrip->from_time,
+            //         'to_time' => $busTrip->to_time,
+            //         'type' => $busTrip->type,
+            //         'event' => $busTrip->type,
+            //     ];
 
-                $pivotData = $busTrip->Pivoit;
-                $customPivotData = [];
-                foreach ($pivotData as $pivot) {
-                    $customPivotData[] = [
-                        'break_id'  => $pivot->id,
-                        'government'  => $pivot->break_trip->break->area->name,
-                        'name_break' => $pivot->break_trip->break->name,
-                        'status' => $pivot->status,
+            //     $pivotData = $busTrip->Pivoit;
+            //     $customPivotData = [];
+            //     foreach ($pivotData as $pivot) {
+            //         $customPivotData[] = [
+            //             'break_id'  => $pivot->id,
+            //             'government'  => $pivot->break_trip->break->area->name,
+            //             'name_break' => $pivot->break_trip->break->name,
+            //             'status' => $pivot->status,
 
-                    ];
-                }
-                $busTripData['pivot'] = $customPivotData;
+            //         ];
+            //     }
+            //     $busTripData['pivot'] = $customPivotData;
 
-                $seats = $busTrip->bus->seat; // Assuming you have a seats relationship on the bus_trip model
-                $seatsData = [];
-                foreach ($seats as $seat) {
-                    $seatsData[] = [
-                        'id' => $seat->id,
-                        'status' => $seat->status,
-                        // Add any other columns you want to include from the seats table
-                    ];
-                }
-                $busTripData['seats'] = $seatsData;
+            //     $seats = $busTrip->bus->seat; // Assuming you have a seats relationship on the bus_trip model
+            //     $seatsData = [];
+            //     foreach ($seats as $seat) {
+            //         $seatsData[] = [
+            //             'id' => $seat->id,
+            //             'status' => $seat->status,
+            //             // Add any other columns you want to include from the seats table
+            //         ];
+            //     }
+            //     $busTripData['seats'] = $seatsData;
 
-                $busTripsData[] = $busTripData;
-            }
+            //     $busTripsData[] = $busTripData;
+            // }
 
             $data[] = [
                 'trip_id' => $trip->id,
-                'company_id' => $trip->company->user->name,
+                'company_name' => $trip->company->user->name,
                 'from'  => $trip->path->from,
                 'to'  => $trip->path->to,
                 'price' => $trip->price,
-                'bus_trips' => $busTripsData,
+                // 'bus_trips' => $busTripsData,
 
                 // Add any other columns you want to include from the trips table
             ];

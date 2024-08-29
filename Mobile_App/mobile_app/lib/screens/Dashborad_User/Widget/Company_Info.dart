@@ -34,7 +34,18 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Company Info'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        centerTitle: true,
+        title: Text(
+          'Company Info',
+          style: TextStyle(color: Colors.white, fontSize: 22.0),
+        ),
         backgroundColor: AppColors.primaryColor,
       ),
       body: Consumer<CompanyInfoProvider>(
@@ -56,7 +67,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                     aspectRatio: 16 / 9,
                     child: CachedNetworkImage(
                       imageUrl:
-                          'https://alkadmous.com/SD08/msf/1481723158_57034255.jpg',
+                          'https://t3.ftcdn.net/jpg/02/51/59/46/360_F_251594672_c7xertPrElSFJ5eTd6V0CmQE1CyGC6Ke.jpg',
                       placeholder: (context, url) => Center(
                         child: CircularProgressIndicator(),
                       ),

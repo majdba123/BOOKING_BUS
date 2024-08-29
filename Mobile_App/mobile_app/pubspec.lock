@@ -1077,6 +1077,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0+1"
+  tap_debouncer:
+    dependency: "direct main"
+    description:
+      name: tap_debouncer
+      sha256: "9ec465354c1f59c4ce189b9e743161a38a0cb0f694d97db0b109282a5f146e9f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   term_glyph:
     dependency: transitive
     description:
@@ -1101,6 +1109,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  ticket_widget:
+    dependency: "direct main"
+    description:
+      name: ticket_widget
+      sha256: "82cfcd2296ea83b47ec474a2e55c64ac8cdfc3058ec08f079b2d05e598bdf137"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   timeline_tile:
     dependency: "direct main"
     description:
