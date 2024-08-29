@@ -213,10 +213,10 @@
                             </td>
                             <td>
                                 <button
-                                    class="edit-btn"
-                                    @click="editTrip(index, trip.id)"
+                                    class="delete-btn"
+                                    @click="openDeleteConfirmModal(trip)"
                                 >
-                                    <span class="material-icons">edit</span>
+                                    <span class="material-icons">delete</span>
                                 </button>
                             </td>
                         </tr>
@@ -394,6 +394,26 @@
                 </div>
             </div>
         </div>
+        <div v-if="showDeleteConfirmModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Confirm Delete</div>
+                <div class="modal-body">
+                    Are you sure you want to delete the trip with ID
+                    {{ tripToDelete.id }}?
+                </div>
+                <div class="modal-footer">
+                    <button @click="deleteConfirmedTrip" class="update-btn">
+                        Yes
+                    </button>
+                    <button
+                        @click="closeDeleteConfirmModal"
+                        class="close-modal"
+                    >
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -451,6 +471,8 @@ export default {
             toast: useToast(),
             showTripStatusModal: false,
             tripStatusData: [],
+            showDeleteConfirmModal: false,
+            tripToDelete: null, // Holds the trip selected for deletion
         };
     },
     mounted() {
@@ -650,6 +672,25 @@ export default {
                     console.error(error);
                 });
         },
+        openDeleteConfirmModal(trip) {
+            this.tripToDelete = trip;
+            this.showDeleteConfirmModal = true;
+        },
+
+        closeDeleteConfirmModal() {
+            this.showDeleteConfirmModal = false;
+            this.tripToDelete = null;
+        },
+
+        deleteConfirmedTrip() {
+            if (this.tripToDelete && this.tripToDelete.id) {
+                this.DeleteTrip(this.tripToDelete.id);
+            } else {
+                console.error("No trip selected for deletion.");
+            }
+            this.closeDeleteConfirmModal();
+        },
+
         DeleteTrip(id) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
