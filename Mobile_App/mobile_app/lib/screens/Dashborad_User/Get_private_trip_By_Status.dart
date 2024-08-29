@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/user/Accpeted_private_trip_By_company.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Map_in_private_trip/CreatePrivateTrip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Map_in_private_trip/map.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Map_in_private_trip/mapWidget.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
@@ -19,7 +18,7 @@ class PrivateTripByStatus extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (context) => MapView(),
+                  builder: (context) => MapUI(),
                 ),
                 // result: ModalRoute.withName('/mainPageUser'),
               );

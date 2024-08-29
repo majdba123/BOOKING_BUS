@@ -6,22 +6,29 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:mobile_app/colors.dart';
+import 'package:intl/intl.dart';
 
-class MapView extends StatefulWidget {
+class MapUI extends StatefulWidget {
   @override
   _MapViewState createState() => _MapViewState();
 }
 
-class _MapViewState extends State<MapView> {
+class _MapViewState extends State<MapUI> {
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
   late GoogleMapController mapController;
 
   late Position _currentPosition;
   String _currentAddress = '';
+  bool _isLoading = false;
+  bool _showAcceptButton = false;
+  bool _showDateTimeFields = false;
 
   final startAddressController = TextEditingController();
   final destinationAddressController = TextEditingController();
-
+  final _dateController = TextEditingController();
+  final _startTimeController = TextEditingController();
   final startAddressFocusNode = FocusNode();
   final desrinationAddressFocusNode = FocusNode();
 
@@ -109,12 +116,16 @@ class _MapViewState extends State<MapView> {
         startAddressController.text = _currentAddress;
         _startAddress = _currentAddress;
       });
+      print(_currentAddress);
     } catch (e) {
       print(e);
     }
   }
 
   Future<bool> _calculateDistance() async {
+    setState(() {
+      _isLoading = true;
+    });
     final apiKey =
         'AIzaSyAeLUpyozCjrCIxNBNmwVfCERYrHZh3MbU'; // Replace with your Google Maps API key
 
@@ -220,13 +231,18 @@ class _MapViewState extends State<MapView> {
 // Convert to kilometers
         print('DISTANCE: $_placeDistance km');
       });
-
+      setState(() {
+        _isLoading = false;
+      });
       return true;
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
+      setState(() {
+        _isLoading = false;
+      });
     }
     return false;
   }
@@ -257,6 +273,8 @@ class _MapViewState extends State<MapView> {
     return degrees * pi / 180.0;
   }
 
+  var from;
+  var to;
   _createPolylines(
     double startLatitude,
     double startLongitude,
@@ -273,7 +291,8 @@ class _MapViewState extends State<MapView> {
         mode: TravelMode.driving,
       ),
     );
-
+    from = PointLatLng(startLatitude, startLongitude);
+    to = PointLatLng(destinationLatitude, destinationLongitude);
     polylineCoordinates.clear(); // Clear previous polyline coordinates
 
     if (result.points.isNotEmpty) {
@@ -402,13 +421,17 @@ class _MapViewState extends State<MapView> {
                               label: 'Start',
                               hint: 'Choose starting point',
                               prefixIcon: Icon(Icons.looks_one),
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.my_location),
-                                onPressed: () {
-                                  startAddressController.text = _currentAddress;
-                                  _startAddress = _currentAddress;
-                                },
-                              ),
+                              // suffixIcon: IconButton(
+                              //   icon: Icon(Icons.my_location),
+                              //   onPressed: () {
+                              //     // startAddressController.text = _currentAddress;
+                              //     _startAddress = _currentAddress;
+                              //     // print(startAddressController.text);
+                              //     // print(_startAddress);
+                              //     print(_currentPosition.latitude);
+                              //     print(_currentPosition.longitude);
+                              //   },
+                              // ),
                               controller: startAddressController,
                               focusNode: startAddressFocusNode,
                               width: width,
@@ -449,6 +472,7 @@ class _MapViewState extends State<MapView> {
                                     startAddressFocusNode.unfocus();
                                     desrinationAddressFocusNode.unfocus();
                                     setState(() {
+                                      _isLoading = true;
                                       if (markers.isNotEmpty) markers.clear();
                                       if (polylines.isNotEmpty)
                                         polylines.clear();
@@ -458,7 +482,13 @@ class _MapViewState extends State<MapView> {
                                     });
 
                                     _calculateDistance().then((isCalculated) {
+                                      setState(() {
+                                        _isLoading = false;
+                                        _showDateTimeFields = false;
+                                      });
                                       if (isCalculated) {
+                                        _showAcceptButton = true;
+
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(
@@ -478,23 +508,178 @@ class _MapViewState extends State<MapView> {
                                     });
                                   }
                                 : null,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Show Route'.toUpperCase(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
-                                ),
-                              ),
-                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                             ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                // alignment: Alignment.center,
+                                children: [
+                                  Text(
+                                    'Show Route'.toUpperCase(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0,
+                                    ),
+                                  ),
+                                  if (_isLoading)
+                                    CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          AppColors.primaryColor),
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
+                          if (_showAcceptButton) ...[
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _showDateTimeFields = true;
+                                  _showAcceptButton = false;
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Accept'.toUpperCase(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20.0,
+                                  ),
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                            ),
+                          ],
+                          SizedBox(height: 20),
+                          if (_showDateTimeFields) ...[
+                            Container(
+                              width: width * 0.8,
+                              child: GestureDetector(
+                                onTap: () {
+                                  _pickDate(context);
+                                },
+                                child: AbsorbPointer(
+                                  child: TextFormField(
+                                    controller: _dateController,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.calendar_today_outlined,
+                                        color: AppColors.primaryColor,
+                                      ),
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      contentPadding: EdgeInsets.all(15),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0)),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey.shade400,
+                                            width: 2),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0)),
+                                        borderSide: BorderSide(
+                                            color: Colors.blue.shade300,
+                                            width: 2),
+                                      ),
+                                      labelText: 'Date (dd/MM/yyyy)',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a date';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Container(
+                              width: width * 0.8,
+                              child: GestureDetector(
+                                onTap: () {
+                                  _pickStartTime(context);
+                                },
+                                child: AbsorbPointer(
+                                  child: TextFormField(
+                                    controller: _startTimeController,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.access_time_rounded,
+                                        color: AppColors.primaryColor,
+                                      ),
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      contentPadding: EdgeInsets.all(15),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0)),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey.shade400,
+                                            width: 2),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0)),
+                                        borderSide: BorderSide(
+                                            color: Colors.blue.shade300,
+                                            width: 2),
+                                      ),
+                                      labelText: 'Start Time (HH:mm)',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a start time';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                print('sned order message');
+
+                                print(from);
+                                print(to);
+                              },
+                              child: Text(
+                                'Send Order'.toUpperCase(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -530,6 +715,9 @@ class _MapViewState extends State<MapView> {
                               ),
                             ),
                           );
+
+                          print(_currentPosition.latitude);
+                          print(_currentPosition.longitude);
                         },
                       ),
                     ),
@@ -540,6 +728,34 @@ class _MapViewState extends State<MapView> {
           ],
         ),
       ),
+    );
+  }
+
+  void _pickDate(BuildContext context) {
+    DatePicker.showDatePicker(
+      context,
+      showTitleActions: true,
+      onConfirm: (date) {
+        setState(() {
+          _dateController.text = DateFormat('dd/MM/yyyy').format(date);
+        });
+      },
+      currentTime: DateTime.now(),
+      locale: LocaleType.en,
+    );
+  }
+
+  void _pickStartTime(BuildContext context) {
+    DatePicker.showTimePicker(
+      context,
+      showTitleActions: true,
+      onConfirm: (time) {
+        setState(() {
+          _startTimeController.text = DateFormat('HH:mm').format(time);
+        });
+      },
+      currentTime: DateTime.now(),
+      locale: LocaleType.en,
     );
   }
 }
