@@ -376,41 +376,34 @@ class DriverController extends Controller
 
         return response()->json($response);
     }
-    public function start_trip()
-    {
-        DB::beginTransaction();
-        try{
-            $driver = Auth::user()->Driver;
-            $company = $driver->company;
 
-        $bus = Bus_Driver::where('status', 'pending')
+
+   public function start_trip()
+{
+    DB::beginTransaction();
+    try {
+        $driver = Auth::user()->Driver;
+        $bus = Bus_Driver::where('status', 'padding')
             ->where('driver_id', $driver->id)
             ->first();
 
-        $bus_trip = Bus_Trip::where('status', 'pending')
+        $bus_trip = Bus_Trip::where('status', 'padding')
             ->where('bus_id', $bus->bus_id)
             ->first();
 
-        $name_breaks = $bus_trip->Pivoit->where('status', 'pending')->pluck('break_trip.break.name');
+        $name_breaks = $bus_trip->Pivot->where('status', 'padding')->pluck('break_trip.break.name');
 
-            if ($name_breaks->first() === "start") {
-                $bus_trip->event = $name_breaks->first();
-                $bus_trip->save();
-                $pivoit_id=$bus_trip->Pivoit->first();
         if ($name_breaks->first() === "start") {
             $bus_trip->event = $name_breaks->first();
             $bus_trip->save();
-            $pivoit_id = $bus_trip->Pivoit->first();
+            $pivoit_id = $bus_trip->Pivot->first();
 
-                event(new BreakTripEvent($bus_trip , $pivoit_id ));
             event(new BreakTripEvent($bus_trip, $pivoit_id));
 
-                $notification ="your bus_trip $bus_trip->id  is started  ";
-                event(new CompanyNotification($company ,$notification));
             $notification = "your bus_trip $bus_trip->id  is started  ";
-            event(new CompanyNotification($company, $notification));
+            event(new CompanyNotification($bus_trip->company, $notification));
 
-                $reservations = Reservation::where('status', 'padding')
+            $reservations = Reservation::where('status', 'pending')
                 ->where('pivoit_id', $pivoit_id)
                 ->where('type', 1)
                 ->get()
@@ -419,44 +412,24 @@ class DriverController extends Controller
                         'id' => $reservation->id,
                         'user_name' => $reservation->user->name,
                         'price' => $reservation->price,
-                        'bus_trip_id' => $reservation->bus_trip_id,
+                        'bus__trip_id ' => $reservation->bus__trip_id ,
                         'type' => $reservation->type,
-                        'bus_trip_id' => $reservation->bus__trip_id,
                         'status' => $reservation->status,
                         'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
                     ];
                 });
-                DB::commit();
-                return response()->json($reservations);
-            }
+
+            DB::commit();
+            return response()->json($reservations);
+        } else {
             DB::rollBack();
             return response()->json($name_breaks->first());
-        }catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'An error occurred while starting the trip'], 500);
         }
-            $reservations = Reservation::where('status', 'padding')
-                ->where('pivoit_id', $pivoit_id)
-                ->where('type', 1)
-                ->get()
-                ->map(function ($reservation) {
-                    return [
-                        'id' => $reservation->id,
-                        'user_name' => $reservation->user->name,
-                        'price' => $reservation->price,
-                        'bus_trip_id' => $reservation->bus_trip_id,
-                        'type' => $reservation->type,
-                        'bus_trip_id' => $reservation->bus__trip_id,
-                        'status' => $reservation->status,
-                        'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
-                    ];
-                });
-
-            return response()->json($reservations);
-        }
-
-        return response()->json($name_breaks->first());
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['error' => 'An error occurred while starting the trip'], 500);
     }
+}
 
 
     public function finish_breaks($pivoit_id)

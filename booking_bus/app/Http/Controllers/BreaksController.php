@@ -20,8 +20,15 @@ class BreaksController extends Controller
 
         $breaks = Breaks::where('path_id', $path_id)->get();
 
+        $company = auth()->user()->Company; // assuming you have a `company` relationship on the User model
+
+        $breaks = Breaks::where('path_id', $path_id)
+            ->whereHas('path.company', function ($query) use ($company) {
+                $query->where('id', $company->id);
+            })
+            ->get();
         if ($breaks->isEmpty()) {
-            return response()->json(['message' => 'No breaks found for this path.'], 404);
+            return response()->json(['message' => 'you are not owner of this breaks'], 404);
         }
         return response()->json($breaks);
     }
