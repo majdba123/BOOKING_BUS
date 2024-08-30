@@ -22,65 +22,72 @@
         <div v-else class="recent_orders">
             <h1>All Government</h1>
             <div class="table-container">
-                <div
-                    v-if="!filteredGovernment.length > 0"
-                    class="no-data-message"
-                >
-                    No Data Available
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
                 </div>
                 <div v-else>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Breack</th>
-                                <th>ِActions</th>
-                                <th>Display In Map</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(user, index) in filteredGovernment"
-                                :key="index"
-                            >
-                                <td>{{ user.id }}</td>
-                                <td>{{ user.name }}</td>
-                                <td>
-                                    <button
-                                        class="nav-btnd btn-primary"
-                                        @click="openBreackModal(user.id)"
-                                    >
-                                        Breack
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        class="delete-btn"
-                                        @click="DeleteGovernment(user.id)"
-                                    >
-                                        <span class="material-icons"
-                                            >delete</span
+                    <div
+                        v-if="!filteredGovernment.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Breack</th>
+                                    <th>ِActions</th>
+                                    <th>Display In Map</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(user, index) in filteredGovernment"
+                                    :key="index"
+                                >
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-primary"
+                                            @click="openBreackModal(user.id)"
                                         >
-                                    </button>
-                                    <button
-                                        class="edit-btn"
-                                        @click="openEditModal(user, id)"
-                                    >
-                                        <span class="material-icons">edit</span>
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        class="nav-btnd btn-primary"
-                                        @click="openMapModal(user.id)"
-                                    >
-                                        Display
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                            Breack
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="delete-btn"
+                                            @click="DeleteGovernment(user.id)"
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
+                                        </button>
+                                        <button
+                                            class="edit-btn"
+                                            @click="openEditModal(user, id)"
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-primary"
+                                            @click="openMapModal(user.id)"
+                                        >
+                                            Display
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -102,30 +109,37 @@
             <div class="modal-content">
                 <div class="modal-header">Breack</div>
                 <div class="modal-body">
-                    <div
-                        v-if="!GovernmentBreack.length > 0"
-                        class="no-data-message"
-                    >
-                        No Data Available
+                    <div v-if="loading1" class="spinner-container">
+                        <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="(driver, index) in GovernmentBreack"
-                                    :key="index"
-                                >
-                                    <td>{{ driver.id }}</td>
-                                    <td>{{ driver.name }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div
+                            v-if="!GovernmentBreack.length > 0"
+                            class="no-data-message"
+                        >
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(
+                                            driver, index
+                                        ) in GovernmentBreack"
+                                        :key="index"
+                                    >
+                                        <td>{{ driver.id }}</td>
+                                        <td>{{ driver.name }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -140,7 +154,7 @@
         </div>
         <div v-if="showEditModal" class="modal">
             <div class="modal-content">
-                <div class="modal-header">Edit Path</div>
+                <div class="modal-header">Edit Government</div>
                 <div class="modal-body">
                     <UpdateMapGovernment />
                 </div>
@@ -170,6 +184,9 @@ export default {
     name: "AddDriver",
     data() {
         return {
+            loading: true,
+            loading1: true,
+
             showEditModal: false,
             showMapModal: false,
             mapLat: null,
@@ -306,11 +323,13 @@ export default {
                     this.Driver = response.data;
                     store.state.Government = response.data;
                     console.log(response.data);
+                    this.loading = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting government.");
                     console.error(error);
                 });
+            this.loading = true;
         },
         DeleteGovernment(driverId) {
             const access_token = window.localStorage.getItem("access_token");
@@ -339,11 +358,13 @@ export default {
                 .then((response) => {
                     this.GovernmentBreack = response.data.breaks;
                     console.log(response.data);
+                    this.loading1 = false;
                 })
                 .catch((error) => {
                     window.alert("Error fetching Break");
                     console.error(error);
                 });
+            this.loading1 = true;
         },
 
         toggleTheme() {
@@ -488,13 +509,20 @@ h2 {
     width: 100%;
     overflow-x: auto;
 }
-.table-container {
-    width: 100% !important;
-    overflow-x: auto !important;
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
-.table-container {
-    width: 100%;
-    overflow-x: auto;
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
 }
 .recent_orders th,
 .recent_orders td {
@@ -859,7 +887,7 @@ input:focus {
 }
 
 .modal-header,
-.modal-body,
+.modal-body div,
 .modal-footer {
     margin-bottom: 15px;
 }
@@ -872,29 +900,29 @@ input:focus {
     border-bottom: 2px solid var(--clr-primary);
 }
 
-.modal-body div {
+.modal-body div div {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.modal-body table {
+.modal-body div table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.modal-body th,
-.modal-body td {
+.modal-body div th,
+.modal-body div td {
     padding: 12px;
     text-align: left;
 }
 
-.modal-body th {
+.modal-body div th {
     background-color: var(--clr-primary);
     color: #fff;
 }
 
-.modal-body td {
+.modal-body div td {
     border-bottom: 1px solid #ddd;
 }
 
@@ -937,7 +965,7 @@ input:focus {
         height: auto;
     }
 
-    .modal-body {
+    .modal-body div {
         flex-direction: column;
     }
 

@@ -47,14 +47,6 @@
         </router-link>
 
         <router-link
-            to="AllTrip2"
-            @click="selectOption('Trip')"
-            :class="{ active: selectedOption === 'Trip' }"
-        >
-            <span class="material-icons" aria-label="Analytics">route</span>
-            <h3>Trip</h3>
-        </router-link>
-        <router-link
             to="AllChargebalnce"
             @click="selectOption('AllChargebalnce')"
             :class="{ active: selectedOption === 'AllChargebalnce' }"
@@ -64,19 +56,6 @@
             <span class="msg_count">14</span>
         </router-link>
 
-        <router-link to="AllBreak">
-            <span class="material-icons" aria-label="Analytics">pin_drop</span>
-            <h3>Break</h3>
-        </router-link>
-
-        <router-link
-            to="PrivateTrip"
-            @click="selectOption('PrivateTrip')"
-            :class="{ active: selectedOption === 'PrivateTrip' }"
-        >
-            <span class="material-icons" aria-label="Products">commute</span>
-            <h3>Private Trip</h3>
-        </router-link>
         <router-link
             to="AllInquires"
             @click="selectOption('AllInquires')"
@@ -86,32 +65,6 @@
             <h3>Inquires</h3>
         </router-link>
 
-        <router-link
-            to="ProfileCompany"
-            @click="selectOption('Profile')"
-            :class="{ active: selectedOption === 'Profile' }"
-        >
-            <span class="material-icons" aria-label="Products">person</span>
-            <h3>Profile</h3>
-        </router-link>
-        <router-link
-            to="AllReservation"
-            @click="selectOption('Reservation')"
-            :class="{ active: selectedOption === 'Reservation' }"
-        >
-            <span class="material-icons" aria-label="Products">person</span>
-            <h3>Reservation</h3>
-        </router-link>
-        <router-link
-            to="AllPolices"
-            @click="selectOption('AllPolices')"
-            :class="{ active: selectedOption === 'AllPolices' }"
-        >
-            <span class="material-icons" aria-label="Analytics"
-                >description</span
-            >
-            <h3>Polices</h3>
-        </router-link>
         <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">
             <span class="material-icons" aria-label="Logout">logout</span>
             <h3>Logout</h3>

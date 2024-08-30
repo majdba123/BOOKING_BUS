@@ -224,7 +224,7 @@
                             <td>
                                 <button
                                     class="delete-btn"
-                                    @click="DeleteReward(reward.id)"
+                                    @click="confirmDeleteReward(reward.id)"
                                 >
                                     <span class="material-icons">delete</span>
                                 </button>
@@ -240,6 +240,28 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Confirm Delete Reward Modal -->
+            <div v-if="showDeleteConfirmModal" class="dialog-container">
+                <div class="dialog-box">
+                    <div class="dialog-header">Confirm Delete</div>
+                    <div class="dialog-body">
+                        Are you sure you want to delete the reward with ID
+                        {{ rewardToDelete }}?
+                    </div>
+                    <div class="dialog-footer">
+                        <button @click="deleteReward" class="confirm-btn">
+                            Yes
+                        </button>
+                        <button
+                            @click="closeDeleteConfirmModal"
+                            class="cancel-btnd"
+                        >
+                            No
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Modal for adding or editing rewards -->
@@ -366,7 +388,7 @@
                             <td>
                                 <button
                                     class="delete-btn"
-                                    @click="deleteRule(rule.id)"
+                                    @click="openDeleteConfirmModal(rule)"
                                 >
                                     <span class="material-icons">delete</span>
                                 </button>
@@ -382,6 +404,30 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <!-- Confirm Delete Rule Modal -->
+            <div v-if="showDeleteConfirmModal" class="dialog-container">
+                <div class="dialog-box">
+                    <div class="dialog-header">Confirm Delete</div>
+                    <div class="dialog-body">
+                        Are you sure you want to delete the cancellation rule
+                        with ID {{ ruleToDelete.id }}?
+                    </div>
+                    <div class="dialog-footer">
+                        <button
+                            @click="deleteConfirmedRule"
+                            class="confirm-btn"
+                        >
+                            Yes
+                        </button>
+                        <button
+                            @click="closeDeleteConfirmModal"
+                            class="cancel-btnd"
+                        >
+                            No
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Modal for adding or editing rules -->
@@ -486,6 +532,9 @@ export default {
             cancellationRules: [],
             selectedRuleId: null,
             toast: useToast(),
+            showDeleteConfirmModal: false,
+            ruleToDelete: null, // Holds the cancellation rule selected for deletion
+            rewardToDelete: null, // Holds the reward selected for deletion
         };
     },
     methods: {
@@ -507,7 +556,6 @@ export default {
         },
         closeRuleModal() {
             this.showModal = false;
-
             this.ruleHoursBefore = "";
             this.ruleDiscountPercentage = "";
             this.ruleDescription = "";
@@ -610,26 +658,39 @@ export default {
                 });
         },
 
-        DeleteReward(id) {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "delete",
-                url: `http://127.0.0.1:8000/api/company/rewards/${id}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    this.Rewards = this.Rewards.filter(
-                        (rewardItem) => rewardItem.id !== id
-                    );
-                    this.toast.success("Reward Deleted Successfully");
-                    this.AllRewards();
-                })
-                .catch((error) => {
-                    this.toast.error("Error Deleting Reward");
-                    console.error(error);
-                });
+        confirmDeleteReward(id) {
+            this.rewardToDelete = id;
+            this.showDeleteConfirmModal = true;
         },
 
+        // Delete the reward after confirmation
+        deleteReward() {
+            if (this.rewardToDelete) {
+                const access_token =
+                    window.localStorage.getItem("access_token");
+                axios({
+                    method: "delete",
+                    url: `http://127.0.0.1:8000/api/company/rewards/${this.rewardToDelete}`,
+                    headers: { Authorization: `Bearer ${access_token}` },
+                })
+                    .then(() => {
+                        this.Rewards = this.Rewards.filter(
+                            (rewardItem) =>
+                                rewardItem.id !== this.rewardToDelete
+                        );
+                        this.toast.success("Reward Deleted Successfully");
+                        this.AllRewards();
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error Deleting Reward");
+                        console.error(error);
+                    });
+                this.showDeleteConfirmModal = false;
+                this.rewardToDelete = null;
+            } else {
+                console.error("No reward selected for deletion.");
+            }
+        },
         fetchTripsData() {
             console.log("Fetching trips data...");
             const accessToken = window.localStorage.getItem("access_token");
@@ -788,6 +849,25 @@ export default {
                 });
         },
 
+        openDeleteConfirmModal(rule) {
+            this.ruleToDelete = rule;
+            this.showDeleteConfirmModal = true;
+        },
+
+        closeDeleteConfirmModal() {
+            this.showDeleteConfirmModal = false;
+            this.ruleToDelete = null;
+        },
+
+        deleteConfirmedRule() {
+            if (this.ruleToDelete && this.ruleToDelete.id) {
+                this.deleteRule(this.ruleToDelete.id);
+            } else {
+                console.error("No cancellation rule selected for deletion.");
+            }
+            this.closeDeleteConfirmModal();
+        },
+
         deleteRule(id) {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -921,6 +1001,149 @@ body {
     text-align: center;
     margin-bottom: 20px;
     color: var(--clr-dark);
+} /* Modal Styling delete*/
+.dialog-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 50%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.dialog-header,
+.dialog-body,
+.dialog-footer {
+    margin-bottom: 10px;
+}
+
+.dialog-header {
+    font-size: 1.3rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.confirm-btn {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background-color: #4cae4c;
+}
+
+.cancel-btnd {
+    padding: 8px 16px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.cancel-btnd:hover {
+    background-color: #c9302c;
+}
+/* Modal background overlay */
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal content box */
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Modal header style */
+.modal-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Modal body style */
+.modal-body {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* Modal footer style */
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Button styles */
+.update-btn,
+.close-modal {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Style for 'Yes' button */
+.update-btn {
+    background-color: #28a745; /* Green background */
+    color: white;
+}
+
+.update-btn:hover {
+    background-color: #218838; /* Darker green */
+}
+
+/* Style for 'No' button */
+.close-modal {
+    background-color: #dc3545; /* Red background */
+    color: white;
+}
+
+.close-modal:hover {
+    background-color: #c82333; /* Darker red */
 }
 
 /* Content Styles */
