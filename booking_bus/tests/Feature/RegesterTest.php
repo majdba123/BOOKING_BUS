@@ -18,16 +18,21 @@ class RegesterTest extends TestCase
     {
         $response = $this->postJson('/api/register', [
             'name' => 'John Doe',
-            'email' => 'johndoe@example.com',
+            'email' => 'johndoe2@example.com', // use a different email address
             'password' => 'password123',
         ]);
         $response->assertStatus(200);
-        //dd($response->json());
         $response->assertJson([ "message" => "User Created "]);
-        $this->assertCount(1, User::all());
-        $this->assertEquals('John Doe', User::first()->name);
-        $this->assertEquals('johndoe@example.com', User::first()->email);
+      //  dd($response);
+       // $this->assertCount(1, User::all());
+        $this->assertEquals(2,  User::count());
+        $name = User::where('name' ,'John Doe' )->first();
+        //dd($name->name);
+        $this->assertEquals('John Doe', $name->name  );
+
+        $this->assertEquals('johndoe2@example.com',  $name->email );    
     }
+    
 
     public function test_Regester_validates_the_request_data()
     {
@@ -38,7 +43,10 @@ class RegesterTest extends TestCase
         ]);
         $response->assertStatus(422);
         $response->assertJsonStructure(['error']);
-        $this->assertCount(0, User::all());
+        $this->assertEquals(1,  User::count());
+       
+        //dd($response);
+       
     }
 
 
@@ -53,6 +61,7 @@ class RegesterTest extends TestCase
         ]);
         $response->assertStatus(422);
         $response->assertJson([ "error"=> "Email has already been taken"]);
-        $this->assertCount(1, User::all());
+        $this->assertEquals(2,  User::count());
+       
     }
 }

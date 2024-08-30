@@ -189,6 +189,9 @@ class TripTest extends TestCase
         // Create a user with a company
         $user = User::factory()->create();
         $company = Company::factory()->create(['user_id' => $user->id]);
+        $path = Path::factory()->create([
+            "company_id" => $company->id
+        ]);
 
         // Login as the user
         $response = $this->postJson('/api/login', [
@@ -199,6 +202,7 @@ class TripTest extends TestCase
 
         // Create a trip associated with the company
         $trip = Trip::factory()->create([
+            'path_id' => $path->id,
             'company_id' => $company->id,
         ]);
 
