@@ -613,13 +613,11 @@ body {
 
 .recent_orders {
     width: 100%;
-    overflow-x: auto;
     margin-top: 20px;
 }
 
 .table-container {
     width: 100%;
-    overflow-x: auto;
 }
 
 .recent_orders table {
