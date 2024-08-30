@@ -205,41 +205,60 @@
 
             <!-- Table displaying all rewards -->
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Reward ID</th>
-                            <th>Percentage</th>
-                            <th>Reservation Cost</th>
-                            <th>Delete</th>
-                            <th>Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(reward, index) in Rewards" :key="index">
-                            <td>{{ reward.id }}</td>
-                            <td>{{ reward.reward_percentage }}%</td>
-                            <td>{{ reward.Reservation_Costs }}</td>
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Rewards.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Reward ID</th>
+                                    <th>Percentage</th>
+                                    <th>Reservation Cost</th>
+                                    <th>Delete</th>
+                                    <th>Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(reward, index) in Rewards"
+                                    :key="index"
+                                >
+                                    <td>{{ reward.id }}</td>
+                                    <td>{{ reward.reward_percentage }}%</td>
+                                    <td>{{ reward.Reservation_Costs }}</td>
 
-                            <td>
-                                <button
-                                    class="delete-btn"
-                                    @click="DeleteReward(reward.id)"
-                                >
-                                    <span class="material-icons">delete</span>
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="edit-btn"
-                                    @click="editReward(index, reward.id)"
-                                >
-                                    <span class="material-icons">edit</span>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <td>
+                                        <button
+                                            class="delete-btn"
+                                            @click="DeleteReward(reward.id)"
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="edit-btn"
+                                            @click="
+                                                editReward(index, reward.id)
+                                            "
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- Modal for adding or editing rewards -->
@@ -345,43 +364,60 @@
 
             <!-- Table displaying all rules -->
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Hours Before</th>
-                            <th>Discount Percentage</th>
-                            <th>Description</th>
-                            <th>Delete</th>
-                            <th>Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="(rule, index) in cancellationRules"
-                            :key="rule.id"
-                        >
-                            <td>{{ rule.hours_before }}</td>
-                            <td>{{ rule.discount_percentage }}%</td>
-                            <td>{{ rule.description }}</td>
-                            <td>
-                                <button
-                                    class="delete-btn"
-                                    @click="deleteRule(rule.id)"
+                <div v-if="loading1" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div
+                        v-if="!cancellationRules.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Hours Before</th>
+                                    <th>Discount Percentage</th>
+                                    <th>Description</th>
+                                    <th>Delete</th>
+                                    <th>Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(rule, index) in cancellationRules"
+                                    :key="rule.id"
                                 >
-                                    <span class="material-icons">delete</span>
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    class="edit-btn"
-                                    @click="editRule(index, rule.id)"
-                                >
-                                    <span class="material-icons">edit</span>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <td>{{ rule.hours_before }}</td>
+                                    <td>{{ rule.discount_percentage }}%</td>
+                                    <td>{{ rule.description }}</td>
+                                    <td>
+                                        <button
+                                            class="delete-btn"
+                                            @click="deleteRule(rule.id)"
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="edit-btn"
+                                            @click="editRule(index, rule.id)"
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- Modal for adding or editing rules -->
@@ -458,6 +494,9 @@ export default {
     name: "PolicesCancel",
     data() {
         return {
+            loading: true,
+            loading1: true,
+
             searchQuery: "",
             options: [],
             filteredOptions: [],
@@ -522,6 +561,7 @@ export default {
             })
                 .then((response) => {
                     this.Rewards = response.data;
+                    this.loading = false;
                 })
                 .catch((error) => {
                     console.error(
@@ -530,6 +570,7 @@ export default {
                     );
                     this.toast.error("Error Getting Rewards");
                 });
+            this.loading = true;
         },
 
         editReward(index, id) {
@@ -730,11 +771,13 @@ export default {
                 })
                 .then((response) => {
                     this.cancellationRules = response.data;
+                    this.loading1 = false;
                 })
                 .catch((error) => {
                     console.error("Error fetching cancellation rules:", error);
                     this.toast.error("Error fetching cancellation rules");
                 });
+            this.loading1 = true;
         },
 
         addRule() {
@@ -904,6 +947,33 @@ body {
     background: var(--clr-color-background);
 }
 
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
 /* Container Styles */
 .containers {
     padding: 20px;

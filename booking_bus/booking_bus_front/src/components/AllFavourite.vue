@@ -6,28 +6,38 @@
         <!-- Start recent orders -->
         <div class="recent_orders">
             <h1>Users Who Favorited the Company</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Points</th>
-                        <th>Created At</th>
-                        <th>Updated At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="user in users" :key="user.id">
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.name }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.point }}</td>
-                        <td>{{ user.created_at }}</td>
-                        <td>{{ user.updated_at }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div v-if="loading" class="spinner-container">
+                <div class="spinner"></div>
+            </div>
+            <div v-else>
+                <div v-if="!users.length > 0" class="no-data-message">
+                    No Data Available
+                </div>
+                <div v-else>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Points</th>
+                                <th>Created At</th>
+                                <th>Updated At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="user in users" :key="user.id">
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.point }}</td>
+                                <td>{{ user.created_at }}</td>
+                                <td>{{ user.updated_at }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
         <!-- End recent orders -->
     </main>
@@ -41,6 +51,8 @@ export default {
     name: "MainCompany",
     data() {
         return {
+            loading: true,
+
             users: [],
         };
     },
@@ -54,10 +66,12 @@ export default {
             })
                 .then((response) => {
                     this.users = response.data;
+                    this.loading = false;
                 })
                 .catch((error) => {
                     console.error("Error fetching users:", error);
                 });
+            this.loading = true;
         },
     },
     mounted() {
@@ -244,7 +258,32 @@ main .insights {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.6rem;
 }
-
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
 main .insights > div {
     background-color: #fff;
     padding: 1.8rem;

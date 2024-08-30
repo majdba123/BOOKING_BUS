@@ -60,62 +60,86 @@
         <div v-else class="recent_orders">
             <h1>All Drivers</h1>
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Select Driver To Bus</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="(user, index) in filteredDrivers"
-                            :key="index"
-                        >
-                            <td>{{ user.driver_id }}</td>
-                            <td>{{ user.name }}</td>
-                            <td>{{ user.email_driver }}</td>
-                            <td>{{ user.status }}</td>
-                            <td>
-                                <select
-                                    :value="user.selectedBusId || ''"
-                                    @change="
-                                        SelectDriver($event, user.driver_id)
-                                    "
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div
+                        v-if="!filteredDrivers.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Select Driver To Bus</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(user, index) in filteredDrivers"
+                                    :key="index"
                                 >
-                                    <option value="">Select a bus</option>
-                                    <option
-                                        v-for="(bus, index) in Bus"
-                                        :key="index"
-                                        :value="bus.id"
-                                    >
-                                        {{ bus.number_bus }}
-                                    </option>
-                                </select>
-                            </td>
-                            <td>
-                                <button
-                                    class="delete-btn"
-                                    @click="DeleteDriver(user.driver_id)"
-                                >
-                                    <span class="material-icons">delete</span>
-                                </button>
-                                <button
-                                    class="cancel-btn"
-                                    @click="CancelDriver(user.driver_id)"
-                                >
-                                    <span class="material-icons"
-                                        >close_small</span
-                                    >
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <td>{{ user.driver_id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email_driver }}</td>
+                                    <td>{{ user.status }}</td>
+                                    <td>
+                                        <select
+                                            :value="user.selectedBusId || ''"
+                                            @change="
+                                                SelectDriver(
+                                                    $event,
+                                                    user.driver_id
+                                                )
+                                            "
+                                        >
+                                            <option value="">
+                                                Select a bus
+                                            </option>
+                                            <option
+                                                v-for="(bus, index) in Bus"
+                                                :key="index"
+                                                :value="bus.id"
+                                            >
+                                                {{ bus.number_bus }}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="delete-btn"
+                                            @click="
+                                                DeleteDriver(user.driver_id)
+                                            "
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
+                                        </button>
+                                        <button
+                                            class="cancel-btn"
+                                            @click="
+                                                CancelDriver(user.driver_id)
+                                            "
+                                        >
+                                            <span class="material-icons"
+                                                >close_small</span
+                                            >
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -141,27 +165,39 @@
                     >
                         Completed
                     </button>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(driver, index) in driverStatusData"
-                                :key="index"
-                            >
-                                <td>{{ driver.driver_id }}</td>
-                                <td>{{ driver.name }}</td>
-                                <td>{{ driver.email_driver }}</td>
-                                <td>{{ driver.status }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="loading1" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div v-else>
+                        <div v-if="!driverStatusData" class="no-data-message">
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(
+                                            driver, index
+                                        ) in driverStatusData"
+                                        :key="index"
+                                    >
+                                        <td>{{ driver.driver_id }}</td>
+                                        <td>{{ driver.name }}</td>
+                                        <td>{{ driver.email_driver }}</td>
+                                        <td>{{ driver.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button @click="closeDriverStatusModal" class="close-modal">
@@ -175,29 +211,41 @@
             <div class="modal-content">
                 <div class="modal-header">All Drivers with Bus</div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Bus ID</th>
-                                <th>Company Name</th>
-                                <th>Bus Plate Number</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(driver, index) in driverWithBusData"
-                                :key="index"
-                            >
-                                <td>{{ driver.id }}</td>
-                                <td>{{ driver.driver_name }}</td>
-                                <td>{{ driver.bus_id }}</td>
-                                <td>{{ driver.company_name }}</td>
-                                <td>{{ driver.bus_plate_number }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="loading2" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div v-else>
+                        <div v-if="!driverWithBusData" class="no-data-message">
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Bus ID</th>
+                                        <th>Company Name</th>
+                                        <th>Bus Plate Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(
+                                            driver, index
+                                        ) in driverWithBusData"
+                                        :key="index"
+                                    >
+                                        <td>{{ driver.id }}</td>
+                                        <td>{{ driver.driver_name }}</td>
+                                        <td>{{ driver.bus_id }}</td>
+                                        <td>{{ driver.company_name }}</td>
+                                        <td>{{ driver.bus_plate_number }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button
@@ -221,6 +269,10 @@ export default {
     name: "AddDriver",
     data() {
         return {
+            loading: true,
+            loading1: false,
+            loading2: true,
+
             showForm: true,
             Driver: [],
             Bus: [],
@@ -307,11 +359,13 @@ export default {
                     this.Driver = response.data;
                     store.state.Driver = response.data;
                     console.log(response.data);
+                    this.loading = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting drivers.");
                     console.error(error);
                 });
+            this.loading = true;
         },
 
         DeleteDriver(driverId) {
@@ -379,13 +433,17 @@ export default {
                 .then((response) => {
                     this.driverStatusData = response.data;
                     console.log(response.data);
+                    this.loading1 = false;
                 })
                 .catch((error) => {
                     window.alert("Error fetching driver status");
                     console.error(error);
                 });
+            this.loading1 = true;
         },
         fetchAllDriverWithBus() {
+            this.showDriverWithBusModal = true;
+
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
@@ -395,12 +453,13 @@ export default {
                 .then((response) => {
                     this.driverWithBusData = response.data;
                     console.log(this.driverWithBusData);
-                    this.showDriverWithBusModal = true;
+                    this.loading2 = false;
                 })
                 .catch((error) => {
                     window.alert("Error fetching drivers with bus.");
                     console.error(error);
                 });
+            this.loading2 = true;
         },
         toggleTheme() {
             this.isDarkMode = !this.isDarkMode;
@@ -491,6 +550,18 @@ body {
     font-size: 0.88rem;
     user-select: none;
     background: var(--clr-color-background);
+}
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
 }
 
 .recent_orders h1 {
@@ -600,6 +671,21 @@ select:focus {
     width: 29px;
     padding: 2px;
     margin: 5px;
+}
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
 }
 .cancel-btn:hover {
     color: #fff;
