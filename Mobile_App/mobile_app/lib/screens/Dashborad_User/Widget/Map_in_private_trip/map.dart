@@ -128,7 +128,7 @@ class _MapViewState extends State<MapUI> {
       _isLoading = true;
     });
     final apiKey =
-        'AIzaSyAeLUpyozCjrCIxNBNmwVfCERYrHZh3MbU'; // Replace with your Google Maps API key
+        'AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo'; // Replace with your Google Maps API key
 
     try {
       if (_startAddress.isEmpty || _destinationAddress.isEmpty) {
@@ -263,7 +263,7 @@ class _MapViewState extends State<MapUI> {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
             var width = MediaQuery.of(context).size.width;
-
+            var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white70, // The color for the bottom sheet content
@@ -286,27 +286,45 @@ class _MapViewState extends State<MapUI> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          ClipOval(
-                            child: Material(
-                              color: Colors.blue.shade100,
-                              child: InkWell(
-                                splashColor: Colors.blue,
-                                child: SizedBox(
-                                  child: Icon(Icons.arrow_downward_rounded),
-                                  width: 50,
-                                  height: 50,
-                                ),
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
+                          Padding(
+                            padding:
+                                EdgeInsets.fromLTRB(150.0, 20.0, 150.0, 20.0),
+                            child: InkWell(
+                              child: Container(
+                                height: 8.0,
+                                width: 80.0,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.all(
+                                        const Radius.circular(8.0))),
                               ),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
                             ),
                           ),
-                          Text(
-                            'Places',
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                          SizedBox(height: 10),
+                          // ClipOval(
+                          //   child: Material(
+                          //     color: Colors.blue.shade100,
+                          //     child: InkWell(
+                          //       splashColor: Colors.blue,
+                          //       child: SizedBox(
+                          //         child: Icon(Icons.arrow_downward_rounded),
+                          //         width: 50,
+                          //         height: 50,
+                          //       ),
+                          //       onTap: () {
+                          //         Navigator.of(context).pop();
+                          //       },
+                          //     ),
+                          //   ),
+                          // ),
+
+                          // Text(
+                          //   'Places',
+                          //   style: TextStyle(fontSize: 20.0),
+                          // ),
+                          // SizedBox(height: 10),
                           _textField(
                               label: 'Start',
                               hint: 'Choose starting point',
@@ -629,8 +647,7 @@ class _MapViewState extends State<MapUI> {
   ) async {
     polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey:
-          "AIzaSyAeLUpyozCjrCIxNBNmwVfCERYrHZh3MbU", // Replace with your Google Maps API key
+      googleApiKey: "AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo",
       request: PolylineRequest(
         origin: PointLatLng(startLatitude, startLongitude),
         destination: PointLatLng(destinationLatitude, destinationLongitude),
@@ -639,7 +656,7 @@ class _MapViewState extends State<MapUI> {
     );
     from = PointLatLng(startLatitude, startLongitude);
     to = PointLatLng(destinationLatitude, destinationLongitude);
-    polylineCoordinates.clear(); // Clear previous polyline coordinates
+    polylineCoordinates.clear();
 
     if (result.points.isNotEmpty) {
       result.points.forEach((PointLatLng point) {
