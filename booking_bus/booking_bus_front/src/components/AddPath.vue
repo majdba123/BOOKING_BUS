@@ -88,7 +88,9 @@
                                         </button>
                                         <button
                                             class="delete-btn"
-                                            @click="DeletePath(path.id)"
+                                            @click="
+                                                openDeleteConfirmModal(path)
+                                            "
                                         >
                                             <span class="material-icons"
                                                 >delete</span
@@ -137,6 +139,25 @@
                 </div>
             </div>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div v-if="showDeleteConfirmModal" class="dialog-container">
+            <div class="dialog-box">
+                <div class="dialog-header">Confirm Delete</div>
+                <div class="dialog-body">
+                    Are you sure you want to delete path from
+                    {{ pathToDelete.from }} to {{ pathToDelete.to }}?
+                </div>
+                <div class="dialog-footer">
+                    <button @click="deleteConfirmedPath" class="confirm-btn">
+                        Yes
+                    </button>
+                    <button @click="closeDeleteConfirmModal" class="cancel-btn">
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -161,6 +182,8 @@ export default {
             editedPath: { from: "", to: "" },
             editingIndex: null,
             toast: useToast(),
+            showDeleteConfirmModal: false,
+            pathToDelete: {},
         };
     },
     mounted() {
@@ -241,7 +264,15 @@ export default {
                 });
             this.loading = true;
         },
-        DeletePath(id) {
+        openDeleteConfirmModal(path) {
+            this.pathToDelete = path;
+            this.showDeleteConfirmModal = true;
+        },
+        closeDeleteConfirmModal() {
+            this.showDeleteConfirmModal = false;
+        },
+        deleteConfirmedPath() {
+            const id = this.pathToDelete.id;
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "delete",
@@ -274,6 +305,9 @@ export default {
                         draggablePercent: 0.6,
                     });
                     console.error(error);
+                })
+                .finally(() => {
+                    this.closeDeleteConfirmModal();
                 });
         },
         openEditModal(path, index) {
@@ -285,12 +319,11 @@ export default {
             this.showEditModal = false;
         },
         updatePath() {
+            const id = this.editedPath.id;
             const access_token = window.localStorage.getItem("access_token");
-            const pathId = this.editedPath.id;
             axios({
                 method: "put",
-                url: `http://127.0.0.1:8000/api/company/path_update/${pathId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
+                url: `http://127.0.0.1:8000/api/company/path_update/${id}`,
                 data: {
                     from: this.editedPath.from,
                     to: this.editedPath.to,
@@ -300,12 +333,10 @@ export default {
                     long_to: store.state.endLng,
                     Distance: store.state.distance,
                 },
+                headers: { Authorization: `Bearer ${access_token}` },
             })
-                .then((response) => {
-                    this.Paths.splice(this.editingIndex, 1, this.editedPath);
-                    this.editingIndex = null;
-                    this.editedPath = { from: "", to: "" };
-                    console.log(response);
+                .then(() => {
+                    this.Paths[this.editingIndex] = { ...this.editedPath };
                     this.toast.success("Path Updated Successfully", {
                         transition: "Vue-Toastification__bounce",
                         hideProgressBar: true,
@@ -315,8 +346,7 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    this.showEditModal = false;
-                    this.AllPaths;
+                    this.AllPaths();
                 })
                 .catch((error) => {
                     this.toast.error("Error Updating Path", {
@@ -329,21 +359,15 @@ export default {
                         draggablePercent: 0.6,
                     });
                     console.error(error);
+                })
+                .finally(() => {
+                    this.closeEditModal();
                 });
         },
     },
     computed: {
         filteredPaths() {
-            return store.state.Paths.filter((path) => {
-                return (
-                    path.from
-                        .toLowerCase()
-                        .includes(store.state.searchQuery.toLowerCase()) ||
-                    path.to
-                        .toLowerCase()
-                        .includes(store.state.searchQuery.toLowerCase())
-                );
-            });
+            return this.Paths;
         },
     },
 };
@@ -673,19 +697,75 @@ input:focus {
     border-radius: 20px;
 }
 
-@media screen and (max-width: 1200px) {
-    .form-map-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .form-containerd,
-    .map-container {
-        width: 100%;
-        margin-top: 20px;
-    }
+/* Modal Styling delete*/
+.dialog-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
 }
 
+.dialog-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 50%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.dialog-header,
+.dialog-body,
+.dialog-footer {
+    margin-bottom: 10px;
+}
+
+.dialog-header {
+    font-size: 1.3rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.confirm-btn {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background-color: #4cae4c;
+}
+
+.cancel-btn {
+    padding: 8px 16px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.cancel-btn:hover {
+    background-color: #c9302c;
+}
+
+/* Modal Styling */
 /* Edit Modal Styling */
 .modal {
     display: flex;
@@ -753,5 +833,17 @@ input:focus {
 }
 .update-btn:hover {
     background-color: #489248;
+}
+@media screen and (max-width: 1200px) {
+    .form-map-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-containerd,
+    .map-container {
+        width: 100%;
+        margin-top: 20px;
+    }
 }
 </style>

@@ -69,8 +69,7 @@
                                 <th>Government Name</th>
                                 <th>Break Name</th>
                                 <th>Display IN Map</th>
-
-                                <th>ِActions</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,7 +77,6 @@
                                 <td>{{ breack.id }}</td>
                                 <td>{{ breack.area_name }}</td>
                                 <td>{{ breack.break_name }}</td>
-
                                 <td>
                                     <button
                                         class="nav-btnd"
@@ -102,7 +100,7 @@
                                     </button>
                                     <button
                                         class="delete-btn"
-                                        @click="DeleteBreak(breack.id)"
+                                        @click="confirmDelete(breack.id)"
                                     >
                                         <span class="material-icons"
                                             >delete</span
@@ -143,19 +141,41 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div v-if="showMapModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">Location on Map</div>
-            <div class="modal-body">
-                <div class="map-containers">
-                    <DisplayMap :lat="mapLat" :lng="mapLng" />
+        <div v-if="showMapModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Location on Map</div>
+                <div class="modal-body">
+                    <div class="map-containers">
+                        <DisplayMap :lat="mapLat" :lng="mapLng" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeMapModal" class="close-modal">
+                        Close
+                    </button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button @click="closeMapModal" class="close-modal">
-                    Close
-                </button>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div v-if="showConfirmDeleteModal" class="dialog-container">
+            <div class="dialog-box">
+                <div class="dialog-header">Confirm Delete</div>
+                <div class="dialog-body">
+                    Are you sure you want to delete driver with ID
+                    {{ breakIdToDelete }}?
+                </div>
+                <div class="dialog-footer">
+                    <button @click="deleteBreak" class="confirm-btn">
+                        Yes
+                    </button>
+                    <button
+                        @click="closeConfirmDeleteModal"
+                        class="close-modal"
+                    >
+                        No
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -166,6 +186,7 @@ import axios from "axios";
 import MapBreack from "./MapBreack.vue";
 import store from "@/store";
 import DisplayMap from "./DisplayMap.vue";
+import { useToast } from "vue-toastification";
 
 export default {
     name: "AddBreak",
@@ -173,15 +194,17 @@ export default {
     data() {
         return {
             showMapModal: false,
+            showEditModal: false,
+            showConfirmDeleteModal: false,
             areaid: "",
+            breakIdToDelete: null,
 
             name: "",
             mapLat: 30.033333, // Default latitude for Cairo, Egypt
-            mapLng: 31.233334, // Defau
+            mapLng: 31.233334, // Default longitude for Cairo, Egypt
             Idgovernment: "",
             name_break: "",
             showForm: true,
-            showEditModal: false,
             break: {
                 name: "",
                 government: "",
@@ -197,7 +220,36 @@ export default {
             editingIndex: null,
         };
     },
+    setup() {
+        const toast = useToast();
+        return { toast };
+    },
     methods: {
+        confirmDelete(id) {
+            this.breakIdToDelete = id;
+            this.showConfirmDeleteModal = true;
+        },
+        deleteBreak() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "delete",
+                url: `http://127.0.0.1:8000/api/admin/delete_breaks/${this.breakIdToDelete}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then(() => {
+                    this.toast.success("Deleted Complete");
+                    this.fetchBreaks();
+                    this.closeConfirmDeleteModal();
+                })
+                .catch((error) => {
+                    this.toast.error("Error deleting Break");
+                    console.error(error);
+                });
+        },
+        closeConfirmDeleteModal() {
+            this.showConfirmDeleteModal = false;
+            this.breakIdToDelete = null;
+        },
         openMapModal(id) {
             const government = this.breaks.find((breack) => breack.id === id);
             if (government) {
@@ -221,7 +273,7 @@ export default {
                     this.governments = response.data;
                 })
                 .catch((error) => {
-                    window.alert("Error getting Government");
+                    this.toast.error("Error getting Government");
                     console.error(error);
                 });
         },
@@ -237,7 +289,7 @@ export default {
                     console.log(this.breaks);
                 })
                 .catch((error) => {
-                    window.alert("Error getting Breaks");
+                    this.toast.error("Error getting Breaks");
                     console.error(error);
                 });
         },
@@ -246,92 +298,70 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url:
-                    "http://127.0.0.1:8000/api/admin/store_breaks/" +
-                    this.Idgovernment,
-                data: {
-                    name: this.name,
-                    lat: store.state.breacklat, // استخدام القيمة المخزنة في Vuex Store
-                    long: store.state.breacklong, // استخدام القيم
-                },
+                url: "http://127.0.0.1:8000/api/admin/add_break",
                 headers: { Authorization: `Bearer ${access_token}` },
+                data: {
+                    break_name: this.name,
+                    area_id: this.Idgovernment,
+                    lat: this.mapLat,
+                    lng: this.mapLng,
+                },
             })
                 .then(() => {
-                    window.alert("Complete ADD");
+                    this.toast.success("Added Complete");
                     this.fetchBreaks();
                     this.resetForm();
                 })
                 .catch((error) => {
-                    window.alert("ERROR ADD");
+                    this.toast.error("Error adding Break");
                     console.error(error);
                 });
         },
-        updateMapLocation() {
-            const selectedGov = this.governments.find(
-                (gov) => gov.id === this.Idgovernment
-            );
-            if (selectedGov) {
-                console.log(selectedGov);
-                this.mapLat = selectedGov.latitude;
-                this.mapLng = selectedGov.longitude;
-                console.log(selectedGov.latitude);
-            }
-        },
-        openEditModal(areaid, index, x) {
-            this.areaid = areaid;
-            this.editingIndex = index;
+        openEditModal(id, index, breakName) {
             this.showEditModal = true;
-            this.name_break = x;
+            this.editingIndex = index;
+            this.name = breakName;
+            this.areaid = id;
+            this.fetchBreaks();
         },
         updateBreak() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "put",
-                url:
-                    "http://127.0.0.1:8000/api/admin/update_breaks/" +
-                    this.areaid +
-                    "?name=" +
-                    this.name_break,
-                data: {
-                    name: this.name,
-                    lat: store.state.breacklat, // استخدام القيمة المخزنة في Vuex Store
-                    long: store.state.breacklong, // استخدام القيم
-                },
+                url: `http://127.0.0.1:8000/api/admin/update_breaks/${this.areaid}`,
                 headers: { Authorization: `Bearer ${access_token}` },
+                data: {
+                    break_name: this.name,
+                    area_id: this.Idgovernment,
+                },
             })
                 .then(() => {
-                    window.alert("Updated Complete");
+                    this.toast.success("Updated Complete");
                     this.fetchBreaks();
                     this.closeEditModal();
                 })
                 .catch((error) => {
-                    window.alert("Error updating Break");
+                    this.toast.error("Error updating Break");
                     console.error(error);
                 });
         },
         closeEditModal() {
             this.showEditModal = false;
-            this.editedBreak = { name: "", government: "", description: "" };
+        },
+        updateMapLocation() {
+            const selectedGovernment = this.governments.find(
+                (gov) => gov.id === this.Idgovernment
+            );
+            if (selectedGovernment) {
+                this.mapLat = selectedGovernment.latitude;
+                this.mapLng = selectedGovernment.longitude;
+            }
         },
         resetForm() {
-            this.break = { name: "", government: "", description: "" };
-        },
-
-        DeleteBreak(breakId) {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "delete",
-                url: `http://127.0.0.1:8000/api/admin/delete_breaks/${breakId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Deleted Complete");
-                    this.fetchBreaks();
-                })
-                .catch((error) => {
-                    window.alert("Error deleting Break");
-                    console.error(error);
-                });
+            this.name = "";
+            this.Idgovernment = "";
+            this.mapLat = 30.033333;
+            this.mapLng = 31.233334;
         },
     },
     mounted() {
@@ -614,6 +644,7 @@ table tbody tr:last-child td {
     background-color: #f1f1f1;
     border-radius: 9px;
     padding: 3px;
+    margin: 10px;
 }
 .edit-btn:hover {
     color: #fff;
@@ -631,7 +662,82 @@ table tbody tr:last-child td {
     color: #fff;
     background-color: #f44336;
 }
+.dialog-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
 
+.dialog-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 50%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.dialog-header,
+.dialog-body,
+.dialog-footer {
+    margin-bottom: 10px;
+}
+
+.dialog-header {
+    font-size: 1.3rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.confirm-btn {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.confirm-btn:hover {
+    background-color: #4cae4c;
+}
+
+.cancel-btn {
+    padding: 8px 16px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.cancel-btn:hover {
+    background-color: #c9302c;
+}
+.close-modal {
+    padding: 8px 16px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
 /* ***Modal styling */
 .modal {
     display: flex;

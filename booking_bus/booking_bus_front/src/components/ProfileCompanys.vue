@@ -48,18 +48,31 @@
                             v-model="company.phone"
                         />
                     </div>
-                    <div class="form-group">
+                    <div class="form-group image-upload">
                         <label for="logo">Company Logo</label>
-                        <input
-                            type="file"
-                            id="logo"
-                            @change="handleLogoUpload"
-                            accept="image/*"
-                        />
+                        <div class="image-upload-container">
+                            <input
+                                type="file"
+                                id="logo"
+                                @change="handleLogoUpload"
+                                accept="image/*"
+                            />
+                            <img
+                                v-if="company.logoURL"
+                                :src="company.logoURL"
+                                alt="Company Logo"
+                            />
+                        </div>
                     </div>
                     <div class="submit-btn">
-                        <button type="submit">Save Profile</button>
-                        <button type="button" @click="modifyCompanyInfo">
+                        <button v-if="!isDataFilled" type="submit">
+                            Save Profile
+                        </button>
+                        <button
+                            v-if="isDataFilled"
+                            type="button"
+                            @click="modifyCompanyInfo"
+                        >
                             Update Profile
                         </button>
                     </div>
@@ -84,7 +97,9 @@ export default {
                 area: "",
                 phone: "",
                 logo: null,
+                logoURL: null,
             },
+            isDataFilled: false,
         };
     },
     mounted() {
@@ -101,9 +116,9 @@ export default {
                 .then((response) => {
                     this.company.name = response.data.name;
                     this.company.email = response.data.email;
-                    this.company.phone = response.data.phone;
-                    // Assuming the logo URL is included in the response
-                    this.company.logo = response.data.logo;
+                    this.company.phone = response.data.phoneNumber;
+                    this.company.logoURL = response.data.profile_image;
+                    this.checkDataFilled();
                 })
                 .catch((error) => {
                     console.error(
@@ -111,6 +126,15 @@ export default {
                         error
                     );
                 });
+        },
+        checkDataFilled() {
+            this.isDataFilled = [
+                this.company.name,
+                this.company.email,
+                this.company.city,
+                this.company.area,
+                this.company.phone,
+            ].every((value) => value !== "" && value !== null);
         },
         fetchCompanyAddress() {
             const access_token = window.localStorage.getItem("access_token");
@@ -120,10 +144,10 @@ export default {
                 })
                 .then((response) => {
                     if (response.data.length > 0) {
-                        // Assuming the response contains an array of addresses
-                        const address = response.data[0]; // Get the first address
+                        const address = response.data[0];
                         this.company.city = address.city;
                         this.company.area = address.area;
+                        this.checkDataFilled();
                     }
                 })
                 .catch((error) => {
@@ -134,6 +158,11 @@ export default {
                 });
         },
         storeCompanyInfo() {
+            if (!this.isDataFilled) {
+                alert("Please fill in all the required fields.");
+                return;
+            }
+
             const formData = this.createFormData();
             const access_token = window.localStorage.getItem("access_token");
             const toast = useToast();
@@ -191,11 +220,15 @@ export default {
                 });
         },
         modifyCompanyInfo() {
+            if (!this.isDataFilled) {
+                alert("Please fill in all the required fields.");
+                return;
+            }
+
             const formData = this.createFormData();
             const access_token = window.localStorage.getItem("access_token");
             const toast = useToast();
 
-            // Update address separately
             axios
                 .put(
                     `http://127.0.0.1:8000/api/company/update_address/1?city=${this.company.city}&area=${this.company.area}`,
@@ -252,6 +285,13 @@ export default {
         },
         handleLogoUpload(event) {
             this.company.logo = event.target.files[0];
+
+            const file = event.target.files[0];
+            if (file) {
+                this.company.logoURL = URL.createObjectURL(file);
+            }
+
+            this.checkDataFilled();
         },
         createFormData() {
             const formData = new FormData();
@@ -259,15 +299,19 @@ export default {
             formData.append("email", this.company.email);
             formData.append("phone", this.company.phone);
             if (this.company.logo) {
-                formData.append("image", this.company.logo); // Ensure the key name is 'image'
+                formData.append("image", this.company.logo);
             }
 
-            console.log([...formData]); // Print formData content to console for debugging
+            console.log([...formData]);
             return formData;
         },
     },
 };
 </script>
+
+<style scoped>
+/* Add your styles here */
+</style>
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
@@ -343,6 +387,35 @@ label {
     margin-bottom: 5px;
     font-weight: 500;
     color: #363949;
+}
+
+.image-upload {
+    display: flex;
+    align-items: center;
+}
+
+.image-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.image-upload-container input[type="file"] {
+    flex-shrink: 0;
+}
+
+.image-upload-container img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.image-upload-container img:hover {
+    transform: scale(1.05);
 }
 
 input,

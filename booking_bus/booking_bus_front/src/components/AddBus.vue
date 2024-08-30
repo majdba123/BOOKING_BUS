@@ -77,9 +77,10 @@
                                                 >edit</span
                                             >
                                         </button>
+
                                         <button
                                             class="delete-btn"
-                                            @click="DeleteBus(bus.id)"
+                                            @click="confirmDeleteBus(bus)"
                                         >
                                             <span class="material-icons"
                                                 >delete</span
@@ -172,7 +173,7 @@
                             :key="seat.seat_id"
                             :class="[
                                 'seat',
-                                seat.occupied ? 'occupied' : '',
+                                seat.status === 2 ? 'occupied' : '',
                                 'seat' + (index + 1),
                             ]"
                         >
@@ -224,6 +225,26 @@
                 </div>
             </div>
         </div>
+        <div v-if="showDeleteConfirmModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Confirm Delete</div>
+                <div class="modal-body">
+                    Are you sure you want to delete bus number
+                    {{ busToDelete.number_bus }}?
+                </div>
+                <div class="modal-footer">
+                    <button @click="deleteConfirmedBus" class="update-btn">
+                        Yes
+                    </button>
+                    <button
+                        @click="closeDeleteConfirmModal"
+                        class="close-modal"
+                    >
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -247,6 +268,8 @@ export default {
             showBusStatusModal: false,
             showSeatsModal: false,
             showEditModal: false,
+            showDeleteConfirmModal: false,
+            busToDelete: null,
             editedBus: {
                 id: "",
                 number_bus: "",
@@ -373,8 +396,25 @@ export default {
             this.editingIndex = index;
             this.showEditModal = true;
         },
+        confirmDeleteBus(bus) {
+            console.log("Bus selected for deletion:", bus);
+            this.busToDelete = bus;
+            this.showDeleteConfirmModal = true;
+        },
+
+        deleteConfirmedBus() {
+            if (this.busToDelete && this.busToDelete.id) {
+                console.log("Deleting bus:", this.busToDelete);
+                this.DeleteBus(this.busToDelete.id);
+            } else {
+                console.error("No bus selected for deletion.");
+            }
+            this.closeDeleteConfirmModal();
+        },
+
         DeleteBus(id) {
             const access_token = window.localStorage.getItem("access_token");
+
             axios({
                 method: "delete",
                 url: `http://127.0.0.1:8000/api/company/delete_bus/${id}`,
@@ -382,12 +422,18 @@ export default {
             })
                 .then(() => {
                     this.Bus = this.Bus.filter((busItem) => busItem.id !== id);
-                    this.toast.success("Bus deleted successfully!");
-                }, this.AllBus())
+                    this.toast.success("Bus delete successfully");
+                    this.AllBus();
+                })
                 .catch((error) => {
-                    this.toast.error("Error deleting bus.");
-                    console.error(error);
+                    console.error("Error during deletion:", error);
+                    this.toast.error("Error delete bus ");
                 });
+        },
+
+        closeDeleteConfirmModal() {
+            this.showDeleteConfirmModal = false;
+            this.busToDelete = null;
         },
         showSeats(busId) {
             const access_token = window.localStorage.getItem("access_token");
@@ -638,11 +684,11 @@ select:focus {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
+    border-radius: 9px;
     background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
     color: white;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
@@ -832,10 +878,10 @@ input:focus {
 /* Seats styling */
 .seats-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 50px 1fr 1fr; /* عمودان للمقاعد، ممر في الوسط، وعمودان للمقاعد */
+    grid-template-columns: 1fr 1fr 50px 1fr 1fr;
     gap: 10px;
     justify-content: center;
-    width: 250px; /* عرض يكفي لتوزيع المقاعد مع الممر */
+    width: 250px;
     height: 300px;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -886,7 +932,6 @@ input:focus {
     background-color: #d9534f;
     color: #fff;
 }
-
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .containerd {

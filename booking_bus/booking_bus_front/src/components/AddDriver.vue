@@ -117,13 +117,16 @@
                                         <button
                                             class="delete-btn"
                                             @click="
-                                                DeleteDriver(user.driver_id)
+                                                showDeleteConfirmation(
+                                                    user.driver_id
+                                                )
                                             "
                                         >
                                             <span class="material-icons"
                                                 >delete</span
                                             >
                                         </button>
+
                                         <button
                                             class="cancel-btn"
                                             @click="
@@ -257,6 +260,27 @@
                 </div>
             </div>
         </div>
+        <!-- Delete Confirmation Modal -->
+        <div v-if="showDeleteConfirmModal" class="dialog-container">
+            <div class="dialog-box">
+                <div class="dialog-header">Confirm Delete</div>
+                <div class="dialog-body">
+                    Are you sure you want to delete driver with ID
+                    {{ driverIdToDelete }}?
+                </div>
+                <div class="dialog-footer">
+                    <button @click="confirmDeleteDriver" class="confirm-btn">
+                        Yes
+                    </button>
+                    <button
+                        @click="closeDeleteConfirmModal"
+                        class="close-modal"
+                    >
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -285,6 +309,8 @@ export default {
             showDriverWithBusModal: false,
             toast: useToast(),
             isDarkMode: false,
+            showDeleteConfirmModal: false,
+            driverIdToDelete: null,
         };
     },
     mounted() {
@@ -305,6 +331,18 @@ export default {
         handleSubmit() {
             console.log("Form Submitted", this.name, this.email, this.password);
         },
+        showDeleteConfirmation(driverId) {
+            this.driverIdToDelete = driverId;
+            this.showDeleteConfirmModal = true;
+        },
+        confirmDeleteDriver() {
+            this.DeleteDriver(this.driverIdToDelete);
+            this.showDeleteConfirmModal = false;
+        },
+        closeDeleteConfirmModal() {
+            this.showDeleteConfirmModal = false;
+        },
+
         CreateDriver() {
             const token = window.localStorage.getItem("access_token");
 
@@ -563,7 +601,82 @@ body {
     border-radius: var(--border-radius-2);
     background-color: #f6f6f9;
 }
+.dialog-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
 
+.dialog-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 50%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.dialog-header,
+.dialog-body,
+.dialog-footer {
+    margin-bottom: 10px;
+}
+
+.dialog-header {
+    font-size: 1.3rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.confirm-btn {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.confirm-btn:hover {
+    background-color: #4cae4c;
+}
+
+.cancel-btn {
+    padding: 8px 16px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.cancel-btn:hover {
+    background-color: #c9302c;
+}
+.close-modal {
+    padding: 8px 16px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
 .recent_orders h1 {
     margin: 18px;
     color: var(--clr-dark);
@@ -571,13 +684,11 @@ body {
 
 .recent_orders {
     width: 100%;
-    overflow-x: auto;
     margin-top: 20px;
 }
 
 .table-container {
     width: 100%;
-    overflow-x: auto;
 }
 
 .recent_orders table {
