@@ -70,6 +70,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
 
 
     Route::get('/all_breaks/{path_id}', [BreaksController::class, 'index']);
+    Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
     Route::post('/store_breaks/{id}', [BreaksController::class, 'store']);
     Route::put('/update_breaks/{id}', [BreaksController::class, 'update']);
     Route::delete('/delete_breaks/{id}', [BreaksController::class, 'destroy']);
@@ -125,7 +126,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
     Route::post('/all_driver_rating_by_driver_id/{driver_id}', [RateDriverController::class, 'rate_driver__by_id']);
 
 
-   /* Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
+    /* Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
 
     Route::get('/all_government', [AreaController::class, 'index']);
     Route::post('/show_goverment/{id}', [AreaController::class, 'show']);*/
@@ -234,7 +235,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum']
 
     //hamza
 
-  //  Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
+    //  Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
 });
 
 
@@ -252,7 +253,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
     Route::post('/cancel_Reservation/{id}', [ReservationController::class, 'cancelReservation']);
-    
+
     Route::post('/rate_trip/{trip_id}', [RateTripsController::class, 'store']);
 
     Route::post('/store_private_trip', [PrivateTripController::class, 'store']);
@@ -285,7 +286,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
     Route::put('/update_address/{address_id}', [AddressController::class, 'update']);
 
 
-   // Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
+    // Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
 
 
     Route::get('/my_info', [ProfileController::class, 'index']);

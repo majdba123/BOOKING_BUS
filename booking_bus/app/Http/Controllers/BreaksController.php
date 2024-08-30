@@ -17,7 +17,7 @@ class BreaksController extends Controller
      */
     public function index($path_id)
     {
-        
+
         $breaks = Breaks::where('path_id', $path_id)->get();
 
         if ($breaks->isEmpty()) {
@@ -29,7 +29,7 @@ class BreaksController extends Controller
 
     public function allbreaks()
     {
-        $company =Auth::user()->Company->id;
+        $company = Auth::user()->Company->id;
         $paths = Path::where('company_id', $company)->get();
         if ($paths->isEmpty()) {
             return response()->json(['message' => 'No paths found for this company.'], 404);
@@ -122,11 +122,11 @@ class BreaksController extends Controller
         if (!$break) {
             return response()->json(['error' => 'Break not found.'], 404);
         }
-
+        // print(Auth::user()->Company->id);
+        // print($break->path->company_id);
         if ($break->path->company_id !== Auth::user()->Company->id) {
 
             return response()->json(['error' => 'You are not authorized to update this break.'], 403);
-    
         }
 
         $validator = Validator::make($request->all(), [
