@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lock;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserApiController;
 use Illuminate\Support\Facades\Auth;
@@ -242,6 +243,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
     Route::post('/cancel_Reservation/{id}', [ReservationController::class, 'cancelReservation']);
+    
     Route::post('/rate_trip/{trip_id}', [RateTripsController::class, 'store']);
 
     Route::post('/store_private_trip', [PrivateTripController::class, 'store']);
