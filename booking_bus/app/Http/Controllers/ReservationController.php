@@ -284,7 +284,7 @@ class ReservationController extends Controller
             ];
 
             return response()->json($responseData);
-        }finally{
+        } finally{
             $lock->release();
         }
     }
