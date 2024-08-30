@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PrivateTripController extends Controller
 {
@@ -34,49 +35,60 @@ class PrivateTripController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'from' => 'required',
-            'to' => 'required',
-            'date' => 'required',
-            'start_time' => 'required',
-            'lat_from' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
-            'long_from' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
-            'lat_to' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
-            'long_to' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
-            'Distance' => 'required|numeric',
-
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors()->first();
-            return response()->json(['error' => $errors], 422);
+        try {
+            DB::beginTransaction();
+    
+            $validator = Validator::make($request->all(), [
+                'from' => 'required',
+                'to' => 'required',
+                'date' => 'required',
+                'start_time' => 'required',
+                'lat_from' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                'long_from' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+                'lat_to' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                'long_to' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+                'Distance' => 'required|numeric',
+            ]);
+    
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return response()->json(['error' => $errors], 422);
+            }
+    
+            $user = Auth::user();
+            $lat_from = $request->input('lat_from');
+            $long_from = $request->input('long_from');
+            $lat_to = $request->input('lat_to');
+            $long_to = $request->input('long_to');
+    
+            $fromLocation = geolocation::create([
+                'latitude' => $lat_from,
+                'longitude' => $long_from
+            ]);
+    
+            $toLocation = geolocation::create([
+                'latitude' => $lat_to,
+                'longitude' => $long_to
+            ]);
+    
+            $private = new Private_trip();
+            $private->user_id = $user->id;
+            $private->from = $request->input('from');
+            $private->to = $request->input('to');
+            $private->from_location = $fromLocation->id;
+            $private->to_location = $toLocation->id;
+            $private->date = $request->input('date');
+            $private->start_time = $request->input('start_time');
+            $private->Distance = $request->input('Distance');
+            $private->save();
+    
+            DB::commit();
+    
+            return response()->json(['message' => 'Private trip created successfully'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to create private trip'], 500);
         }
-        $user = Auth::user();
-        $lat_from = $request->input('lat_from');
-        $long_from =   $request->input('long_from');
-        $lat_to =  $request->input('lat_to');
-        $long_to =    $request->input('long_to');
-        $fromLocation = geolocation::create([
-            'latitude' => $lat_from,
-            'longitude' => $long_from
-        ]);
-
-        $toLocation = geolocation::create([
-            'latitude' => $lat_to,
-            'longitude' => $long_to
-
-        ]);
-        $private = new Private_trip();
-        $private->user_id = $user->id;
-        $private->from = $request->input('from');
-        $private->to = $request->input('to');
-        $private->from_location = $fromLocation->id;
-        $private->to_location = $toLocation->id;
-        $private->date = $request->input('date');
-        $private->start_time = $request->input('start_time');
-        $private->Distance = $request->input('Distance');
-        $private->save();
-
-        return response()->json(['message' => 'Private trip created successfully'], 201);
     }
     /**
      * Display the specified resource.
@@ -99,40 +111,49 @@ class PrivateTripController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $privateTrip = Private_trip::findOrfail($id);
-
-        // Check if the authenticated user is the owner of the private trip
-        if ($privateTrip->user_id !== Auth::user()->id) {
-            return response()->json(['error' => 'You are not authorized to update this private trip'], 403);
+        try {
+            DB::beginTransaction();
+    
+            $privateTrip = Private_trip::findOrfail($id);
+    
+            // Check if the authenticated user is the owner of the private trip
+            if ($privateTrip->user_id !== Auth::user()->id) {
+                return response()->json(['error' => 'You are not authorized to update this private trip'], 403);
+            }
+    
+            $validator = Validator::make($request->all(), [
+                'from' => 'sometimes|required',
+                'to' => 'sometimes|required',
+                'date' => 'sometimes|required',
+                'start_time' => 'sometimes|required',
+            ]);
+    
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return response()->json(['error' => $errors], 422);
+            }
+    
+            if ($request->has('from')) {
+                $privateTrip->from = $request->input('from');
+            }
+            if ($request->has('to')) {
+                $privateTrip->to = $request->input('to');
+            }
+            if ($request->has('date')) {
+                $privateTrip->date = $request->input('date');
+            }
+            if ($request->has('start_time')) {
+                $privateTrip->start_time = $request->input('start_time');
+            }
+    
+            $privateTrip->save();
+    
+            DB::commit();
+            return response()->json($privateTrip);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to update private trip'], 500);
         }
-
-        $validator = Validator::make($request->all(), [
-            'from' => 'sometimes|required',
-            'to' => 'sometimes|required',
-            'date' => 'sometimes|required',
-            'start_time' => 'sometimes|required',
-        ]);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->first();
-            return response()->json(['error' => $errors], 422);
-        }
-
-        if ($request->has('from')) {
-            $privateTrip->from = $request->input('from');
-        }
-        if ($request->has('to')) {
-            $privateTrip->to = $request->input('to');
-        }
-        if ($request->has('date')) {
-            $privateTrip->date = $request->input('date');
-        }
-        if ($request->has('start_time')) {
-            $privateTrip->start_time = $request->input('start_time');
-        }
-
-        $privateTrip->save();
-        return response()->json($privateTrip);
     }
     /**
      * Remove the specified resource from storage.

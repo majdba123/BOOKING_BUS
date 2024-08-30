@@ -11,7 +11,7 @@ class Breaks extends Model
     use HasFactory;
     protected $fillable = [
         'name',
-        'area_id',
+        'path_id',
         'geolocation_id',
     ];
 
@@ -22,9 +22,9 @@ class Breaks extends Model
     {
         return $this->hasMany(Breaks_trip::class);
     }
-    public function area()
+    public function path()
     {
-        return $this->belongsTo(Area::class, 'area_id');
+        return $this->belongsTo(Path::class, 'path_id');
     }
     public function geolocation()
     {

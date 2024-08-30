@@ -98,4 +98,10 @@ class Path extends Model
     {
         return $this->toGeolocation ? $this->toGeolocation->longitude : null;
     }
+
+    public function breaks()
+    {
+        return $this->hasMany(Breaks::class);
+    }
+
 }

@@ -79,7 +79,6 @@ class AdminDashBoardController extends Controller
             $info = [
                 "user_name" => $reservation->user->name,
                 "reservation_id" => $reservation->id,
-                "area_name" => $reservation->pivoit->break_trip->break->area->name,
                 "break_name" => $reservation->pivoit->break_trip->break->name,
                 'pivoit_id' => $reservation->pivoit->id,
                 "reservation_status" => $reservation->status,
@@ -125,7 +124,6 @@ class AdminDashBoardController extends Controller
             $info = [
                 "user_name" => $reservation->user->name,
                 "reservation_id" => $reservation->id,
-                "area_name" => $reservation->pivoit->break_trip->break->area->name,
                 "break_name" => $reservation->pivoit->break_trip->break->name,
                 'pivoit_id' => $reservation->pivoit->id,
                 "reservation_status" => $reservation->status,
@@ -452,7 +450,7 @@ class AdminDashBoardController extends Controller
 
     public function all_trip_of_company($company_id)
     {
-        $trips = Trip::where('company_id', $company_id)->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->get();
+        $trips = Trip::where('company_id', $company_id)->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->get();
         return response()->json($trips);
     }
 
@@ -467,7 +465,7 @@ class AdminDashBoardController extends Controller
         }
         $trips = Trip::where('company_id', $company_id)
             ->where('status', $request->input('status'))
-            ->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->get();
+            ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->get();
         return response()->json($trips);
     }
 
@@ -519,7 +517,6 @@ class AdminDashBoardController extends Controller
                 foreach ($pivotData as $pivot) {
                     $customPivotData[] = [
                         'break_id'  => $pivot->id,
-                        'government'  => $pivot->break_trip->break->area->name,
                         'name_break' => $pivot->break_trip->break->name,
                         'status' => $pivot->status,
 
@@ -599,7 +596,6 @@ class AdminDashBoardController extends Controller
             foreach ($busTrip->Pivoit as $pivot) {
                 $breakData = [
                     'id' => $pivot->id,
-                    'government' => $pivot->break_trip->break->area->name,
                     'name_break' => $pivot->break_trip->break->name,
                     'status' => $pivot->status,
                 ];
@@ -685,7 +681,6 @@ class AdminDashBoardController extends Controller
             foreach ($busTrip->Pivoit as $pivot) {
                 $breakData = [
                     'id' => $pivot->id,
-                    'government' => $pivot->break_trip->break->area->name,
                     'name_break' => $pivot->break_trip->break->name,
                     'status' => $pivot->status,
                 ];

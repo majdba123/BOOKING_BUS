@@ -18,10 +18,6 @@ class Area extends Model
     protected $appends = ['latitude', 'longitude'];
     protected $hidden = ['geolocation', 'geolocation_id'];
 
-    public function breaks()
-    {
-        return $this->hasMany(Breaks::class);
-    }
 
     public function geolocation()
     {
