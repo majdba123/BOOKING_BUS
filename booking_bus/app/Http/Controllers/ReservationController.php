@@ -48,47 +48,49 @@ class ReservationController extends Controller
      */
     public function store(Request $request, $bus_trip_id)
     {
-        $bus_trip = Bus_Trip::findOrfail($bus_trip_id);
-        $pivoit = $bus_trip->Pivoit->where('status', 'pending')->pluck('id');
-        $validator = Validator::make($request->all(), [
-            'type' => 'required|in:1,2',
-            'seat' => 'nullable|array',
-            'seat.*' => 'integer|exists:seats,id',
-            'break_id' => 'nullable|integer|exists:pivoits,id|in:' . implode(',', $pivoit->all())
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors()->first();
-            return response()->json(['error' => $errors], 422);
+        /**
+         *
+         *
+         *
+         *
+         * When you make two requests at the same time, the second request will wait for up to 10 seconds for the lock to be released by the first request. If the lock is released within that time, the second request will acquire the lock and proceed with the reservation process. If the lock is not released within that time, the second request will timeout and throw a LockTimeoutException.
+         *So, in this case, you won't see the "Failed to acquire lock. Try again later." message, because the second request will simply wait for the lock to be released.
+         */
+        $lock = Cache::lock('reservation_locks', 10);
+        if (!$lock) {
+            return response()->json(['message' => 'Failed to acquire lock. Try again later.'], 500);
         }
-        $user_id = Auth::user()->id;
+
+        try {
+            $bus_trip = Bus_Trip::findOrfail($bus_trip_id);
+            $pivoit = $bus_trip->Pivoit->where('status', 'pending')->pluck('id');
+            $validator = Validator::make($request->all(), [
+                'type' => 'required|in:1,2',
+                'seat' => 'nullable|array',
+                'seat.*' => 'integer|exists:seats,id',
+                'break_id' => 'nullable|integer|exists:pivoits,id|in:' . implode(',', $pivoit->all())
+            ]);
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return response()->json(['error' => $errors], 422);
+            }
+            $user_id = Auth::user()->id;
 
             $number_seattt = $bus_trip->bus->seat->count();
-        $number_seattt = $bus_trip->bus->seat->count(); // يجيب عدد المقاعد للباص
 
             $number_seat_complete = $bus_trip->bus->seat->where('status', 3)->count();
-        $number_seat_complete = $bus_trip->bus->seat->where('status', 3)->count(); // يجيب
 
             if ($number_seat_complete == $number_seattt) {
                 return response()->json([
                     'message' => "trip has completed can not",
                 ]);
             }
-        if ($number_seat_complete == $number_seattt) {      // الباص مليان
-            return response()->json([
-                'message' => "trip has completed can not",
-            ]);
-        }
 
             if ($bus_trip->status == 'finished_going' && $request->input('type') == 1) {
                 return response()->json([
                     'massage' => 'trip finished going trips'
                 ]);
             }
-        if ($bus_trip->status == 'finished_going' && $request->input('type') == 1) {
-            return response()->json([
-                'massage' => 'trip finished going trips'
-            ]);
-        }
 
             $pivoit1 = Pivoit::where('bus__trip_id', $bus_trip->id)
                 ->where('id', $request->input('break_id'))
@@ -127,44 +129,6 @@ class ReservationController extends Controller
             }
             $seats = $request->input('seat');
             $bus_seats = $bus_trip->bus->seat->pluck('id')->all();
-        $pivoit1 = Pivoit::where('bus__trip_id', $bus_trip->id)
-            ->where('id', $request->input('break_id'))
-            ->first();
-        // ما فيك تطلع من من موقف البداية في حالة الرجعة
-        if ($pivoit1->break_trip->break->name == "start" &&  $request->input('type') == 2) {
-            return response()->json([
-                'massage' => 'can not this is the las breake_start'
-            ]);
-        }
-        //  ما فيك تطلع من موقف النهاية في حالة الروحة
-        if ($pivoit1->break_trip->break->name == 'end' &&  $request->input('type') == 1) {
-            return response()->json([
-                'massage' => 'can not this is the last breake_end'
-            ]);
-        }
-        if ($pivoit1->break_trip->break->name == $bus_trip->event) {
-            return response()->json([
-                'massage' => 'the bus already in this break and it will leave '
-            ]);
-        }
-        $seatInput = $request->input('seat');
-        if (is_array($seatInput)) {
-            $count_seat_of_user = count($seatInput);
-        } else {
-            $count_seat_of_user = 1;
-        }
-        $count_reservation = Seat_Reservation::where('status', 'pending')
-            ->whereHas('seat', function ($query) use ($bus_trip) {
-                $query->where('bus_id', $bus_trip->bus->id);
-            })
-            ->count();
-        if ($count_seat_of_user + $count_reservation >  2 * $number_seattt) {
-            return response()->json([
-                'message' => "trip has completed can_____ not",
-            ]);
-        }
-        $seats = $request->input('seat');
-        $bus_seats = $bus_trip->bus->seat->pluck('id')->all();
 
             foreach ($seats as $seat_id) {
                 $seat = Seat::find($seat_id);
@@ -192,8 +156,8 @@ class ReservationController extends Controller
             }
             $price1 = $bus_trip->trip->price;
 
-        // $price = $price1 * $count_seat_of_user;
-        $price = $this->calculatePrice($price1, $count_seat_of_user);
+            // $price = $price1 * $count_seat_of_user;
+            $price = $this->calculatePrice($price1, $count_seat_of_user);
 
             $user = auth()->user();
             if ($user->point < $price) {
@@ -284,7 +248,7 @@ class ReservationController extends Controller
             ];
 
             return response()->json($responseData);
-        } finally{
+        } finally {
             $lock->release();
         }
     }
