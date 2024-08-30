@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AddressController extends Controller
 {
@@ -77,48 +78,56 @@ class AddressController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = Auth::user()->id;
-        $address = Address::find($id);
+            $user = Auth::user()->id;
+            $address = Address::find($id);
 
-        if (!$address) {
-            return response()->json(['error' => 'Address not found'], 404);
-        }
-
-        // Check if the user updating the address is the same user who owns the address
-        if ($address->user_id !== $user) {
-            return response()->json(['error' => 'You are not authorized to update this address'], 403);
-        }
-
-        // Only validate and update fields that are present in the request
-        if ($request->has('city')) {
-            $validator = Validator::make(['city' => $request->input('city')], [
-                'city' => 'string|max:255',
-            ]);
-
-            if ($validator->fails()) {
-                $errors = $validator->errors()->first();
-                return response()->json(['error' => $errors], 422);
+            if (!$address) {
+                return response()->json(['error' => 'Address not found'], 404);
             }
 
-            $address->city = $request->input('city');
-        }
+            // Check if the user updating the address is the same user who owns the address
+            if ($address->user_id !== $user) {
+                return response()->json(['error' => 'You are not authorized to update this address'], 403);
+            }
+            DB::beginTransaction();
+            // Only validate and update fields that are present in the request
+            try{
+            if ($request->has('city')) {
+                $validator = Validator::make(['city' => $request->input('city')], [
+                    'city' => 'string|max:255',
+                ]);
 
-        if ($request->has('area')) {
-            $validator = Validator::make(['area' => $request->input('area')], [
-                'area' => 'string|max:255',
-            ]);
+                if ($validator->fails()) {
+                    $errors = $validator->errors()->first();
+                    DB::rollBack();
+                    return response()->json(['error' => $errors], 422);
+                }
 
-            if ($validator->fails()) {
-                $errors = $validator->errors()->first();
-                return response()->json(['error' => $errors], 422);
+                $address->city = $request->input('city');
             }
 
-            $address->area = $request->input('area');
+            if ($request->has('area')) {
+                $validator = Validator::make(['area' => $request->input('area')], [
+                    'area' => 'string|max:255',
+                ]);
+
+                if ($validator->fails()) {
+                    $errors = $validator->errors()->first();
+                    DB::rollBack();
+                    return response()->json(['error' => $errors], 422);
+                }
+
+                $address->area = $request->input('area');
+
+            }
+
+            $address->save();
+            DB::commit();
+            return response()->json($address);
+        }catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'An error occurred while updating the address'], 500);
         }
-
-        $address->save();
-
-        return response()->json($address);
     }
 
     /**

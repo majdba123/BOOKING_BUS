@@ -67,6 +67,15 @@ dependencies:
   google_places_flutter: ^2.0.9
   flutter_google_maps_webservices: ^1.1.1
   location: ^6.0.2
+  geolocator: ^9.0.2
+  geocoding: ^3.0.0
+  flutter_polyline_points: ^2.0.0
+  geocode: ^1.0.3
+  tap_debouncer: ^2.2.0
+  ticket_widget: ^1.0.2
+
+
+
 
 
 

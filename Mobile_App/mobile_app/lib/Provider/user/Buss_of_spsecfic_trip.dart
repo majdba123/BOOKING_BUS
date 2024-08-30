@@ -114,6 +114,7 @@ class BussofSpsccifTripProvider with ChangeNotifier {
       // Replace with your API call logic
       print('try!!!!');
       _SeatsOfBus = await TripStatus().fetchSeatOfBus(accessToken, busId);
+      notifyListeners();
       print(_SeatsOfBus);
       print('the _SeatsOfBus response $_busResponses');
     } catch (e) {

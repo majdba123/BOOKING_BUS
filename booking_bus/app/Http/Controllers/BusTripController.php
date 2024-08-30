@@ -118,7 +118,6 @@ class BusTripController extends Controller
             foreach ($busTrip->Pivoit as $pivot) {
                 $breakData = [
                     'break_id' => $pivot->id,
-                    'government' => $pivot->break_trip->break->area->name,
                     'name_break' => $pivot->break_trip->break->name,
                     'latitude' => $pivot->break_trip->break->latitude,
                     'longitude' => $pivot->break_trip->break->longitude,
@@ -203,7 +202,6 @@ class BusTripController extends Controller
             foreach ($busTrip->Pivoit as $pivot) {
                 $breakData = [
                     'id' => $pivot->id,
-                    'government' => $pivot->break_trip->break->area->name,
                     'name_break' => $pivot->break_trip->break->name,
                     'status' => $pivot->status,
                 ];
@@ -286,7 +284,6 @@ class BusTripController extends Controller
             foreach ($busTrip->Pivoit as $pivot) {
                 $breakData = [
                     'id' => $pivot->id,
-                    'government' => $pivot->break_trip->break->area->name,
                     'name_break' => $pivot->break_trip->break->name,
                     'status' => $pivot->status,
                 ];

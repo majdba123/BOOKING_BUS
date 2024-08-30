@@ -4,9 +4,10 @@ import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dar
 import 'package:mobile_app/screens/Dashborad_User/Main_Ui_private_Trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/All_My_charage_Balance_By_Status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Help_Screen.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/MY_Reservation.dart';
+import 'package:mobile_app/screens/Dashborad_User/MyBooking/MY_Reservation.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Rate_Driver.dart';
 import 'package:mobile_app/Provider/user/user_info_profile.dart';
+import 'package:mobile_app/screens/Dashborad_User/policy/PolicyPage.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/colors.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Address_list_page.dart';
@@ -175,6 +176,17 @@ class ProfilePage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => HelpDeskScreen()),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 5),
+                    ProfileOption(
+                      icon: Icons.question_answer,
+                      title: 'Policy of use',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => PolicyPage()),
                         );
                       },
                     ),

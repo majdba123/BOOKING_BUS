@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/colors.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
@@ -11,6 +12,7 @@ import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/register_page.d
 import 'package:mobile_app/widgets/Alert_Box.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:tap_debouncer/tap_debouncer.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -161,87 +163,106 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       SizedBox(height: screenHeight * 0.04),
 
-                      InkWell(
-                        onTap: () async {
-                          showDialog(
-                            context: context,
-                            builder: (context) => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-
-                          AuthProvider authProvider =
-                              Provider.of<AuthProvider>(context, listen: false);
-                          await authProvider.setAuthData(
-                              emailController.text, passwordController.text);
-                          if (authProvider.accessToken.isNotEmpty) {
-                            final tripProvider = Provider.of<TripuserProvider>(
-                                context,
-                                listen: false);
-                            await tripProvider
-                                .getallTrips(authProvider.accessToken);
-                            await tripProvider
-                                .getAllcompanies(authProvider.accessToken);
-                          }
-
-                          Navigator.of(context).pop();
-
-                          if (authProvider.accessToken.isNotEmpty) {
-                            Widget destinationPage;
-                            if (authProvider.userType == "company") {
-                              destinationPage = Dashbord();
-                            } else if (authProvider.userType == "user") {
-                              destinationPage = ProfileCheckPage();
-                            } else if (authProvider.userType == "driver") {
-                              destinationPage = DashboardDriver();
-                            } else if (authProvider.userType == "admin") {
-                              destinationPage = DashbordAdmin();
+                      TapDebouncer(
+                          cooldown: const Duration(seconds: 10),
+                          onTap: () async {
+                            if (emailController.text.isEmpty &&
+                                passwordController.text.isEmpty) {
+                              showCustomAlertDialog(context,
+                                  "You Must Insert a E-mail and Passsord");
                             } else {
-                              showCustomAlertDialog(
-                                context,
-                                "Unexpected user type: ${authProvider.userType}",
+                              showDialog(
+                                context: context,
+                                builder: (context) => const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
                               );
-                              return;
-                            }
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => destinationPage),
-                            );
-                          } else {
-                            showCustomAlertDialog(
-                                context, "Invalid Credentials");
-                          }
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(
-                              vertical:
-                                  screenHeight * 0.025), // Slightly larger
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              const BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 10,
-                                offset: Offset(0, 4),
+                              AuthProvider authProvider =
+                                  Provider.of<AuthProvider>(context,
+                                      listen: false);
+                              await authProvider.setAuthData(
+                                  emailController.text,
+                                  passwordController.text);
+                              if (authProvider.accessToken.isNotEmpty) {
+                                final tripProvider =
+                                    Provider.of<TripuserProvider>(context,
+                                        listen: false);
+                                await tripProvider
+                                    .getallTrips(authProvider.accessToken);
+                                await tripProvider
+                                    .getAllcompanies(authProvider.accessToken);
+                              }
+
+                              Navigator.of(context).pop();
+
+                              if (authProvider.accessToken.isNotEmpty) {
+                                Widget destinationPage;
+                                if (authProvider.userType == "company") {
+                                  destinationPage = Dashbord();
+                                } else if (authProvider.userType == "user") {
+                                  destinationPage = ProfileCheckPage();
+                                } else if (authProvider.userType == "driver") {
+                                  destinationPage = DashboardDriver();
+                                } else if (authProvider.userType == "admin") {
+                                  destinationPage = DashbordAdmin();
+                                } else {
+                                  showCustomAlertDialog(
+                                    context,
+                                    "Unexpected user type: ${authProvider.userType}",
+                                  );
+                                  return;
+                                }
+                                Navigator.push(context,
+                                    animetedRoutePage(destinationPage));
+                              } else {
+                                showCustomAlertDialog(
+                                    context, "Invalid Credentials");
+                              }
+                            }
+                          },
+                          builder: (context, TapDebouncerFunc? onTap) {
+                            return InkWell(
+                              onTap: onTap ??
+                                  () {
+                                    // If onTap is null (button is in cooldown), show the SnackBar
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'Please wait for 10 seconds for anthor Sign...'),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                  },
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: screenHeight *
+                                        0.025), // Slightly larger
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    const BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 10,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'Sign In',
+                                  style: TextStyle(
+                                    fontSize: screenHeight * 0.025,
+                                    color: Colors.white, // White text
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.2,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                            ],
-                          ),
-                          child: Text(
-                            'Sign In',
-                            style: TextStyle(
-                              fontSize: screenHeight * 0.025,
-                              color: Colors.white, // White text
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.2,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
+                            );
+                          }),
                       SizedBox(height: screenHeight * 0.02),
 
                       // Register Link

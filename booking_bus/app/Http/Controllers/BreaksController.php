@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Breaks;
-use App\Models\Area;
 use App\Models\Geolocation;
+use App\Models\Path;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -15,32 +15,41 @@ class BreaksController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($area_id)
+    public function index($path_id)
     {
-        $breaks = Breaks::where('area_id', $area_id)->get();
+        $company = auth()->user()->Company; // assuming you have a `company` relationship on the User model
 
+        $breaks = Breaks::where('path_id', $path_id)
+            ->whereHas('path.company', function ($query) use ($company) {
+                $query->where('id', $company->id);
+            })
+            ->get();
         if ($breaks->isEmpty()) {
-            return response()->json(['message' => 'No breaks found for this area.'], 404);
+            return response()->json(['message' => 'you are not owner of this breaks'], 404);
         }
         return response()->json($breaks);
     }
+
+
     public function allbreaks()
     {
-        $breaks = Breaks::with('area')->get();
-
+        $company =Auth::user()->Company->id;
+        $paths = Path::where('company_id', $company)->get();
+        if ($paths->isEmpty()) {
+            return response()->json(['message' => 'No paths found for this company.'], 404);
+        }
+        $pathIds = $paths->pluck('id');
+        $breaks = Breaks::whereIn('path_id', $pathIds)->get();
         if ($breaks->isEmpty()) {
-            return response()->json(['message' => 'No breaks found for this area.'], 404);
+            return response()->json(['message' => 'No breaks found for these paths.'], 404);
         }
         $formattedBreaks = $breaks->map(function ($break) {
             return [
                 'id' => $break->id,
-                'area_id' => $break->area_id,
+                'Path_id' => $break->path_id,
                 'break_name' => $break->name,
                 'latitude' => $break->latitude,
                 'longitude' => $break->longitude,
-                'area_name' => $break->area->name,
-                'area_latitude' => $break->area ? $break->area->latitude : null,
-                'area_longitude' => $break->area ? $break->area->longitude : null,
             ];
         });
 
@@ -58,11 +67,11 @@ class BreaksController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, $area_idd)
+    public function store(Request $request, $path_id)
     {
-        $area = Area::find($area_idd);
-        if (!$area) {
-            return response()->json(['error' => 'Area not found.'], 404);
+        $Path = Path::find($path_id);
+        if (!$Path) {
+            return response()->json(['error' => 'Path not found.'], 404);
         }
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'unique:breaks,name,'],
@@ -82,7 +91,7 @@ class BreaksController extends Controller
         ]);
         $break = new Breaks();
         $break->name = $request->input('name');
-        $break->area_id = $area_idd;
+        $break->path_id = $path_id;
         $break->geolocation_id = $Location->id;
 
         $break->save();
@@ -116,6 +125,12 @@ class BreaksController extends Controller
         $break = Breaks::find($break_id);
         if (!$break) {
             return response()->json(['error' => 'Break not found.'], 404);
+        }
+
+        if ($break->path->company_id !== Auth::user()->Company->id) {
+
+            return response()->json(['error' => 'You are not authorized to update this break.'], 403);
+    
         }
 
         $validator = Validator::make($request->all(), [
@@ -157,6 +172,9 @@ class BreaksController extends Controller
 
         if (!$break) {
             return response()->json(['error' => 'Break not found.'], 404);
+        }
+        if ($break->path->company_id !== Auth::user()->Company->id) {
+            return response()->json(['error' => 'You are not authorized to update this break.'], 403);
         }
         $break->delete();
 

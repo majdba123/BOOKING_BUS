@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile_app/colors.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -89,20 +90,8 @@ class _WelcomePageState extends State<WelcomePage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      SignInPage(),
-                              transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                              },
-                            ),
-                          );
+                          Navigator.push(
+                              context, animetedRoutePage(SignInPage()));
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(

@@ -15,6 +15,7 @@ use App\Models\Bus;
 use App\Events\NewTrip;
 use App\Models\Policy\SatisfactionRate\SatisfactionRate;
 use App\Models\Policy\SatisfactionRate\UserSatisfactionRate;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +30,7 @@ class TripController extends Controller
     public function index()
     {
         $company_id = Auth::user()->Company->id;
-        $trips = Trip::where('company_id', $company_id)->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->get();
+        $trips = Trip::where('company_id', $company_id)->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->get();
         return response()->json($trips);
     }
 
@@ -42,7 +43,7 @@ class TripController extends Controller
         $company_id = Auth::user()->Company->id;
         $trips = Trip::where('company_id', $company_id)
             ->where('status', $request->input('status'))
-            ->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->get();
+            ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->get();
         return response()->json($trips);
     }
 
@@ -55,8 +56,8 @@ class TripController extends Controller
         $validator = Validator::make($request->all(), [
             'path_id' => 'required|exists:paths,id',
             'price' => 'sometimes|required|string|max:255',
-            'breaks_ids' => 'required|array',
-            'breaks_ids.*' => 'integer',
+           /* 'breaks_ids' => 'required|array',
+            'breaks_ids.*' => 'integer',*/
             'bus_ids' => 'required|array',
             'bus_ids.*.bus_id' => 'integer',
             'bus_ids.*.type' => 'string|required',
@@ -115,10 +116,10 @@ class TripController extends Controller
             $breakTripStart->save();
 
 
-            $breakIds = $request->input('breaks_ids');
-
+         //   $breakIds = $request->input('breaks_ids');
+            $breakIds = Breaks::where('path_id',$request->input('path_id'))->get();
             foreach ($breakIds as $breakId) {
-                $FIND = Breaks::FIND($breakId);
+                $FIND = Breaks::find($breakId->id);
                 if (!$FIND) {
                     return response()->json([
                         'message' => 'break not found',
@@ -127,7 +128,7 @@ class TripController extends Controller
 
                 $breakTrip = new Breaks_trip();
                 $breakTrip->trip_id = $trip->id;
-                $breakTrip->breaks_id = $breakId;
+                $breakTrip->breaks_id = $breakId->id;
                 $breakTrip->save();
             }
 
@@ -173,7 +174,7 @@ class TripController extends Controller
             }
             DB::commit();
 
-            $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break.area', 'path'])->find($trip->id);
+            $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->find($trip->id);
             event(new NewTrip($trips1));
             return response()->json($trips1, 201);
         } catch (\Exception $e) {
@@ -190,7 +191,7 @@ class TripController extends Controller
         $company_id = Auth::user()->Company->id;
         $trips = Trip::where('company_id', $company_id)
             ->where('id', $trip)
-            ->with(['bus_trip.Pivoit.break_trip', 'breaks_trip.break.area', 'path'])->get();
+            ->with(['bus_trip.Pivoit.break_trip', 'breaks_trip.break', 'path'])->get();
         return response()->json($trips);
     }
 
@@ -209,10 +210,8 @@ class TripController extends Controller
     {
         $company = Auth::user()->Company->id;
         $validator = Validator::make($request->all(), [
-            'path_id' => 'exists:paths,id',
+            'path_id' => 'required|exists:paths,id',
             'price' => 'sometimes|string|max:255',
-            'breaks_ids' => 'required_with:bus_ids|array',
-            'breaks_ids.*' => 'integer',
             'bus_ids' => 'required_with:breaks_ids|array',
             'bus_ids.*.bus_id' => 'integer',
             'bus_ids.*.type' => 'string',
@@ -221,109 +220,121 @@ class TripController extends Controller
             'bus_ids.*.date' => 'nullable|date',
         ]);
 
+    
         if ($validator->fails()) {
             $errors = $validator->errors()->first();
             return response()->json(['error' => $errors], 422);
         }
-
+    
         $trip = Trip::find($id);
-
+    
         if (!$trip) {
-
             return response()->json(['error' => 'Trip not found'], 404);
         }
-        if ($request->has('path_id')) {
-            $trip->path_id = $request->input('path_id');
-            $trip->save();
-        }
-        if ($request->has('price')) {
-            $trip->price = $request->input('price');
-            $trip->save();
-        }
 
-        if ($request->has('breaks_ids') && $request->has('bus_ids')) {
-            $bus_trips = Bus_Trip::where('trip_id', $trip->id)->get();
-            if ($bus_trips->count() > 0) {
-                foreach ($bus_trips as $bus_trip) {
-                    $bus = $bus_trip->bus;
-                    if ($bus) {
-                        $bus->status = 'available';
-                        $bus->save();
-                        $drivers = Bus_Driver::where('bus_id', $bus->id)
-                            ->where('status', 'pending')
-                            ->get();
-                        if ($drivers->count() > 0) {
-                            foreach ($drivers as $driverr) {
-                                $x = $driverr->driver;
-                                $x->status = 'available';
-                                $x->save();
+        if ($trip->path->company->id !== Auth::user()->Company->id) {
+
+            return response()->json(['error' => 'You are not authorized to update this break.'], 403);
+    
+        }
+    
+        DB::beginTransaction();
+    
+        try {
+            if ($request->has('price')) {
+                $trip->price = $request->input('price');
+                $trip->save();
+            }
+    
+            if ($request->has('path_id') && $request->has('bus_ids')) {
+                $bus_trips = Bus_Trip::where('trip_id', $trip->id)->get();
+                if ($bus_trips->count() > 0) {
+                    foreach ($bus_trips as $bus_trip) {
+                        $bus = $bus_trip->bus;
+                        if ($bus) {
+                            $bus->status = 'available';
+                            $bus->save();
+                            $drivers = Bus_Driver::where('bus_id', $bus->id)
+                                ->where('status', 'pending')
+                                ->get();
+                            if ($drivers->count() > 0) {
+                                foreach ($drivers as $driverr) {
+                                    $x = $driverr->driver;
+                                    $x->status = 'available';
+                                    $x->save();
+                                }
                             }
                         }
                     }
-                }
-                $trip->bus_trip()->delete();
-                $trip->breaks_trip()->delete();
-
-                $breakTripStart = new Breaks_trip();
-                $breakTripStart->trip_id = $trip->id;
-                $breakTripStart->breaks_id = 1; // start break
-                $breakTripStart->save();
-
-
-                $breakIds = $request->input('breaks_ids');
-                foreach ($breakIds as $breakId) {
-                    $FIND = Breaks::FIND($breakId);
-                    if (!$FIND) {
-                        return response()->json([
-                            'message' => 'break not found',
-                        ]);
-                    }
-                    $breakTrip = new Breaks_trip();
-                    $breakTrip->trip_id = $trip->id;
-                    $breakTrip->breaks_id = $breakId;
-                    $breakTrip->save();
-                }
-                $breakTripEnd = new Breaks_trip();
-                $breakTripEnd->trip_id = $trip->id;
-                $breakTripEnd->breaks_id = 2; // end break
-                $breakTripEnd->save();
-                $busIds = $request->input('bus_ids');
-
-                foreach ($busIds as $busId) {
-                    $bus = Bus::find($busId['bus_id']);
-                    if ($bus && $bus->status == 'available') {
-                        $busTrip = new Bus_Trip();
-                        $busTrip->trip_id = $trip->id;
-                        $busTrip->bus_id = $busId['bus_id'];
-                        $busTrip->type = $busId['type'];
-                        $busTrip->from_time = $busId['start_time']; // optional
-                        $busTrip->to_time = $busId['end_time']; // optional
-                        $busTrip->date = $busId['date'];
-                        $busTrip->save();
-                        $bus->status = 'completed';
-                        $bus->bus_driver->pluck('driver')->each->update(['status' => 'completed']);
-                        $bus->save();
-
-                        $breakTrips = Breaks_trip::where('trip_id', $trip->id)->get();
-                        foreach ($breakTrips as $breakTrip) {
-                            $pivoit = new Pivoit();
-                            $pivoit->bus__trip_id = $busTrip->id;
-                            $pivoit->breaks_trip_id = $breakTrip->id;
-                            $pivoit->save();
+                    $trip->bus_trip()->delete();
+                    $trip->breaks_trip()->delete();
+    
+                    $breakTripStart = new Breaks_trip();
+                    $breakTripStart->trip_id = $trip->id;
+                    $breakTripStart->breaks_id = 1; // start break
+                    $breakTripStart->save();
+    
+                    $breakIds = Breaks::where('path_id', $request->input('path_id'))->get();
+                    foreach ($breakIds as $breakId) {
+                        $FIND = Breaks::find($breakId->id);
+                        if (!$FIND) {
+                            throw new Exception('Break not found');
                         }
-                    } else {
-                        // You can return an error message or log an error if the bus is not available
-                        return response()->json([
-                            'message' => 'Bus not available',
-                        ]);
+                        $breakTrip = new Breaks_trip();
+                        $breakTrip->trip_id = $trip->id;
+                        $breakTrip->breaks_id = $breakId->id;
+                        $breakTrip->save();
+                    }
+                    $breakTripEnd = new Breaks_trip();
+                    $breakTripEnd->trip_id = $trip->id;
+                    $breakTripEnd->breaks_id = 2; // end break
+                    $breakTripEnd->save();
+    
+                    $busIds = $request->input('bus_ids');
+    
+                    foreach ($busIds as $busId) {
+                        $bus = Bus::find($busId['bus_id']);
+                        if ($bus && $bus->status == 'available') {
+                            $busTrip = new Bus_Trip();
+                            $busTrip->trip_id = $trip->id;
+                            $busTrip->bus_id = $busId['bus_id'];
+                            $busTrip->type = $busId['type'];
+                            $busTrip->from_time = $busId['start_time']; // optional
+                            $busTrip->to_time = $busId['end_time']; // optional
+                            $busTrip->date = $busId['date'];
+                            $busTrip->save();
+                            $bus->status = 'completed';
+                            $bus->bus_driver->pluck('driver')->each->update(['status' => 'completed']);
+                            $bus->save();
+    
+                            $breakTrips = Breaks_trip::where('trip_id', $trip->id)->get();
+                            foreach ($breakTrips as $breakTrip) {
+                                $pivoit = new Pivoit();
+                                $pivoit->bus__trip_id = $busTrip->id;
+                                $pivoit->breaks_trip_id = $breakTrip->id;
+                                $pivoit->save();
+                            }
+                        } else {
+                            throw new Exception('Bus not available');
+                        }
                     }
                 }
             }
+    
+            DB::commit();
+    
+            return response()->json([
+                'message' => 'Trip updated successfully',
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 500);
         }
-        return response()->json([
-            'message' => 'Trip updated successfully',
-        ]);
     }
+
+
     /**
      * Remove the specified resource from storage.
      */
@@ -333,6 +344,10 @@ class TripController extends Controller
         if (!$trip) {
 
             return response()->json(['error' => 'Trip not found'], 404);
+        }
+
+        if ($trip->path->company->id !== Auth::user()->Company->id) {
+            return response()->json(['error' => 'You are not authorized to update this break.'], 403);
         }
         $bus_trips = Bus_Trip::where('trip_id', $trip->id)->get();
         if ($bus_trips->count() > 0) {
@@ -459,52 +474,52 @@ class TripController extends Controller
         $trips = $tripsQuery->get();
         $data = [];
         foreach ($trips as $trip) {
-            $busTrips = $trip->bus_trip;
-            $busTripsData = [];
-            foreach ($busTrips as $busTrip) {
-                $busTripData = [
+            // $busTrips = $trip->bus_trip;
+            // $busTripsData = [];
+            // foreach ($busTrips as $busTrip) {
+            //     $busTripData = [
 
-                    'bus_id' => $busTrip->bus_id,
-                    'from_time' => $busTrip->from_time,
-                    'to_time' => $busTrip->to_time,
-                    'type' => $busTrip->type,
-                    'event' => $busTrip->type,
-                ];
+            //         'bus_id' => $busTrip->bus_id,
+            //         'from_time' => $busTrip->from_time,
+            //         'to_time' => $busTrip->to_time,
+            //         'type' => $busTrip->type,
+            //         'event' => $busTrip->type,
+            //     ];
 
-                $pivotData = $busTrip->Pivoit;
-                $customPivotData = [];
-                foreach ($pivotData as $pivot) {
-                    $customPivotData[] = [
-                        'break_id'  => $pivot->id,
-                        'government'  => $pivot->break_trip->break->area->name,
-                        'name_break' => $pivot->break_trip->break->name,
-                        'status' => $pivot->status,
+            //     $pivotData = $busTrip->Pivoit;
+            //     $customPivotData = [];
+            //     foreach ($pivotData as $pivot) {
+            //         $customPivotData[] = [
+            //             'break_id'  => $pivot->id,
+            //             'government'  => $pivot->break_trip->break->area->name,
+            //             'name_break' => $pivot->break_trip->break->name,
+            //             'status' => $pivot->status,
 
-                    ];
-                }
-                $busTripData['pivot'] = $customPivotData;
+            //         ];
+            //     }
+            //     $busTripData['pivot'] = $customPivotData;
 
-                $seats = $busTrip->bus->seat; // Assuming you have a seats relationship on the bus_trip model
-                $seatsData = [];
-                foreach ($seats as $seat) {
-                    $seatsData[] = [
-                        'id' => $seat->id,
-                        'status' => $seat->status,
-                        // Add any other columns you want to include from the seats table
-                    ];
-                }
-                $busTripData['seats'] = $seatsData;
+            //     $seats = $busTrip->bus->seat; // Assuming you have a seats relationship on the bus_trip model
+            //     $seatsData = [];
+            //     foreach ($seats as $seat) {
+            //         $seatsData[] = [
+            //             'id' => $seat->id,
+            //             'status' => $seat->status,
+            //             // Add any other columns you want to include from the seats table
+            //         ];
+            //     }
+            //     $busTripData['seats'] = $seatsData;
 
-                $busTripsData[] = $busTripData;
-            }
+            //     $busTripsData[] = $busTripData;
+            // }
 
             $data[] = [
                 'trip_id' => $trip->id,
-                'company_id' => $trip->company->user->name,
+                'company_name' => $trip->company->user->name,
                 'from'  => $trip->path->from,
                 'to'  => $trip->path->to,
                 'price' => $trip->price,
-                'bus_trips' => $busTripsData,
+                // 'bus_trips' => $busTripsData,
 
                 // Add any other columns you want to include from the trips table
             ];

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/user/inquiry_by_status.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/InquiryForm.dart';
 
 class HelpDeskScreen extends StatefulWidget {
@@ -46,9 +47,24 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Help '),
+        title: Text(
+          'Help ',
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(),
+              ),
+              result: ModalRoute.withName('/ProfilePage'),
+            );
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.grey[200],
+        backgroundColor: AppColors.primaryColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -3,8 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Area;
 use App\Models\Geolocation;
+use App\Models\Path;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
@@ -16,14 +16,14 @@ return new class extends Migration
     {
         Schema::create('breaks', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Area::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(Path::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
             $table->foreignIdFor(Geolocation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
         DB::table('breaks')->insert([
             [
-                'area_id' => 1,
+                'path_id' => 1,
                 'name' => 'start',
                 'geolocation_id' => 1,
                 'created_at' => now(),
@@ -31,7 +31,7 @@ return new class extends Migration
 
             ],
             [
-                'area_id' => 1,
+                'path_id' => 1,
                 'name' => 'end',
                 'geolocation_id' => 1,
                 'created_at' => now(),
