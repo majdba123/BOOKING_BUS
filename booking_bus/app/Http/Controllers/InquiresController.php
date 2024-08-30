@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class InquiresController extends Controller
 {
@@ -49,26 +50,38 @@ class InquiresController extends Controller
      */
     public function store(Request $request)
     {
-        $user=Auth::user();
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'quastion' => 'required|string',
-          ]);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->first();
-            return response()->json(['error' => $errors], 422);
+        DB::beginTransaction();
+    
+        try {
+            $user = Auth::user();
+    
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'quastion' => 'required|string',
+            ]);
+    
+            if ($validator->fails()) {
+                DB::rollBack();
+                $errors = $validator->errors()->first();
+                return response()->json(['error' => $errors], 422);
+            }
+    
+            $inquires = new inquires();
+            $inquires->email = $request->email;
+            $inquires->quastion = $request->quastion;
+            $inquires->user_id = $user->id;
+            $inquires->save();
+    
+            DB::commit();
+    
+            return response()->json([
+                'message' => "store done"
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'An error occurred while storing inquires'], 500);
         }
-        $inquires=New inquires();
-        $inquires->email =$request->email;
-        $inquires->quastion =$request->quastion;
-        $inquires->user_id =$user->id;
-        $inquires->save();
-        return response()->json([
-            'message' => "store done"
-        ]);
     }
-
     /**
      * Display the specified resource.
      */
