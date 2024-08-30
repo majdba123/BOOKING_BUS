@@ -26,7 +26,7 @@ final Color veppoBlue = Color(0xFF1363FF);
 const kBodyText2 =
     TextStyle(fontSize: 28, fontWeight: FontWeight.w500, color: Colors.white);
 
-const name_domain_server = "http://192.168.1.5:8000/api/";
+const name_domain_server = "http://192.168.43.125:8000/api/";
 
 Route animetedRoutePage(Widget child) {
   return PageRouteBuilder(
@@ -46,17 +46,18 @@ Route animetedRoutePage(Widget child) {
   );
 }
 
-Widget backImage(var width, var height) {
-  return Container(
-    width: width,
-    height: height,
-    decoration: const BoxDecoration(
-      image: DecorationImage(
-        image: AssetImage(
-          "assets/images/background_mappp.png",
-        ),
-        fit: BoxFit.cover,
-      ),
-    ),
-  );
+
+Widget backImage(var width ,var height){
+   return Container(
+            width: width,
+            height: height,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  "assets/images/background_mappp.png",
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
 }
