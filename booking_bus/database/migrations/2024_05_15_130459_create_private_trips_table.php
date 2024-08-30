@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('private_trips', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('from');
             $table->unsignedBigInteger('from_location');

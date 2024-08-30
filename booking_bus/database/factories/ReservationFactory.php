@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Bus_Trip;
 use App\Models\Pivoit;
+use App\Models\User;
 use App\Models\Reservation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,7 +22,7 @@ class ReservationFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => $this->faker->numberBetween(1, 10), // assuming you have 10 users
+            'user_id' =>User::factory(), // assuming you have 10 users
             'pivoit_id' => Pivoit::factory(), // assuming you have 10 pivoits
             'bus__trip_id' => Bus_Trip::factory(), // assuming you have 10 bus trips
             'price' => $this->faker->randomFloat(1, 100),
