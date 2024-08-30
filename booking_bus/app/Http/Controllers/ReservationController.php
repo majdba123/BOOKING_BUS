@@ -22,6 +22,7 @@ use App\Models\Policy\CancellationRule\CancellationRule;
 use App\Models\Policy\Reward\Reward;
 use Carbon\Carbon;
 use FFI\Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
@@ -61,22 +62,71 @@ class ReservationController extends Controller
         }
         $user_id = Auth::user()->id;
 
+            $number_seattt = $bus_trip->bus->seat->count();
         $number_seattt = $bus_trip->bus->seat->count(); // يجيب عدد المقاعد للباص
 
+            $number_seat_complete = $bus_trip->bus->seat->where('status', 3)->count();
         $number_seat_complete = $bus_trip->bus->seat->where('status', 3)->count(); // يجيب
 
+            if ($number_seat_complete == $number_seattt) {
+                return response()->json([
+                    'message' => "trip has completed can not",
+                ]);
+            }
         if ($number_seat_complete == $number_seattt) {      // الباص مليان
             return response()->json([
                 'message' => "trip has completed can not",
             ]);
         }
 
-        if ($bus_trip->status == 'finished_going' && $request->input('type') == 1) {   
+            if ($bus_trip->status == 'finished_going' && $request->input('type') == 1) {
+                return response()->json([
+                    'massage' => 'trip finished going trips'
+                ]);
+            }
+        if ($bus_trip->status == 'finished_going' && $request->input('type') == 1) {
             return response()->json([
                 'massage' => 'trip finished going trips'
             ]);
         }
 
+            $pivoit1 = Pivoit::where('bus__trip_id', $bus_trip->id)
+                ->where('id', $request->input('break_id'))
+                ->first();
+
+            if ($pivoit1->break_trip->break->name == "start" &&  $request->input('type') == 2) {
+                return response()->json([
+                    'massage' => 'can not this is the las breake_start'
+                ]);
+            }
+            if ($pivoit1->break_trip->break->name == 'end' &&  $request->input('type') == 1) {
+                return response()->json([
+                    'massage' => 'can not this is the last breake_end'
+                ]);
+            }
+            if ($pivoit1->break_trip->break->name == $bus_trip->event) {
+                return response()->json([
+                    'massage' => 'the bus already in this break and it will leave '
+                ]);
+            }
+            $seatInput = $request->input('seat');
+            if (is_array($seatInput)) {
+                $count_seat_of_user = count($seatInput);
+            } else {
+                $count_seat_of_user = 1;
+            }
+            $count_reservation = Seat_Reservation::where('status', 'pending')
+                ->whereHas('seat', function ($query) use ($bus_trip) {
+                    $query->where('bus_id', $bus_trip->bus->id);
+                })
+                ->count();
+            if ($count_seat_of_user + $count_reservation >  2 * $number_seattt) {
+                return response()->json([
+                    'message' => "trip has completed can_____ not",
+                ]);
+            }
+            $seats = $request->input('seat');
+            $bus_seats = $bus_trip->bus->seat->pluck('id')->all();
         $pivoit1 = Pivoit::where('bus__trip_id', $bus_trip->id)
             ->where('id', $request->input('break_id'))
             ->first();
@@ -116,124 +166,127 @@ class ReservationController extends Controller
         $seats = $request->input('seat');
         $bus_seats = $bus_trip->bus->seat->pluck('id')->all();
 
-        foreach ($seats as $seat_id) {
-            $seat = Seat::find($seat_id);
-            if (!$seat) {
-                return response()->json([
-                    'message' => 'seat not_found',
-                ]);
+            foreach ($seats as $seat_id) {
+                $seat = Seat::find($seat_id);
+                if (!$seat) {
+                    return response()->json([
+                        'message' => 'seat not_found',
+                    ]);
+                }
+                if (!in_array($seat_id, $bus_seats)) {
+                    return response()->json([
+                        'message' => "Seat is not part of this bus's seat configuration",
+                    ]);
+                }
+
+                if ($seat->status == 3) {
+                    return response()->json([
+                        'message' => "Seat is not available",
+                    ]);
+                }
+                if ($seat->status == $request->input('type')) {
+                    return response()->json([
+                        'message' => "Seat already booking",
+                    ]);
+                }
             }
-            if (!in_array($seat_id, $bus_seats)) {
-                return response()->json([
-                    'message' => "Seat is not part of this bus's seat configuration",
-                ]);
+            $price1 = $bus_trip->trip->price;
+
+        // $price = $price1 * $count_seat_of_user;
+        $price = $this->calculatePrice($price1, $count_seat_of_user);
+
+            $user = auth()->user();
+            if ($user->point < $price) {
+                return response()->json(['message' => 'You do not have enough points to make this reservation']);
             }
 
-            if ($seat->status == 3) {
-                return response()->json([
-                    'message' => "Seat is not available",
-                ]);
+            $reward = Reward::where('company_id', $bus_trip->bus->company->id)
+                ->where('Reservation_Costs', '<=', $price)
+                ->orderBy('Reservation_Costs', 'desc')
+                ->first();
+
+            if ($reward) {
+                $reward_points = ($price * ($reward->reward_percentage / 100));
+            } else {
+                $reward_points = 0;
             }
-            if ($seat->status == $request->input('type')) {
-                return response()->json([
-                    'message' => "Seat already booking",
-                ]);
-            }
-        }
-        $price1 = $bus_trip->trip->price;
 
-       // $price = $price1 * $count_seat_of_user;
-       $price = $this->calculatePrice($price1, $count_seat_of_user);
-
-        $user = auth()->user();
-        if ($user->point < $price) {
-            return response()->json(['message' => 'You do not have enough points to make this reservation']);
-        }
-
-        $reward = Reward::where('company_id', $bus_trip->bus->company->id)
-            ->where('Reservation_Costs', '<=', $price)
-            ->orderBy('Reservation_Costs', 'desc')
-            ->first();
-
-        if ($reward) {
-            $reward_points = ($price * ($reward->reward_percentage / 100));
-        } else {
-            $reward_points = 0;
-        }
-
-        $user->point -= $price;
-        $user->save();
-
-        // إضافة المكافأة إلى نقاط المستخدم
-        if ($reward_points > 0) {
-            $user->point += $reward_points;
+            $user->point -= $price;
             $user->save();
 
-            $user->rewards()->attach($reward->id);
-        }
+            // إضافة المكافأة إلى نقاط المستخدم
+            if ($reward_points > 0) {
+                $user->point += $reward_points;
+                $user->save();
 
-
-        $bookink = new Reservation();
-        $bookink->user_id = $user_id;
-        $bookink->bus__trip_id = $bus_trip_id;
-        $bookink->pivoit_id = $request->input('break_id');
-        $bookink->type = $request->input('type');
-        $bookink->price = $price;
-        $massage = " your booked is done : $bookink ";
-        event(new PrivateNotification($user_id, $massage));
-
-        $bookink->save();
-
-        $reservation_id = $bookink->id;
-
-        foreach ($seats as $seat_id) {
-            $seat_reservation = new Seat_Reservation();
-            $seat_reservation->reservation_id = $reservation_id;
-            $seat_reservation->seat_id = $seat_id;
-            $seat_reservation->save();
-
-            $seat = Seat::find($seat_id);
-            if ($request->input('type') == 1) {
-                if ($seat->status == 0) {
-                    $seat->status = 1;
-                } elseif ($seat->status == 2) {
-                    $seat->status = 3;
-                }
-                $seat->save();
-                event(new SeatEvent($bus_trip, $seat));
-            } elseif ($request->input('type') == 2) {
-                if ($seat->status == 1) {
-                    $seat->status = 3;
-                } elseif ($seat->status == 0) {
-                    $seat->status = 2;
-                }
-                $seat->save();
-                event(new SeatEvent($bus_trip, $seat));
+                $user->rewards()->attach($reward->id);
             }
+
+
+            $bookink = new Reservation();
+            $bookink->user_id = $user_id;
+            $bookink->bus__trip_id = $bus_trip_id;
+            $bookink->pivoit_id = $request->input('break_id');
+            $bookink->type = $request->input('type');
+            $bookink->price = $price;
+            $massage = " your booked is done : $bookink ";
+            event(new PrivateNotification($user_id, $massage));
+
+            $bookink->save();
+
+            $reservation_id = $bookink->id;
+
+            foreach ($seats as $seat_id) {
+                $seat_reservation = new Seat_Reservation();
+                $seat_reservation->reservation_id = $reservation_id;
+                $seat_reservation->seat_id = $seat_id;
+                $seat_reservation->save();
+
+                $seat = Seat::find($seat_id);
+                if ($request->input('type') == 1) {
+                    if ($seat->status == 0) {
+                        $seat->status = 1;
+                    } elseif ($seat->status == 2) {
+                        $seat->status = 3;
+                    }
+                    $seat->save();
+                    event(new SeatEvent($bus_trip, $seat));
+                } elseif ($request->input('type') == 2) {
+                    if ($seat->status == 1) {
+                        $seat->status = 3;
+                    } elseif ($seat->status == 0) {
+                        $seat->status = 2;
+                    }
+                    $seat->save();
+                    event(new SeatEvent($bus_trip, $seat));
+                }
+            }
+
+
+            $company = $bus_trip->bus->company->user;
+            $company->point += $price;
+            $company->save();
+
+
+
+
+            $bookink->load(['seat_reservation', 'pivoit']);
+
+
+            $responseData = [
+                'message' => 'Reservation created successfully',
+                'reservation_id' => $bookink->id,
+                'break' => $bookink->pivoit->break_trip->break->name,
+                'bus_trip_id' => $bus_trip_id,
+                'seats' => $bookink->seat_reservation->where('status', 'padding')->all(),
+                'price' => $bookink->price,
+                'user_name' => $bookink->user->name,
+            ];
+
+            return response()->json($responseData);
+        }finally{
+            $lock->release();
         }
-
-
-        $company = $bus_trip->bus->company->user;
-        $company->point += $price;
-        $company->save();
-
-
-
-
-        $bookink->load(['seat_reservation', 'pivoit']);
-
-
-        $responseData = [
-            'message' => 'Reservation created successfully',
-            'reservation_id' => $bookink->id,
-            'break' => $bookink->pivoit->break_trip->break->name,
-            'bus_trip_id' => $bus_trip_id,
-            'seats' => $bookink->seat_reservation->where('status', 'padding')->all(),
-            'price' => $bookink->price,
-            'user_name' => $bookink->user->name,
-        ];
-
-        return response()->json($responseData);
     }
 
 
