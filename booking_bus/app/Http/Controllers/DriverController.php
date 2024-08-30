@@ -16,6 +16,8 @@ use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 class DriverController extends Controller
 {
     /**
@@ -226,50 +228,64 @@ class DriverController extends Controller
 
     public function start_trip()
     {
-        $driver = Auth::user()->Driver;
-        $company = $driver->company;
+        DB::beginTransaction();
+        try{
+            $driver = Auth::user()->Driver;
+            $company = $driver->company;
 
-        $bus = Bus_Driver::where('status', 'pending')
-                        ->where('driver_id', $driver->id)
-                        ->first();
+            $bus = Bus_Driver::where('status', 'pending')
+                            ->where('driver_id', $driver->id)
+                            ->first();
+            if (!$bus) {
+                        DB::rollBack();
+                        return response()->json(['error' => 'Bus not found'], 404);        
+            }
 
-        $bus_trip = Bus_Trip::where('status', 'pending')
-                        ->where('bus_id', $bus->bus_id)
-                        ->first();
+            $bus_trip = Bus_Trip::where('status', 'pending')
+                            ->where('bus_id', $bus->bus_id)
+                            ->first();
+            if (!$bus_trip)
+            {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Bus trip not found'], 404);     
+            }
+            $name_breaks = $bus_trip->Pivoit->where('status', 'pending')->pluck('break_trip.break.name');
 
-        $name_breaks = $bus_trip->Pivoit->where('status', 'pending')->pluck('break_trip.break.name');
+            if ($name_breaks->first() === "start") {
+                $bus_trip->event = $name_breaks->first();
+                $bus_trip->save();
+                $pivoit_id=$bus_trip->Pivoit->first();
 
-        if ($name_breaks->first() === "start") {
-            $bus_trip->event = $name_breaks->first();
-            $bus_trip->save();
-            $pivoit_id=$bus_trip->Pivoit->first();
+                event(new BreakTripEvent($bus_trip , $pivoit_id ));
 
-            event(new BreakTripEvent($bus_trip , $pivoit_id ));
+                $notification ="your bus_trip $bus_trip->id  is started  ";
+                event(new CompanyNotification($company ,$notification));
 
-            $notification ="your bus_trip $bus_trip->id  is started  ";
-            event(new CompanyNotification($company ,$notification));
-
-            $reservations = Reservation::where('status', 'padding')
-            ->where('pivoit_id', $pivoit_id)
-            ->where('type', 1)
-            ->get()
-            ->map(function ($reservation) {
-                return [
-                    'id' => $reservation->id,
-                    'user_name' => $reservation->user->name,
-                    'price' => $reservation->price,
-                    'bus_trip_id' => $reservation->bus_trip_id,
-                    'type' => $reservation->type,
-                    'bus_trip_id' => $reservation->bus__trip_id,
-                    'status' => $reservation->status,
-                    'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
-                ];
-            });
-
-            return response()->json($reservations);
+                $reservations = Reservation::where('status', 'padding')
+                ->where('pivoit_id', $pivoit_id)
+                ->where('type', 1)
+                ->get()
+                ->map(function ($reservation) {
+                    return [
+                        'id' => $reservation->id,
+                        'user_name' => $reservation->user->name,
+                        'price' => $reservation->price,
+                        'bus_trip_id' => $reservation->bus_trip_id,
+                        'type' => $reservation->type,
+                        'bus_trip_id' => $reservation->bus__trip_id,
+                        'status' => $reservation->status,
+                        'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
+                    ];
+                });
+                DB::commit();
+                return response()->json($reservations);
+            }
+            DB::rollBack();
+            return response()->json($name_breaks->first());
+        }catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'An error occurred while starting the trip'], 500);
         }
-
-        return response()->json($name_breaks->first());
     }
 
 
@@ -833,108 +849,117 @@ class DriverController extends Controller
 
     public function my_finished_going_trip()
     {
-        $driver = Auth::user()->Driver;
-
-        if (!$driver) {
-            return response()->json(['error' => 'Driver not found'], 404);
-        }
-
-        $bus = Bus_Driver::where('status', 'finished_going')
-                        ->where('driver_id', $driver->id)
-                        ->first();
-
-        if (!$bus) {
-            return response()->json(['error' => 'No pending bus found for the driver'], 404);
-        }
-
-        $trips = Bus_Trip::where('status', 'finished_going')
-                        ->where('bus_id', $bus->bus_id)
-                        ->get();
-
-        if ($trips->isEmpty()) {
-            return response()->json(['error' => 'No pending trip found for the bus'], 404);
-        }
-
-        $response = [];
-        foreach ($trips as $trip) {
-            $pivotData = [];
-            foreach ($trip->Pivoit as $pivoit) {
-                $pivotData[] = [
-                    'id' => $pivoit->id,
-                    'bus_trip_id' => $pivoit->bus__trip_id,
-                    'break_name' => $pivoit->break_trip->break->name,
-                    'status' => $pivoit->status,
+        DB::beginTransaction();
+        try {
+            $driver = Auth::user()->Driver;
+            if (!$driver) {
+                DB::rollBack();
+                return response()->json(['error' => 'Driver not found'], 404);
+            }
+    
+            $bus = Bus_Driver::where('status', 'finished_going')
+                            ->where('driver_id', $driver->id)
+                            ->first();
+    
+            if (!$bus) {
+                DB::rollBack();
+                return response()->json(['error' => 'No pending bus found for the driver'], 404);
+            }
+    
+            $trips = Bus_Trip::where('status', 'finished_going')
+                            ->where('bus_id', $bus->bus_id)
+                            ->get();
+    
+            if ($trips->isEmpty()) {
+                DB::rollBack();
+                return response()->json(['error' => 'No pending trip found for the bus'], 404);
+            }
+    
+            $response = [];
+            foreach ($trips as $trip) {
+                $pivotData = [];
+                foreach ($trip->Pivoit as $pivoit) {
+                    $pivotData[] = [
+                        'id' => $pivoit->id,
+                        'bus_trip_id' => $pivoit->bus__trip_id,
+                        'break_name' => $pivoit->break_trip->break->name,
+                        'status' => $pivoit->status,
+                    ];
+                }
+                $response[] = [
+                    'bus_trip_id' => $trip->id,
+                    'bus_id' => $trip->bus_id,
+                    'from_time' => $trip->from_time,
+                    'to_time' => $trip->to_time,
+                    'date' => $trip->date,
+                    'type' => $trip->type,
+                    'event' => $trip->event,
+                    'status' => $trip->status,
+                    'breaks_data' => $pivotData,
                 ];
             }
-
-            $response[] = [
-                'bus_trip_id' => $trip->id,
-                'bus_id' => $trip->bus_id,
-                'from_time' => $trip->from_time,
-                'to_time' => $trip->to_time,
-                'date' => $trip->date,
-                'type' => $trip->type,
-                'event' => $trip->event,
-                'status' => $trip->status,
-                'breaks_data' => $pivotData,
-            ];
+            DB::commit();
+            return response()->json($response);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'An error occurred while retrieving finished going trips'], 500);
         }
-
-        return response()->json($response);
     }
+
+
 
     public function my_finished_trip()
     {
-        $driver = Auth::user()->Driver;
-
-        if (!$driver) {
-            return response()->json(['error' => 'Driver not found'], 404);
-        }
-
-        $bus = Bus_Driver::where('status', 'finished')
-                        ->where('driver_id', $driver->id)
-                        ->first();
-
-        if (!$bus) {
-            return response()->json(['error' => 'No pending bus found for the driver'], 404);
-        }
-
-        $trips = Bus_Trip::where('status', 'finished_going')
-                        ->where('bus_id', $bus->bus_id)
-                        ->get();
-
-        if ($trips->isEmpty()) {
-            return response()->json(['error' => 'No pending trip found for the bus'], 404);
-        }
-
-        $response = [];
-        foreach ($trips as $trip) {
-            $pivotData = [];
-            foreach ($trip->Pivoit as $pivoit) {
-                $pivotData[] = [
-                    'id' => $pivoit->id,
-                    'bus_trip_id' => $pivoit->bus__trip_id,
-                    'break_name' => $pivoit->break_trip->break->name,
-                    'status' => $pivoit->status,
+        DB::beginTransaction();
+        try {
+            $driver = Auth::user()->Driver;
+            if (!$driver) {
+                DB::rollBack();
+                return response()->json(['error' => 'Driver not found'], 404);
+            }
+            $bus = Bus_Driver::where('status', 'finished')
+                            ->where('driver_id', $driver->id)
+                            ->first();
+            if (!$bus) {
+                DB::rollBack();
+                return response()->json(['error' => 'No pending bus found for the driver'], 404);
+            }
+            $trips = Bus_Trip::where('status', 'finished_going')
+                            ->where('bus_id', $bus->bus_id)
+                            ->get();
+            if ($trips->isEmpty()) {
+                DB::rollBack();
+                return response()->json(['error' => 'No pending trip found for the bus'], 404);
+            }
+            $response = [];
+            foreach ($trips as $trip) {
+                $pivotData = [];
+                foreach ($trip->Pivoit as $pivoit) {
+                    $pivotData[] = [
+                        'id' => $pivoit->id,
+                        'bus_trip_id' => $pivoit->bus__trip_id,
+                        'break_name' => $pivoit->break_trip->break->name,
+                        'status' => $pivoit->status,
+                    ];
+                }
+                $response[] = [
+                    'bus_trip_id' => $trip->id,
+                    'bus_id' => $trip->bus_id,
+                    'from_time' => $trip->from_time,
+                    'to_time' => $trip->to_time,
+                    'date' => $trip->date,
+                    'type' => $trip->type,
+                    'event' => $trip->event,
+                    'status' => $trip->status,
+                    'breaks_data' => $pivotData,
                 ];
             }
-
-            $response[] = [
-                'bus_trip_id' => $trip->id,
-                'bus_id' => $trip->bus_id,
-                'from_time' => $trip->from_time,
-                'to_time' => $trip->to_time,
-                'date' => $trip->date,
-                'type' => $trip->type,
-                'event' => $trip->event,
-                'status' => $trip->status,
-                'breaks_data' => $pivotData,
-            ];
+            DB::commit();
+            return response()->json($response);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'An error occurred while retrieving finished trips'], 500);
         }
-
-        return response()->json($response);
     }
-
-
 
 }

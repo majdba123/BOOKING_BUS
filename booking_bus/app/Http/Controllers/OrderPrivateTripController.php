@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderPrivateTripController extends Controller
 {
@@ -86,31 +87,42 @@ class OrderPrivateTripController extends Controller
      */
     public function store(Request $request, $private_trip_id)
     {
-        $validatedData = $request->validate([
-
-            'price' => 'required|numeric',
-
-        ]);
-        $company_id = Auth::user()->Company->id;
-        if (Order_Private_trip::where('company_id', $company_id)
-        ->where('private_trip_id', $private_trip_id)
-        ->exists()) {
-        return response()->json(['error' => 'Company has already accepted this private trip'], 422);
+        DB::beginTransaction();
+    
+        try {
+            $validatedData = $request->validate([
+                'price' => 'required|numeric',
+            ]);
+    
+            $company_id = Auth::user()->Company->id;
+    
+            if (Order_Private_trip::where('company_id', $company_id)
+                ->where('private_trip_id', $private_trip_id)
+                ->exists()) {
+                DB::rollBack();
+                return response()->json(['error' => 'Company has already accepted this private trip'], 422);
+            }
+    
+            $privateTrip = Private_trip::findOrFail($private_trip_id);
+    
+            $order = new Order_Private_trip();
+            $order->private_trip_id = $privateTrip->id;
+            $order->company_id = $company_id;
+            $order->price = $request->input('price');
+    
+            $company_name = Auth::user()->Company;
+            $massage = " company $company_name->name accept your private trip ";
+            event(new PrivateNotification($privateTrip->user->id, $massage));
+    
+            $order->save();
+    
+            DB::commit();
+    
+            return response()->json($order);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'An error occurred while storing order'], 500);
         }
-
-        $privateTrip = Private_trip::findOrFail($private_trip_id);
-
-        $order = New Order_Private_trip();
-        $order->private_trip_id = $privateTrip->id;
-        $order->company_id = $company_id;
-        $order->price = $request->input('price');
-        $company_name =Auth::user()->Company;
-        $massage =" company $company_name->name accept your private trip " ;
-        event(new PrivateNotification($privateTrip->user->id , $massage));
-
-        $order->save();
-
-        return response()->json($order);
     }
     /**
      * Display the specified resource.
