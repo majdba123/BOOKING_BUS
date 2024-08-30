@@ -27,7 +27,7 @@ export default {
     methods: {
         loadGoogleMapsScript() {
             const script = document.createElement("script");
-            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAeLUpyozCjrCIxNBNmwVfCERYrHZh3MbU&libraries=places&callback=initAutocomplete`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo&libraries=places&callback=initAutocomplete`;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
