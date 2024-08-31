@@ -15,7 +15,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('paths', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('from');
             $table->unsignedBigInteger('from_location');
@@ -31,6 +31,7 @@ return new class extends Migration
         $fromLocation = Geolocation::factory()->create();
         $toLocation = Geolocation::factory()->create();
         DB::table('paths')->insert([
+            'id' => 1,
             'company_id' => $company->id,
             'from' => 'Nothing',
             'from_location' =>$fromLocation->id,

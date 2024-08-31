@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('seat__reservations', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignIdFor(Seat::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Reservation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('status')->default('padding');

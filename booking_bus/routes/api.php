@@ -61,7 +61,7 @@ Route::get('all_user', [AdminDashBoardController::class, 'all_user']);
 
 
 
-Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']], function () {
+Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum', 'throttle:30,1']], function () {
 
     Route::get('/get_driver_by_status', [DriverController::class, 'get_driver_by_status']);
     Route::get('/all_driver', [DriverController::class, 'index']);
@@ -172,7 +172,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
 });
 
 
-Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum', 'throttle:30,1']], function () {
 
     Route::get('/all_government', [AreaController::class, 'index']);
     Route::post('/store_government', [AreaController::class, 'store']);
@@ -242,7 +242,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum']
 
 
 
-Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum', 'throttle:30,1']], function () {
 
     Route::get('/trips', [TripController::class, 'index_user']);
     Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
@@ -309,7 +309,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
 
 
 
-Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum', 'throttle:30,1']], function () {
 
     Route::get('/my_bus', [DriverController::class, 'my_bus']);
     Route::get('/my_pending_trip', [DriverController::class, 'my_pending_trip']);
