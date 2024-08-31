@@ -238,6 +238,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum',
     //hamza
 
     //  Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
+
+
+    Route::post('/get_profit_/{company_id}', [AdminDashBoardController::class, 'getPriceData1']);
 });
 
 

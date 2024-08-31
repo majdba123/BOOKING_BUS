@@ -1102,4 +1102,59 @@ class AdminDashBoardController extends Controller
 
         return response()->json($dash);
     }
+
+
+
+    public function getPriceData1(Request $request ,$company_id)
+    {
+        $period = $request->input('period'); // daily, monthly, yearly
+        $company =Company::find($company_id);
+        if(!$company)
+        {
+            return response()->json(['error' => 'company not found '], 422);
+        }
+        $validator = Validator::make($request->all(), [
+            'period' => ['required', 'string', 'in:daily,monthly,yearly'],
+        ]);
+        if ($validator->fails()) {
+            // Return an error response if the validation fails
+            return response()->json(['error' => 'Invalid request'], 422);
+        }
+    
+        $reservations = Reservation::whereHas('bus_trip.trip.company', function ($query) use ($company_id) {
+            $query->where('id', $company_id);
+        })
+        ->when($period === 'daily', function ($query) {
+            $query->whereDate('created_at', today());
+        })
+        ->when($period === 'monthly', function ($query) {
+            $query->whereMonth('created_at', now()->month);
+        })
+        ->when($period === 'yearly', function ($query) {
+            $query->whereYear('created_at', now()->year);
+        })    
+        ->select('price') // select only the price column
+        ->get(); 
+    
+        $prices = $reservations->pluck('price')->toArray(); 
+     //   var_dump($prices);
+        if (empty($prices)) {
+            return response()->json(['message' => 'No prices found for the given period'], 200);
+        }
+    
+        $averageProfit = $this->calculateAverageProfit1($prices);
+        return response()->json(['period' => $request->input('period'), 'average_profit' => $averageProfit]);
+    }
+
+
+    public function calculateAverageProfit1($prices)
+    {
+        if (empty($prices)) {
+
+            return 0;
+        }
+        $sum = array_sum($prices);
+        $count = count($prices);
+        return $sum / $count;
+    }
 }
