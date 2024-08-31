@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('charge__balances', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('image');
             $table->string('point');

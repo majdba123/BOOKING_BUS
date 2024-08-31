@@ -14,13 +14,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('areas', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('name');
             $table->foreignIdFor(geolocation::class)->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
         DB::table('areas')->insert([
-            'id' => 1,
+
             'name' => 'Nothing',
             'geolocation_id' => '1',
             'created_at' => now(),
