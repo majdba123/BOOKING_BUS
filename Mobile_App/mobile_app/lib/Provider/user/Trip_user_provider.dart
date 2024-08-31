@@ -14,9 +14,9 @@ import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/TicketDetailObject.dart'; // To decode JSON responses
 
 class TripuserProvider with ChangeNotifier {
-  List<TripByPath> _trips = [];
+  List<AllTrips> _trips = [];
 
-  List<TripByPath> get trips => _trips;
+  List<AllTrips> get trips => _trips;
   List<AllTrips> _alltrips = [];
 
   List<AllTrips> get AllTripsItems => _alltrips;
@@ -166,16 +166,32 @@ class TripuserProvider with ChangeNotifier {
 
   Future<void> getTripsByPath(
       String accessToken, String from, String to, var companyName) async {
-    final response = await http.get(headers: {
-      'Authorization': 'Bearer $accessToken',
-    }, Uri.parse(name_domain_server + 'user/trip_by_path?from=$from&to=$to'));
+    _isLoading = true;
+    notifyListeners();
+    final response;
+    if (companyName == null) {
+      response = await http.get(headers: {
+        'Authorization': 'Bearer $accessToken',
+      }, Uri.parse(name_domain_server + 'user/trip_by_path?from=$from&to=$to'));
+    } else {
+      response = await http.get(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+          Uri.parse(name_domain_server +
+              'user/trip_by_path?from=$from&to=$to&company_name=$companyName'));
+    }
 
+    print(name_domain_server +
+        'user/trip_by_path?from=$from&to=$to&company_name=$companyName');
     print(response.statusCode);
     print('here in serach trip by path');
     print(response.body);
     if (response.statusCode == 200) {
       final List<dynamic> tripList = json.decode(response.body);
-      _trips = tripList.map((json) => TripByPath.fromJson(json)).toList();
+      _trips = tripList.map((json) => AllTrips.fromJson(json)).toList();
+      print(_trips);
+      _isLoading = false;
       notifyListeners();
     } else {
       throw Exception('Failed to load trips');

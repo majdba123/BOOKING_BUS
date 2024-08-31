@@ -41,47 +41,68 @@
         <div v-else class="recent_orders">
             <h1>All Bus</h1>
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Number Bus</th>
-                            <th>Number Passenger</th>
-                            <th>Actions</th>
-                            <th>Seats</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(bus, index) in filteredBuses" :key="index">
-                            <td>{{ bus.number_bus }}</td>
-                            <td>{{ bus.number_passenger }}</td>
-                            <td>
-                                <button
-                                    class="edit-btn"
-                                    @click="openEditModal(bus, index)"
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div
+                        v-if="!filteredBuses.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Number Bus</th>
+                                    <th>Number Passenger</th>
+                                    <th>Actions</th>
+                                    <th>Seats</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(bus, index) in filteredBuses"
+                                    :key="index"
                                 >
-                                    <span class="material-icons">edit</span>
-                                </button>
-                                <button
-                                    class="delete-btn"
-                                    @click="confirmDeleteBus(bus)"
-                                >
-                                    <span class="material-icons">delete</span>
-                                </button>
-                            </td>
+                                    <td>{{ bus.number_bus }}</td>
+                                    <td>{{ bus.number_passenger }}</td>
+                                    <td>
+                                        <button
+                                            class="edit-btn"
+                                            @click="openEditModal(bus, index)"
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
+                                        </button>
 
-                            <td>
-                                <button
-                                    class="status-btn"
-                                    @click="showSeats(bus.id)"
-                                >
-                                    <span class="material-icons"
-                                        >visibility</span
-                                    >
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                        <button
+                                            class="delete-btn"
+                                            @click="confirmDeleteBus(bus)"
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
+                                        </button>
+                                    </td>
+
+                                    <td>
+                                        <button
+                                            class="status-btn"
+                                            @click="showSeats(bus.id)"
+                                        >
+                                            <span class="material-icons"
+                                                >visibility</span
+                                            >
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -101,25 +122,38 @@
                     Finished
                 </button>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Number Bus</th>
-                                <th>Number Passenger</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(bus, index) in busStatusData"
-                                :key="index"
-                            >
-                                <td>{{ bus.number_bus }}</td>
-                                <td>{{ bus.number_passenger }}</td>
-                                <td>{{ bus.status }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="loading1" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div v-else>
+                        <div
+                            v-if="!busStatusData.length > 0"
+                            class="no-data-message"
+                        >
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Number Bus</th>
+                                        <th>Number Passenger</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(bus, index) in busStatusData"
+                                        :key="index"
+                                    >
+                                        <td>{{ bus.number_bus }}</td>
+                                        <td>{{ bus.number_passenger }}</td>
+                                        <td>{{ bus.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button @click="closeBusStatusModal" class="close-modal">
@@ -223,6 +257,8 @@ export default {
     name: "AddBus",
     data() {
         return {
+            loading: true,
+            loading1: false,
             showForm: true,
             Bus: [],
             busStatusData: [],
@@ -329,11 +365,13 @@ export default {
                     this.Bus = response.data;
                     store.state.Bus = response.data;
                     console.log(response.data);
+                    this.loading = false;
                 })
                 .catch(function (error) {
                     window.alert("Error Getting Bus");
                     console.error(error);
                 });
+            this.loading = true;
         },
         fetchBusStatus(status) {
             const access_token = window.localStorage.getItem("access_token");
@@ -345,11 +383,13 @@ export default {
                 .then((response) => {
                     this.busStatusData = response.data;
                     console.log(response.data);
+                    this.loading1 = false;
                 })
                 .catch((error) => {
                     window.alert("Error fetching bus status");
                     console.error(error);
                 });
+            this.loading1 = true;
         },
         openEditModal(bus, index) {
             this.editedBus = { ...bus };
@@ -490,7 +530,33 @@ h2 {
     max-width: none;
     font-size: 0.85rem;
 }
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
 
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
 .recent_orders table:hover {
     box-shadow: none;
 }
@@ -729,7 +795,7 @@ input:focus {
 }
 
 .modal-header,
-.modal-body {
+.modal-body div div {
     margin-bottom: 10px;
     display: flex;
     justify-content: center;
@@ -744,41 +810,41 @@ input:focus {
     display: flex;
     justify-content: flex-end;
 }
-.modal-body table {
+.modal-body div div table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.modal-body table th,
-.modal-body table td {
+.modal-body div div table th,
+.modal-body div div table td {
     text-align: center;
     vertical-align: middle;
     padding: 8px;
 }
 
-.modal-body table tbody tr {
+.modal-body div div table tbody tr {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.modal-body table thead {
+.modal-body div div table thead {
     display: flex;
     justify-content: center;
 }
 
-.modal-body table tbody {
+.modal-body div div table tbody {
     display: flex;
     flex-direction: column;
 }
 
-.modal-body table tr {
+.modal-body div div table tr {
     width: 100%;
     display: flex;
     justify-content: space-evenly;
 }
 
-.modal-body table td {
+.modal-body div div table td {
     flex: 1;
 }
 

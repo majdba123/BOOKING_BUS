@@ -19,35 +19,47 @@
         <div v-if="showAllTrips" class="recent_orders">
             <h1>All Trips</h1>
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Trip ID</th>
-                            <th>Status</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Price</th>
-                            <th>View Ratings</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(trip, index) in Trips" :key="index">
-                            <td>{{ trip.id }}</td>
-                            <td>{{ trip.status }}</td>
-                            <td>{{ trip.path?.from }}</td>
-                            <td>{{ trip.path?.to }}</td>
-                            <td>{{ trip.price }}</td>
-                            <td>
-                                <button
-                                    class="status-btn view-ratings-btn"
-                                    @click="openTripRatingsModal(trip.id)"
-                                >
-                                    View Ratings
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Trips.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Trip ID</th>
+                                    <th>Status</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Price</th>
+                                    <th>View Ratings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(trip, index) in Trips" :key="index">
+                                    <td>{{ trip.id }}</td>
+                                    <td>{{ trip.status }}</td>
+                                    <td>{{ trip.path?.from }}</td>
+                                    <td>{{ trip.path?.to }}</td>
+                                    <td>{{ trip.price }}</td>
+                                    <td>
+                                        <button
+                                            class="status-btn view-ratings-btn"
+                                            @click="
+                                                openTripRatingsModal(trip.id)
+                                            "
+                                        >
+                                            View Ratings
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -55,112 +67,149 @@
         <div v-if="showAllDrivers" class="recent_orders">
             <h1>All Drivers</h1>
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Driver ID</th>
-                            <th>Name</th>
-                            <th>View Ratings</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(driver, index) in Drivers" :key="index">
-                            <td>{{ driver.driver_id }}</td>
-                            <td>{{ driver.name }}</td>
-                            <td>
-                                <button
-                                    class="status-btn view-ratings-btn"
-                                    @click="
-                                        openDriverRatingsModal(driver.driver_id)
-                                    "
+                <div v-if="loading1" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Drivers.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Driver ID</th>
+                                    <th>Name</th>
+                                    <th>View Ratings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(driver, index) in Drivers"
+                                    :key="index"
                                 >
-                                    View Ratings
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <td>{{ driver.driver_id }}</td>
+                                    <td>{{ driver.name }}</td>
+                                    <td>
+                                        <button
+                                            class="status-btn view-ratings-btn"
+                                            @click="
+                                                openDriverRatingsModal(
+                                                    driver.driver_id
+                                                )
+                                            "
+                                        >
+                                            View Ratings
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Start ratings tables -->
         <div v-if="showTripRatings" class="recent_orders">
             <h1>Trip Ratings</h1>
-            <div class="table-container" v-if="showTripRatings.lenght">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>User ID</th>
-                            <th>Trip ID</th>
-                            <th>Rating</th>
-                            <th>Created At</th>
-                            <th>Updated At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(rating, index) in tripRatings" :key="index">
-                            <td>{{ rating.id }}</td>
-                            <td>{{ rating.user_id }}</td>
-                            <td>{{ rating.trip_id }}</td>
-                            <td>
-                                <span
-                                    v-for="n in 5"
-                                    :key="n"
-                                    class="fa"
-                                    :class="
-                                        n <= rating.rating
-                                            ? 'fa-star'
-                                            : 'fa-star-o'
-                                    "
-                                ></span>
-                            </td>
-                            <td>{{ rating.created_at }}</td>
-                            <td>{{ rating.updated_at }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div v-else class="modal-content">
-                <p>No Trip Ratings.</p>
+            <div class="table-container" v-if="showTripRatings">
+                <div v-if="loading2" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!tripRatings.length > 0" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User ID</th>
+                                    <th>Trip ID</th>
+                                    <th>Rating</th>
+                                    <th>Created At</th>
+                                    <th>Updated At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(rating, index) in tripRatings"
+                                    :key="index"
+                                >
+                                    <td>{{ rating.id }}</td>
+                                    <td>{{ rating.user_id }}</td>
+                                    <td>{{ rating.trip_id }}</td>
+                                    <td>
+                                        <span
+                                            v-for="n in 5"
+                                            :key="n"
+                                            class="fa"
+                                            :class="
+                                                n <= rating.rating
+                                                    ? 'fa-star'
+                                                    : 'fa-star-o'
+                                            "
+                                        ></span>
+                                    </td>
+                                    <td>{{ rating.created_at }}</td>
+                                    <td>{{ rating.updated_at }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div v-if="showDriverRatings" class="recent_orders">
             <h1>Driver Ratings</h1>
-            <div class="table-container" v-if="showDriverRatings.lenght">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Driver ID</th>
-                            <th>Rating</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="(rating, index) in driverRatings"
-                            :key="index"
-                        >
-                            <td>{{ rating.driver_id }}</td>
-                            <td>
-                                <span
-                                    v-for="star in 5"
-                                    :key="star"
-                                    class="fa"
-                                    :class="{
-                                        'fa-star': star <= rating.rating,
-                                        'fa-star-o': star > rating.rating,
-                                    }"
-                                ></span>
-                            </td>
-                            <td>{{ rating.created_at }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div v-else class="modal-content">
-                <p>No Driver Ratings.</p>
+            <div class="table-container" v-if="showDriverRatings">
+                <div v-if="loading3" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div
+                        v-if="!driverRatings.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Driver ID</th>
+                                    <th>Rating</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(rating, index) in driverRatings"
+                                    :key="index"
+                                >
+                                    <td>{{ rating.driver_id }}</td>
+                                    <td>
+                                        <span
+                                            v-for="star in 5"
+                                            :key="star"
+                                            class="fa"
+                                            :class="{
+                                                'fa-star':
+                                                    star <= rating.rating,
+                                                'fa-star-o':
+                                                    star > rating.rating,
+                                            }"
+                                        ></span>
+                                    </td>
+                                    <td>{{ rating.created_at }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -174,37 +223,54 @@
                     >
                 </div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>User ID</th>
-                                <th>Rating</th>
-                                <th>Comment</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(rating, index) in tripRatingsDetails"
-                                :key="index"
-                            >
-                                <td>{{ rating.user_id }}</td>
-                                <td>
-                                    <span
-                                        v-for="star in 5"
-                                        :key="star"
-                                        class="fa"
-                                        :class="{
-                                            'fa-star': star <= rating.rating,
-                                            'fa-star-o': star > rating.rating,
-                                        }"
-                                    ></span>
-                                </td>
-                                <td>{{ rating.comment }}</td>
-                                <td>{{ rating.created_at }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="loading4" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div v-else>
+                        <div
+                            v-if="!tripRatingsDetails.length > 0"
+                            class="no-data-message"
+                        >
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Rating</th>
+                                        <th>Comment</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(
+                                            rating, index
+                                        ) in tripRatingsDetails"
+                                        :key="index"
+                                    >
+                                        <td>{{ rating.user_id }}</td>
+                                        <td>
+                                            <span
+                                                v-for="star in 5"
+                                                :key="star"
+                                                class="fa"
+                                                :class="{
+                                                    'fa-star':
+                                                        star <= rating.rating,
+                                                    'fa-star-o':
+                                                        star > rating.rating,
+                                                }"
+                                            ></span>
+                                        </td>
+                                        <td>{{ rating.comment }}</td>
+                                        <td>{{ rating.created_at }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -219,37 +285,54 @@
                     >
                 </div>
                 <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>User ID</th>
-                                <th>Rating</th>
-                                <th>Comment</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(rating, index) in driverRatingsDetails"
-                                :key="index"
-                            >
-                                <td>{{ rating.user_id }}</td>
-                                <td>
-                                    <span
-                                        v-for="star in 5"
-                                        :key="star"
-                                        class="fa"
-                                        :class="{
-                                            'fa-star': star <= rating.rating,
-                                            'fa-star-o': star > rating.rating,
-                                        }"
-                                    ></span>
-                                </td>
-                                <td>{{ rating.comment }}</td>
-                                <td>{{ rating.created_at }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div v-if="loading5" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div v-else>
+                        <div
+                            v-if="!driverRatingsDetails.length > 0"
+                            class="no-data-message"
+                        >
+                            No Data Available
+                        </div>
+                        <div v-else>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Rating</th>
+                                        <th>Comment</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(
+                                            rating, index
+                                        ) in driverRatingsDetails"
+                                        :key="index"
+                                    >
+                                        <td>{{ rating.user_id }}</td>
+                                        <td>
+                                            <span
+                                                v-for="star in 5"
+                                                :key="star"
+                                                class="fa"
+                                                :class="{
+                                                    'fa-star':
+                                                        star <= rating.rating,
+                                                    'fa-star-o':
+                                                        star > rating.rating,
+                                                }"
+                                            ></span>
+                                        </td>
+                                        <td>{{ rating.comment }}</td>
+                                        <td>{{ rating.created_at }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -265,6 +348,13 @@ export default {
     name: "GetAllRating",
     data() {
         return {
+            loading: true,
+            loading1: true,
+            loading2: true,
+            loading3: true,
+            loading4: true,
+            loading5: true,
+
             showTripRatings: false,
             showDriverRatings: false,
             showAllTrips: false,
@@ -317,10 +407,12 @@ export default {
             })
                 .then((response) => {
                     this.tripRatings = response.data;
+                    this.loading2 = false;
                 })
                 .catch((error) => {
                     console.error("Error fetching trip ratings:", error);
                 });
+            this.loading2 = true;
         },
         fetchDriverRatings() {
             const access_token = window.localStorage.getItem("access_token");
@@ -331,12 +423,17 @@ export default {
             })
                 .then((response) => {
                     this.driverRatings = response.data;
+                    this.loading3 = false;
                 })
                 .catch((error) => {
                     console.error("Error fetching driver ratings:", error);
                 });
+            this.loading3 = true;
         },
         fetchTripRatingsByTripId(trip_id) {
+            this.showTripRatingsModal = true;
+            this.showTripRatingsModal = true;
+
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -345,7 +442,7 @@ export default {
             })
                 .then((response) => {
                     this.tripRatingsDetails = response.data;
-                    this.showTripRatingsModal = true;
+                    this.loading4 = false;
                 })
                 .catch((error) => {
                     console.error(
@@ -353,8 +450,11 @@ export default {
                         error
                     );
                 });
+            this.loading4 = true;
         },
         fetchDriverRatingsByDriverId(driver_id) {
+            this.showDriverRatingsModal = true;
+
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -363,7 +463,7 @@ export default {
             })
                 .then((response) => {
                     this.driverRatingsDetails = response.data;
-                    this.showDriverRatingsModal = true;
+                    this.loading5 = false;
                 })
                 .catch((error) => {
                     console.error(
@@ -371,6 +471,7 @@ export default {
                         error
                     );
                 });
+            this.loading5 = true;
         },
         AllTrips() {
             const access_token = window.localStorage.getItem("access_token");
@@ -382,10 +483,12 @@ export default {
                 .then((response) => {
                     this.Trips = response.data;
                     console.log(response.data);
+                    this.loading = false;
                 })
                 .catch((error) => {
                     console.error("Error Getting Trips:", error);
                 });
+            this.loading = true;
         },
         AllDriver() {
             const access_token = window.localStorage.getItem("access_token");
@@ -397,10 +500,12 @@ export default {
                 .then((response) => {
                     this.Drivers = response.data;
                     console.log(response.data);
+                    this.loading1 = false;
                 })
                 .catch((error) => {
                     console.error("Error getting drivers:", error);
                 });
+            this.loading1 = true;
         },
         openTripRatingsModal(tripId) {
             this.fetchTripRatingsByTripId(tripId);
@@ -441,6 +546,33 @@ export default {
     padding: 0;
     box-sizing: border-box;
     text-decoration: none;
+}
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* Adjust as needed */
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
 }
 
 body {

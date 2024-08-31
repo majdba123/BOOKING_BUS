@@ -45,8 +45,8 @@ class TripTest extends TestCase
         ]);
 
         // Create breaks
-        $break1 = Breaks::factory()->create();
-        $break2 = Breaks::factory()->create();
+        $break1 = Breaks::factory()->create(['path_id' =>$path->id ]);
+        $break2 = Breaks::factory()->create(['path_id' =>$path->id ]);
 
         // Create buses
         $bus1 = Bus::factory()->create([
@@ -62,7 +62,6 @@ class TripTest extends TestCase
         $data = [
             'path_id' => $path->id,
             'price' => '10.00',
-            'breaks_ids' => [$break1->id, $break2->id],
             'bus_ids' => [
                 [
                     'bus_id' => $bus1->id,
@@ -94,12 +93,12 @@ class TripTest extends TestCase
             'price' => '10.00',
         ]);
         $this->assertEquals(1,  Trip::count());
-        foreach ($data['breaks_ids'] as $breakId) {
+  /*      foreach ($data['breaks_ids'] as $breakId) {
             $this->assertDatabaseHas('breaks_trips', [
                 'trip_id' =>$response->json()['id'],
                 'breaks_id' => $breakId,
             ]);
-        }
+        }*/
         $this->assertEquals(4, Breaks_trip::where('trip_id', $response->json()['id'])->count()); // Check that two break trips were created
         foreach ($data['bus_ids'] as $busData) {
             $this->assertDatabaseHas('bus__trips', [

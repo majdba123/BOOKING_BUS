@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/user/Wallet_provider.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -33,7 +34,23 @@ class _ChargeBalancePageBystatusState extends State<ChargeBalanceByStatusPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Charge Balance'),
+        leading: IconButton(
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(),
+              ),
+              result: ModalRoute.withName('/ProfilePage'),
+            );
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
+        centerTitle: true,
+        title: Text(
+          'Charge Balance',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: AppColors.primaryColor,
       ),
       body: Padding(

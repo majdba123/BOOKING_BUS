@@ -8,46 +8,62 @@
             <button class="nav-btnd" @click="fetchMyOrders">My Orders</button>
         </header>
 
-        <!-- Display orders if showOrders is true -->
         <div v-if="showOrders && myOrders.length" class="form-containerd">
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Starting Area</th>
-                            <th>End Area</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="order in paginatedOrders" :key="order.id">
-                            <td>{{ order.id }}</td>
-                            <td>{{ order.private_trip.from }}</td>
-                            <td>{{ order.private_trip.to }}</td>
-                            <td>{{ order.price }}</td>
-                            <td>{{ order.status }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div v-if="totalOrderPages > 1" class="pagination">
-                    <button
-                        @click="prevOrderPage"
-                        :disabled="currentOrderPage === 1"
+            <div class="table-container" v-if="privateTrips">
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div
+                        v-if="!privateTrips.length > 0"
+                        class="no-data-message"
                     >
-                        <span class="material-icons"> skip_previous </span>
-                    </button>
-                    <span
-                        >Page {{ currentOrderPage }} of
-                        {{ totalOrderPages }}</span
-                    >
-                    <button
-                        @click="nextOrderPage"
-                        :disabled="currentOrderPage === totalOrderPages"
-                    >
-                        <span class="material-icons"> skip_next </span>
-                    </button>
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Starting Area</th>
+                                    <th>End Area</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="order in paginatedOrders"
+                                    :key="order.id"
+                                >
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.private_trip.from }}</td>
+                                    <td>{{ order.private_trip.to }}</td>
+                                    <td>{{ order.price }}</td>
+                                    <td>{{ order.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-if="totalOrderPages > 1" class="pagination">
+                        <button
+                            @click="prevOrderPage"
+                            :disabled="currentOrderPage === 1"
+                        >
+                            <span class="material-icons"> skip_previous </span>
+                        </button>
+                        <span
+                            >Page {{ currentOrderPage }} of
+                            {{ totalOrderPages }}</span
+                        >
+                        <button
+                            @click="nextOrderPage"
+                            :disabled="currentOrderPage === totalOrderPages"
+                        >
+                            <span class="material-icons"> skip_next </span>
+                        </button>
+                    </div>
+                    <!-- Display orders if showOrders is true -->
                 </div>
             </div>
         </div>
@@ -104,7 +120,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Modal for accepting order -->
         <div v-if="showAcceptModal" class="modal">
             <div class="modal-content">
@@ -141,6 +156,8 @@ export default {
     name: "PrivateTrip",
     data() {
         return {
+            loading: true,
+
             showForm: true, // Indicates if private trips should be displayed
             showOrders: false, // Indicates if orders should be displayed
             privateTrips: [],
@@ -153,6 +170,9 @@ export default {
             selectedTripId: null,
             toast: useToast(),
         };
+    },
+    mounted() {
+        this.fetchPrivateTrips();
     },
     computed: {
         paginatedTrips() {
@@ -182,6 +202,9 @@ export default {
             })
                 .then((response) => {
                     this.privateTrips = response.data;
+                    this.loading = false;
+                    console.log(this.privateTrips);
+
                     this.showOrders = false; // Hide orders and show private trips
                     this.showForm = true; // Show private trips form
                 })
@@ -189,6 +212,7 @@ export default {
                     this.toast.error("Error fetching private trips.");
                     console.error(error);
                 });
+            this.loading = true;
         },
         fetchMyOrders() {
             const token = window.localStorage.getItem("access_token");
@@ -319,7 +343,35 @@ h2 {
 .table-container {
     width: 100%;
 }
-
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* Adjust as needed */
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+.recent_orders div table {
+    background-color: #fff;
+}
 .table-container table {
     width: 100%;
     border-radius: 1rem;
@@ -329,11 +381,36 @@ h2 {
     max-width: none;
     font-size: 0.85rem;
 }
+.recent_orders div div h1 {
+    margin: 18px;
+    color: var(--clr-dark);
+}
+.recent_orders div div {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+.recent_orders table {
+    background-color: var(--clr-white);
+    width: 100%;
+    border-radius: 1rem;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
+    color: var(--clr-dark);
+    max-width: none;
+    font-size: 0.85rem;
+}
 
 .table-container table:hover {
     box-shadow: none;
 }
-
+.recent_orders a {
+    text-align: center;
+    display: block;
+    margin: 1rem;
+    font-size: 0.85rem;
+}
 table thead tr th {
     padding: 10px;
     font-size: 0.9rem;
@@ -512,22 +589,34 @@ select:focus {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transition: 0.3s ease;
 }
-
+.containerd {
+    width: 100%;
+    margin-left: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-size: cover;
+    min-height: 100vh;
+    background: var(--clr-color-background);
+}
 /* Form and Map styling */
+.dark-theme-variables .form-containerd {
+    background-color: var(--clr-dark-variant);
+}
 .form-containerd {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--clr-info-light);
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     width: 100%;
     margin-top: 50px;
-    margin: 40px auto;
+    transition: background-color 0.3s ease;
 }
-
 .form-groupd {
     margin-bottom: 15px;
     width: 100%;

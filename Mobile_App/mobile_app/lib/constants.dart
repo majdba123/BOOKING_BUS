@@ -27,3 +27,37 @@ const kBodyText2 =
     TextStyle(fontSize: 28, fontWeight: FontWeight.w500, color: Colors.white);
 
 const name_domain_server = "http://192.168.43.125:8000/api/";
+
+Route animetedRoutePage(Widget child) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+
+Widget backImage(var width ,var height){
+   return Container(
+            width: width,
+            height: height,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  "assets/images/background_mappp.png",
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+}

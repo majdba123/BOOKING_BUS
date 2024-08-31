@@ -43,45 +43,60 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            DelayedDisplay(
-              delay: const Duration(milliseconds: 500),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  BusHeader(),
-                  const SeatLegendRow(),
-                  if (upperDeckSeats.isNotEmpty)
-                    DeckSwitch(
-                      showUpperDeck: showUpperDeck,
-                      onToggle: (value) {
-                        setState(() {
-                          showUpperDeck = value;
-                        });
-                      },
-                    ),
-                ],
-              ),
+      body: Consumer<BussofSpsccifTripProvider>(
+        builder: (context, busProvider, child) {
+          // Check if the data is still loading
+          if (busProvider.isLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          List<SeatModel> lowerDeckSeats = busProvider.seats.take(40).toList();
+          List<SeatModel> upperDeckSeats = busProvider.seats.length > 40
+              ? busProvider.seats.skip(40).take(40).toList()
+              : [];
+
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                DelayedDisplay(
+                  delay: const Duration(milliseconds: 500),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BusHeader(),
+                      const SeatLegendRow(),
+                      if (upperDeckSeats.isNotEmpty)
+                        DeckSwitch(
+                          showUpperDeck: showUpperDeck,
+                          onToggle: (value) {
+                            setState(() {
+                              showUpperDeck = value;
+                            });
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+                DelayedDisplay(
+                  delay: const Duration(milliseconds: 2000),
+                  child: BusLayout(
+                    seats: showUpperDeck ? upperDeckSeats : lowerDeckSeats,
+                    selectedSeats: selectedSeats,
+                    onSeatTap: _onSeatTap,
+                  ),
+                ),
+                DelayedDisplay(
+                  delay: const Duration(milliseconds: 2000),
+                  child: ConfirmButton(
+                    onPressed: _confirmSelection,
+                  ),
+                ),
+              ],
             ),
-            DelayedDisplay(
-              delay: const Duration(milliseconds: 2000),
-              child: BusLayout(
-                seats: showUpperDeck ? upperDeckSeats : lowerDeckSeats,
-                selectedSeats: selectedSeats,
-                onSeatTap: _onSeatTap,
-              ),
-            ),
-            DelayedDisplay(
-              delay: const Duration(milliseconds: 2000),
-              child: ConfirmButton(
-                onPressed: _confirmSelection,
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

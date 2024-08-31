@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationInput extends StatefulWidget {
   final TextEditingController originController;
   final TextEditingController destinationController;
-  final VoidCallback onUseCurrentLocation;
-  final ValueChanged<String> onSearchOrigin;
-  final ValueChanged<String> onSearchDestination;
+  final Function(LatLng) onSearchOrigin;
+  final Function(LatLng) onSearchDestination;
 
   const LocationInput({
     required this.originController,
     required this.destinationController,
-    required this.onUseCurrentLocation,
     required this.onSearchOrigin,
     required this.onSearchDestination,
   });
@@ -42,9 +41,10 @@ class _LocationInputState extends State<LocationInput> {
                     _isLoading = true; // Start loading
                   });
 
-                  widget.onUseCurrentLocation();
-
-                  // Simulate a delay for loading (e.g., waiting for location)
+                  // Notify the parent to get the current location
+                  widget.onSearchOrigin(LatLng(0,
+                      0)); // This should be updated with actual location fetching
+                  // Simulate a delay for loading
                   Future.delayed(Duration(seconds: 2), () {
                     setState(() {
                       _isLoading = false; // Stop loading
@@ -85,8 +85,6 @@ class _LocationInputState extends State<LocationInput> {
             controller: widget.originController,
             readOnly: _isCurrentLocation,
             onTap: _showLocationChoiceDialog,
-            onSubmitted: (query) => widget
-                .onSearchOrigin(query), // Search and zoom on origin search
             decoration: InputDecoration(
               labelText: 'From',
               prefixIcon: _isLoading
@@ -100,8 +98,6 @@ class _LocationInputState extends State<LocationInput> {
           SizedBox(height: 8),
           TextField(
             controller: widget.destinationController,
-            onSubmitted: (query) => widget.onSearchDestination(
-                query), // Search and zoom on destination search
             decoration: InputDecoration(
               labelText: 'To',
               prefixIcon: Icon(Icons.search),
@@ -109,6 +105,11 @@ class _LocationInputState extends State<LocationInput> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
             ),
+            onSubmitted: (value) {
+              // Trigger search for the destination location
+              widget.onSearchDestination(
+                  LatLng(0, 0)); // Update with actual location fetching
+            },
           ),
         ],
       ),

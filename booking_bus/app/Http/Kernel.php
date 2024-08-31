@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'company' => \App\Http\Middleware\CompMiddleware::class,
         'checkAdmi' => \App\Http\Middleware\adminMiddleWare::class,
+        'lock.reservation' => \App\Http\Middleware\LockMiddleWare::class,
 
     ];
 }

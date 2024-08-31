@@ -9,6 +9,8 @@ use App\Models\Seat;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 class BusController extends Controller
 {
     /**
@@ -40,35 +42,47 @@ class BusController extends Controller
      */
     public function store(Request $request)
     {
-       $company =Auth::user()->Company->id;
-
-        $validator = Validator::make($request->all(), [
-            'number_bus' => 'required|string',
-            'number_passenger' => 'required|string',
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors()->first();
-            return response()->json(['error' => $errors], 422);
+        DB::beginTransaction();
+    
+        try {
+            $company = Auth::user()->Company->id;
+    
+            $validator = Validator::make($request->all(), [
+                'number_bus' => 'required|string',
+                'number_passenger' => 'required|string',
+            ]);
+    
+            if ($validator->fails()) {
+                DB::rollBack();
+                $errors = $validator->errors()->first();
+                return response()->json(['error' => $errors], 422);
+            }
+    
+            $bus = new Bus();
+            $bus->number_bus = $request->input('number_bus');
+            $bus->number_passenger = $request->input('number_passenger');
+            $bus->company_id = $company;
+            $bus->save();
+    
+            $number_passenger = $bus->number_passenger;
+    
+            // Create seats equal to the number of passengers
+    
+            for ($i = 0; $i < $number_passenger; $i++) {
+                $seat = new Seat();
+                $seat->bus_id = $bus->id;
+                $seat->save();
+            }
+    
+            DB::commit();
+    
+            return response()->json([
+                'message' => 'bus Created ',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'An error occurred while creating bus'], 500);
         }
-        $bus = new Bus();
-        $bus->number_bus = $request->input('number_bus');
-        $bus->number_passenger = $request->input('number_passenger');
-        $bus->company_id = $company;
-        $bus->save();
-
-        $number_passenger = $bus->number_passenger;
-
-
-        // Create seats equal to the number of passengers
-
-        for ($i = 0; $i < $number_passenger; $i++) {
-            $seat = new Seat();
-            $seat->bus_id = $bus->id;
-            $seat->save();
-        }
-        return response()->json([
-            'message' => 'bus Created ',
-        ]);
     }
 
     /**

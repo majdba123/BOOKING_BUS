@@ -52,7 +52,7 @@ class _SearchBusFormState extends State<SearchBusForm> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final tripProvider = Provider.of<TripuserProvider>(context, listen: false);
 
-    await tripProvider.getTripsByPath(
+    tripProvider.getTripsByPath(
       authProvider.accessToken,
       from,
       to,
@@ -62,8 +62,7 @@ class _SearchBusFormState extends State<SearchBusForm> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            BusSearchScreen(searchFuture: Future.value(tripProvider.trips)),
+        builder: (context) => BusSearchScreen(),
       ),
     );
   }
