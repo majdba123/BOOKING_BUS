@@ -46,10 +46,12 @@ Route animetedRoutePage(Widget child) {
   );
 }
 
-Widget backImage(var width, var height) {
+Widget backImage(BuildContext context) {
+  double screenHeight = MediaQuery.of(context).size.height;
+  double screenWidth = MediaQuery.of(context).size.width;
   return Container(
-    width: width,
-    height: height,
+    width: screenWidth,
+    height: screenHeight,
     decoration: const BoxDecoration(
       image: DecorationImage(
         image: AssetImage(

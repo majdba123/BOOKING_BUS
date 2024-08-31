@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Address_provider.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Add_new_address.dart';
 
 import 'package:mobile_app/screens/Dashborad_User/Widget/update_Address.dart';
@@ -62,28 +63,34 @@ class AddressListPage extends StatelessWidget {
               itemCount: addressProvider.addresses.length,
               itemBuilder: (context, index) {
                 final address = addressProvider.addresses[index];
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  elevation: 5,
-                  child: ListTile(
-                    leading: Icon(Icons.location_on, color: Colors.blue),
-                    title: Text('City : ${address.city}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        )),
-                    subtitle: Text('Area : ${address.area}'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit, color: Colors.grey),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) =>
-                              UpdateAddressDialog(address: address),
-                        );
-                      },
+                return Stack(
+                  children: [
+                    backImage(context),
+                    Card(
+                      margin:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      elevation: 5,
+                      child: ListTile(
+                        leading: Icon(Icons.location_on, color: Colors.blue),
+                        title: Text('City : ${address.city}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            )),
+                        subtitle: Text('Area : ${address.area}'),
+                        trailing: IconButton(
+                          icon: Icon(Icons.edit, color: Colors.grey),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  UpdateAddressDialog(address: address),
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 );
               },
             );

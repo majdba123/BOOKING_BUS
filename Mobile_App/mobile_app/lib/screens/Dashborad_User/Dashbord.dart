@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/All_Trip_Page.dart';
 import 'package:mobile_app/screens/Dashborad_User/All_compines.dart';
 import 'package:mobile_app/screens/Dashborad_User/Auto_Scroll_list_horizental_Trip.dart';
@@ -96,6 +97,7 @@ class _DashboardUserState extends State<DashboardUser> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+          backImage(context),
           SingleChildScrollView(
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top +

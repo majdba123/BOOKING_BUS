@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mobile_app/colors.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/constants.dart';
-import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
 import 'package:provider/provider.dart';
 
 class CompleteProfilePage extends StatefulWidget {
@@ -81,7 +80,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
         width: screenWidth,
         child: Stack(
           children: [
-            backImage(screenWidth, screenHeight),
+            backImage(context),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Form(

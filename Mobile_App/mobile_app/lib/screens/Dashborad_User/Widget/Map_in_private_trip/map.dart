@@ -8,8 +8,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:mobile_app/colors.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class MapUI extends StatefulWidget {
   @override
@@ -39,7 +43,7 @@ class _MapViewState extends State<MapUI> {
   String? _placeDistance;
   String? _timeduration;
   Set<Marker> markers = {};
-
+  final _formKey = GlobalKey<FormState>();
   late PolylinePoints polylinePoints;
   Map<PolylineId, Polyline> polylines = {};
   List<LatLng> polylineCoordinates = [];
@@ -267,8 +271,8 @@ class _MapViewState extends State<MapUI> {
             return KeyboardVisibilityBuilder(
                 builder: (context, isKeyboardVisible) {
               return AnimatedPadding(
-                duration: Duration(milliseconds: isKeyboardVisible ? 600 : 400),
-                  curve: isKeyboardVisible ? Curves.easeOut : Curves.easeIn,
+                duration: Duration(milliseconds: isKeyboardVisible ? 1 : 1),
+                curve: isKeyboardVisible ? Curves.easeOut : Curves.easeIn,
                 padding: EdgeInsets.only(
                     bottom: isKeyboardVisible
                         ? MediaQuery.of(context).viewInsets.bottom
@@ -602,11 +606,115 @@ class _MapViewState extends State<MapUI> {
                                       borderRadius: BorderRadius.circular(20.0),
                                     ),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     print('sned order message');
 
-                                    print(from);
-                                    print(to);
+                                    final from = startAddressController.text;
+                                    final to =
+                                        destinationAddressController.text;
+                                    final date = _dateController.text;
+                                    final startTime = _startTimeController.text;
+                                    final accessToken =
+                                        Provider.of<AuthProvider>(context,
+                                                listen: false)
+                                            .accessToken;
+
+                                    try {
+                                      await Provider.of<
+                                                  PrivateTripuserProvider>(
+                                              context,
+                                              listen: false)
+                                          .storePrivateTrip(
+                                        from,
+                                        to,
+                                        date,
+                                        startTime,
+                                        accessToken,
+                                        _placeDistance!,
+                                        fromlocation.latitude,
+                                        fromlocation.longitude,
+                                        tolocation.latitude,
+                                        tolocation.longitude,
+                                      );
+                                      var message =
+                                          Provider.of<PrivateTripuserProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .message;
+
+                                      if (message != null &&
+                                          message!.isNotEmpty) {
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          print('ddd');
+                                          AwesomeDialog(
+                                            context: context,
+                                            animType: AnimType.leftSlide,
+                                            headerAnimationLoop: false,
+                                            dialogType: DialogType.success,
+                                            showCloseIcon: true,
+                                            title: 'Succes',
+                                            desc:
+                                                'Private Trip add it Succesufly ',
+                                            btnOkOnPress: () {
+                                              Navigator.of(context)
+                                                  .pushNamedAndRemoveUntil(
+                                                      '/ProfilePage',
+                                                      (Route<dynamic> route) =>
+                                                          false);
+                                              debugPrint('OnClcik');
+                                            },
+                                            btnOkIcon: Icons.check_circle,
+                                            onDismissCallback: (type) {
+                                              debugPrint(
+                                                  'Dialog Dissmiss from callback $type');
+                                            },
+                                          ).show();
+                                          message = null;
+                                        });
+                                      }
+                                      // const SizedBox(
+                                      //   height: 16,
+                                      // );
+                                      // }
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(
+                                      //   SnackBar(
+                                      //       content: Text(message ??
+                                      //           'Private trip created successfully')),
+                                      // );
+                                      // Navigator.pop(context);
+                                    } catch (error) {
+                                      print(error);
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback((_) {
+                                        print('ddd');
+                                        Container();
+                                        AwesomeDialog(
+                                          context: context,
+                                          animType: AnimType.rightSlide,
+                                          headerAnimationLoop: false,
+                                          dialogType: DialogType.error,
+                                          showCloseIcon: true,
+                                          title: 'Error Dialog',
+                                          desc:
+                                              'Error During Create Priavte Trip Try later ....',
+                                          btnOkOnPress: () {
+                                            Navigator.of(context)
+                                                .pushNamedAndRemoveUntil(
+                                                    '/ProfilePage',
+                                                    (Route<dynamic> route) =>
+                                                        false);
+                                          },
+                                          btnOkIcon: Icons.check_circle,
+                                          btnOkColor: Colors.red,
+                                          onDismissCallback: (type) {
+                                            debugPrint(
+                                                'Dialog Dissmiss from callback $type');
+                                          },
+                                        ).show();
+                                      });
+                                    }
                                   },
                                   child: Text(
                                     'Send Order'.toUpperCase(),
@@ -656,8 +764,8 @@ class _MapViewState extends State<MapUI> {
     return degrees * pi / 180.0;
   }
 
-  var from;
-  var to;
+  late PointLatLng fromlocation;
+  late PointLatLng tolocation;
   _createPolylines(
     double startLatitude,
     double startLongitude,
@@ -673,8 +781,11 @@ class _MapViewState extends State<MapUI> {
         mode: TravelMode.driving,
       ),
     );
-    from = PointLatLng(startLatitude, startLongitude);
-    to = PointLatLng(destinationLatitude, destinationLongitude);
+    fromlocation = PointLatLng(startLatitude, startLongitude);
+    tolocation = PointLatLng(destinationLatitude, destinationLongitude);
+
+    print(fromlocation);
+    print(tolocation);
     polylineCoordinates.clear();
 
     if (result.points.isNotEmpty) {
@@ -755,28 +866,28 @@ class _MapViewState extends State<MapUI> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    ClipOval(
-                      child: Material(
-                        color: Colors.blue.shade100,
-                        child: InkWell(
-                          splashColor: Colors.blue,
-                          child: SizedBox(
-                            child: Icon(_isPlacesVisible
-                                ? Icons.list_outlined
-                                : Icons.arrow_upward),
-                            width: 50,
-                            height: 50,
-                          ),
-                          onTap: () {
-                            _showBottomSheet(context);
-                            setState(() {
-                              // _isPlacesVisible = !_isPlacesVisible;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
+                    // ClipOval(
+                    //   child: Material(
+                    //     color: Colors.blue.shade100,
+                    //     child: InkWell(
+                    //       splashColor: Colors.blue,
+                    //       child: SizedBox(
+                    //         child: Icon(_isPlacesVisible
+                    //             ? Icons.list_outlined
+                    //             : Icons.arrow_upward),
+                    //         width: 50,
+                    //         height: 50,
+                    //       ),
+                    //       onTap: () {
+                    //         _showBottomSheet(context);
+                    //         setState(() {
+                    //           // _isPlacesVisible = !_isPlacesVisible;
+                    //         });
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(height: 20),
                     ClipOval(
                       child: Material(
                         color: Colors.blue.shade100, // button color
@@ -840,23 +951,25 @@ class _MapViewState extends State<MapUI> {
                         child: SizedBox(
                           width: 56,
                           height: 56,
-                          child: Icon(Icons.my_location),
+                          child: Icon(Icons.arrow_upward_rounded),
                         ),
                         onTap: () {
-                          mapController.animateCamera(
-                            CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                target: LatLng(
-                                  _currentPosition.latitude,
-                                  _currentPosition.longitude,
-                                ),
-                                zoom: 18.0,
-                              ),
-                            ),
-                          );
+                          _showBottomSheet(context);
 
-                          print(_currentPosition.latitude);
-                          print(_currentPosition.longitude);
+                          // mapController.animateCamera(
+                          //   CameraUpdate.newCameraPosition(
+                          //     CameraPosition(
+                          //       target: LatLng(
+                          //         _currentPosition.latitude,
+                          //         _currentPosition.longitude,
+                          //       ),
+                          //       zoom: 18.0,
+                          //     ),
+                          //   ),
+                          // );
+
+                          // print(_currentPosition.latitude);
+                          // print(_currentPosition.longitude);
                         },
                       ),
                     ),
