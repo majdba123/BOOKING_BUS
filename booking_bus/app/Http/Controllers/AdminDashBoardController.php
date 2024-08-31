@@ -555,7 +555,7 @@ class AdminDashBoardController extends Controller
     public function get_all_BusTripsByTripId(Request $request, $companyId)
     {
         $validator = Validator::make($request->all(), [
-            'trip_id' => 'required|integer|exists:trips,id',
+            'trip_id' => 'required|exists:trips,id',
         ]);
 
         if ($validator->fails()) {
@@ -785,7 +785,7 @@ class AdminDashBoardController extends Controller
         $company_id = Company::findOrfail($id);
 
         $validator = Validator::make($request->all(), [
-            'bus_trip_id' => 'required|integer|exists:bus__trips,id',
+            'bus_trip_id' => 'required|exists:bus__trips,id',
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first()], 422);

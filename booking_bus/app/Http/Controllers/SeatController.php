@@ -115,7 +115,7 @@ class SeatController extends Controller
 
             'number_seat' => 'sometimes|integer',
             'location_seat' => 'sometimes|string',
-            'bus_id'  => 'required|integer'
+            'bus_id'  => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -153,7 +153,7 @@ class SeatController extends Controller
     public function destroy(Request $request, $seat_id)
     {
         $validator = Validator::make($request->all(), [
-            'bus_id'  => 'required|integer'
+            'bus_id'  => 'required'
         ]);
 
         if ($validator->fails()) {
