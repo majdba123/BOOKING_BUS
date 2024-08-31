@@ -748,7 +748,7 @@ select:focus {
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
