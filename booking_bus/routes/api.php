@@ -168,6 +168,9 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
         Route::put('/{id}', [CancellationRuleController::class, 'update']);
         Route::delete('/{id}', [CancellationRuleController::class, 'destroy']);
     });
+
+    Route::post('/get_profit_1', [DashboardController::class, 'getPriceData']);
+
 });
 
 
