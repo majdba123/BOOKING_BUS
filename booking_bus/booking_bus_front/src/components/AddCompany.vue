@@ -1111,10 +1111,6 @@ body {
     width: 100%;
     overflow-x: auto;
 }
-.table-container {
-    width: 100% !important;
-    overflow-x: auto !important;
-}
 
 table thead tr th {
     padding: 10px;

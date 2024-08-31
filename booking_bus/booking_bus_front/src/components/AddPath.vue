@@ -47,39 +47,61 @@
         <div v-else class="recent_orders">
             <h1>All Paths</h1>
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name Start</th>
-                            <th>Name End</th>
-                            <th>Distance</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(path, index) in filteredPaths" :key="index">
-                            <td>{{ path.id }}</td>
-                            <td>{{ path.from }}</td>
-                            <td>{{ path.to }}</td>
-                            <td>{{ path.Distance }}</td>
-                            <td>
-                                <button
-                                    class="edit-btn"
-                                    @click="openEditModal(path, index)"
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div
+                        v-if="!filteredPaths.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name Start</th>
+                                    <th>Name End</th>
+                                    <th>Distance</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(path, index) in filteredPaths"
+                                    :key="index"
                                 >
-                                    <span class="material-icons">edit</span>
-                                </button>
-                                <button
-                                    class="delete-btn"
-                                    @click="openDeleteConfirmModal(path)"
-                                >
-                                    <span class="material-icons">delete</span>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <td>{{ path.id }}</td>
+                                    <td>{{ path.from }}</td>
+                                    <td>{{ path.to }}</td>
+                                    <td>{{ path.Distance }}</td>
+                                    <td>
+                                        <button
+                                            class="edit-btn"
+                                            @click="openEditModal(path, index)"
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
+                                        </button>
+                                        <button
+                                            class="delete-btn"
+                                            @click="
+                                                openDeleteConfirmModal(path)
+                                            "
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -150,6 +172,8 @@ export default {
     components: { MapPath },
     data() {
         return {
+            loading: true,
+
             showForm: true,
             Paths: [],
             StartPath: "",
@@ -224,6 +248,7 @@ export default {
                     this.Paths = response.data;
                     store.state.Paths = response.data;
                     console.log(response.data);
+                    this.loading = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error Getting Paths", {
@@ -237,6 +262,7 @@ export default {
                     });
                     console.error(error);
                 });
+            this.loading = true;
         },
         openDeleteConfirmModal(path) {
             this.pathToDelete = path;
@@ -449,6 +475,18 @@ table tbody tr:last-child td {
     margin: 1rem;
     font-size: 0.85rem;
 }
+.no-data-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    font-size: 1.2rem;
+    color: #677483;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-2);
+    background-color: #f6f6f9;
+}
 
 /* Select styling */
 select {
@@ -471,6 +509,21 @@ select:focus {
     padding: 10px;
     margin: 5px;
     transition: background-color 0.3s;
+}
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
 }
 .edit-btns:hover {
     background-color: #3a8d3c;

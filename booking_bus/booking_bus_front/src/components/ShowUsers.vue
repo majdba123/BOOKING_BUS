@@ -1201,7 +1201,7 @@ input:focus {
 }
 
 .modal-header,
-.modal-body,
+.modal-body div div,
 .modal-footer {
     margin-bottom: 15px;
 }
@@ -1220,23 +1220,23 @@ input:focus {
     align-items: center;
 }
 
-.modal-body div table {
+.modal-body div div table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.modal-body div th,
-.modal-body div td {
+.modal-body div div th,
+.modal-body div div td {
     padding: 12px;
     text-align: left;
 }
 
-.modal-body div th {
+.modal-body div div th {
     background-color: var(--clr-primary);
     color: #fff;
 }
 
-.modal-body div td {
+.modal-body div div td {
     border-bottom: 1px solid #ddd;
 }
 
