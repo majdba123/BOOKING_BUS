@@ -3,8 +3,8 @@ class UserInfomodel {
   final String name;
   final String email;
   final String points;
-  var profile_image;
-  final String phoneNumber;
+  final String? profile_image;
+  final String? phoneNumber;
 
   UserInfomodel({
     required this.id,

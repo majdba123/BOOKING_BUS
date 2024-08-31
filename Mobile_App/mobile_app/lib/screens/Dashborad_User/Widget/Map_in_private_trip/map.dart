@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -263,350 +264,368 @@ class _MapViewState extends State<MapUI> {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
             var width = MediaQuery.of(context).size.width;
-            var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white70, // The color for the bottom sheet content
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-              ),
-              child: SafeArea(
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
-                  height: _isPlacesVisible ? null : 0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white70,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20.0),
-                      ),
-                    ),
-                    width: width * 0.9,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                EdgeInsets.fromLTRB(150.0, 20.0, 150.0, 20.0),
-                            child: InkWell(
-                              child: Container(
-                                height: 8.0,
-                                width: 80.0,
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.all(
-                                        const Radius.circular(8.0))),
-                              ),
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
+            return KeyboardVisibilityBuilder(
+                builder: (context, isKeyboardVisible) {
+              return AnimatedPadding(
+                duration: Duration(milliseconds: isKeyboardVisible ? 600 : 400),
+                  curve: isKeyboardVisible ? Curves.easeOut : Curves.easeIn,
+                padding: EdgeInsets.only(
+                    bottom: isKeyboardVisible
+                        ? MediaQuery.of(context).viewInsets.bottom
+                        : 0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors
+                        .white70, // The color for the bottom sheet content
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20.0)),
+                  ),
+                  child: SafeArea(
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      height: _isPlacesVisible ? null : 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20.0),
                           ),
-                          // ClipOval(
-                          //   child: Material(
-                          //     color: Colors.blue.shade100,
-                          //     child: InkWell(
-                          //       splashColor: Colors.blue,
-                          //       child: SizedBox(
-                          //         child: Icon(Icons.arrow_downward_rounded),
-                          //         width: 50,
-                          //         height: 50,
-                          //       ),
-                          //       onTap: () {
-                          //         Navigator.of(context).pop();
-                          //       },
-                          //     ),
-                          //   ),
-                          // ),
-
-                          // Text(
-                          //   'Places',
-                          //   style: TextStyle(fontSize: 20.0),
-                          // ),
-                          // SizedBox(height: 10),
-                          _textField(
-                              label: 'Start',
-                              hint: 'Choose starting point',
-                              prefixIcon: Icon(Icons.looks_one),
-                              // suffixIcon: IconButton(
-                              //   icon: Icon(Icons.my_location),
-                              //   onPressed: () {
-                              //     // startAddressController.text = _currentAddress;
-                              //     _startAddress = _currentAddress;
-                              //     // print(startAddressController.text);
-                              //     // print(_startAddress);
-                              //     print(_currentPosition.latitude);
-                              //     print(_currentPosition.longitude);
-                              //   },
+                        ),
+                        width: width * 0.9,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    150.0, 20.0, 150.0, 20.0),
+                                child: InkWell(
+                                  child: Container(
+                                    height: 8.0,
+                                    width: 80.0,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.all(
+                                            const Radius.circular(8.0))),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                              // ClipOval(
+                              //   child: Material(
+                              //     color: Colors.blue.shade100,
+                              //     child: InkWell(
+                              //       splashColor: Colors.blue,
+                              //       child: SizedBox(
+                              //         child: Icon(Icons.arrow_downward_rounded),
+                              //         width: 50,
+                              //         height: 50,
+                              //       ),
+                              //       onTap: () {
+                              //         Navigator.of(context).pop();
+                              //       },
+                              //     ),
+                              //   ),
                               // ),
-                              controller: startAddressController,
-                              focusNode: startAddressFocusNode,
-                              width: width,
-                              locationCallback: (String value) {
-                                setState(() {
-                                  _startAddress = value;
-                                });
-                              }),
-                          SizedBox(height: 10),
-                          _textField(
-                              label: 'Destination',
-                              hint: 'Choose destination',
-                              prefixIcon: Icon(Icons.looks_two),
-                              controller: destinationAddressController,
-                              focusNode: desrinationAddressFocusNode,
-                              width: width,
-                              locationCallback: (String value) {
-                                setState(() {
-                                  _destinationAddress = value;
-                                });
-                              }),
-                          SizedBox(height: 10),
-                          Visibility(
-                            visible: _placeDistance == null ? false : true,
-                            child: Text(
-                              'DISTANCE: $_placeDistance km',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Visibility(
-                            visible: _placeDistance == null ? false : true,
-                            child: Text(
-                              'Time: $_timeduration ',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          ElevatedButton(
-                            onPressed: (_startAddress != '' &&
-                                    _destinationAddress != '')
-                                ? () async {
-                                    startAddressFocusNode.unfocus();
-                                    desrinationAddressFocusNode.unfocus();
+
+                              // Text(
+                              //   'Places',
+                              //   style: TextStyle(fontSize: 20.0),
+                              // ),
+                              // SizedBox(height: 10),
+                              _textField(
+                                  label: 'Start',
+                                  hint: 'Choose starting point',
+                                  prefixIcon: Icon(Icons.looks_one),
+                                  // suffixIcon: IconButton(
+                                  //   icon: Icon(Icons.my_location),
+                                  //   onPressed: () {
+                                  //     // startAddressController.text = _currentAddress;
+                                  //     _startAddress = _currentAddress;
+                                  //     // print(startAddressController.text);
+                                  //     // print(_startAddress);
+                                  //     print(_currentPosition.latitude);
+                                  //     print(_currentPosition.longitude);
+                                  //   },
+                                  // ),
+                                  controller: startAddressController,
+                                  focusNode: startAddressFocusNode,
+                                  width: width,
+                                  locationCallback: (String value) {
                                     setState(() {
-                                      _isLoading = true;
-                                      if (markers.isNotEmpty) markers.clear();
-                                      if (polylines.isNotEmpty)
-                                        polylines.clear();
-                                      if (polylineCoordinates.isNotEmpty)
-                                        polylineCoordinates.clear();
-                                      _placeDistance = null;
+                                      _startAddress = value;
                                     });
-
-                                    _calculateDistance().then((isCalculated) {
-                                      setState(() {
-                                        _isLoading = false;
-                                        _showDateTimeFields = false;
-                                      });
-                                      if (isCalculated) {
-                                        _showAcceptButton = true;
-
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                                'Distance Calculated Successfully'),
-                                          ),
-                                        );
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                                'Error Calculating Distance'),
-                                          ),
-                                        );
-                                      }
+                                  }),
+                              SizedBox(height: 10),
+                              _textField(
+                                  label: 'Destination',
+                                  hint: 'Choose destination',
+                                  prefixIcon: Icon(Icons.looks_two),
+                                  controller: destinationAddressController,
+                                  focusNode: desrinationAddressFocusNode,
+                                  width: width,
+                                  locationCallback: (String value) {
+                                    setState(() {
+                                      _destinationAddress = value;
                                     });
-                                  }
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
+                                  }),
+                              SizedBox(height: 10),
+                              Visibility(
+                                visible: _placeDistance == null ? false : true,
+                                child: Text(
+                                  'DISTANCE: $_placeDistance km',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                // alignment: Alignment.center,
-                                children: [
-                                  if (!_isLoading) // Show the text only if _isLoading is false
-                                    Text(
-                                      'Serach'.toUpperCase(),
+                              SizedBox(height: 5),
+                              Visibility(
+                                visible: _placeDistance == null ? false : true,
+                                child: Text(
+                                  'Time: $_timeduration ',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              ElevatedButton(
+                                onPressed: (_startAddress != '' &&
+                                        _destinationAddress != '')
+                                    ? () async {
+                                        startAddressFocusNode.unfocus();
+                                        desrinationAddressFocusNode.unfocus();
+                                        setState(() {
+                                          _isLoading = true;
+                                          if (markers.isNotEmpty)
+                                            markers.clear();
+                                          if (polylines.isNotEmpty)
+                                            polylines.clear();
+                                          if (polylineCoordinates.isNotEmpty)
+                                            polylineCoordinates.clear();
+                                          _placeDistance = null;
+                                        });
+
+                                        _calculateDistance()
+                                            .then((isCalculated) {
+                                          setState(() {
+                                            _isLoading = false;
+                                            _showDateTimeFields = false;
+                                          });
+                                          if (isCalculated) {
+                                            _showAcceptButton = true;
+
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    'Distance Calculated Successfully'),
+                                              ),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    'Error Calculating Distance'),
+                                              ),
+                                            );
+                                          }
+                                        });
+                                      }
+                                    : null,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    // alignment: Alignment.center,
+                                    children: [
+                                      if (!_isLoading) // Show the text only if _isLoading is false
+                                        Text(
+                                          'Serach'.toUpperCase(),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20.0,
+                                          ),
+                                        ),
+                                      if (_isLoading) // Show the loading spinner if _isLoading is true
+                                        CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  AppColors.primaryColor),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              if (_showAcceptButton) ...[
+                                SizedBox(height: 20),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _showDateTimeFields = true;
+                                      _showAcceptButton = false;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Accept'.toUpperCase(),
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20.0,
                                       ),
                                     ),
-                                  if (_isLoading) // Show the loading spinner if _isLoading is true
-                                    CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          AppColors.primaryColor),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
                                     ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          if (_showAcceptButton) ...[
-                            SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  _showDateTimeFields = true;
-                                  _showAcceptButton = false;
-                                });
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Accept'.toUpperCase(),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20.0,
                                   ),
                                 ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                              ),
-                            ),
-                          ],
-                          SizedBox(height: 20),
-                          if (_showDateTimeFields) ...[
-                            Container(
-                              width: width * 0.8,
-                              child: GestureDetector(
-                                onTap: () {
-                                  _pickDate(context);
-                                },
-                                child: AbsorbPointer(
-                                  child: TextFormField(
-                                    controller: _dateController,
-                                    decoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        Icons.calendar_today_outlined,
-                                        color: AppColors.primaryColor,
-                                      ),
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      contentPadding: EdgeInsets.all(15),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.grey.shade400,
-                                            width: 2),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.blue.shade300,
-                                            width: 2),
-                                      ),
-                                      labelText: 'Date (dd/MM/yyyy)',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter a date';
-                                      }
-                                      return null;
+                              ],
+                              SizedBox(height: 20),
+                              if (_showDateTimeFields) ...[
+                                Container(
+                                  width: width * 0.8,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _pickDate(context);
                                     },
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Container(
-                              width: width * 0.8,
-                              child: GestureDetector(
-                                onTap: () {
-                                  _pickStartTime(context);
-                                },
-                                child: AbsorbPointer(
-                                  child: TextFormField(
-                                    controller: _startTimeController,
-                                    decoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        Icons.access_time_rounded,
-                                        color: AppColors.primaryColor,
-                                      ),
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      contentPadding: EdgeInsets.all(15),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.grey.shade400,
-                                            width: 2),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.blue.shade300,
-                                            width: 2),
-                                      ),
-                                      labelText: 'Start Time (HH:mm)',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
+                                    child: AbsorbPointer(
+                                      child: TextFormField(
+                                        controller: _dateController,
+                                        decoration: InputDecoration(
+                                          prefixIcon: Icon(
+                                            Icons.calendar_today_outlined,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                          fillColor: Colors.white,
+                                          filled: true,
+                                          contentPadding: EdgeInsets.all(15),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0)),
+                                            borderSide: BorderSide(
+                                                color: Colors.grey.shade400,
+                                                width: 2),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0)),
+                                            borderSide: BorderSide(
+                                                color: Colors.blue.shade300,
+                                                width: 2),
+                                          ),
+                                          labelText: 'Date (dd/MM/yyyy)',
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter a date';
+                                          }
+                                          return null;
+                                        },
                                       ),
                                     ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter a start time';
-                                      }
-                                      return null;
-                                    },
                                   ),
                                 ),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+                                SizedBox(height: 20),
+                                Container(
+                                  width: width * 0.8,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _pickStartTime(context);
+                                    },
+                                    child: AbsorbPointer(
+                                      child: TextFormField(
+                                        controller: _startTimeController,
+                                        decoration: InputDecoration(
+                                          prefixIcon: Icon(
+                                            Icons.access_time_rounded,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                          fillColor: Colors.white,
+                                          filled: true,
+                                          contentPadding: EdgeInsets.all(15),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0)),
+                                            borderSide: BorderSide(
+                                                color: Colors.grey.shade400,
+                                                width: 2),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0)),
+                                            borderSide: BorderSide(
+                                                color: Colors.blue.shade300,
+                                                width: 2),
+                                          ),
+                                          labelText: 'Start Time (HH:mm)',
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter a start time';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              onPressed: () {
-                                print('sned order message');
+                                SizedBox(height: 10),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    print('sned order message');
 
-                                print(from);
-                                print(to);
-                              },
-                              child: Text(
-                                'Send Order'.toUpperCase(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
+                                    print(from);
+                                    print(to);
+                                  },
+                                  child: Text(
+                                    'Send Order'.toUpperCase(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ],
+                              ],
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
+              );
+            });
           });
         });
   }
@@ -692,6 +711,7 @@ class _MapViewState extends State<MapUI> {
       height: height,
       width: width,
       child: Scaffold(
+        // resizeToAvoidBottomInset: true,
         // bottomNavigationBar: BottomNavigationBar(
         //   items: [
         //     BottomNavigationBarItem(

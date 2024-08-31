@@ -46,18 +46,17 @@ Route animetedRoutePage(Widget child) {
   );
 }
 
-
-Widget backImage(var width ,var height){
-   return Container(
-            width: width,
-            height: height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  "assets/images/background_mappp.png",
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
+Widget backImage(var width, var height) {
+  return Container(
+    width: width,
+    height: height,
+    decoration: const BoxDecoration(
+      image: DecorationImage(
+        image: AssetImage(
+          "assets/images/background_mappp.png",
+        ),
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
 }

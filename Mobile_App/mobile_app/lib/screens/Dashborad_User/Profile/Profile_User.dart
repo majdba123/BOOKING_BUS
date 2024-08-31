@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dart';
-import 'package:mobile_app/screens/Dashborad_User/Main_Ui_private_Trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/All_My_charage_Balance_By_Status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Help_Screen.dart';
-import 'package:mobile_app/screens/Dashborad_User/MyBooking/MY_Reservation.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Rate_Driver.dart';
 import 'package:mobile_app/Provider/user/user_info_profile.dart';
 import 'package:mobile_app/screens/Dashborad_User/policy/PolicyPage.dart';
@@ -79,7 +77,7 @@ class ProfilePage extends StatelessWidget {
                             CircleAvatar(
                               radius: 50,
                               backgroundImage:
-                                  NetworkImage(userInfo.profile_image),
+                                  NetworkImage(userInfo.profile_image!),
                             ),
                             SizedBox(height: 20),
                             Text(
@@ -99,7 +97,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                             SizedBox(height: 5),
                             Text(
-                              userInfo.phoneNumber,
+                              userInfo.phoneNumber!,
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey[600],

@@ -34,7 +34,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     var userInfoProvider =
         Provider.of<UserInfoProvider>(context, listen: false).userInfo;
 
-    _phoneController.text = userInfoProvider!.phoneNumber;
+    _phoneController.text = userInfoProvider!.phoneNumber!;
     _nameController.text = userInfoProvider!.name;
     _emailController.text = userInfoProvider.email;
   }
@@ -97,7 +97,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                     backgroundImage: _image != null
                         ? FileImage(_image!)
                         : userInfoProvider?.profile_image != null
-                            ? NetworkImage(userInfoProvider?.profile_image!)
+                            ? NetworkImage(userInfoProvider!.profile_image!)
                             : null,
                     child: _image == null &&
                             userInfoProvider?.profile_image == null
