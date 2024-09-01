@@ -162,17 +162,16 @@ class DriverController extends Controller
     {
         $driver = Auth::user()->Driver;
 
-        $bus = Bus_Driver::where('status', 'pending')
-            ->where('driver_id', $driver->id)->first();
+        $bus = Bus_Driver::where('driver_id', $driver->id)->first();
 
         $info = $bus->bus;
         $data = [
-            'id_bus' => $info->id,
-            'company_id' => $info->company_id,
+            // 'id_bus' => $info->id,
+            // 'company_id' => $info->company_id,
             'company_name' => $info->company->name_company,
             'number_bus' => $info->number_bus,
             'number_passenger' => $info->number_passenger,
-            'status' => $info->status,
+            // 'status' => $info->status,
         ];
         return response()->json($data);
     }
@@ -378,58 +377,58 @@ class DriverController extends Controller
     }
 
 
-   public function start_trip()
-{
-    DB::beginTransaction();
-    try {
-        $driver = Auth::user()->Driver;
-        $bus = Bus_Driver::where('status', 'padding')
-            ->where('driver_id', $driver->id)
-            ->first();
+    public function start_trip()
+    {
+        DB::beginTransaction();
+        try {
+            $driver = Auth::user()->Driver;
+            $bus = Bus_Driver::where('status', 'padding')
+                ->where('driver_id', $driver->id)
+                ->first();
 
-        $bus_trip = Bus_Trip::where('status', 'padding')
-            ->where('bus_id', $bus->bus_id)
-            ->first();
+            $bus_trip = Bus_Trip::where('status', 'padding')
+                ->where('bus_id', $bus->bus_id)
+                ->first();
 
-        $name_breaks = $bus_trip->Pivot->where('status', 'padding')->pluck('break_trip.break.name');
+            $name_breaks = $bus_trip->Pivot->where('status', 'padding')->pluck('break_trip.break.name');
 
-        if ($name_breaks->first() === "start") {
-            $bus_trip->event = $name_breaks->first();
-            $bus_trip->save();
-            $pivoit_id = $bus_trip->Pivot->first();
+            if ($name_breaks->first() === "start") {
+                $bus_trip->event = $name_breaks->first();
+                $bus_trip->save();
+                $pivoit_id = $bus_trip->Pivot->first();
 
-            event(new BreakTripEvent($bus_trip, $pivoit_id));
+                event(new BreakTripEvent($bus_trip, $pivoit_id));
 
-            $notification = "your bus_trip $bus_trip->id  is started  ";
-            event(new CompanyNotification($bus_trip->company, $notification));
+                $notification = "your bus_trip $bus_trip->id  is started  ";
+                event(new CompanyNotification($bus_trip->company, $notification));
 
-            $reservations = Reservation::where('status', 'pending')
-                ->where('pivoit_id', $pivoit_id)
-                ->where('type', 1)
-                ->get()
-                ->map(function ($reservation) {
-                    return [
-                        'id' => $reservation->id,
-                        'user_name' => $reservation->user->name,
-                        'price' => $reservation->price,
-                        'bus__trip_id ' => $reservation->bus__trip_id ,
-                        'type' => $reservation->type,
-                        'status' => $reservation->status,
-                        'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
-                    ];
-                });
+                $reservations = Reservation::where('status', 'pending')
+                    ->where('pivoit_id', $pivoit_id)
+                    ->where('type', 1)
+                    ->get()
+                    ->map(function ($reservation) {
+                        return [
+                            'id' => $reservation->id,
+                            'user_name' => $reservation->user->name,
+                            'price' => $reservation->price,
+                            'bus__trip_id ' => $reservation->bus__trip_id,
+                            'type' => $reservation->type,
+                            'status' => $reservation->status,
+                            'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
+                        ];
+                    });
 
-            DB::commit();
-            return response()->json($reservations);
-        } else {
+                DB::commit();
+                return response()->json($reservations);
+            } else {
+                DB::rollBack();
+                return response()->json($name_breaks->first());
+            }
+        } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json($name_breaks->first());
+            return response()->json(['error' => 'An error occurred while starting the trip'], 500);
         }
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json(['error' => 'An error occurred while starting the trip'], 500);
     }
-}
 
 
     public function finish_breaks($pivoit_id)
@@ -984,15 +983,15 @@ class DriverController extends Controller
                 return response()->json(['error' => 'Driver not found'], 404);
             }
             $bus = Bus_Driver::where('status', 'finished')
-                            ->where('driver_id', $driver->id)
-                            ->first();
+                ->where('driver_id', $driver->id)
+                ->first();
             if (!$bus) {
                 DB::rollBack();
                 return response()->json(['error' => 'No pending bus found for the driver'], 404);
             }
             $trips = Bus_Trip::where('status', 'finished_going')
-                            ->where('bus_id', $bus->bus_id)
-                            ->get();
+                ->where('bus_id', $bus->bus_id)
+                ->get();
             if ($trips->isEmpty()) {
                 DB::rollBack();
                 return response()->json(['error' => 'No pending trip found for the bus'], 404);
@@ -1075,5 +1074,4 @@ class DriverController extends Controller
 
         return response()->json($response);
     }
-
 }

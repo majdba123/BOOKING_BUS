@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Driver/TripForDriver.dart';
-import 'package:mobile_app/Provider/Driver/TripDriver.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:provider/provider.dart';
 
 class FirstTrip extends StatelessWidget {
@@ -9,7 +9,7 @@ class FirstTrip extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Consumer<TripDriverProvider>(builder: (context, provider, child) {
+    return Consumer<DriverProvider>(builder: (context, provider, child) {
       // Handle loading state
       if (provider.isLoading) {
         return Center(
@@ -27,14 +27,27 @@ class FirstTrip extends StatelessWidget {
           child: Text('No trip available'),
         );
       }
-      // DateTime tripTime = DateTime.parse((tripdriver.from_time));
+      String dateString = "${tripdriver.date} ${tripdriver.from_time}";
 
-      // DateTime now = DateTime.now();
+      DateTime from = DateTime.parse(dateString);
 
-      // Calculate the difference in hours
-      // Duration difference = tripTime.difference(now);
-      // double hoursDifference =
-      //     difference.inHours + (difference.inMinutes.remainder(60) / 60);
+      DateTime now = DateTime.now();
+
+      Duration difference = now.difference(from).abs();
+
+      int days = difference.inDays;
+      int totalHours = difference.inHours;
+      int hours = totalHours.remainder(24) % 12;
+      if (hours == 0) hours = 12;
+      String formattedDay = '-1';
+      String foramtedHorus = '-1';
+      if (days > 0) {
+        formattedDay = '$days';
+        foramtedHorus = '${hours.toString().padLeft(2, '0')}';
+      } else {
+        foramtedHorus = '${hours.toString().padLeft(2, '0')}';
+      }
+
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
         child: Container(
@@ -136,22 +149,49 @@ class FirstTrip extends StatelessWidget {
                   Spacer(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        '4',
-                        style: TextStyle(
-                          fontSize: screenHeight * 0.055,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF4267B2),
+                    children: <Widget>[
+                      if (formattedDay != '-1' && foramtedHorus != '-1') ...[
+                        Text(
+                          '$formattedDay D',
+                          style: TextStyle(
+                            fontSize: screenHeight * 0.055,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF4267B2),
+                          ),
                         ),
-                      ),
-                      Text(
-                        'hours left',
-                        style: TextStyle(
-                          fontSize: screenHeight * 0.018,
-                          color: Colors.grey[600],
+                        Text(
+                          '${foramtedHorus} hours left',
+                          style: TextStyle(
+                            fontSize: screenHeight * 0.018,
+                            color: Colors.grey[600],
+                          ),
                         ),
-                      ),
+                      ] else if (formattedDay == '-1') ...[
+                        Text(
+                          '$foramtedHorus',
+                          style: TextStyle(
+                            fontSize: screenHeight * 0.055,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF4267B2),
+                          ),
+                        ),
+                        Text(
+                          'hours left',
+                          style: TextStyle(
+                            fontSize: screenHeight * 0.018,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ] else if (formattedDay != '-1') ...[
+                        Text(
+                          '$formattedDay',
+                          style: TextStyle(
+                            fontSize: screenHeight * 0.055,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF4267B2),
+                          ),
+                        ),
+                      ]
                     ],
                   ),
                 ],

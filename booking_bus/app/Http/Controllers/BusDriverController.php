@@ -183,7 +183,7 @@ class BusDriverController extends Controller
                 'to' => $firstTrip->trip->path->to ?? null,
                 'Distance' => $firstTrip->trip->path->Distance ?? null,
                 'from_time' => $formattedFromTime,
-                // 'date' => $firstTrip->date,
+                'date' => $firstTrip->date,
                 'to_time' => $formattedToTime,
                 'Passengers' =>  $firstTrip->bus->getNumberOfReservationsAttribute(),
                 'Stops' =>  $firstTrip->Pivoit->count(),

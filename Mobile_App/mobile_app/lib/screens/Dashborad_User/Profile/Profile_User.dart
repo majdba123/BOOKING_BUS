@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/MainPage/BusCardInfo.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/PrivateTrip/Get_private_trip_By_Status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Help_Screen.dart';
@@ -207,9 +208,14 @@ class ProfilePage extends StatelessWidget {
                               );
                             },
                           ),
+                          SizedBox(height: 30),
+                          EWalletSection()
+                        ] else ...[
+                          SizedBox(height: 30),
+                          MyBusInfo(),
                         ],
-                        SizedBox(height: 30),
-                        EWalletSection(),
+
+                        // ,
                       ],
                     )
                   ],

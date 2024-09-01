@@ -51,10 +51,14 @@ class FilterBarUserUi extends StatelessWidget {
             icon: Icon(Icons.airplane_ticket,
                 color: Colors.white, size: iconSize),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => BookingsScreen()),
-              );
+              print(auth.userType);
+              if (auth.userType == "user") {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/BookingUser', (Route<dynamic> route) => false);
+              } else if (auth.userType == "driver") {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/JourneysScreen', (Route<dynamic> route) => false);
+              }
             },
           ),
           IconButton(

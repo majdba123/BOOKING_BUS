@@ -6,6 +6,7 @@ class TripForDriverModel {
   final int Distance;
   final String from_time;
   final String to_time;
+  final String date;
   final int Passengers;
   final int Stops;
   final String trip_duration;
@@ -19,6 +20,7 @@ class TripForDriverModel {
     required this.Distance,
     required this.from_time,
     required this.to_time,
+    required this.date,
     required this.Passengers,
     required this.Stops,
     required this.trip_duration,
@@ -34,6 +36,7 @@ class TripForDriverModel {
       Distance: json['Distance'],
       from_time: json['from_time'],
       to_time: json['to_time'],
+      date: json['date'],
       Passengers: json['Passengers'],
       Stops: json['Stops'],
       trip_duration: json['trip_duration'],
