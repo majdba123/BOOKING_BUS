@@ -1,9 +1,9 @@
 class BreakArea {
-  final int id;
-   final int areaId;
+  final String id;
+  final String areaId;
   final String name;
   final DateTime createdAt;
- final DateTime updatedAt;
+  final DateTime updatedAt;
   BreakArea({
     required this.id,
     required this.areaId,
@@ -16,7 +16,7 @@ class BreakArea {
     return BreakArea(
       id: json['id'],
       name: json['name'],
-     areaId:json['area_id'],
+      areaId: json['area_id'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
     );

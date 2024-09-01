@@ -1,7 +1,7 @@
 import 'package:mobile_app/Data_Models/BusInfoTrip.dart';
 
 class Trip {
-  final int pathId;
+  final String pathId;
   final String price;
   final List<int> breaksIds;
   final List<BusInfo> busIds;

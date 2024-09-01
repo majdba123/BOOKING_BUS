@@ -4,8 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/colors.dart';
 import 'package:mobile_app/constants.dart';
-import 'package:mobile_app/screens/DashBorad_Company/Dashbord.dart';
-import 'package:mobile_app/screens/Dashborad_Admin/Dashbord.dart';
+
 import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/ProfileCheckPage.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/register_page.dart';
@@ -198,14 +197,10 @@ class _SignInPageState extends State<SignInPage> {
 
                               if (authProvider.accessToken.isNotEmpty) {
                                 Widget destinationPage;
-                                if (authProvider.userType == "company") {
-                                  destinationPage = Dashbord();
-                                } else if (authProvider.userType == "user") {
+                                if (authProvider.userType == "user") {
                                   destinationPage = ProfileCheckPage();
                                 } else if (authProvider.userType == "driver") {
                                   destinationPage = DashboardDriver();
-                                } else if (authProvider.userType == "admin") {
-                                  destinationPage = DashbordAdmin();
                                 } else {
                                   showCustomAlertDialog(
                                     context,

@@ -1,6 +1,6 @@
 class DriverBusActive {
-  final int id;
-  final int busId;
+  final String id;
+  final String busId;
   final String driver_name;
   final int ?driver_phone;
   final String status;

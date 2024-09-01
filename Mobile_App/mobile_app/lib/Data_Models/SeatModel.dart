@@ -1,6 +1,6 @@
 class SeatModel {
   final int status;
-  final int id;
+  final String id;
   SeatModel({
     required this.status,
     required this.id,

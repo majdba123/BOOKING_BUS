@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/BUS_Trip.dart';
 
 class BreakPlace {
-  final int breakId;
+  final String breakId;
   final String latitude;
   final String longitude;
   final String government;
@@ -12,7 +12,6 @@ class BreakPlace {
   BreakPlace({
     required this.breakId,
     required this.government,
-
     required this.nameBreak,
     required this.status,
     required this.latitude,

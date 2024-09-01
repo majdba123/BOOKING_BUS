@@ -81,7 +81,7 @@ class InquiryProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteInquiry(int inquiryId, String accessToken) async {
+  Future<void> deleteInquiry(String inquiryId, String accessToken) async {
     final url = name_domain_server +
         'user/delete_inquires/$inquiryId'; // Replace with your API URL
 

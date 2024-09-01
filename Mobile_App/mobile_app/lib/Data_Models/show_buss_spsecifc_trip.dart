@@ -4,8 +4,8 @@ import 'dart:ffi';
 import 'package:mobile_app/Data_Models/Breack_place.dart';
 
 class BusResponse {
-  int bus_trip_id;
-  int busId;
+  String bus_trip_id;
+  String busId;
   String from;
   String to;
   String nameCompany;

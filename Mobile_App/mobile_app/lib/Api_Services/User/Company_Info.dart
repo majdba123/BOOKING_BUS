@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:mobile_app/constants.dart';
 
 class CompanyService {
-  Future<Company> fetchCompanyInfo(int companyId, String accessToken) async {
+  Future<Company> fetchCompanyInfo(String companyId, String accessToken) async {
     final response = await http.post(
       Uri.parse(name_domain_server + 'user/show_info_about_company/$companyId'),
       headers: {

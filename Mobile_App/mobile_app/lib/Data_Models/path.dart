@@ -1,6 +1,6 @@
 class Path {
-  final int id;
-  final int companyId;
+  final String id;
+  final String companyId;
   final String from;
   final String to;
   final DateTime createdAt;

@@ -1,5 +1,5 @@
 class UserFavorite {
-  final int companyId;
+  final String companyId;
 
   UserFavorite({required this.companyId});
 

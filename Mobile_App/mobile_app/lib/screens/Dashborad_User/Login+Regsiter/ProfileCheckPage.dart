@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Profile/Complete_info_profile.dart';
 import 'package:mobile_app/Provider/user/user_info_profile.dart';
@@ -88,9 +89,14 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _isChecking
-          ? Center(child: CircularProgressIndicator())
-          : SizedBox.shrink(), // Hide UI when checking is done
+      body: Stack(
+        children: [
+          backImage(context),
+          _isChecking
+              ? Center(child: CircularProgressIndicator())
+              : SizedBox.shrink(),
+        ],
+      ),
     );
   }
 }

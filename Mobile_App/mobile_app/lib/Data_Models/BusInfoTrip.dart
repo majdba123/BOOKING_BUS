@@ -1,19 +1,18 @@
 class BusInfo {
-  int busId;
+  String busId;
   String type;
   String startTime;
   String endTime;
-String date;
-  BusInfo({
-    required this.busId,
-    required this.type,
-    required this.startTime,
-    required this.endTime,
-    required this.date
-  });
+  String date;
+  BusInfo(
+      {required this.busId,
+      required this.type,
+      required this.startTime,
+      required this.endTime,
+      required this.date});
 
   BusInfo copyWith({
-    int? busId,
+    String? busId,
     String? type,
     String? startTime,
     String? endTime,

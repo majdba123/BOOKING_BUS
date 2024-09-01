@@ -88,7 +88,7 @@ class DriverProvider with ChangeNotifier {
   //     print(error);
   //   }
   // }
-  Future<void> deleteDriver(String token, int id) async {
+  Future<void> deleteDriver(String token, String id) async {
     try {
       await DriverApiService().deleteDriver(token, id);
       _Drivers.removeWhere((Driver) => Driver.id == id);

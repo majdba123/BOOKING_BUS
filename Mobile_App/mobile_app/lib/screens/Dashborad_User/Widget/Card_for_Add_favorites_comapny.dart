@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 class CardfavoriteCompany extends StatefulWidget {
   final String name_of_company;
   final String image_link;
-  final int company_id;
+  final String company_id;
 
   const CardfavoriteCompany({
     required this.name_of_company,

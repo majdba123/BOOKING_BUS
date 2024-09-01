@@ -3,20 +3,26 @@ import 'package:http/http.dart' as http;
 import 'package:mobile_app/Data_Models/path.dart';
 import 'package:mobile_app/constants.dart';
 
-
 class PathApiService {
   // final String apiUrl = ;
-Future<String> Addpath(String accessToken,var From, var To, ) async {
-    String url = name_domain_server+"company/path_store";
+  Future<String> Addpath(
+    String accessToken,
+    var From,
+    var To,
+  ) async {
+    String url = name_domain_server + "company/path_store";
     print(From);
     print(To);
-   
+
     var res = await http.post(
       Uri.parse('$url'),
-      body: {'from': From, 'to': To, },
-       headers: <String, String>{
-      'Authorization': 'Bearer $accessToken',
-    },
+      body: {
+        'from': From,
+        'to': To,
+      },
+      headers: <String, String>{
+        'Authorization': 'Bearer $accessToken',
+      },
     );
     print(res.statusCode);
     if (res.statusCode == 200) {
@@ -31,7 +37,7 @@ Future<String> Addpath(String accessToken,var From, var To, ) async {
   }
 
   Future<List<Path>> fetchpaths(String accessToken) async {
-    String url = name_domain_server+"company/all_path";
+    String url = name_domain_server + "company/all_path";
     final response = await http.get(
       Uri.parse('$url'),
       headers: <String, String>{
@@ -46,14 +52,16 @@ Future<String> Addpath(String accessToken,var From, var To, ) async {
       throw Exception('Failed to load paths');
     }
   }
-  
-  Future<Path> updatepath(String accessToken, int id, String from, String to) async {
+
+  Future<Path> updatepath(
+      String accessToken, String id, String from, String to) async {
     print(id);
     print(from);
     print(to);
     // print('${name_domain_server}company/path_update/$id?from=$from&to=$to');
     final response = await http.put(
-      Uri.parse('${name_domain_server}company/path_update/$id?from=$from&to=$to'),
+      Uri.parse(
+          '${name_domain_server}company/path_update/$id?from=$from&to=$to'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         // 'Content-Type': 'application/json',
@@ -70,17 +78,15 @@ Future<String> Addpath(String accessToken,var From, var To, ) async {
     }
   }
 
- Future<void> deletepath(String accessToken, int id) async {
-  print('${name_domain_server}company/path_delete/$id');
+  Future<void> deletepath(String accessToken, String id) async {
+    print('${name_domain_server}company/path_delete/$id');
     final response = await http.delete(
       Uri.parse('${name_domain_server}company/path_delete/$id'),
       headers: {'Authorization': 'Bearer $accessToken'},
     );
-  print(response.body);
+    print(response.body);
     if (response.statusCode != 200) {
       throw Exception('Failed to delete path');
     }
   }
-
-
 }

@@ -23,7 +23,6 @@ import 'package:mobile_app/Provider/user/Update_password_provider.dart';
 import 'package:mobile_app/Provider/user/Wallet_provider.dart';
 import 'package:mobile_app/Provider/user/inquiry_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
-import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client.dart';
@@ -39,18 +38,18 @@ void main() {
     KeyboardDismissOnTap(
       child: MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => PathProvider()),
-          ChangeNotifierProvider(
-              create: (BuildContext context) => BusProvider()),
+          // ChangeNotifierProvider(create: (_) => PathProvider()),
+          // ChangeNotifierProvider(
+          //     create: (BuildContext context) => BusProvider()),
           ChangeNotifierProvider(create: (_) => DriverProvider()),
-          ChangeNotifierProvider(create: (_) => SeatProvider()),
-          ChangeNotifierProvider(create: (_) => areaProvider()),
-          ChangeNotifierProvider(create: (_) => BreakAreaProvider()),
+          // ChangeNotifierProvider(create: (_) => SeatProvider()),
+          // ChangeNotifierProvider(create: (_) => areaProvider()),
+          // ChangeNotifierProvider(create: (_) => BreakAreaProvider()),
           ChangeNotifierProvider(create: (_) => AuthProvider()),
-          ChangeNotifierProvider(create: (_) => BusStatusProvider()),
-          ChangeNotifierProvider(create: (_) => AssingBusProvider()),
-          ChangeNotifierProvider(create: (_) => TripBusProvider()),
-          ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
+          // ChangeNotifierProvider(create: (_) => BusStatusProvider()),
+          // ChangeNotifierProvider(create: (_) => AssingBusProvider()),
+          // ChangeNotifierProvider(create: (_) => TripBusProvider()),
+          // ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
           ChangeNotifierProvider(create: (_) => TripuserProvider()),
           ChangeNotifierProvider(create: (_) => PrivateTripuserProvider()),
           ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),
@@ -67,7 +66,7 @@ void main() {
           // ChangeNotifierProvider(create: (_) => LocationProvider()),
         ],
         child: MyApp(),
-      ), 
+      ),
     ),
   );
 }
@@ -81,23 +80,16 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
         routes: {
-          '/BusDash': (context) => Bus_management_Page(),
+          // '/BusDash': (context) => Bus_management_Page(),
           '/mainPageUser': (context) => DashboardUser(),
           '/ProfilePage': (context) => ProfilePage(),
         },
         debugShowCheckedModeBanner: false,
         title: 'Flutter Sign In Sign Up Ui',
-        theme: ThemeData(fontFamily: 'Inter'
-            // scaffoldBackgroundColor:  AppColors.primaryColor,
-            //  appBarTheme: AppBarTheme(
-            //     // color: Color.fromARGB(255, 116, 136, 146),
-            //   ),
-            ),
+        theme: ThemeData(fontFamily: 'Inter'),
         home: WelcomePage()
 
         //  ,
         );
   }
-
-  
 }

@@ -1,6 +1,6 @@
 class Inquiry {
-  final int id;
-  final int userId;
+  final String id;
+  final String userId;
   final String email;
   final String question;
   final String status;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Api_Services/User/Private_trip.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
-import 'package:mobile_app/Provider/Company/Private_Trip_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -179,7 +178,7 @@ class TripCard extends StatelessWidget {
     );
   }
 
-  Future<void> _acceptPrivateOrder(BuildContext context, int tripId) async {
+  Future<void> _acceptPrivateOrder(BuildContext context, String tripId) async {
     final accessToken =
         Provider.of<AuthProvider>(context, listen: false).accessToken;
     try {

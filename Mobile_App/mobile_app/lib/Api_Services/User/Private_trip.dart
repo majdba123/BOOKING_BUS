@@ -89,7 +89,8 @@ class PrivateTrip {
     }
   }
 
-  Future<void> acceptPrivateOrder(String accessToken, int ordertripId) async {
+  Future<void> acceptPrivateOrder(
+      String accessToken, String ordertripId) async {
     final response = await http.post(
       Uri.parse(
           name_domain_server + 'user/accept_company_for_private/$ordertripId'),

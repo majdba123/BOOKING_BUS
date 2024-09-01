@@ -3,7 +3,6 @@ import 'package:mobile_app/Api_Services/Company/path.dart';
 
 import 'package:mobile_app/Data_Models/path.dart';
 
-
 class PathProvider with ChangeNotifier {
   List<Path> _paths = [];
   bool _isLoading = false;
@@ -25,15 +24,17 @@ class PathProvider with ChangeNotifier {
     }
   }
 
-Future<String> addpath(String accessToken,String from, String to) async {
-    String message = await PathApiService().Addpath(accessToken,from, to);
+  Future<String> addpath(String accessToken, String from, String to) async {
+    String message = await PathApiService().Addpath(accessToken, from, to);
     notifyListeners();
     return message;
   }
 
-  Future<void> updatepath(String token, int id, String from, String to) async {
+  Future<void> updatepath(
+      String token, String id, String from, String to) async {
     try {
-      final updatedPath = await PathApiService().updatepath(token, id, from, to);
+      final updatedPath =
+          await PathApiService().updatepath(token, id, from, to);
       print(updatedPath.to);
       final index = _paths.indexWhere((Path) => Path.id == id);
       if (index != -1) {
@@ -44,7 +45,8 @@ Future<String> addpath(String accessToken,String from, String to) async {
       print(error);
     }
   }
-  Future<void> deletepath(String token, int id) async {
+
+  Future<void> deletepath(String token, String id) async {
     try {
       await PathApiService().deletepath(token, id);
       _paths.removeWhere((Path) => Path.id == id);

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 class BusTrip {
-  int id;
-  int companyId;
-  int pathId;
+  String id;
+  String companyId;
+  String pathId;
   String status;
   String price;
   DateTime createdAt;
@@ -34,17 +34,19 @@ class BusTrip {
       price: json['price'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
-      busTrip: List<BusTripDetails>.from(json['bus_trip'].map((x) => BusTripDetails.fromJson(x))),
-      breaksTrip: List<BreaksTrip>.from(json['breaks_trip'].map((x) => BreaksTrip.fromJson(x))),
+      busTrip: List<BusTripDetails>.from(
+          json['bus_trip'].map((x) => BusTripDetails.fromJson(x))),
+      breaksTrip: List<BreaksTrip>.from(
+          json['breaks_trip'].map((x) => BreaksTrip.fromJson(x))),
       path: Path2.fromJson(json['path']),
     );
   }
 }
 
 class BusTripDetails {
-  int id;
-  int tripId;
-  int busId;
+  String id;
+  String tripId;
+  String busId;
   String fromTime;
   String date;
   String toTime;
@@ -89,9 +91,9 @@ class BusTripDetails {
 }
 
 class Pivot {
-  int id;
-  int busTripId;
-  int breaksTripId;
+  String id;
+  String busTripId;
+  String breaksTripId;
   String status;
   DateTime createdAt;
   DateTime updatedAt;
@@ -118,9 +120,9 @@ class Pivot {
 }
 
 class BreaksTrip {
-  int id;
-  int tripId;
-  int breaksId;
+  String id;
+  String tripId;
+  String breaksId;
   DateTime createdAt;
   DateTime updatedAt;
   Break breakDetails;
@@ -147,8 +149,8 @@ class BreaksTrip {
 }
 
 class Break {
-  int id;
-  int areaId;
+  String id;
+  String areaId;
   String name;
   DateTime createdAt;
   DateTime updatedAt;
@@ -176,7 +178,7 @@ class Break {
 }
 
 class Area {
-  int id;
+  String id;
   String name;
   DateTime createdAt;
   DateTime updatedAt;
@@ -199,8 +201,8 @@ class Area {
 }
 
 class Path2 {
-  int id;
-  int companyId;
+  String id;
+  String companyId;
   String from;
   String to;
   DateTime createdAt;
