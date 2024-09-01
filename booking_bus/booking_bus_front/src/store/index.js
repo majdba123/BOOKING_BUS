@@ -19,6 +19,8 @@ export default createStore({
         startLat: null,
         startLng: null,
         endLat: null,
+        selectedLat: null,
+        selectedLng: null,
         endLng: null,
         distance: null,
         placeName: null,

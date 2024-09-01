@@ -1,13 +1,18 @@
 <template>
     <div class="containerd">
         <header class="navd">
-            <button class="nav-btnd" @click="showForm = true">Add Break</button>
-            <button class="nav-btnd" @click="showForm = false">
+            <button class="nav-btnd" @click="toggleshowaddbreack">
+                Add Break
+            </button>
+            <button class="nav-btnd" @click="toggleshowbreack">
                 Show Break
+            </button>
+            <button class="nav-btnd" @click="toggleshowbreackbypath">
+                Show Break By Path
             </button>
         </header>
         <div class="content">
-            <div class="form-map-container" v-if="showForm">
+            <div class="form-map-container" v-if="showaddbreack">
                 <div class="form-container">
                     <form
                         @submit.prevent="handleSubmit(Idgovernment)"
@@ -28,7 +33,7 @@
                                 <span class="material-icons"
                                     >location_city</span
                                 >
-                                Select Government
+                                Select Path
                             </label>
                             <select
                                 id="government"
@@ -37,15 +42,13 @@
                                 required
                                 class="custom-select"
                             >
-                                <option value="" disabled>
-                                    Select Government
-                                </option>
+                                <option value="" disabled>Select Path</option>
                                 <option
                                     v-for="gov in governments"
                                     :key="gov.id"
                                     :value="gov.id"
                                 >
-                                    {{ gov.name }}
+                                    {{ gov.from }}>>{{ gov.to }}
                                 </option>
                             </select>
                         </div>
@@ -56,17 +59,23 @@
                     </form>
                 </div>
                 <div class="map-container">
-                    <MapBreack :lat="mapLat" :lng="mapLng" />
+                    <MapBreack
+                        :lat="this.lat"
+                        :long="this.long"
+                        :fromlat="frommapLat"
+                        :fromlng="frommapLng"
+                        :tolng="tomapLng"
+                        :tolat="tomapLat"
+                    />
                 </div>
             </div>
-            <div v-else class="recent_orders">
+            <div v-if="showbreack" class="recent_orders">
                 <h1>All Breaks</h1>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Government Name</th>
                                 <th>Break Name</th>
                                 <th>Display IN Map</th>
                                 <th>Actions</th>
@@ -75,12 +84,16 @@
                         <tbody>
                             <tr v-for="(breack, index) in breaks" :key="index">
                                 <td>{{ breack.id }}</td>
-                                <td>{{ breack.area_name }}</td>
                                 <td>{{ breack.break_name }}</td>
                                 <td>
                                     <button
                                         class="nav-btnd"
-                                        @click="openMapModal(breack.id)"
+                                        @click="
+                                            openMapModal(
+                                                breack.id,
+                                                breack.Path_id
+                                            )
+                                        "
                                     >
                                         Display
                                     </button>
@@ -90,9 +103,8 @@
                                         class="edit-btn"
                                         @click="
                                             openEditModal(
-                                                breack.area_id,
-                                                index,
-                                                breack.break_name
+                                                breack.id,
+                                                breack.Path_id
                                             )
                                         "
                                     >
@@ -112,6 +124,66 @@
                     </table>
                 </div>
             </div>
+            <div v-if="showbreackbypath" class="recent_orders">
+                <h1>Break By Path</h1>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Distance</th>
+                                <th>View Break</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(breack, index) in governments"
+                                :key="index"
+                            >
+                                <td>{{ breack.id }}</td>
+                                <td>{{ breack.from }}</td>
+                                <td>{{ breack.to }}</td>
+                                <td>{{ breack.Distance }}</td>
+                                <td>
+                                    <button
+                                        class="nav-btnd"
+                                        @click="openbreackmodel(breack.id)"
+                                    >
+                                        Display
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div v-if="showbreachpath" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Break</div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(bus, index) in breakbypath" :key="index">
+                            <td>{{ bus.id }}</td>
+                            <td>{{ bus.name }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeBusStatusModal" class="close-modal">
+                    Close
+                </button>
+            </div>
         </div>
         <div v-if="showEditModal" class="modal">
             <div class="modal-content">
@@ -128,7 +200,14 @@
                     </div>
 
                     <div class="map-container">
-                        <MapBreack :lat="mapLat" :lng="mapLng" />
+                        <MapBreack
+                            :fromlat="frommapLatt"
+                            :fromlng="frommapLngt"
+                            :tolng="tomapLngt"
+                            :tolat="tomapLatt"
+                            :lat="this.lat"
+                            :long="this.long"
+                        />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -146,7 +225,14 @@
                 <div class="modal-header">Location on Map</div>
                 <div class="modal-body">
                     <div class="map-containers">
-                        <DisplayMap :lat="mapLat" :lng="mapLng" />
+                        <DisplayMap
+                            :fromlat="this.frommapLat"
+                            :fromlong="this.frommapLog"
+                            :tolat="this.tomapLat"
+                            :tolong="this.tomapLog"
+                            :lat="this.lat"
+                            :lng="this.long"
+                        />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -193,18 +279,32 @@ export default {
     components: { MapBreack, DisplayMap },
     data() {
         return {
+            lat: null,
+            long: null,
+            breakbypath: [],
+            showbreackbypath: false,
+            showaddbreack: true,
+            showbreack: false,
             showMapModal: false,
             showEditModal: false,
+            showbreackpath: false,
             showConfirmDeleteModal: false,
             areaid: "",
             breakIdToDelete: null,
-
+            showbreachpath: false,
             name: "",
-            mapLat: 30.033333, // Default latitude for Cairo, Egypt
-            mapLng: 31.233334, // Default longitude for Cairo, Egypt
+            pathid: "",
+            frommapLat: 30.033333, // Default latitude for Cairo, Egypt
+            frommapLng: 31.233334,
+            tomapLat: 30.033333, // Default latitude for Cairo, Egypt
+            tomapLng: 31.233334, // Default longitude for Cairo, Egypt
+            frommapLatt: 30.033333, // Default latitude for Cairo, Egypt
+            frommapLngt: 31.233334,
+            tomapLatt: 30.033333, // Default latitude for Cairo, Egypt
+            tomapLngt: 31.233334, // Default longitude for Cairo, Egypt
             Idgovernment: "",
             name_break: "",
-            showForm: true,
+            showForm: 1,
             break: {
                 name: "",
                 government: "",
@@ -225,6 +325,21 @@ export default {
         return { toast };
     },
     methods: {
+        toggleshowbreackbypath() {
+            this.showbreackbypath = true;
+            this.showaddbreack = false;
+            this.showbreack = false;
+        },
+        toggleshowaddbreack() {
+            this.showbreackbypath = false;
+            this.showaddbreack = true;
+            this.showbreack = false;
+        },
+        toggleshowbreack() {
+            this.showbreackbypath = false;
+            this.showaddbreack = false;
+            this.showbreack = true;
+        },
         confirmDelete(id) {
             this.breakIdToDelete = id;
             this.showConfirmDeleteModal = true;
@@ -233,7 +348,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "delete",
-                url: `http://127.0.0.1:8000/api/admin/delete_breaks/${this.breakIdToDelete}`,
+                url: `http://127.0.0.1:8000/api/company/delete_breaks/${this.breakIdToDelete}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
@@ -250,30 +365,50 @@ export default {
             this.showConfirmDeleteModal = false;
             this.breakIdToDelete = null;
         },
-        openMapModal(id) {
-            const government = this.breaks.find((breack) => breack.id === id);
+        openMapModal(id, path) {
+            this.areaid = id;
+            this.pathid = path;
+            const government = this.governments.find(
+                (breack) => breack.id === path
+            );
+            console.log(this.governments);
             if (government) {
-                this.mapLat = government.latitude;
-                this.mapLng = government.longitude;
+                this.frommapLat = government.from_latitude;
+                this.frommapLog = government.from_longitude;
+                this.tomapLat = government.to_latitude;
+                this.tomapLog = government.to_longitude;
                 this.showMapModal = true;
-                console.log(this.mapLat, this.mapLng);
+                console.log(
+                    this.tomapLog,
+                    this.frommapLat,
+                    this.frommapLog,
+                    this.tomapLat
+                );
+            }
+            const breaks = this.breaks.find((breack) => breack.id === id);
+            if (breaks) {
+                this.lat = breaks.latitude;
+                this.long = breaks.longitude;
+                console.log(this.long, this.lat);
             }
         },
         closeMapModal() {
             this.showMapModal = false;
         },
+
         fetchGovernment() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/admin/all_government",
+                url: "http://127.0.0.1:8000/api/company/all_path",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     this.governments = response.data;
+                    console.log(this.governments);
                 })
                 .catch((error) => {
-                    this.toast.error("Error getting Government");
+                    this.toast.error("Error getting Path");
                     console.error(error);
                 });
         },
@@ -281,7 +416,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/admin/all_breaks/",
+                url: "http://127.0.0.1:8000/api/company/all_breaks",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -298,13 +433,14 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: "http://127.0.0.1:8000/api/admin/add_break",
+                url:
+                    "http://127.0.0.1:8000/api/company/store_breaks/" +
+                    this.Idgovernment,
                 headers: { Authorization: `Bearer ${access_token}` },
                 data: {
-                    break_name: this.name,
-                    area_id: this.Idgovernment,
-                    lat: this.mapLat,
-                    lng: this.mapLng,
+                    name: this.name,
+                    lat: store.state.selectedLat,
+                    long: store.state.selectedLng,
                 },
             })
                 .then(() => {
@@ -313,26 +449,49 @@ export default {
                     this.resetForm();
                 })
                 .catch((error) => {
+                    console.log(
+                        store.state.selectedLat,
+                        store.state.selectedLng
+                    );
                     this.toast.error("Error adding Break");
                     console.error(error);
                 });
         },
-        openEditModal(id, index, breakName) {
+        openEditModal(id, path) {
             this.showEditModal = true;
-            this.editingIndex = index;
-            this.name = breakName;
             this.areaid = id;
+            this.pathid = path;
             this.fetchBreaks();
+            this.updateMapLocation();
+            this.updateMapbreackLocation();
+        },
+        openbreackmodel(id) {
+            this.showbreachpath = true;
+            this.fetchBreaksbypath(id);
+        },
+        fetchBreaksbypath(id) {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "get",
+                url: `http://127.0.0.1:8000/api/company/all_breaks/${id}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.breakbypath = response.data;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
         updateBreak() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "put",
-                url: `http://127.0.0.1:8000/api/admin/update_breaks/${this.areaid}`,
+                url: `http://127.0.0.1:8000/api/company/update_breaks/${this.areaid}`,
                 headers: { Authorization: `Bearer ${access_token}` },
                 data: {
-                    break_name: this.name,
-                    area_id: this.Idgovernment,
+                    name: this.name,
+                    pathid: this.Idgovernment,
                 },
             })
                 .then(() => {
@@ -348,15 +507,54 @@ export default {
         closeEditModal() {
             this.showEditModal = false;
         },
+        updateMapbreackLocation() {
+            const selectedbreack = this.breaks.find(
+                (gov) => gov.id === this.areaid
+            );
+
+            if (selectedbreack) {
+                this.lat = selectedbreack.latitude;
+                this.long = selectedbreack.longitude;
+
+                console.log(`Latitude: ${this.lat}, Longitude: ${this.long}`);
+            } else {
+                console.error(`ID: ${this.areaid} not found in breaks`);
+            }
+        },
+
         updateMapLocation() {
             const selectedGovernment = this.governments.find(
                 (gov) => gov.id === this.Idgovernment
             );
             if (selectedGovernment) {
-                this.mapLat = selectedGovernment.latitude;
-                this.mapLng = selectedGovernment.longitude;
+                this.frommapLat = selectedGovernment.from_latitude;
+                this.frommapLng = selectedGovernment.from_longitude;
+                this.tomapLat = selectedGovernment.to_latitude;
+                this.tomapLng = selectedGovernment.to_longitude;
+                console.log(
+                    this.tomapLng,
+                    this.tomapLat,
+                    this.frommapLng,
+                    this.frommapLat
+                );
+            }
+            const selectedGovernmet = this.governments.find(
+                (gov) => gov.id === this.pathid
+            );
+            if (selectedGovernmet) {
+                this.frommapLatt = selectedGovernmet.from_latitude;
+                this.frommapLngt = selectedGovernmet.from_longitude;
+                this.tomapLatt = selectedGovernmet.to_latitude;
+                this.tomapLngt = selectedGovernmet.to_longitude;
+                console.log(
+                    this.tomapLngt,
+                    this.tomapLatt,
+                    this.frommapLngt,
+                    this.frommapLatt
+                );
             }
         },
+
         resetForm() {
             this.name = "";
             this.Idgovernment = "";

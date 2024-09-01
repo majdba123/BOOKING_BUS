@@ -14,12 +14,12 @@
             <!-- End top -->
 
             <!-- Start sidebar -->
-            <SidebarAdmin />
+            <SidebarCompany />
             <!-- End sidebar -->
         </aside>
         <div class="main-content">
             <main>
-                <h1>{{ x }}</h1>
+                <h1>Break</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -91,14 +91,14 @@
 
 <script>
 import axios from "axios";
-import SidebarAdmin from "@/components/SidebarAdmin.vue";
+import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddBreak from "@/components/AddBreak.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 
 export default {
     name: "AllBus",
-    components: { SidebarAdmin, AddBreak, DriverChart },
+    components: { SidebarCompany, AddBreak, DriverChart },
     data() {
         return {
             x: store.state.x,
