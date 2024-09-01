@@ -61,7 +61,7 @@ Route::get('all_user', [AdminDashBoardController::class, 'all_user']);
 
 
 
-Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']], function () {
+Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum', 'throttle:30,1']], function () {
 
     Route::get('/get_driver_by_status', [DriverController::class, 'get_driver_by_status']);
     Route::get('/all_driver', [DriverController::class, 'index']);
@@ -126,7 +126,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
     Route::post('/all_driver_rating_by_driver_id/{driver_id}', [RateDriverController::class, 'rate_driver__by_id']);
 
 
-   /* Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
+    /* Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
 
     Route::get('/all_government', [AreaController::class, 'index']);
     Route::post('/show_goverment/{id}', [AreaController::class, 'show']);*/
@@ -175,7 +175,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
 });
 
 
-Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum', 'throttle:30,1']], function () {
 
     Route::get('/all_government', [AreaController::class, 'index']);
     Route::post('/store_government', [AreaController::class, 'store']);
@@ -248,7 +248,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum']
 
 
 
-Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum', 'throttle:30,1']], function () {
 
     Route::get('/trips', [TripController::class, 'index_user']);
     Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
@@ -259,6 +259,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
     Route::post('/cancel_Reservation/{id}', [ReservationController::class, 'cancelReservation']);
+
 
     Route::post('/rate_trip/{trip_id}', [RateTripsController::class, 'store']);
 
@@ -292,7 +293,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
     Route::put('/update_address/{address_id}', [AddressController::class, 'update']);
 
 
-   // Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
+    // Route::get('/all_breaks/{area_id}', [BreaksController::class, 'index']);
 
 
     Route::get('/my_info', [ProfileController::class, 'index']);
@@ -315,7 +316,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
 
 
 
-Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum', 'throttle:30,1']], function () {
 
     Route::get('/my_bus', [DriverController::class, 'my_bus']);
     Route::get('/my_pending_trip', [DriverController::class, 'my_pending_trip']);
