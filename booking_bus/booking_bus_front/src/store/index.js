@@ -7,7 +7,7 @@ export default createStore({
         breacklong: null,
         x: "Dashboard",
         Bus: {},
-        Driver: {},
+        Driver: [],
         Company: {},
         Paths: {},
         Trips: {},
