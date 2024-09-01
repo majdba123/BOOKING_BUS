@@ -112,7 +112,7 @@ export default {
             salesOffset: 0,
             expensesOffset: 0,
             incomeOffset: 0,
-            circumference: 2 * Math.PI * 30, // محيط الدائرة
+            circumference: 2 * Math.PI * 30,
         };
     },
     methods: {
@@ -131,7 +131,6 @@ export default {
                     this.all_user = data.all_user || 0;
                     this.all_drivers = data.all_drivers || 0;
 
-                    // حساب النسب المئوية
                     const maxValue = 100;
                     this.salesPercentage = Math.min(
                         100,
@@ -146,7 +145,6 @@ export default {
                         (this.all_drivers / maxValue) * 100
                     );
 
-                    // حساب stroke-dashoffset
                     this.salesOffset =
                         this.circumference -
                         (this.circumference * this.salesPercentage) / 100;
@@ -193,10 +191,21 @@ export default {
     --card-padding: 1.8rem;
     --padding-1: 1.2rem;
 
-    --box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    --box-shadow: 0 2rem 3rem var(--clr-light);
     --circle-radius: 30px;
     --circle-diameter: calc(var(--circle-radius) * 2);
     --circle-circumference: calc(2 * var(--circle-radius) * 3.14159);
+
+    --font-size-small: 0.88rem;
+    --font-size-medium: 1.2rem;
+    --font-size-large: 1.6rem;
+
+    --padding-small: 0.5rem;
+    --padding-medium: 1.8rem;
+    --padding-large: 40px;
+
+    --transition-duration: 0.3s;
+    --transition-ease: ease;
 }
 
 body {
@@ -204,7 +213,7 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    font-size: 0.88rem;
+    font-size: var(--font-size-small);
     user-select: none;
     overflow-x: hidden;
     background: var(--clr-color-background);
@@ -213,7 +222,7 @@ body {
 .container {
     display: grid;
     width: 100%;
-    gap: 1.8rem;
+    gap: var(--padding-medium);
     grid-template-columns: 14rem auto 14rem;
     margin-left: 0;
 }
@@ -221,17 +230,17 @@ body {
 .insights {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.6rem;
-    padding: 1.8rem;
+    gap: var(--padding-small);
+    padding: var(--card-padding);
 }
 
 .insights > div {
     background-color: var(--clr-white);
     padding: var(--card-padding);
     border-radius: var(--card-border-radius);
-    margin-top: 1rem;
+    margin-top: var(--padding-small);
     box-shadow: var(--box-shadow);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow var(--transition-duration) var(--transition-ease);
 }
 
 .insights > div:hover {
@@ -240,7 +249,7 @@ body {
 
 .insights > div span {
     background: var(--clr-primary);
-    padding: 0.5rem;
+    padding: var(--padding-small);
     border-radius: 50%;
     color: var(--clr-white);
     font-size: 2rem;
@@ -261,7 +270,7 @@ body {
 }
 
 .insights > div .middle h1 {
-    font-size: 1.6rem;
+    font-size: var(--font-size-large);
     color: var(--clr-dark);
 }
 
@@ -309,7 +318,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 1.2rem;
+    font-size: var(--font-size-medium);
     color: var(--clr-dark);
 }
 
@@ -320,7 +329,7 @@ body {
     }
 
     .insights {
-        padding: 40px;
+        padding: var(--padding-large);
         grid-template-columns: repeat(1, 1fr);
     }
 }
@@ -386,7 +395,7 @@ body {
     }
 
     .insights {
-        padding: 40px;
+        padding: var(--padding-large);
         grid-template-columns: repeat(1, 1fr);
     }
 }
