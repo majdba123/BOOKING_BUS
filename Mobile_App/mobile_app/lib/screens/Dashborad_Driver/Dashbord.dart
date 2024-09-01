@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/filtter_bar.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:mobile_app/Provider/Driver/TripDriver.dart';
+import 'package:mobile_app/Provider/user/user_info_profile.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/FirstTripcard.dart';
+import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
+import 'package:mobile_app/screens/WidgetApp/BottomBaronScreen.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class DashboardDriver extends StatefulWidget {
@@ -10,7 +16,22 @@ class DashboardDriver extends StatefulWidget {
 
 class _DashboardDriverState extends State<DashboardDriver> {
   void _logout(BuildContext context) {
-    // Implement logout functionality here
+    // _unsubscribeFromPusher(); // Unsubscribe on logout
+    Provider.of<AuthProvider>(context, listen: false).logout();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => SignInPage()),
+    );
+  }
+
+  late UserInfoProvider infoUser;
+  late AuthProvider auth;
+  @override
+  void initState() {
+    super.initState();
+    auth = Provider.of<AuthProvider>(context, listen: false);
+    infoUser = Provider.of<UserInfoProvider>(context, listen: false);
+    Provider.of<TripDriverProvider>(context, listen: false)
+        .fetchFirstTrip(auth.accessToken);
   }
 
   @override
@@ -26,7 +47,6 @@ class _DashboardDriverState extends State<DashboardDriver> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Full-width Header Section
                 Container(
                   width: screenWidth,
                   padding: EdgeInsets.symmetric(
@@ -35,10 +55,7 @@ class _DashboardDriverState extends State<DashboardDriver> {
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.only(
-                        // bottomLeft: Radius.circular(25.0),
-                        // bottomRight: Radius.circular(25.0),
-                        ),
+                    borderRadius: BorderRadius.only(),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -90,7 +107,7 @@ class _DashboardDriverState extends State<DashboardDriver> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Good Evening Augustine!',
+                        'Good Evening ${infoUser.userInfo?.name}',
                         style: TextStyle(
                           fontSize: screenHeight * 0.028,
                           fontWeight: FontWeight.bold,
@@ -111,132 +128,7 @@ class _DashboardDriverState extends State<DashboardDriver> {
 
                 SizedBox(height: screenHeight * 0.03),
 
-                // Journey Details Card
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                  child: Container(
-                    padding: EdgeInsets.all(20.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.0),
-                      border: Border.all(color: Color(0xFF9EDDCE)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Chennai - Coimbatore',
-                              style: TextStyle(
-                                fontSize: screenHeight * 0.019,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            Text(
-                              '628 kms, 8.21 hrs',
-                              style: TextStyle(
-                                fontSize: screenHeight * 0.014,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: screenHeight * 0.01),
-                        Text(
-                          '42 Passengers • 28 Stops',
-                          style: TextStyle(
-                            fontSize: screenHeight * 0.018,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.025),
-                        Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: screenHeight * 0.015,
-                                      color: Color(0xFF4267B2),
-                                    ),
-                                    SizedBox(width: screenWidth * 0.02),
-                                    Text(
-                                      'Chennai 10:30 pm',
-                                      style: TextStyle(
-                                        fontSize: screenHeight * 0.018,
-                                        color: Colors.grey[800],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: screenHeight * 0.02),
-                                Container(
-                                  height: screenHeight * 0.03,
-                                  child: VerticalDivider(
-                                    thickness: 2.0,
-                                    color: Colors.grey[400],
-                                  ),
-                                ),
-                                SizedBox(height: screenHeight * 0.02),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: screenHeight * 0.015,
-                                      color: Color(0xFF27AE60),
-                                    ),
-                                    SizedBox(width: screenWidth * 0.02),
-                                    Text(
-                                      'Coimbatore 06:30 am',
-                                      style: TextStyle(
-                                        fontSize: screenHeight * 0.018,
-                                        color: Colors.grey[800],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Spacer(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '4',
-                                  style: TextStyle(
-                                    fontSize: screenHeight * 0.055,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF4267B2),
-                                  ),
-                                ),
-                                Text(
-                                  'hours left',
-                                  style: TextStyle(
-                                    fontSize: screenHeight * 0.018,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                FirstTrip(),
 
                 SizedBox(height: screenHeight * 0.03),
 
@@ -274,7 +166,7 @@ class _DashboardDriverState extends State<DashboardDriver> {
                         child: Column(
                           children: [
                             Text(
-                              '£ 460.86',
+                              '£${infoUser.userInfo?.points}',
                               style: TextStyle(
                                 fontSize: screenHeight * 0.035,
                                 fontWeight: FontWeight.bold,
@@ -418,19 +310,7 @@ class _DashboardDriverState extends State<DashboardDriver> {
               ],
             ),
           ),
-
-          // Filter Bar Positioned at the Bottom
-          Positioned(
-            bottom: 20,
-            left: 50,
-            right: 50,
-            child: Center(
-              child: FilterBarJorney(
-                height: screenHeight * 0.07,
-                iconSize: screenHeight * 0.04,
-              ),
-            ),
-          ),
+          buildBottomNavBar(context),
         ],
       ),
     );

@@ -5,7 +5,6 @@ import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/colors.dart';
 import 'package:mobile_app/constants.dart';
 
-import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/ProfileCheckPage.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/register_page.dart';
 import 'package:mobile_app/widgets/Alert_Box.dart';
@@ -183,33 +182,35 @@ class _SignInPageState extends State<SignInPage> {
                               await authProvider.setAuthData(
                                   emailController.text,
                                   passwordController.text);
-                              if (authProvider.accessToken.isNotEmpty) {
-                                final tripProvider =
-                                    Provider.of<TripuserProvider>(context,
-                                        listen: false);
-                                await tripProvider
-                                    .getallTrips(authProvider.accessToken);
-                                await tripProvider
-                                    .getAllcompanies(authProvider.accessToken);
-                              }
+                              // if (authProvider.accessToken.isNotEmpty) {
+
+                              // }
 
                               Navigator.of(context).pop();
 
                               if (authProvider.accessToken.isNotEmpty) {
-                                Widget destinationPage;
+                                // Widget destinationPage;
                                 if (authProvider.userType == "user") {
-                                  destinationPage = ProfileCheckPage();
-                                } else if (authProvider.userType == "driver") {
-                                  destinationPage = DashboardDriver();
-                                } else {
-                                  showCustomAlertDialog(
-                                    context,
-                                    "Unexpected user type: ${authProvider.userType}",
-                                  );
-                                  return;
+                                  final tripProvider =
+                                      Provider.of<TripuserProvider>(context,
+                                          listen: false);
+                                  await tripProvider
+                                      .getallTrips(authProvider.accessToken);
+                                  await tripProvider.getAllcompanies(
+                                      authProvider.accessToken);
                                 }
+                                //else if (authProvider.userType == "driver") {
+                                // destinationPage = ProfileCheckPage();
+                                // }
+                                //  else {
+                                //   showCustomAlertDialog(
+                                //     context,
+                                //     "Unexpected user type: ${authProvider.userType}",
+                                //   );
+                                //   return;
+                                // }
                                 Navigator.push(context,
-                                    animetedRoutePage(destinationPage));
+                                    animetedRoutePage(ProfileCheckPage()));
                               } else {
                                 showCustomAlertDialog(
                                     context, "Invalid Credentials");

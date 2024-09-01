@@ -172,6 +172,8 @@ class BusDriverController extends Controller
             $firstTrip->load(['trip.path']);
             $fromTime = new \DateTime($firstTrip->from_time);
             $toTime = new \DateTime($firstTrip->to_time);
+            $formattedFromTime = $fromTime->format('H:i');
+            $formattedToTime =  $toTime->format('H:i');
             $interval = $fromTime->diff($toTime);
             $tripDuration = $interval->format('%H:%I');
             return response()->json([
@@ -180,9 +182,9 @@ class BusDriverController extends Controller
                 'from' => $firstTrip->trip->path->from ?? null,
                 'to' => $firstTrip->trip->path->to ?? null,
                 'Distance' => $firstTrip->trip->path->Distance ?? null,
-                'from_time' => $firstTrip->from_time,
+                'from_time' => $formattedFromTime,
                 // 'date' => $firstTrip->date,
-                'to_time' => $firstTrip->to_time,
+                'to_time' => $formattedToTime,
                 'Passengers' =>  $firstTrip->bus->getNumberOfReservationsAttribute(),
                 'Stops' =>  $firstTrip->Pivoit->count(),
                 'trip_duration' => $tripDuration,

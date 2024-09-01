@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/constants.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Profile/Complete_info_profile.dart';
 import 'package:mobile_app/Provider/user/user_info_profile.dart';
@@ -13,25 +14,24 @@ class ProfileCheckPage extends StatefulWidget {
 }
 
 class _ProfileCheckPageState extends State<ProfileCheckPage> {
-  bool _isChecking = true; // Track whether profile check is in progress
-
+  bool _isChecking = true;
+  late AuthProvider authprovider;
   @override
   void initState() {
     super.initState();
+    authprovider = Provider.of<AuthProvider>(context, listen: false);
     _checkProfileStatus();
   }
 
+  var accessToken;
   Future<void> _checkProfileStatus() async {
     final prefsHelper = SharedPreferencesHelper();
 
-    var accessToken =
-        Provider.of<AuthProvider>(context, listen: false).accessToken;
+    accessToken = authprovider.accessToken;
     print('the access token is !');
     print(accessToken);
-    // print();
-    // Fetch the user's unique identifier (e.g., userId or email)
     await Provider.of<UserInfoProvider>(context, listen: false)
-        .fetchUserInfo(accessToken!);
+        .fetchUserInfo(accessToken!, authprovider.userType);
     var userId =
         Provider.of<UserInfoProvider>(context, listen: false).userInfo?.id;
     print(userId);
@@ -40,8 +40,7 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
       return;
     }
 
-    bool isProfileComplete =
-        await prefsHelper.isUserIdInList(userId.toString());
+    bool isProfileComplete = await prefsHelper.isUserIdInList(userId);
 
     if (isProfileComplete) {
       // Profile is already marked complete, navigate to dashboard
@@ -50,7 +49,7 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
       // If profile status is not complete or not stored, fetch from server
       try {
         await Provider.of<UserInfoProvider>(context, listen: false)
-            .fetchUserInfo(accessToken!);
+            .fetchUserInfo(accessToken!, authprovider.userType);
         var userInfo =
             Provider.of<UserInfoProvider>(context, listen: false).userInfo;
         print('the use info is ! $userInfo');
@@ -62,9 +61,9 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
             ),
           );
         } else {
-          // If profile is complete, store this status locally
-          await prefsHelper.saveUserIdList([userId.toString()]); // Update list
-          // Proceed to the main dashboard
+          print('try to svae the profile use!!');
+          await prefsHelper.saveUserIdList([userId]); // Update list
+          print('try to go to dash boder!!!');
           _navigateToDashboard();
         }
       } catch (error) {
@@ -80,9 +79,15 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
       setState(() {
         _isChecking = false; // Update state to hide progress indicator
       });
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => DashboardUser()),
-      );
+      if (authprovider.userType == "user") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => DashboardUser()),
+        );
+      } else if (authprovider.userType == "driver") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => DashboardDriver()),
+        );
+      }
     }
   }
 

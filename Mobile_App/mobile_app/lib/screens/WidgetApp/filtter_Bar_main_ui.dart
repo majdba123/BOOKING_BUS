@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/Driver_profile/Driver_profile.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/JourneyCard.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/journeys_screen.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
+import 'package:mobile_app/screens/Dashborad_User/MyBooking/MY_Reservation.dart';
+import 'package:provider/provider.dart';
 
-class FilterBarJorney extends StatelessWidget {
+class FilterBarUserUi extends StatelessWidget {
   final double height;
   final double iconSize;
 
-  const FilterBarJorney({
+  const FilterBarUserUi({
     required this.height,
     required this.iconSize,
   });
 
   @override
   Widget build(BuildContext context) {
+    var auth = Provider.of<AuthProvider>(context, listen: false);
     return Container(
       height: height,
       padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -36,10 +38,13 @@ class FilterBarJorney extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.home, color: Colors.white, size: iconSize),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DashboardDriver()),
-              );
+              if (auth.userType == "user") {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/mainPageUser', (Route<dynamic> route) => false);
+              } else if (auth.userType == "driver") {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/driverPageUser', (Route<dynamic> route) => false);
+              }
             },
           ),
           IconButton(
@@ -48,17 +53,15 @@ class FilterBarJorney extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => JourneysScreen()),
+                MaterialPageRoute(builder: (context) => BookingsScreen()),
               );
             },
           ),
           IconButton(
             icon: Icon(Icons.person, color: Colors.white, size: iconSize),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DriverProfilePage()),
-              );
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/ProfilePage', (Route<dynamic> route) => false);
             },
           ),
         ],
