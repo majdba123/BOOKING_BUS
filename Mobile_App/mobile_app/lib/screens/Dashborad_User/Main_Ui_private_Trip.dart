@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:mobile_app/screens/Dashborad_User/Get_private_trip_By_Status.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/PrivateTrip/Get_private_trip_By_Status.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Map_in_private_trip/map.dart';
 

@@ -17,7 +17,7 @@ class UserInfoProvider with ChangeNotifier {
   Future<void> fetchUserInfo(String accessToken) async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
+    // notifyListeners();
 
     final url = Uri.parse(name_domain_server + 'user/my_info');
     final headers = {
@@ -31,7 +31,13 @@ class UserInfoProvider with ChangeNotifier {
       print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print(data);
+        print('Decoded JSON data: $data');
+
         _userInfo = UserInfomodel.fromJson(data);
+        // notifyListeners();
+        print('after call model !!');
+        print(_userInfo);
       } else {
         _errorMessage = json.decode(response.body)['message'];
       }

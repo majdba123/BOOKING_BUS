@@ -6,8 +6,17 @@ import 'dart:convert';
 import 'package:mobile_app/constants.dart';
 
 class PrivateTrip {
-  Future<String> storePrivateTrip(String from, String to, String date,
-      String startTime, String accessToken) async {
+  Future<String> storePrivateTrip(
+      String from,
+      String to,
+      String date,
+      String startTime,
+      String accessToken,
+      String Distance,
+      double lat_from,
+      double long_from,
+      double lat_to,
+      double long_to) async {
     final url = Uri.parse(name_domain_server + 'user/store_private_trip');
     final headers = {
       'Authorization': 'Bearer $accessToken',
@@ -18,7 +27,13 @@ class PrivateTrip {
       'to': to,
       'date': date,
       'start_time': startTime,
+      'Distance': Distance,
+      'lat_from': lat_from,
+      'long_from': long_from,
+      'lat_to': lat_to,
+      'long_to': long_to,
     });
+    print(body);
 
     final response = await http.post(url, headers: headers, body: body);
     print(response.body);

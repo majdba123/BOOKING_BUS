@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Profile_provider.dart';
 import 'package:mobile_app/Provider/user/user_info_profile.dart';
@@ -91,6 +92,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           ),
           body: Stack(
             children: [
+               backImage(context),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Form(

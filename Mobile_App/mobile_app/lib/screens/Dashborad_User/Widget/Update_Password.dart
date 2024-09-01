@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/user/Update_password_provider.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 
@@ -65,6 +66,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         builder: (context, passwordProvider, child) {
           return Stack(
             children: [
+              backImage(context),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Form(

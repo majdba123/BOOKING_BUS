@@ -22,8 +22,10 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
 
   Future<void> _checkProfileStatus() async {
     final prefsHelper = SharedPreferencesHelper();
+
     var accessToken =
         Provider.of<AuthProvider>(context, listen: false).accessToken;
+    print('the access token is !');
     print(accessToken);
     // print();
     // Fetch the user's unique identifier (e.g., userId or email)
@@ -50,7 +52,7 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
             .fetchUserInfo(accessToken!);
         var userInfo =
             Provider.of<UserInfoProvider>(context, listen: false).userInfo;
-
+        print('the use info is ! $userInfo');
         if (userInfo?.profile_image == null) {
           // If profile is not complete, navigate to the CompleteProfilePage
           Navigator.of(context).pushReplacement(

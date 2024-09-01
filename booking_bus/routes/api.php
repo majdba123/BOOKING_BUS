@@ -70,6 +70,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
 
 
     Route::get('/all_breaks/{path_id}', [BreaksController::class, 'index']);
+    Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
     Route::post('/store_breaks/{id}', [BreaksController::class, 'store']);
     Route::put('/update_breaks/{id}', [BreaksController::class, 'update']);
     Route::delete('/delete_breaks/{id}', [BreaksController::class, 'destroy']);
