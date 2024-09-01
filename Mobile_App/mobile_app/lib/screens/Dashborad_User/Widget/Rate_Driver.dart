@@ -140,7 +140,7 @@ class DriverCard extends StatelessWidget {
     );
   }
 
-  void _showRatingDialog(BuildContext context, int driverId,
+  void _showRatingDialog(BuildContext context, String driverId,
       RatingUserProvider userProvider, int previousRating) {
     showDialog(
       context: context,

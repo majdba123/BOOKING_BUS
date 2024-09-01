@@ -92,7 +92,7 @@ class TripBusApi {
     }
   }
 
-  Future<void> deleteTrip(String accessToken, int tripId) async {
+  Future<void> deleteTrip(String accessToken, String tripId) async {
     final url = Uri.parse(name_domain_server +
         "company/delete_trip/$tripId"); // Adjust endpoint as per your API
     final response = await http.delete(

@@ -4,8 +4,8 @@ import 'package:mobile_app/Data_Models/SeatModel.dart';
 
 class BusLayout extends StatelessWidget {
   final List<SeatModel> seats;
-  final List<int> selectedSeats;
-  final Function(int) onSeatTap;
+  final List<String> selectedSeats;
+  final Function(String) onSeatTap;
 
   const BusLayout({
     Key? key,

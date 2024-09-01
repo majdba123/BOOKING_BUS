@@ -5,7 +5,7 @@ import 'package:mobile_app/Data_Models/Breack_place.dart';
 import 'package:mobile_app/Data_Models/SeatModel.dart';
 
 class TripByPath {
-  final int tripId;
+  final String tripId;
   final String companyId;
   final String from;
   final String to;
@@ -38,7 +38,7 @@ class TripByPath {
 }
 
 class BusTrip {
-  final int busId;
+  final String busId;
   final String fromTime;
   final String toTime;
   final String type;

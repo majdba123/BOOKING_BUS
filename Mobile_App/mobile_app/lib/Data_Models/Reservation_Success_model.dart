@@ -1,6 +1,6 @@
 class Reservation {
   final String message;
-  final int reservationId;
+  final String reservationId;
   final String busTripId;
   final String breakName;
   final List<Seat> seats;
@@ -49,9 +49,9 @@ class Reservation {
 }
 
 class Seat {
-  final int id;
-  final int seatId;
-  final int reservationId;
+  final String id;
+  final String seatId;
+  final String reservationId;
   final String status;
   final DateTime createdAt;
   final DateTime updatedAt;

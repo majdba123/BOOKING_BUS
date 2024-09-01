@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Address_provider.dart';
@@ -55,8 +56,32 @@ class AddressListPage extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else if (addressProvider.addresses.isEmpty) {
-            return Center(
-              child: Text('No addresses found.'),
+            return Stack(
+              children: [
+                backImage(context),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Lottie.asset(
+                        'assets/images/no_result.json', // Use your Lottie file path here
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.fill,
+                      ),
+                      SizedBox(height: 30),
+                      Text(
+                        'No Address found ...',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          // fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             );
           } else {
             return ListView.builder(

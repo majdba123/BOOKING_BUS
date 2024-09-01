@@ -84,8 +84,8 @@ class BusApiService {
     }
   }
 
-  Future<Bus> updateBus(
-      String accessToken, var number_bus, int id, var number_passenger) async {
+  Future<Bus> updateBus(String accessToken, var number_bus, String id,
+      var number_passenger) async {
     print(number_bus);
     print(number_passenger);
     print(
@@ -108,7 +108,7 @@ class BusApiService {
     }
   }
 
-  Future<void> deleteBus(String accessToken, int id) async {
+  Future<void> deleteBus(String accessToken, String id) async {
     final response = await http.delete(
       Uri.parse('${name_domain_server}company/delete_bus/$id'),
       headers: {'Authorization': 'Bearer $accessToken'},

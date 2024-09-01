@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/MainPage/Dashbord.dart';
 
 class JourneyCompletedScreen extends StatelessWidget {
   @override

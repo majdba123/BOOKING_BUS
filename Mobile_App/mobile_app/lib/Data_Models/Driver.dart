@@ -2,9 +2,9 @@ import 'company.dart';  // Assuming you have the Company class in a separate fil
 import 'user.dart';     // Assuming you have the User class in a separate file.
 
 class Driver {
-  final int id;
-  final int userId;
-  final int companyId;
+  final String id;
+  final String userId;
+  final String companyId;
   final String status;
   final DateTime? createdAt;
   final DateTime ?updatedAt;

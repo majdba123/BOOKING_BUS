@@ -44,7 +44,8 @@ class ChargeRequestProvider with ChangeNotifier {
     }
   }
 
-  Future<void> acceptChargeRequest(BuildContext context, int requestId) async {
+  Future<void> acceptChargeRequest(
+      BuildContext context, String requestId) async {
     try {
       final accessToken =
           Provider.of<AuthProvider>(context, listen: false).accessToken;
@@ -63,7 +64,7 @@ class ChargeRequestProvider with ChangeNotifier {
   }
 
   Future<void> fetchChargeRequestDetails(
-      BuildContext context, int requestId) async {
+      BuildContext context, String requestId) async {
     _isLoading = true;
     notifyListeners();
 
@@ -100,7 +101,7 @@ class ChargeRequestProvider with ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse(baseUrl+'admin/charge_balance_by_status?status=$status'),
+        Uri.parse(baseUrl + 'admin/charge_balance_by_status?status=$status'),
         headers: {
           'Authorization':
               'Bearer $accessToken', // Include the access token in the Authorization header

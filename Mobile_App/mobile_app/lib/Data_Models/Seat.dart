@@ -1,6 +1,6 @@
 class Seat {
-  final int id;
-  final int bus_id;
+  final String id;
+  final String bus_id;
   final int status;
   final DateTime createdAt;
  final DateTime updatedAt;

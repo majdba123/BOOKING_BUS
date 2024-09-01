@@ -29,11 +29,12 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     }
   }
 
+  late AuthProvider authProvider;
   void initState() {
     super.initState();
     var userInfoProvider =
         Provider.of<UserInfoProvider>(context, listen: false).userInfo;
-
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
     _phoneController.text = userInfoProvider!.phoneNumber!;
     _nameController.text = userInfoProvider!.name;
     _emailController.text = userInfoProvider.email;
@@ -41,8 +42,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   void _updateProfile(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      var accessToken =
-          Provider.of<AuthProvider>(context, listen: false).accessToken;
+      var accessToken = authProvider.accessToken;
       await Provider.of<updateProfileProvider>(context, listen: false)
           .updateProfile(
         _image,
@@ -56,7 +56,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           Provider.of<updateProfileProvider>(context, listen: false);
       if (profileProvider.errorMessage == null) {
         await Provider.of<UserInfoProvider>(context, listen: false)
-            .fetchUserInfo(accessToken);
+            .fetchUserInfo(accessToken, authProvider.userType);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Profile updated successfully')),
         );

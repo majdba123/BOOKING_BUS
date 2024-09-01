@@ -19,7 +19,7 @@ class SeatsGridPage extends StatefulWidget {
 }
 
 class _SeatsGridPageState extends State<SeatsGridPage> {
-  List<int> selectedSeats = [];
+  List<String> selectedSeats = [];
   bool showUpperDeck = false;
   late final BussofSpsccifTripProvider providerSpecificBusTrip;
 
@@ -101,7 +101,7 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
     );
   }
 
-  void _onSeatTap(int seatId) {
+  void _onSeatTap(String seatId) {
     setState(() {
       if (selectedSeats.contains(seatId)) {
         selectedSeats.remove(seatId);
@@ -115,7 +115,7 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
     var busProvider = Provider.of<TripuserProvider>(context, listen: false);
 
     // Adding the selected seats to the provider
-    for (int seatId in selectedSeats) {
+    for (String seatId in selectedSeats) {
       String seatType = busProvider.getSeatType(seatId);
       int seatPrice = busProvider.price_trip;
 

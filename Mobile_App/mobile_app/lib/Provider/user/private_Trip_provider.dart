@@ -73,7 +73,7 @@ class PrivateTripuserProvider with ChangeNotifier {
   }
 
   Future<void> acceptPrivateTripRequsetfromuser(
-      int OrderPrivateId, String accessToken) async {
+      String OrderPrivateId, String accessToken) async {
     _isLoading = true;
     notifyListeners();
     await PrivateTrip().acceptPrivateOrder(accessToken, OrderPrivateId);

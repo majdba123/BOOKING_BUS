@@ -1,4 +1,3 @@
-
 class AllTrips {
   final int tripId;
   final String companyName;

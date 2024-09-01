@@ -1,7 +1,7 @@
 class PrivateTripAccpetedBycompanyModel {
-  final int id;
-  final int company_id;
-  final int private_trip_id;
+  final String id;
+  final String company_id;
+  final String private_trip_id;
   final String price;
 
   final String status;

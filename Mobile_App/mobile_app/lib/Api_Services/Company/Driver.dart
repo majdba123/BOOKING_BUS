@@ -185,7 +185,7 @@ class DriverApiService {
   //   }
   // }
 
-  Future<void> deleteDriver(String accessToken, int id) async {
+  Future<void> deleteDriver(String accessToken, String id) async {
     final response = await http.delete(
       Uri.parse('${name_domain_server}company/delete_driver/$id'),
       headers: {'Authorization': 'Bearer $accessToken'},

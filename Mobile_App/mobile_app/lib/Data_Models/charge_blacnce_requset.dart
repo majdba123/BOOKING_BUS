@@ -1,6 +1,6 @@
 class ChargeRequest {
-  final int id;
-  final int userId;
+  final String id;
+  final String userId;
   final String image;
   final String status;
   final String point;

@@ -61,8 +61,8 @@ class ReservationController extends Controller
             $validator = Validator::make($request->all(), [
                 'type' => 'required|in:1,2',
                 'seat' => 'nullable|array',
-                'seat.*' => 'integer|exists:seats,id',
-                'break_id' => 'nullable|integer|exists:pivoits,id|in:' . implode(',', $pivoit->all())
+                'seat.*' => 'exists:seats,id',
+                'break_id' => 'nullable|exists:pivoits,id|in:' . implode(',', $pivoit->all())
             ]);
             if ($validator->fails()) {
                 DB::rollBack();

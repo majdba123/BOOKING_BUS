@@ -1,5 +1,5 @@
 class MYReservation {
-  final int id;
+  final String id;
   final String from;
   final String to;
   final String type;
@@ -38,7 +38,7 @@ class MYReservation {
 }
 
 class Seat {
-  final int id;
+  final String id;
   final int status;
 
   Seat({required this.id, required this.status});
