@@ -59,7 +59,7 @@ class TripController extends Controller
            /* 'breaks_ids' => 'required|array',
             'breaks_ids.*' => 'integer',*/
             'bus_ids' => 'required|array',
-            'bus_ids.*.bus_id' => 'integer',
+            'bus_ids.*.bus_id' => 'required',
             'bus_ids.*.type' => 'string|required',
             'bus_ids.*.start_time' => 'nullable|date_format:H:i',
             'bus_ids.*.end_time' => 'nullable|date_format:H:i',
@@ -213,7 +213,7 @@ class TripController extends Controller
             'path_id' => 'required|exists:paths,id',
             'price' => 'sometimes|string|max:255',
             'bus_ids' => 'required_with:breaks_ids|array',
-            'bus_ids.*.bus_id' => 'integer',
+            'bus_ids.*.bus_id' => 'sometimes|string',
             'bus_ids.*.type' => 'string',
             'bus_ids.*.start_time' => 'nullable|date_format:H:i',
             'bus_ids.*.end_time' => 'nullable|date_format:H:i',

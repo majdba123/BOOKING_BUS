@@ -169,6 +169,9 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum']
         Route::put('/{id}', [CancellationRuleController::class, 'update']);
         Route::delete('/{id}', [CancellationRuleController::class, 'destroy']);
     });
+
+    Route::post('/get_profit_1', [DashboardController::class, 'getPriceData']);
+
 });
 
 
@@ -235,7 +238,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum']
 
     //hamza
 
-  //  Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
+    //  Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
+
+
+    Route::post('/get_profit_/{company_id}', [AdminDashBoardController::class, 'getPriceData1']);
 });
 
 
@@ -253,7 +259,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function ()
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
     Route::post('/cancel_Reservation/{id}', [ReservationController::class, 'cancelReservation']);
-    
+
     Route::post('/rate_trip/{trip_id}', [RateTripsController::class, 'store']);
 
     Route::post('/store_private_trip', [PrivateTripController::class, 'store']);

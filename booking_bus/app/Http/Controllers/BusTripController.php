@@ -311,8 +311,8 @@ class BusTripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'bus_trip_id' => 'required|integer|exists:bus_trips,id',
-            'new_bus_id' => 'required|integer|exists:buses,id',
+            'bus_trip_id' => 'required|exists:bus_trips,id',
+            'new_bus_id' => 'required|exists:buses,id',
         ]);
 
         if ($validator->fails()) {
