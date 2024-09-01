@@ -1,6 +1,5 @@
 <template>
     <main>
-        <HeaderCompany />
         <!-- End insights -->
 
         <!-- Start recent orders -->
@@ -45,7 +44,6 @@
 
 <script>
 import axios from "axios";
-import HeaderCompany from "./HeaderCompany.vue";
 
 export default {
     name: "MainCompany",
@@ -77,7 +75,6 @@ export default {
     mounted() {
         this.fetchUsers();
     },
-    components: { HeaderCompany },
 };
 </script>
 
@@ -272,9 +269,6 @@ main .insights {
     font-size: 1.2rem;
     color: #677483;
     text-align: center;
-    border: 1px solid #ddd;
-    border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
 }
 .spinner {
     border: 4px solid rgba(0, 0, 0, 0.1);
@@ -400,14 +394,13 @@ main .insights .progress .number {
 }
 
 main .recent_orders h1 {
-    margin: 15px;
     color: #363949;
 }
 
 main .recent_orders table {
     background-color: #fff;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1000px;
     border-radius: 2rem;
     padding: 0.8rem;
     text-align: center;

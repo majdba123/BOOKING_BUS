@@ -30,12 +30,10 @@
                         />
                         <button @click="search">Search</button>
                     </div>
-                    <GoogleMap class="map-container" />
                 </div>
                 <AddDriver ref="addDriver" />
             </main>
         </div>
-        <!-- Right section start -->
         <div class="right">
             <!--start top-->
             <div class="top">
@@ -56,19 +54,41 @@
                         <p>Admin</p>
                     </div>
                     <div class="profile-photo">
-                        <img src="@/assets/busss.png" alt="Profile" />
+                        <img
+                            :src="profileImage"
+                            alt="Profile"
+                            @click="toggleProfileMenu"
+                        />
+                        <ul v-if="showProfileMenu" class="dropdown-menu">
+                            <li @click="goToProfile">Go to Profile</li>
+                            <li @click="logout">Logout</li>
+                        </ul>
                     </div>
                 </div>
             </div>
             <!--end top-->
 
             <!--start driver_chart-->
-            <div class="driver_chart">
-                <h2>Driver Workload Status</h2>
-                <DriverChart :chartData="chartData" />
-            </div>
 
             <!--start driver_status-->
+            <div class="datetime-container">
+                <div class="dateright">{{ currentDateTime.date }}</div>
+                <div class="time">
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[0] }}
+                        <span>hour</span>
+                    </div>
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[1] }}
+                        <span>minutes</span>
+                    </div>
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[2] }}
+                        <span>seconds</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="driver_status">
                 <h2>Driver Status</h2>
                 <div class="statuses">
@@ -85,13 +105,16 @@
                 </div>
             </div>
             <!--end driver_status-->
+            <div class="driver_chart">
+                <h2>Driver Workload Status</h2>
+                <DriverChart :chartData="chartData" />
+            </div>
         </div>
         <!-- Right section end -->
     </div>
 </template>
 
 <script>
-import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddDriver from "@/components/AddDriver.vue";
 import DriverChart from "@/components/DriverChart.vue";
@@ -104,8 +127,8 @@ export default {
         return {
             x: store.state.x,
             searchQuery: "",
+            showProfileMenu: false,
             Driver: [],
-            Bus: [],
             chartData: {
                 labels: ["Under Pressure", "Not Working"],
                 datasets: [
@@ -125,6 +148,10 @@ export default {
                 ],
             },
             isDarkMode: false,
+            currentDateTime: {
+                date: "",
+                time: "",
+            },
         };
     },
     watch: {
@@ -134,6 +161,41 @@ export default {
         },
     },
     methods: {
+        toggleProfileMenu() {
+            this.showProfileMenu = !this.showProfileMenu;
+            if (this.showProfileMenu) {
+                setTimeout(() => {
+                    const dropdownMenu =
+                        this.$el.querySelector(".dropdown-menu");
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.add("show");
+                    }
+                }, 10);
+            } else {
+                const dropdownMenu = this.$el.querySelector(".dropdown-menu");
+                if (dropdownMenu) {
+                    dropdownMenu.classList.remove("show");
+                }
+            }
+        },
+        goToProfile() {
+            this.$router.push("/ProfileCompany");
+        },
+        logout() {
+            store.dispatch("logout");
+            this.$router.push("/");
+        },
+        fetchProfileInfo() {
+            const userDataFrame = {
+                image: "path/to/profile-image.jpg",
+            };
+            this.profileImage = userDataFrame.image;
+        },
+        updateDateTime() {
+            const now = new Date();
+            this.currentDateTime.date = now.toISOString().split("T")[0]; // Format YYYY-MM-DD
+            this.currentDateTime.time = now.toTimeString().split(" ")[0]; // Format HH:MM:SS
+        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
@@ -165,60 +227,17 @@ export default {
                 .querySelector("span:nth-child(2)")
                 .classList.toggle("active", this.isDarkMode);
         },
-        search() {},
-        DeleteDriver(x) {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "delete",
-                url: `http://127.0.0.1:8000/api/company/delete_driver/${x}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Deleted Complete");
-                    this.AllDriver();
-                })
-                .catch(function (error) {
-                    window.alert("Error get Driver");
-                    console.error(x);
-                    console.error(error);
-                });
-        },
-        fetchBus() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.Bus = response.data;
-                })
-                .catch(function (error) {
-                    window.alert("Error get paths");
-                    console.error(error);
-                });
-        },
-        SelectDriver(event, userId) {
-            const busId = event.target.value;
-            const access_token = window.localStorage.getItem("access_token");
-
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
-                data: { driver_id: userId },
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Selected Complete");
-                    this.AllDriver();
-                })
-                .catch(function (error) {
-                    window.alert("Error getting Bus");
-                    console.error(error);
-                });
+        search() {
+            console.log("Searching for:", this.searchQuery);
+            // Add your search logic here
         },
     },
     mounted() {
+        // Set initial date and time
+        this.updateDateTime();
+
+        // Update date and time every second
+        setInterval(this.updateDateTime, 1000);
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme === "enabled") {
             this.isDarkMode = true;
@@ -342,14 +361,23 @@ small {
     font-size: 0.75rem;
     color: var(--clr-dark);
 }
-
-.profile-photo img {
-    width: 2.8rem;
-    height: 2.8rem;
-    border-radius: 50%;
-    overflow: hidden;
+.profile-photo {
+    position: relative; /* Allows absolute positioning for the dropdown menu */
+    display: flex;
+    align-items: center;
 }
-
+.profile-photo img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid var(--clr-primary);
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.profile-photo img:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
 .text-muted {
     color: #7d8da1;
 }
@@ -376,6 +404,7 @@ aside {
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
+    border-radius: 0 2rem 2rem 0;
     padding: 1rem;
 }
 
@@ -390,16 +419,14 @@ aside .logo {
     display: flex;
     gap: 1rem;
 }
+#menu_bar {
+    display: none;
+}
 
 .top-bar {
     display: flex;
     gap: 1rem;
     align-items: center;
-}
-
-.map-container {
-    margin: 10px;
-    flex: 1;
 }
 
 .date {
@@ -436,167 +463,177 @@ aside .logo {
           start right side
   ***************************** */
 .right {
-    margin-top: 1.4rem;
     padding: 1rem;
-    background-color: var(--clr-color-background);
-    grid-column: span 1;
+    border-radius: 2rem 0 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .right .top {
     display: flex;
     justify-content: space-between;
-    gap: 2rem;
-    margin-left: 15px;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .right .top button {
-    display: none;
+    background: var(--clr-primary);
+    border: none;
+    border-radius: 0.5rem;
+    color: var(--clr-white);
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.right .top button:hover {
+    background-color: var(--clr-primary-variant);
 }
 
 .right .theme-toggler {
-    background-color: var(--clr-white);
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    height: 1.6rem;
-    width: 4.2rem;
+    background: var(--clr-light);
+    padding: 0.5rem;
+    border-radius: 1rem;
     cursor: pointer;
-    border-radius: 10px;
 }
 
 .right .theme-toggler span {
-    font-size: 1.2rem;
-    width: 50%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--clr-warning);
+    cursor: pointer;
 }
 
 .right .theme-toggler span.active {
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    border-radius: 10px;
+    color: var(--clr-primary);
 }
-
 .right .profile {
+    position: relative;
     display: flex;
-    gap: 1rem;
     align-items: center;
+    cursor: pointer;
 }
 
 .right .profile .info p {
-    margin: 0;
+    margin-right: 1rem;
     color: var(--clr-dark);
 }
 
-.right .profile .profile-photo img {
-    width: 2.8rem;
-    height: 2.8rem;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.right .driver_status {
-    margin-top: 4rem;
+.right .driver_chart {
     background: var(--clr-white);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    padding: 1.5rem;
+    border-radius: 0.8rem;
+    box-shadow: 0 1rem 2rem rgba(132, 139, 200, 0.15);
 }
 
-.right .driver_status h2 {
-    color: var(--clr-dark);
-    margin-bottom: 14px;
-    margin-left: 42px;
-}
-
-.right .driver_status .statuses {
-    padding: 1rem;
-}
-
-.right .driver_status .status {
+.right .driver_chart h2 {
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.right .driver_status .status .info {
-    margin-left: 10px;
+    color: var(--clr-dark);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
     align-items: center;
 }
 
-.right .driver_status .status .info p {
-    margin: 10px;
+.right .driver_chart {
+    padding: 0.5rem;
 }
 
 .p {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-weight: bold;
+    color: var(--clr-primary);
 }
-
-.driver_chart {
-    margin-top: 3rem;
+.driver_status {
     background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    text-align: center;
 }
 
-.driver_chart h2 {
+.driver_status h2 {
     color: var(--clr-dark);
     margin-bottom: 14px;
-    margin-left: 42px;
 }
 
-.table-container {
-    width: 100%;
-    overflow-x: auto;
+.driver_status .statuses {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
-.recent_orders table {
-    background-color: var(--clr-white);
-    width: 100%;
-    border-radius: 2rem;
-    padding: 1.8rem;
-    text-align: center;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    transition: all 0.3s ease;
+.driver_status .status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.driver_status .status .info {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.driver_status .status .info p {
+    margin: 0;
     color: var(--clr-dark);
-    max-width: 100px;
 }
-
-.recent_orders table:hover {
-    box-shadow: none;
-}
-
-table thead tr th {
-    padding: 15px;
-}
-
-table tbody tr {
-    height: 3.8rem;
-    border-bottom: 1px solid var(--clr-white);
-    color: #677483;
-}
-
-table tbody td {
-    height: 3.8rem;
-    border-bottom: 1px solid var(--clr-dark);
-    color: #677483;
-}
-
-table tbody tr:last-child td {
-    border: none;
-}
-
-.recent_orders a {
+/* Styling for datetime container */
+.datetime-container {
     text-align: center;
-    display: block;
-    margin: 1rem;
+    font-family: "Arial", sans-serif;
+    color: #ffffff;
 }
 
+.dateright {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #72c3ff;
+    background: linear-gradient(90deg, #72c3ff, #ff4d4d);
+    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
+    background-clip: text; /* Standard property (currently not supported widely) */
+    color: transparent;
+    margin-bottom: 10px;
+}
+
+.time {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.time-box {
+    background: #111111;
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    font-size: 1.5rem;
+    position: relative;
+    color: #ffffff;
+    text-align: center;
+    background: linear-gradient(135deg, #ff4d4d, #72c3ff);
+    color: transparent;
+    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
+    background-clip: text; /* Standard property (currently not supported widely) */
+}
+
+.time-box span {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: normal;
+    margin-top: 0.5rem;
+    color: #c0c0c0;
+}
 /* Select styling */
 select {
     padding: 10px;
@@ -611,6 +648,52 @@ select {
 
 select:focus {
     border-color: var(--clr-primary-variant);
+}
+.dropdown-menu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: var(--clr-white);
+    border: 1px solid var(--clr-info-light);
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 10px 0;
+    z-index: 1000;
+    width: 150px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-menu li:hover {
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+}
+
+/* Adding a subtle fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Delete button styling */
@@ -782,6 +865,21 @@ select:focus {
         background-color: var(--clr-primary);
         color: var(--clr-white);
         border-radius: 10px;
+    }
+    #menu_bar {
+        display: block;
+        background: var(--clr-primary);
+        border: none;
+        border-radius: 0.5rem;
+        color: var(--clr-white);
+        padding: 0.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #menu_bar:hover {
+        background-color: var(--clr-primary-variant);
     }
 }
 </style>
