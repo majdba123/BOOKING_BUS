@@ -228,7 +228,7 @@
                                     v-for="(reward, index) in Rewards"
                                     :key="index"
                                 >
-                                    <td>{{ reward.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ reward.reward_percentage }}%</td>
                                     <td>{{ reward.Reservation_Costs }}</td>
 
@@ -1033,7 +1033,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {

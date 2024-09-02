@@ -27,7 +27,7 @@
                                         v-for="(item, index) in items"
                                         :key="index"
                                     >
-                                        <td>{{ item.user_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>
                                             <img
                                                 :src="item.image"
@@ -67,7 +67,7 @@
             <div class="modal-content">
                 <div class="modal-header">Item Details</div>
                 <div class="modal-body">
-                    <p><strong>User ID:</strong> {{ selectedItem.user_id }}</p>
+                    <p><strong>User ID:</strong> {{ index }}</p>
                     <p><strong>Point:</strong> {{ selectedItem.point }}</p>
                     <p><strong>Status:</strong> {{ selectedItem.status }}</p>
                     <img
@@ -257,7 +257,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 .no-data-message {
     display: flex;

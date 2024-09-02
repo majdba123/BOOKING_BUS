@@ -26,7 +26,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="user in users" :key="user.id">
-                                <td>{{ user.id }}</td>
+                                <td>{{ index }}</td>
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>{{ user.point }}</td>
@@ -259,7 +259,7 @@ main .insights {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 .no-data-message {
     display: flex;

@@ -36,7 +36,7 @@
                                     v-for="order in paginatedOrders"
                                     :key="order.id"
                                 >
-                                    <td>{{ order.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ order.private_trip.from }}</td>
                                     <td>{{ order.private_trip.to }}</td>
                                     <td>{{ order.price }}</td>
@@ -85,7 +85,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="trip in paginatedTrips" :key="trip.id">
-                            <td>{{ trip.id }}</td>
+                            <td>{{ index }}</td>
                             <td>{{ trip.from }}</td>
                             <td>{{ trip.to }}</td>
                             <td>{{ trip.Distance }}</td>
@@ -376,7 +376,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .no-data-message {

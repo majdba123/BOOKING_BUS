@@ -34,7 +34,7 @@
                                         v-for="(item, index) in items"
                                         :key="index"
                                     >
-                                        <td>{{ item.user_name }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ item.email_user }}</td>
                                         <td>{{ item.question }}</td>
 
@@ -224,7 +224,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 .table-container {
     width: 100%;

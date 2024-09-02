@@ -87,7 +87,7 @@
                                     v-for="(user, index) in filteredDrivers"
                                     :key="index"
                                 >
-                                    <td>{{ user.driver_id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email_driver }}</td>
                                     <td>{{ user.status }}</td>
@@ -192,7 +192,7 @@
                                         ) in driverStatusData"
                                         :key="index"
                                     >
-                                        <td>{{ driver.driver_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ driver.name }}</td>
                                         <td>{{ driver.email_driver }}</td>
                                         <td>{{ driver.status }}</td>
@@ -239,7 +239,7 @@
                                         ) in driverWithBusData"
                                         :key="index"
                                     >
-                                        <td>{{ driver.id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ driver.driver_name }}</td>
                                         <td>{{ driver.bus_id }}</td>
                                         <td>{{ driver.company_name }}</td>
@@ -787,7 +787,7 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {
