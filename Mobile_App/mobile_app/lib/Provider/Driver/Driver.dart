@@ -7,17 +7,27 @@ import 'package:mobile_app/Data_Models/Driver/TripForDriver.dart';
 class DriverProvider extends ChangeNotifier {
   TripForDriverModel? _TripDriver;
   List<TripForDriverModel>? _MyTrip;
+  List<TripForDriverModel>? _hsitoryTrip;
   RateDriverModel? _RateDriver;
   MyBusModel? _MyBus;
   bool _isLoading = false;
   String? _errorMessage;
+  String _typePage = 'alltrip';
+  String get typePage => _typePage;
 
   TripForDriverModel? get TripDriver => _TripDriver;
+
   List<TripForDriverModel>? get MyTrip => _MyTrip;
+  List<TripForDriverModel>? get hsitoryTrip => _hsitoryTrip;
   RateDriverModel? get RateDriver => _RateDriver;
   MyBusModel? get MyBus => _MyBus;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+
+  void setypePage(type) {
+    _typePage = type;
+    notifyListeners();
+  }
 
   Future<void> fetchFirstTrip(String accessToken) async {
     _isLoading = true;
@@ -44,6 +54,24 @@ class DriverProvider extends ChangeNotifier {
     try {
       _MyTrip = await DriverService().fetchMyTrip(accessToken);
       print(_MyTrip);
+      print('after handling !!');
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> history(String accessToken) async {
+    _isLoading = true;
+    _errorMessage = null;
+    _MyTrip = null;
+    notifyListeners();
+
+    try {
+      _MyTrip = await DriverService().History(accessToken);
+      print(_hsitoryTrip);
       print('after handling !!');
     } catch (error) {
       _errorMessage = error.toString();

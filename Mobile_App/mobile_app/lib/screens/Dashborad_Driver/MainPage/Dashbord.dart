@@ -42,6 +42,7 @@ class _DashboardDriverState extends State<DashboardDriver> {
               children: [
                 SizedBox(height: screenHeight * 0.03),
                 HeraderSection(),
+                SizedBox(height: screenHeight * 0.03),
                 Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidth * 0.05),

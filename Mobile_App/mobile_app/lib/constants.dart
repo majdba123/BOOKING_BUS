@@ -26,7 +26,7 @@ final Color veppoBlue = Color(0xFF1363FF);
 const kBodyText2 =
     TextStyle(fontSize: 28, fontWeight: FontWeight.w500, color: Colors.white);
 
-const name_domain_server = "http://192.168.0.25:8000/api/";
+const name_domain_server = "http://192.168.1.6:8000/api/";
 
 Route animetedRoutePage(Widget child) {
   return PageRouteBuilder(

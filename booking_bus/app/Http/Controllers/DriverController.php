@@ -195,7 +195,7 @@ class DriverController extends Controller
             ->get();
 
         if ($trips->isEmpty()) {
-            return response()->json(['error' => 'No pending trips found for the bus'], 404);
+            return response()->json(['error' => 'No  history was found for You'], 404);
         }
 
         $response = [];
@@ -209,14 +209,14 @@ class DriverController extends Controller
             $interval = $fromTime->diff($toTime);
             $tripDuration = $interval->format('%H:%I');
             $response[] = [
-                'bus_trip_id' => $trip->id,
+                'id' => $trip->id,
                 'bus_id' => $trip->bus_id,
                 'from' => $trip->trip->path->from ?? null,
                 'to' => $trip->trip->path->to ?? null,
                 'from_time' => $trip->from_time,
                 'to_time' => $trip->to_time,
                 'date' => $trip->date,
-                // 'distance' => $trip->trip->path->Distance ?? null,
+                'Distance' => $trip->trip->path->Distance ?? null,
                 // 'from_lat' => $trip->trip->path->from_latitude ?? null,
                 // 'from_long' => $trip->trip->path->from_longitude ?? null,
                 // 'to_lat' => $trip->trip->path->to_latitude ?? null,
@@ -224,7 +224,7 @@ class DriverController extends Controller
                 // 'number_of_seat_in_bus' => $trip->bus->number_passenger,
                 'Passengers' => $trip->bus->getNumberOfReservationsAttribute(),
                 'Stops' => $trip->Pivoit->count(),
-                'tripDuration' => $tripDuration,
+                'trip_duration' => $tripDuration,
                 // 'event' => $trip->event,
                 'status' => $trip->status,
                 // 'breaks_data' => $pivotData,

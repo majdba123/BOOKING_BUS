@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/Data_Models/Driver/TripForDriver.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/herader_section.dart';
 import 'package:mobile_app/screens/WidgetApp/filtter_Bar_main_ui.dart';
 import 'package:provider/provider.dart';
 import 'JourneyCard.dart';
@@ -15,9 +13,10 @@ class JourneysScreen extends StatefulWidget {
 }
 
 class _JourneysScreenState extends State<JourneysScreen> {
+  late AuthProvider auth;
   void initState() {
     super.initState();
-    AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+    auth = Provider.of<AuthProvider>(context, listen: false);
     Provider.of<DriverProvider>(context, listen: false)
         .fetchMyTrip(auth.accessToken);
   }
@@ -28,25 +27,25 @@ class _JourneysScreenState extends State<JourneysScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(screenHeight * 0.1),
-        child: AppBar(
-          backgroundColor: AppColors.primaryColor,
-          leading: Padding(
-            padding: EdgeInsets.only(left: screenWidth * 0.04),
-            child: Icon(Icons.arrow_back, size: screenHeight * 0.035),
-          ),
-          title: Text(
-            'Journeys',
-            style: TextStyle(
-              fontSize: screenHeight * 0.03,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-          centerTitle: true,
-          elevation: 0,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
+        backgroundColor: AppColors.primaryColor,
+        title: Text(
+          'Your Trip',
+          style: TextStyle(
+            fontSize: screenHeight * 0.03,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
@@ -56,7 +55,10 @@ class _JourneysScreenState extends State<JourneysScreen> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigate to JourneyHistoryScreen
+                  Provider.of<DriverProvider>(context, listen: false)
+                      .history(auth.accessToken);
+                  Provider.of<DriverProvider>(context, listen: false)
+                      .setypePage('history');
                   Navigator.push(
                     context,
                     MaterialPageRoute(
