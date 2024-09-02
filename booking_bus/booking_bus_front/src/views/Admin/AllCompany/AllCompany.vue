@@ -96,6 +96,7 @@ import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 import SidebarAdmin from "@/components/SidebarAdmin.vue";
 import AddCompany from "@/components/AddCompany.vue";
+import router from "@/router";
 
 export default {
     name: "AllCompany",
@@ -134,6 +135,20 @@ export default {
         },
     },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const token = window.localStorage.getItem("access_token");
+            const userType = window.localStorage.getItem("type_user");
+
+            if (token && userType) {
+                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+                if (userType === "company") {
+                    router.push("/");
+                } else if (userType === "user") {
+                    router.push("/");
+                }
+            }
+        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
@@ -221,6 +236,7 @@ export default {
         },
     },
     mounted() {
+        this.checkToken();
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme === "enabled") {
             this.isDarkMode = true;

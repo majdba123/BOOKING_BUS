@@ -119,6 +119,7 @@ import SidebarCompany from "@/components/SidebarCompany.vue";
 import PolicesCancel from "@/components/PolicesCancel.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
+import router from "@/router";
 
 export default {
     name: "AllDriver",
@@ -161,6 +162,20 @@ export default {
         },
     },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const token = window.localStorage.getItem("access_token");
+            const userType = window.localStorage.getItem("type_user");
+
+            if (token && userType) {
+                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+                if (userType === "admin") {
+                    router.push("/");
+                } else if (userType === "user") {
+                    router.push("/");
+                }
+            }
+        },
         toggleProfileMenu() {
             this.showProfileMenu = !this.showProfileMenu;
             if (this.showProfileMenu) {
@@ -233,6 +248,8 @@ export default {
         },
     },
     mounted() {
+        this.checkToken();
+
         // Set initial date and time
         this.updateDateTime();
 
