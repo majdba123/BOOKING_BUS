@@ -193,8 +193,8 @@ export default {
         },
         updateDateTime() {
             const now = new Date();
-            this.currentDateTime.date = now.toISOString().split("T")[0]; // Format YYYY-MM-DD
-            this.currentDateTime.time = now.toTimeString().split(" ")[0]; // Format HH:MM:SS
+            this.currentDateTime.date = now.toISOString().split("T")[0];
+            this.currentDateTime.time = now.toTimeString().split(" ")[0];
         },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -362,7 +362,7 @@ small {
     color: var(--clr-dark);
 }
 .profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
+    position: relative;
     display: flex;
     align-items: center;
 }
