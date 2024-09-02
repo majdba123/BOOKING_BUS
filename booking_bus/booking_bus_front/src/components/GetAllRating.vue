@@ -1,6 +1,5 @@
 <template>
     <div class="containerd">
-        <HeaderCompany />
         <!-- Header with buttons -->
         <header class="navd">
             <button class="nav-btnd" @click="toggleTripRatings">
@@ -40,7 +39,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(trip, index) in Trips" :key="index">
-                                    <td>{{ trip.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ trip.status }}</td>
                                     <td>{{ trip.path?.from }}</td>
                                     <td>{{ trip.path?.to }}</td>
@@ -88,7 +87,7 @@
                                     v-for="(driver, index) in Drivers"
                                     :key="index"
                                 >
-                                    <td>{{ driver.driver_id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ driver.name }}</td>
                                     <td>
                                         <button
@@ -138,7 +137,7 @@
                                     v-for="(rating, index) in tripRatings"
                                     :key="index"
                                 >
-                                    <td>{{ rating.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ rating.user_id }}</td>
                                     <td>{{ rating.trip_id }}</td>
                                     <td>
@@ -190,7 +189,7 @@
                                     v-for="(rating, index) in driverRatings"
                                     :key="index"
                                 >
-                                    <td>{{ rating.driver_id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>
                                         <span
                                             v-for="star in 5"
@@ -250,7 +249,7 @@
                                         ) in tripRatingsDetails"
                                         :key="index"
                                     >
-                                        <td>{{ rating.user_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>
                                             <span
                                                 v-for="star in 5"
@@ -312,7 +311,7 @@
                                         ) in driverRatingsDetails"
                                         :key="index"
                                     >
-                                        <td>{{ rating.user_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>
                                             <span
                                                 v-for="star in 5"
@@ -341,7 +340,6 @@
 </template>
 
 <script>
-import HeaderCompany from "./HeaderCompany.vue";
 import axios from "axios";
 
 export default {
@@ -520,11 +518,12 @@ export default {
             this.showDriverRatingsModal = false;
         },
     },
-    components: { HeaderCompany },
 };
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
 :root {
     --clr-primary: #7380ec;
     --clr-danger: #ff7782;
@@ -538,7 +537,16 @@ export default {
     --border-radius-1: 0.4rem;
     --border-radius-2: 0.8rem;
     --padding-1: 1.2rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    --box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.dark-theme-variables {
+    --clr-color-background: #181a1e;
+    --clr-white: #202528;
+    --clr-light: rgba(0, 0, 0, 0.4);
+    --clr-dark: #edeffd;
+    --clr-dark-variant: #677483;
+    --box-shadow: 0 2rem 3rem var(--clr-light);
 }
 
 * {
@@ -547,28 +555,30 @@ export default {
     box-sizing: border-box;
     text-decoration: none;
 }
+
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
+
 .no-data-message {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 150px; /* Adjust as needed */
     font-size: 1.2rem;
-    color: #677483;
+    color: var(--clr-dark-variant);
     text-align: center;
-    border: 1px solid #ddd;
+    border: 1px solid var(--clr-light);
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background-color: var(--clr-color-background);
 }
 
 .spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -580,7 +590,7 @@ body {
     width: 100%;
     height: 100%;
     font-size: 0.88rem;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
     overflow-y: auto;
 }
 
@@ -598,8 +608,9 @@ h2 {
     overflow-x: auto;
     margin-top: 20px;
 }
+
 .recent_orders h1 {
-    margin: 15px;
+    margin: var(--padding-1);
 }
 
 .table-container {
@@ -608,13 +619,13 @@ h2 {
 }
 
 .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
-    border-radius: 1rem;
-    padding: 1rem;
+    border-radius: var(--border-radius-2);
+    padding: var(--padding-1);
     text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
+    box-shadow: 0 1rem 1.5rem var(--clr-light);
+    color: var(--clr-dark);
     max-width: none;
     font-size: 0.85rem;
 }
@@ -624,25 +635,25 @@ h2 {
 }
 
 table thead tr th {
-    padding: 10px;
+    padding: var(--padding-1);
     font-size: 0.9rem;
 }
 
 table tbody tr {
     height: 3rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-white);
+    color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
 }
 
 table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: var(--clr-light);
 }
 
 table tbody td {
     height: 3rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-dark);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr:last-child td {
@@ -651,17 +662,17 @@ table tbody tr:last-child td {
 
 /* Select styling */
 select {
-    padding: 8px;
-    border: 1px solid #7380ec;
-    border-radius: 4px;
-    background-color: #fff;
-    color: #363949;
+    padding: var(--padding-1);
+    border: 1px solid var(--clr-primary);
+    border-radius: var(--border-radius-1);
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 select:focus {
-    border-color: #007bff;
+    border-color: var(--clr-primary-variant);
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
@@ -670,10 +681,10 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: var(--padding-1);
     margin-top: 20px;
-    background-color: #fff;
-    border-radius: 10px;
+    background-color: var(--clr-white);
+    border-radius: var(--border-radius-2);
     width: 90%;
 }
 
@@ -681,11 +692,11 @@ select:focus {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
+    border-radius: 9px;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
@@ -724,12 +735,12 @@ select:focus {
 }
 
 .modal-content {
-    background: #fff;
-    padding: 15px;
-    border-radius: 10px;
+    background: var(--clr-white);
+    padding: var(--padding-1);
+    border-radius: var(--border-radius-2);
     max-width: 400px;
     width: 70%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: var(--box-shadow);
     text-align: center;
     margin-top: 2rem;
     margin-left: 10rem;
@@ -739,7 +750,7 @@ select:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: var(--padding-1);
 }
 
 .modal-header h2 {
@@ -757,16 +768,16 @@ select:focus {
 }
 
 .status-btn.view-ratings-btn {
-    background-color: #7380ec;
-    color: white;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     padding: 5px 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-1);
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .status-btn.view-ratings-btn:hover {
-    background-color: #5a68d8;
+    background-color: var(--clr-primary-variant);
 }
 </style>

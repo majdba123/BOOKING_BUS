@@ -310,10 +310,6 @@ export default {
 </script>
 
 <style scoped>
-/* Add your styles here */
-</style>
-
-<style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 :root {
@@ -335,12 +331,12 @@ export default {
     --border-radius-3: 1.2rem;
     --card-padding: 1.8rem;
     --padding-1: 1.2rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    --box-shadow: 0 2rem 3rem var(--clr-light);
 }
 
 .containers {
-    padding: 20px;
-    background: #f6f6f9;
+    padding: var(--padding-1);
+    background: var(--clr-color-background);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -351,7 +347,7 @@ export default {
 .header {
     width: 100%;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: var(--padding-1);
 }
 
 .content {
@@ -364,9 +360,9 @@ export default {
 }
 
 .form-container {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
+    background: var(--clr-white);
+    padding: var(--padding-1);
+    border-radius: var(--border-radius-2);
     box-shadow: var(--box-shadow);
     width: 100%;
 }
@@ -374,7 +370,7 @@ export default {
 .profile-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: var(--padding-1);
     width: 100%;
 }
 
@@ -386,7 +382,43 @@ export default {
 label {
     margin-bottom: 5px;
     font-weight: 500;
-    color: #363949;
+    color: var(--clr-dark);
+}
+
+input,
+select,
+textarea {
+    padding: var(--padding-1);
+    border: 1px solid var(--clr-info-light);
+    border-radius: var(--border-radius-1);
+    transition: border-color 0.3s;
+    width: 100%;
+    font-size: 1rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--clr-primary);
+}
+
+.submit-btn {
+    text-align: center;
+}
+
+.submit-btn button {
+    padding: var(--padding-1) 20px;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    border-radius: var(--border-radius-1);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-right: 10px;
+}
+
+.submit-btn button:hover {
+    background-color: var(--clr-primary-variant);
 }
 
 .image-upload {
@@ -408,7 +440,7 @@ label {
     width: 70px;
     height: 70px;
     object-fit: cover;
-    border: 2px solid #ccc;
+    border: 2px solid var(--clr-info-light);
     border-radius: 50%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease-in-out;
@@ -418,45 +450,9 @@ label {
     transform: scale(1.05);
 }
 
-input,
-select,
-textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    transition: border-color 0.3s;
-    width: 100%;
-    font-size: 1rem;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: #007bff;
-}
-
-.submit-btn {
-    text-align: center;
-}
-
-.submit-btn button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-right: 10px;
-}
-
-.submit-btn button:hover {
-    background-color: #0056b3;
-}
-
 /* Media Queries for Responsive Design */
 @media screen and (max-width: 768px) {
-    .container {
+    .containers {
         padding: 10px;
     }
 

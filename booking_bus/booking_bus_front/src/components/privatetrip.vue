@@ -36,7 +36,7 @@
                                     v-for="order in paginatedOrders"
                                     :key="order.id"
                                 >
-                                    <td>{{ order.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ order.private_trip.from }}</td>
                                     <td>{{ order.private_trip.to }}</td>
                                     <td>{{ order.price }}</td>
@@ -85,7 +85,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="trip in paginatedTrips" :key="trip.id">
-                            <td>{{ trip.id }}</td>
+                            <td>{{ index }}</td>
                             <td>{{ trip.from }}</td>
                             <td>{{ trip.to }}</td>
                             <td>{{ trip.Distance }}</td>
@@ -294,20 +294,46 @@ export default {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
 :root {
     --clr-primary: #7380ec;
     --clr-danger: #ff7782;
     --clr-success: #41f1b6;
     --clr-white: #fff;
+    --clr-info-dark: #7d8da1;
+    --clr-info-light: #e4e9f7;
     --clr-dark: #363949;
+    --clr-warning: #ffbb55;
     --clr-light: rgba(132, 139, 200, 0.18);
     --clr-primary-variant: #111e88;
     --clr-dark-variant: #677483;
     --clr-color-background: #f6f6f9;
+
+    --card-border-radius: 2rem;
     --border-radius-1: 0.4rem;
     --border-radius-2: 0.8rem;
+    --border-radius-3: 1.2rem;
+
+    --card-padding: 1.8rem;
     --padding-1: 1.2rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+
+    box-shadow: 0 2rem 3rem var(--clr-light);
+}
+
+.dark-theme-variables {
+    --clr-primary: #bb86fc;
+    --clr-danger: #cf6679;
+    --clr-success: #03dac6;
+    --clr-white: #121212;
+    --clr-info-dark: #bb86fc;
+    --clr-info-light: #292929;
+    --clr-dark: #f6f6f9;
+    --clr-warning: #ffbb55;
+    --clr-light: rgba(255, 255, 255, 0.2);
+    --clr-primary-variant: #3700b3;
+    --clr-dark-variant: #1f1f1f;
+    --clr-color-background: #121212;
 }
 
 * {
@@ -322,17 +348,19 @@ body {
     width: 100%;
     height: 100%;
     font-size: 0.88rem;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
     overflow-y: auto;
 }
 
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
+    color: var(--clr-dark);
 }
 
 h2 {
     font-size: 1.4rem;
+    color: var(--clr-dark);
 }
 
 .recent_orders {
@@ -343,54 +371,41 @@ h2 {
 .table-container {
     width: 100%;
 }
+
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
+
 .no-data-message {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px; /* Adjust as needed */
+    height: 150px;
     font-size: 1.2rem;
-    color: #677483;
+    color: var(--clr-dark-variant);
     text-align: center;
-    border: 1px solid #ddd;
+    border: 1px solid var(--clr-dark-variant);
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background-color: var(--clr-color-background);
 }
+
 .spinner {
     border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
+    border-left-color: var(--clr-primary);
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
 }
+
 .recent_orders div table {
-    background-color: #fff;
+    background-color: var(--clr-white);
 }
+
 .table-container table {
-    width: 100%;
-    border-radius: 1rem;
-    padding: 1rem;
-    text-align: center;
-    color: #363949;
-    max-width: none;
-    font-size: 0.85rem;
-}
-.recent_orders div div h1 {
-    margin: 18px;
-    color: var(--clr-dark);
-}
-.recent_orders div div {
-    width: 100%;
-    overflow-x: auto;
-    margin-top: 20px;
-}
-.recent_orders table {
     background-color: var(--clr-white);
     width: 100%;
     border-radius: 1rem;
@@ -402,62 +417,92 @@ h2 {
     font-size: 0.85rem;
 }
 
+.recent_orders div div h1 {
+    margin: 18px;
+    color: var(--clr-dark);
+}
+
+.recent_orders div div {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.recent_orders table {
+    background-color: var(--clr-white);
+    width: 100%;
+    border-radius: var(--border-radius-2);
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 1rem 1.5rem var(--clr-light);
+    color: var(--clr-dark);
+    max-width: none;
+    font-size: 0.85rem;
+}
+
 .table-container table:hover {
     box-shadow: none;
 }
+
 .recent_orders a {
     text-align: center;
     display: block;
     margin: 1rem;
     font-size: 0.85rem;
+    color: var(--clr-primary);
 }
+
 table thead tr th {
     padding: 10px;
     font-size: 0.9rem;
+    color: var(--clr-dark);
 }
 
 table tbody tr {
     height: 3rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-white);
+    color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
 }
 
 table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: var(--clr-light);
 }
 
 table tbody td {
     height: 3rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-dark);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr:last-child td {
     border: none;
 }
+
 .accept-btn {
     padding: 4px 8px;
     border-radius: 4px;
     cursor: pointer;
     border: none;
     transition: background-color 0.3s ease, transform 0.2s;
-    color: white;
+    color: var(--clr-white);
     margin: 0 5px;
-    background-color: #007bff;
+    background-color: var(--clr-success);
     font-size: 12px;
     font-weight: bold;
 }
+
 .accept-btn .material-icons {
     font-size: 16px;
     margin-right: 4px;
 }
 
 .accept-btn:hover {
-    background-color: #0056b3;
+    background-color: darken(var(--clr-success), 10%);
     transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 91, 187, 0.5);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
 }
+
 .pagination {
     display: flex;
     justify-content: center;
@@ -468,8 +513,8 @@ table tbody tr:last-child td {
 .pagination button {
     padding: 6px 10px;
     margin: 0 5px;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -484,23 +529,23 @@ table tbody tr:last-child td {
 .pagination span {
     margin: 0 10px;
     font-size: 0.7rem;
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 /* Select styling */
 select {
     padding: 8px;
-    border: 1px solid #7380ec;
+    border: 1px solid var(--clr-primary);
     border-radius: 4px;
-    background-color: #fff;
-    color: #363949;
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    border-color: var(--clr-primary-variant);
+    box-shadow: 0 0 5px var(--clr-primary-variant);
 }
 
 /* Button styling */
@@ -512,33 +557,33 @@ select:focus {
     cursor: pointer;
     border: none;
     transition: background-color 0.3s ease, transform 0.2s;
-    color: white;
+    color: var(--clr-white);
     margin: 0 5px;
 }
 
 .delete-btn {
-    background-color: #d9534f;
+    background-color: var(--clr-danger);
 }
 
 .delete-btn:hover {
-    background-color: #c9302c;
+    background-color: darken(var(--clr-danger), 10%);
 }
 
 .edit-btn {
-    background-color: #f0ad4e;
+    background-color: var(--clr-warning);
 }
 
 .edit-btn:hover {
-    background-color: #ec971f;
+    background-color: darken(var(--clr-warning), 10%);
 }
 
 .status-btn {
-    background-color: #007bff;
+    background-color: var(--clr-primary);
     margin-bottom: 10px;
 }
 
 .status-btn:hover {
-    background-color: #0056b3;
+    background-color: darken(var(--clr-primary), 10%);
 }
 
 /* Navigation styling */
@@ -546,15 +591,11 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
-    background-color: #fff;
+    background-color: var(--clr-white);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
-    max-width: 800px;
-    margin: 20px;
-    padding: 10px;
+    max-width: 400px;
     flex-wrap: wrap;
 }
 
@@ -562,16 +603,15 @@ select:focus {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
+    border-radius: 9px;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
 }
-
 @keyframes gradientAnimation {
     0% {
         background-position: 0% 50%;
@@ -589,6 +629,7 @@ select:focus {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transition: 0.3s ease;
 }
+
 .containerd {
     width: 100%;
     margin-left: 20px;
@@ -600,23 +641,21 @@ select:focus {
     min-height: 100vh;
     background: var(--clr-color-background);
 }
+
 /* Form and Map styling */
-.dark-theme-variables .form-containerd {
-    background-color: var(--clr-dark-variant);
-}
+
 .form-containerd {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     padding: 20px;
-    background-color: var(--clr-info-light);
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     width: 100%;
     margin-top: 50px;
     transition: background-color 0.3s ease;
 }
+
 .form-groupd {
     margin-bottom: 15px;
     width: 100%;
@@ -626,18 +665,19 @@ label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: var(--clr-dark);
 }
 
 input {
     width: 100%;
     padding: 10px;
-    border: 2px solid #ccc;
+    border: 2px solid var(--clr-dark-variant);
     border-radius: 5px;
     transition: border-color 0.3s;
 }
 
 input:focus {
-    border-color: #007bff;
+    border-color: var(--clr-primary);
 }
 
 .submit-btnnd {
@@ -648,15 +688,15 @@ input:focus {
 .submit-btnd {
     padding: 10px 20px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-btnd:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
     transform: translateY(-3px);
 }
 
@@ -675,12 +715,12 @@ input:focus {
 }
 
 .modal-content {
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     max-width: 500px;
     width: 80%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: 0 2rem 3rem var(--clr-light);
 }
 
 .modal-header,
@@ -692,6 +732,7 @@ input:focus {
 .modal-header {
     font-size: 1.2rem;
     font-weight: bold;
+    color: var(--clr-dark);
 }
 
 .modal-footer {
@@ -701,8 +742,8 @@ input:focus {
 
 .close-modal {
     padding: 8px 16px;
-    background-color: #c9302c;
-    color: white;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -710,7 +751,7 @@ input:focus {
 }
 
 .close-modal:hover {
-    background-color: #d9534f;
+    background-color: darken(var(--clr-danger), 10%);
 }
 
 /* Seats styling */
@@ -724,8 +765,8 @@ input:focus {
 .seat {
     width: 50px;
     height: 50px;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -740,7 +781,7 @@ input:focus {
 }
 
 .seat.occupied {
-    background-color: #d9534f;
+    background-color: var(--clr-danger);
 }
 
 /* Responsive Design */

@@ -87,7 +87,7 @@
                                     v-for="(user, index) in filteredDrivers"
                                     :key="index"
                                 >
-                                    <td>{{ user.driver_id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email_driver }}</td>
                                     <td>{{ user.status }}</td>
@@ -192,7 +192,7 @@
                                         ) in driverStatusData"
                                         :key="index"
                                     >
-                                        <td>{{ driver.driver_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ driver.name }}</td>
                                         <td>{{ driver.email_driver }}</td>
                                         <td>{{ driver.status }}</td>
@@ -239,7 +239,7 @@
                                         ) in driverWithBusData"
                                         :key="index"
                                     >
-                                        <td>{{ driver.id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ driver.driver_name }}</td>
                                         <td>{{ driver.bus_id }}</td>
                                         <td>{{ driver.company_name }}</td>
@@ -787,7 +787,7 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {
@@ -824,6 +824,7 @@ select:focus {
     background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
+    max-width: 800px;
 }
 
 .nav-btnd {
@@ -865,16 +866,13 @@ select:focus {
     align-items: center;
     flex-direction: column;
     padding: 20px;
-    background-color: var(--clr-info-light);
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    background-color: rgba(var(--clr-white), 0.9);
+    box-shadow: 0 2rem 3rem var(--clr-light);
     border-radius: 10px;
-    max-width: 400px;
+    max-width: 500px;
     width: 100%;
     margin-top: 50px;
     transition: background-color 0.3s ease;
-}
-.dark-theme-variables .form-containerd {
-    background-color: var(--clr-dark-variant);
 }
 
 .form-groupd {
@@ -890,10 +888,12 @@ label {
 
 input {
     width: 100%;
-    padding: 10px;
+    padding: 15px;
     border: 2px solid #ccc;
     border-radius: 5px;
     transition: border-color 0.3s;
+    font-size: 18px;
+    box-sizing: border-box;
 }
 
 input:focus {

@@ -9,7 +9,7 @@ import AllTripUser from "../views/User/AllTripUser.vue";
 import AddPrivateTrip from "../views/User/AddPrivateTrip.vue";
 import PrivateStatus from "../views/User/PrivateStatus.vue";
 import BookingLogin from "../views/BookingLogin.vue";
-import AllDriver2 from "../views/Company/Driver/AllDriver.vue";
+import AllDriver2 from "../views/Company/Driver/AllDriver2.vue";
 import AllPath2 from "../views/Company/Path/AllPath.vue";
 import AllBus2 from "../views/Company/Bus/AllBus.vue";
 import AllTrip2 from "../views/Company/Trip/AllTrip.vue";

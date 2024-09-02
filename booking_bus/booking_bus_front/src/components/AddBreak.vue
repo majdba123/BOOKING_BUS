@@ -83,7 +83,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(breack, index) in breaks" :key="index">
-                                <td>{{ breack.id }}</td>
+                                <td>{{ index }}</td>
                                 <td>{{ breack.break_name }}</td>
                                 <td>
                                     <button
@@ -142,7 +142,7 @@
                                 v-for="(breack, index) in governments"
                                 :key="index"
                             >
-                                <td>{{ breack.id }}</td>
+                                <td>{{ index }}</td>
                                 <td>{{ breack.from }}</td>
                                 <td>{{ breack.to }}</td>
                                 <td>{{ breack.Distance }}</td>
@@ -173,7 +173,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(bus, index) in breakbypath" :key="index">
-                            <td>{{ bus.id }}</td>
+                            <td>{{ index }}</td>
                             <td>{{ bus.name }}</td>
                         </tr>
                     </tbody>
@@ -185,6 +185,7 @@
                 </button>
             </div>
         </div>
+
         <div v-if="showEditModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Edit Break</div>

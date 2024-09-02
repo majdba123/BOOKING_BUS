@@ -467,20 +467,46 @@ export default {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
 :root {
     --clr-primary: #7380ec;
     --clr-danger: #ff7782;
     --clr-success: #41f1b6;
     --clr-white: #fff;
+    --clr-info-dark: #7d8da1;
+    --clr-info-light: #e4e9f7;
     --clr-dark: #363949;
+    --clr-warning: #ffbb55;
     --clr-light: rgba(132, 139, 200, 0.18);
     --clr-primary-variant: #111e88;
     --clr-dark-variant: #677483;
     --clr-color-background: #f6f6f9;
+
+    --card-border-radius: 2rem;
     --border-radius-1: 0.4rem;
     --border-radius-2: 0.8rem;
+    --border-radius-3: 1.2rem;
+
+    --card-padding: 1.8rem;
     --padding-1: 1.2rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+
+    box-shadow: 0 2rem 3rem var(--clr-light);
+}
+
+.dark-theme-variables {
+    --clr-primary: #bb86fc;
+    --clr-danger: #cf6679;
+    --clr-success: #03dac6;
+    --clr-white: #121212;
+    --clr-info-dark: #bb86fc;
+    --clr-info-light: #292929;
+    --clr-dark: #f6f6f9;
+    --clr-warning: #ffbb55;
+    --clr-light: rgba(255, 255, 255, 0.2);
+    --clr-primary-variant: #3700b3;
+    --clr-dark-variant: #1f1f1f;
+    --clr-color-background: #121212;
 }
 
 * {
@@ -495,17 +521,19 @@ body {
     width: 100%;
     height: 100%;
     font-size: 0.88rem;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
     overflow-y: auto;
 }
 
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
+    color: var(--clr-dark);
 }
 
 h2 {
     font-size: 1.4rem;
+    color: var(--clr-dark);
 }
 
 .recent_orders {
@@ -520,43 +548,46 @@ h2 {
 }
 
 .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
-    border-radius: 1rem;
-    padding: 1rem;
+    border-radius: var(--border-radius-2);
+    padding: var(--card-padding);
     text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
+    box-shadow: 0 1rem 1.5rem var(--clr-light);
+    color: var(--clr-dark);
     max-width: none;
     font-size: 0.85rem;
 }
+
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 100vh;
 }
 
 .spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
 }
+
 .no-data-message {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 150px;
     font-size: 1.2rem;
-    color: #677483;
+    color: var(--clr-dark-variant);
     text-align: center;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background-color: var(--clr-color-background);
 }
+
 .recent_orders table:hover {
     box-shadow: none;
 }
@@ -564,23 +595,23 @@ h2 {
 table thead tr th {
     padding: 10px;
     font-size: 0.9rem;
+    color: var(--clr-dark);
 }
 
 table tbody tr {
     height: 3rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-white);
+    color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
 }
-
 table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: var(--clr-light);
 }
 
 table tbody td {
     height: 3rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-dark);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr:last-child td {
@@ -590,17 +621,17 @@ table tbody tr:last-child td {
 /* Select styling */
 select {
     padding: 8px;
-    border: 1px solid #7380ec;
+    border: 1px solid var(--clr-primary);
     border-radius: 4px;
-    background-color: #fff;
-    color: #363949;
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    border-color: var(--clr-primary-variant);
+    box-shadow: 0 0 5px var(--clr-primary-variant);
 }
 
 /* Button styling */
@@ -619,55 +650,58 @@ select:focus {
     justify-content: center;
     height: 15px;
     width: 15px;
-    cursor: pointer;
 }
 
 .edit-btn {
-    color: #4caf50;
-    background-color: #f1f1f1;
+    color: var(--clr-success);
+    background-color: var(--clr-info-light);
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
 }
+
 .edit-btn:hover {
-    color: #fff;
-    background-color: #4caf50;
+    color: var(--clr-white);
+    background-color: var(--clr-success);
 }
 
 .delete-btn {
-    color: #f44336;
-    background-color: #f1f1f1;
+    color: var(--clr-danger);
+    background-color: var(--clr-info-light);
     border-radius: 9px;
     padding: 3px;
 }
 
 .delete-btn:hover {
-    color: #fff;
-    background-color: #f44336;
+    color: var(--clr-white);
+    background-color: var(--clr-danger);
 }
 
 .status-btn {
     border-radius: 9px;
-    background-color: #007bff;
+    background-color: var(--clr-primary);
     transition: background-color 0.3s ease, transform 0.2s;
-    color: white;
+    color: var(--clr-white);
     width: 30px;
 }
 
 .status-btn:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
 }
+
 .status-btns {
     border-radius: 9px;
-    background-color: #007bff;
+    background-color: var(--clr-primary);
     transition: background-color 0.3s ease, transform 0.2s;
-    color: white;
+    color: var(--clr-white);
     margin: 10px;
     padding: 10px;
 }
+
 .status-btns:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
 }
+
 /* Navigation styling */
 .navd {
     display: flex;
@@ -675,7 +709,7 @@ select:focus {
     justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
-    background-color: #fff;
+    background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
 }
@@ -683,17 +717,17 @@ select:focus {
 .nav-btnd {
     padding: 10px 20px;
     margin: 10px;
+    width: 100%;
     border: none;
     border-radius: 9px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
     font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
 }
-
 @keyframes gradientAnimation {
     0% {
         background-position: 0% 50%;
@@ -719,8 +753,8 @@ select:focus {
     align-items: center;
     flex-direction: column;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    background-color: rgba(var(--clr-white), 0.9);
+    box-shadow: 0 2rem 3rem var(--clr-light);
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
@@ -748,7 +782,7 @@ input {
 }
 
 input:focus {
-    border-color: #007bff;
+    border-color: var(--clr-primary-variant);
 }
 
 .submit-btnnd {
@@ -759,15 +793,15 @@ input:focus {
 .submit-btnd {
     padding: 10px 20px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-btnd:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
     transform: translateY(-3px);
 }
 
@@ -786,12 +820,12 @@ input:focus {
 }
 
 .modal-content {
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     max-width: 500px;
     width: 80%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: 0 2rem 3rem var(--clr-light);
 }
 
 .modal-header,
@@ -804,12 +838,14 @@ input:focus {
 .modal-header {
     font-size: 1.2rem;
     font-weight: bold;
+    color: var(--clr-dark);
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
 }
+
 .modal-body div div table {
     width: 100%;
     border-collapse: collapse;
@@ -850,8 +886,8 @@ input:focus {
 
 .close-modal {
     padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -863,8 +899,8 @@ input:focus {
 
 .update-btn {
     padding: 8px 16px;
-    background-color: #5cb85c;
-    color: white;
+    background-color: var(--clr-success);
+    color: var(--clr-white);
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -887,18 +923,20 @@ input:focus {
     overflow-x: hidden;
     scrollbar-width: none;
 }
+
 .modal-contentseat {
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     max-width: 350px;
     width: 80%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: 0 2rem 3rem var(--clr-light);
 }
+
 .seat {
     width: 30px;
     height: 30px;
-    color: #007bff;
+    color: var(--clr-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -929,9 +967,10 @@ input:focus {
 }
 
 .seat.occupied {
-    background-color: #d9534f;
-    color: #fff;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
 }
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .containerd {

@@ -56,7 +56,7 @@
                                         v-for="(trip, index) in tripStatusData"
                                         :key="index"
                                     >
-                                        <td>{{ trip.id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ trip.price }}</td>
                                         <td>{{ trip.status }}</td>
                                     </tr>
@@ -77,7 +77,7 @@
                 <div class="form-groupd">
                     <label for="path">Path</label>
                     <div class="select-container">
-                        <select v-model="path" id="path">
+                        <select v-model="path" id="path" @change="fetchBreak">
                             <option
                                 v-for="(pathItem, index) in paths"
                                 :key="index"
@@ -92,22 +92,9 @@
                     <label for="price">Price</label>
                     <input type="text" id="price" v-model="price" required />
                 </div>
+
                 <div class="form-groupd">
-                    <label for="area">Area</label>
-                    <div class="select-container">
-                        <select v-model="area" id="area" @change="fetchBreak">
-                            <option
-                                v-for="(areaItem, index) in Government"
-                                :key="index"
-                                :value="areaItem.id"
-                            >
-                                {{ areaItem.name }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-groupd">
-                    <label for="search_break_areas">Search Break Areas</label>
+                    <label for="search_break_areas">Search Break Path</label>
                     <div class="select-container">
                         <select
                             v-model="search_break_areas"
@@ -217,7 +204,7 @@
                                     v-for="(trip, index) in filteredTrips"
                                     :key="index"
                                 >
-                                    <td>{{ trip.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ trip.status }}</td>
                                     <td>{{ trip.path?.from }}</td>
                                     <td>{{ trip.path?.to }}</td>
@@ -332,24 +319,6 @@
                 </div>
 
                 <div class="form-groupd">
-                    <label for="area">Area</label>
-                    <select
-                        v-model="area"
-                        class="input"
-                        @change="fetchBreak"
-                        required
-                    >
-                        <option
-                            v-for="(areaItem, index) in Government"
-                            :key="index"
-                            :value="areaItem.id"
-                        >
-                            {{ areaItem.name }}
-                        </option>
-                    </select>
-                </div>
-
-                <div class="form-groupd">
                     <label for="search_break_areas">Search Break Areas</label>
                     <select
                         v-model="search_break_areas"
@@ -459,7 +428,7 @@
                 <div class="dialog-header">Confirm Delete</div>
                 <div class="dialog-body">
                     Are you sure you want to delete the trip with ID
-                    {{ tripToDelete.id }}?
+                    {{ tripToDelete.index }}?
                 </div>
                 <div class="dialog-footer">
                     <button @click="deleteConfirmedTrip" class="confirm-btn">
@@ -537,7 +506,6 @@ export default {
     },
     mounted() {
         this.fetchPaths();
-        this.fetchGovernment();
         this.fetchAvailableBuses();
         this.AllTrips();
     },
@@ -566,21 +534,6 @@ export default {
                     console.error(error);
                 });
         },
-        fetchGovernment() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_government",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.Government = response.data;
-                })
-                .catch((error) => {
-                    window.alert("Error getting Government");
-                    console.error(error);
-                });
-        },
         fetchAvailableBuses() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -600,14 +553,23 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: `http://127.0.0.1:8000/api/company/all_breaks/${this.area}`,
+                url: `http://127.0.0.1:8000/api/company/all_breaks/${this.path}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     this.breaks = response.data;
+                    console.log(this.breaks);
                 })
                 .catch((error) => {
-                    window.alert("Error getting breaks");
+                    this.toast.warning("This Path Have not Break ", {
+                        transition: "Vue-Toastification__bounce",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
                     console.error(error);
                 });
         },
@@ -1071,7 +1033,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {

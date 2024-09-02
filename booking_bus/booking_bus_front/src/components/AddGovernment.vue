@@ -48,7 +48,7 @@
                                     v-for="(user, index) in filteredGovernment"
                                     :key="index"
                                 >
-                                    <td>{{ user.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>
                                         <button
@@ -134,7 +134,7 @@
                                         ) in GovernmentBreack"
                                         :key="index"
                                     >
-                                        <td>{{ driver.id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ driver.name }}</td>
                                     </tr>
                                 </tbody>
@@ -513,7 +513,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {

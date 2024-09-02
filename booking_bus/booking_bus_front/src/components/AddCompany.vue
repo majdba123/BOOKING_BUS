@@ -84,7 +84,7 @@
                                     v-for="(user, index) in filteredCompany"
                                     :key="index"
                                 >
-                                    <td>{{ user.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ user.name_company }}</td>
                                     <td>{{ user.user.email }}</td>
                                     <td>{{ user.user.profile?.phone }}</td>
@@ -187,7 +187,7 @@
                                         ) in driverStatusData"
                                         :key="index"
                                     >
-                                        <td>{{ driver.id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ driver.user.name }}</td>
                                         <td>{{ driver.user.email }}</td>
                                         <td>{{ driver.status }}</td>
@@ -230,7 +230,7 @@
                                         v-for="(Bus, index) in BusData"
                                         :key="index"
                                     >
-                                        <td>{{ Bus.id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ Bus.number_bus }}</td>
                                         <td>{{ Bus.number_passenger }}</td>
                                         <td>{{ Bus.status }}</td>
@@ -274,7 +274,7 @@
                                         v-for="(Trip, index) in Trips"
                                         :key="index"
                                     >
-                                        <td>{{ Trip.trip_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ Trip.from }}</td>
                                         <td>{{ Trip.to }}</td>
                                         <td>{{ Trip.price }}</td>
@@ -357,7 +357,7 @@
                                         ) in ReversationStatusData"
                                         :key="index"
                                     >
-                                        <td>{{ Trip.id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ Trip.price }}</td>
                                         <td>{{ Trip.type }}</td>
                                         <td>{{ Trip.status }}</td>
@@ -419,7 +419,7 @@
                                         v-for="(Bus, index) in BusTrip"
                                         :key="index"
                                     >
-                                        <td>{{ Bus.bus_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ Bus.from_time }}</td>
                                         <td>{{ Bus.to_time }}</td>
                                         <td>{{ Bus.type }}</td>
@@ -479,7 +479,7 @@
                                         v-for="(Bus, index) in ReservationSeat"
                                         :key="index"
                                     >
-                                        <td>{{ Bus.id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ Bus.status }}</td>
                                     </tr>
                                 </tbody>
@@ -523,7 +523,7 @@
                                         v-for="(Bus, index) in Pivot"
                                         :key="index"
                                     >
-                                        <td>{{ Bus.break_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ Bus.government }}</td>
                                         <td>{{ Bus.name_break }}</td>
                                         <td>{{ Bus.status }}</td>
@@ -564,7 +564,7 @@
                                         v-for="(Bus, index) in Seats"
                                         :key="index"
                                     >
-                                        <td>{{ Bus.id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>{{ Bus.status }}</td>
                                     </tr>
                                 </tbody>
@@ -1231,7 +1231,7 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {
@@ -1477,7 +1477,7 @@ input:focus {
 }
 
 .modal-header,
-.modal-body,
+.modal-body div,
 .modal-footer {
     margin-bottom: 15px;
 }
@@ -1490,19 +1490,19 @@ input:focus {
     border-bottom: 2px solid var(--clr-primary);
 }
 
-.modal-body div {
+.modal-body div div {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.modal-body table {
+.modal-body div table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.modal-body th,
-.modal-body td {
+.modal-body div th,
+.modal-body div td {
     padding: 12px;
     text-align: left;
 }
@@ -1527,7 +1527,7 @@ input:focus {
         height: auto;
     }
 
-    .modal-body {
+    .modal-body div {
         flex-direction: column;
     }
 
@@ -1539,12 +1539,12 @@ input:focus {
     background-color: #c9302c;
 }
 
-.modal-body th {
+.modal-body div th {
     background-color: var(--clr-primary);
     color: #fff;
 }
 
-.modal-body td {
+.modal-body div td {
     border-bottom: 1px solid #ddd;
 }
 

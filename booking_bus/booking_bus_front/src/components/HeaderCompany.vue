@@ -270,38 +270,40 @@ small {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
 }
-
+/* Dropdown Menu Styles */
 .dropdown-menu {
     position: absolute;
     top: 50px;
     right: 0;
     background-color: var(--clr-white);
-    border: 1px solid #ddd;
+    border: 1px solid var(--clr-info-light);
     border-radius: 0.5rem;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     list-style: none;
     padding: 10px 0;
     z-index: 1000;
     width: 150px;
-    animation: fadeIn 0.3s ease;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
 }
 
+/* Display the menu when active */
 .dropdown-menu.show {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
+/* Style list items in the dropdown */
 .dropdown-menu li {
     padding: 10px 15px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Change background on hover */
 .dropdown-menu li:hover {
     background-color: var(--clr-primary);
     color: var(--clr-white);
@@ -318,6 +320,8 @@ small {
         transform: translateY(0);
     }
 }
+
+/* Adding a subtle fade-in animation */
 
 /* Responsive Design */
 @media screen and (max-width: 1200px) {
