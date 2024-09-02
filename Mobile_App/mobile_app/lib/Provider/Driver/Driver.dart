@@ -6,13 +6,14 @@ import 'package:mobile_app/Data_Models/Driver/TripForDriver.dart';
 
 class DriverProvider extends ChangeNotifier {
   TripForDriverModel? _TripDriver;
+  List<TripForDriverModel>? _MyTrip;
   RateDriverModel? _RateDriver;
   MyBusModel? _MyBus;
   bool _isLoading = false;
   String? _errorMessage;
 
   TripForDriverModel? get TripDriver => _TripDriver;
-
+  List<TripForDriverModel>? get MyTrip => _MyTrip;
   RateDriverModel? get RateDriver => _RateDriver;
   MyBusModel? get MyBus => _MyBus;
   bool get isLoading => _isLoading;
@@ -26,6 +27,23 @@ class DriverProvider extends ChangeNotifier {
     try {
       _TripDriver = await DriverService().fetchFirstTrip(accessToken);
       print(_TripDriver);
+      print('after handling !!');
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchMyTrip(String accessToken) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _MyTrip = await DriverService().fetchMyTrip(accessToken);
+      print(_MyTrip);
       print('after handling !!');
     } catch (error) {
       _errorMessage = error.toString();

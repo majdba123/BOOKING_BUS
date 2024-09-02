@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-
 import 'package:mobile_app/Provider/Admin/charge_blanace_requsert_provider.dart';
-
-import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
 import 'package:mobile_app/Provider/Company/Private_Trip_provider.dart';
-
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/Provider/user/Address_provider.dart';
@@ -83,7 +79,7 @@ class MyApp extends StatelessWidget {
           '/JourneysScreen': (context) => JourneysScreen(),
           '/BookingUser': (context) => BookingsScreen(),
 
-          // '/driverProfilePage': (context) => DriverProfilePage(),
+          '/ProfilePage': (context) => ProfilePage(),
         },
         debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: 'Inter'),

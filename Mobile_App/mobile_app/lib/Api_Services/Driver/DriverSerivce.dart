@@ -29,6 +29,28 @@ class DriverService {
     }
   }
 
+  Future<List<TripForDriverModel>> fetchMyTrip(String accessToken) async {
+    final response = await http.get(
+      Uri.parse(name_domain_server + 'driver/my_pending_trip'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      // final Map<String, dynamic> jsonTrip = json.decode(response.body);
+      // print(jsonTrip);
+      print('in get trips for driver');
+      final List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.map((json) => TripForDriverModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load trips');
+    }
+  }
+
   Future<RateDriverModel> fetchRteDriver(String accessToken) async {
     final response = await http.get(
       Uri.parse(name_domain_server + 'driver/all_my_rate'),

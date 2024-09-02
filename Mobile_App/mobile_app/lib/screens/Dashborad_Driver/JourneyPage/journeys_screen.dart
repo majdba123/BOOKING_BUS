@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/Data_Models/Driver/TripForDriver.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/herader_section.dart';
 import 'package:mobile_app/screens/WidgetApp/filtter_Bar_main_ui.dart';
+import 'package:provider/provider.dart';
 import 'JourneyCard.dart';
-import 'toggle_button.dart';
-import 'JourneyHistoryScreen.dart'; // Import the new screen
+import 'JourneyHistoryScreen.dart';
 
 class JourneysScreen extends StatefulWidget {
   @override
@@ -12,6 +15,13 @@ class JourneysScreen extends StatefulWidget {
 }
 
 class _JourneysScreenState extends State<JourneysScreen> {
+  void initState() {
+    super.initState();
+    AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+    Provider.of<DriverProvider>(context, listen: false)
+        .fetchMyTrip(auth.accessToken);
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -75,79 +85,25 @@ class _JourneysScreenState extends State<JourneysScreen> {
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
+
+            // SectionHeader(
+            //   title: 'Today',
+            //   fontSize: screenHeight * 0.025,
+            // ),
             Expanded(
               child: ListView(
-                children: [
-                  // Today Section
-                  SectionHeader(
-                    title: 'Today',
-                    fontSize: screenHeight * 0.025,
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  JourneyCard(
-                    from: 'Coimbatore',
-                    to: 'Chennai',
-                    timeLeft: 'IN 4 HOURS',
-                    departureTime: '6:50AM',
-                    arrivalTime: '12:15PM',
-                    stops: '28 Stops',
-                    passengers: '48 Passengers',
-                    bgColor: Colors.white,
-                    tagColor: Colors.redAccent,
-                    fontSize: screenHeight * 0.02,
-                    iconSize: screenHeight * 0.025,
-                    dashColor: Colors.grey,
-                    showArrowIcon: true,
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  JourneyCard(
-                    from: 'Chennai',
-                    to: 'Coimbatore',
-                    timeLeft: 'IN 12 HOURS',
-                    departureTime: '6:50AM',
-                    arrivalTime: '12:15PM',
-                    stops: '28 Stops',
-                    passengers: '48 Passengers',
-                    bgColor: Colors.white,
-                    tagColor: Colors.blueAccent,
-                    fontSize: screenHeight * 0.02,
-                    iconSize: screenHeight * 0.025,
-                    dashColor: Colors.grey,
-                    showArrowIcon: true,
-                  ),
-                  SizedBox(height: screenHeight * 0.03),
-
-                  // Tomorrow Section
-                  SectionHeader(
-                    title: 'Tomorrow',
-                    fontSize: screenHeight * 0.025,
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  JourneyCard(
-                    from: 'Bangalore',
-                    to: 'Chennai',
-                    timeLeft: 'TOMORROW',
-                    departureTime: '6:50AM',
-                    arrivalTime: '12:15PM',
-                    stops: '28 Stops',
-                    passengers: '48 Passengers',
-                    bgColor: Colors.white,
-                    tagColor: Colors.greenAccent,
-                    fontSize: screenHeight * 0.02,
-                    iconSize: screenHeight * 0.025,
-                    dashColor: Colors.grey,
-                    showArrowIcon: true,
-                  ),
-                ],
+                children: [JourneyCard()],
               ),
             ),
+
+            SizedBox(height: screenHeight * 0.015),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: screenWidth * 0.1,
-          vertical: screenHeight * 0.02,
+          vertical: screenHeight * 0.01,
         ),
         child: FilterBarUserUi(
           height: screenHeight * 0.07,
