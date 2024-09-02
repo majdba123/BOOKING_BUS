@@ -1,9 +1,9 @@
 // models.dart
 
 class SpecificTrip {
-  int id;
-  int companyId;
-  int pathId;
+  String id;
+  String companyId;
+  String pathId;
   String status;
   double price;
   String createdAt;
@@ -27,10 +27,12 @@ class SpecificTrip {
 
   factory SpecificTrip.fromJson(Map<String, dynamic> json) {
     var busTripList = json['bus_trip'] as List;
-    List<BusDetails> busTrips = busTripList.map((e) => BusDetails.fromJson(e)).toList();
+    List<BusDetails> busTrips =
+        busTripList.map((e) => BusDetails.fromJson(e)).toList();
 
     var breaksList = json['breaks_trip'] as List;
-    List<BreakTrip> breaksTrips = breaksList.map((e) => BreakTrip.fromJson(e)).toList();
+    List<BreakTrip> breaksTrips =
+        breaksList.map((e) => BreakTrip.fromJson(e)).toList();
 
     return SpecificTrip(
       id: json['id'],
@@ -48,9 +50,9 @@ class SpecificTrip {
 }
 
 class BusDetails {
-  int id;
-  int tripId;
-  int busId;
+  String id;
+  String tripId;
+  String busId;
   String fromTime;
   String date;
   String toTime;
@@ -98,9 +100,9 @@ class BusDetails {
 }
 
 class BreakTrip {
-  int id;
-  int tripId;
-  int breaksId;
+  String id;
+  String tripId;
+  String breaksId;
   String createdAt;
   String updatedAt;
   Break breakDetails;
@@ -127,8 +129,8 @@ class BreakTrip {
 }
 
 class Break {
-  int id;
-  int areaId;
+  String id;
+  String areaId;
   String name;
   String createdAt;
   String updatedAt;
@@ -156,7 +158,7 @@ class Break {
 }
 
 class Area {
-  int id;
+  String id;
   String name;
   String createdAt;
   String updatedAt;
@@ -179,8 +181,8 @@ class Area {
 }
 
 class PathDetails {
-  int id;
-  int companyId;
+  String id;
+  String companyId;
   String from;
   String to;
   String createdAt;
@@ -208,9 +210,9 @@ class PathDetails {
 }
 
 class Pivot {
-  int id;
-  int busTripId;
-  int breaksTripId;
+  String id;
+  String busTripId;
+  String breaksTripId;
   String status;
   String createdAt;
   String updatedAt;

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/MainPage/BusCardInfo.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/PrivateTrip/Get_private_trip_By_Status.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/All_My_charage_Balance_By_Status.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Help_Screen.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Rate_Driver.dart';
 import 'package:mobile_app/Provider/user/user_info_profile.dart';
 import 'package:mobile_app/screens/Dashborad_User/policy/PolicyPage.dart';
+import 'package:mobile_app/screens/WidgetApp/E_wallet.dart';
+import 'package:mobile_app/screens/WidgetApp/ProfileOption.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/colors.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Address_list_page.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/Charage_blance.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Update_Password.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Update_Profile.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
@@ -17,13 +18,14 @@ import 'package:mobile_app/Provider/Auth_provider.dart';
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var accessToken =
-        Provider.of<AuthProvider>(context, listen: false).accessToken;
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
+    var accessToken = authProvider.accessToken;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     // Fetch user info when the widget is built
     Provider.of<UserInfoProvider>(context, listen: false)
-        .fetchUserInfo(accessToken);
+        .fetchUserInfo(accessToken, authProvider.userType);
 
     return Scaffold(
       appBar: AppBar(
@@ -157,55 +159,63 @@ class ProfilePage extends StatelessWidget {
                             );
                           },
                         ),
-                        ProfileOption(
-                          icon: Icons.calendar_month,
-                          title: ' private Trip',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PrivateTripByStatus()),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 5),
-                        ProfileOption(
-                          icon: Icons.rate_review,
-                          title: 'Rating Driver',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => RatingDriverUi()),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 5),
-                        ProfileOption(
-                          icon: Icons.question_answer,
-                          title: 'send Qustion',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HelpDeskScreen()),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 5),
-                        ProfileOption(
-                          icon: Icons.question_answer,
-                          title: 'Policy of use',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PolicyPage()),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 30),
-                        EWalletSection(),
+                        if (authProvider.userType == "user") ...[
+                          ProfileOption(
+                            icon: Icons.calendar_month,
+                            title: ' private Trip',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PrivateTripByStatus()),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 5),
+                          ProfileOption(
+                            icon: Icons.rate_review,
+                            title: 'Rating Driver',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RatingDriverUi()),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 5),
+                          ProfileOption(
+                            icon: Icons.question_answer,
+                            title: 'send Qustion',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HelpDeskScreen()),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 5),
+                          ProfileOption(
+                            icon: Icons.question_answer,
+                            title: 'Policy of use',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PolicyPage()),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 30),
+                          EWalletSection()
+                        ] else ...[
+                          SizedBox(height: 30),
+                          MyBusInfo(),
+                        ],
+
+                        // ,
                       ],
                     )
                   ],
@@ -216,150 +226,6 @@ class ProfilePage extends StatelessWidget {
             },
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ProfileOption extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-
-  ProfileOption({required this.icon, required this.title, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          children: [
-            Icon(icon, size: 28, color: AppColors.primaryColor),
-            SizedBox(width: 20),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Spacer(),
-            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class EWalletSection extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var point =
-        Provider.of<UserInfoProvider>(context, listen: false).userInfo?.points;
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor,
-        borderRadius: BorderRadius.circular(15.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.account_balance_wallet, size: 28, color: Colors.white),
-              SizedBox(width: 10),
-              Text(
-                'E-Wallet',
-                style: TextStyle(
-                  fontSize: 22,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Balance',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white70,
-            ),
-          ),
-          SizedBox(height: 5),
-          Text(
-            '\$ ${point}',
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: AppColors.primaryColor,
-                  backgroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddFundsPage()),
-                  );
-                },
-                child: Text(
-                  'Add Funds',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: AppColors.primaryColor,
-                  backgroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChargeBalanceByStatusPage()),
-                  );
-                },
-                child: Text(
-                  'All-order ',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

@@ -11,7 +11,7 @@ class CompanyInfoProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> fetchCompanyInfo(int companyId, String accessToken) async {
+  Future<void> fetchCompanyInfo(String companyId, String accessToken) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();

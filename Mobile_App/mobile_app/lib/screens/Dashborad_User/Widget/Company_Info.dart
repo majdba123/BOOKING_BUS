@@ -6,7 +6,7 @@ import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/colors.dart';
 
 class CompanyInfoPage extends StatefulWidget {
-  final int companyId;
+  final String companyId;
 
   CompanyInfoPage({required this.companyId});
 

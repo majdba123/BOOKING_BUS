@@ -41,7 +41,7 @@ class RatingUserProvider with ChangeNotifier {
     }
   }
 
-  Future<String> addCompanyToFavorite(int companyId) async {
+  Future<String> addCompanyToFavorite(String companyId) async {
     print('api provider rating');
     if (_apiService == null) return "API service not initialized";
     String message = await _apiService!.addCompanyToFavorite(companyId);
@@ -52,7 +52,7 @@ class RatingUserProvider with ChangeNotifier {
     return message;
   }
 
-  Future<String> removeCompanyFromFavorite(int companyId) async {
+  Future<String> removeCompanyFromFavorite(String companyId) async {
     print('canel add to Fav');
     if (_apiService == null) return "API service not initialized";
     String message = await _apiService!.removeCompanyFromFavorite(companyId);
@@ -63,14 +63,14 @@ class RatingUserProvider with ChangeNotifier {
     return message;
   }
 
-  Future<String> rateDriver(int driverId, int rating) async {
+  Future<String> rateDriver(String driverId, int rating) async {
     if (_apiService == null) return "API service not initialized";
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('driver_$driverId', rating);
     return await _apiService!.rateDriver(driverId, rating);
   }
 
-  Future<int> getDriverRating(int driverId) async {
+  Future<int> getDriverRating(String driverId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getInt('driver_$driverId') ?? 0;
   }

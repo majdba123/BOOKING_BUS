@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bus__drivers', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignIdFor(Bus::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Driver::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('status')->default('pending');

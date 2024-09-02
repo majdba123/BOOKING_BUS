@@ -2,7 +2,7 @@ import 'company.dart'; // Assuming you have the Company class in a separate file
 import 'user.dart'; // Assuming you have the User class in a separate file.
 
 class DriverStauts {
-  final int id;
+  final String id;
   final String name;
   final String email;
   final String status;

@@ -1,5 +1,5 @@
 class PrivateTripModel {
-  final int id;
+  final String id;
   final String from;
   final String to;
   final String date;

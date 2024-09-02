@@ -42,7 +42,7 @@ class RatingApiServices {
     }
   }
 
-  Future<String> addCompanyToFavorite(int companyId) async {
+  Future<String> addCompanyToFavorite(String companyId) async {
     print('addd it to Fav function !! api ');
     final response = await http.post(
       Uri.parse(name_domain_server + 'user/add_company_to_favourite'),
@@ -60,7 +60,7 @@ class RatingApiServices {
     }
   }
 
-  Future<String> removeCompanyFromFavorite(int companyId) async {
+  Future<String> removeCompanyFromFavorite(String companyId) async {
     print('cancel remove to add fav api!!!');
     final response = await http.delete(
       Uri.parse(name_domain_server + 'user/remove_company_from_favourite'),
@@ -77,7 +77,7 @@ class RatingApiServices {
     }
   }
 
-  Future<String> rateDriver(int driverId, int rating) async {
+  Future<String> rateDriver(String driverId, int rating) async {
     final response = await http.post(
       Uri.parse(name_domain_server + 'user/rate_driver/$driverId'),
       headers: {

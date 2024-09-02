@@ -32,13 +32,13 @@ class TripuserProvider with ChangeNotifier {
   List<TicketDetail> get selectedTicketDetails => _selectedTicketDetails;
   BusTrip? selectedBus;
   BusResponse? selectedBusTrip;
-  late List<int> selectedSeat;
+  late List<String> selectedSeat;
   late BreakPlace breakPlaces;
   String? from;
   String? to;
   late int trip_type;
   late int select_place_debording_break_id;
-  late int select_place_bording_break_id;
+  late String select_place_bording_break_id;
   BreakPlace? _selectedBoardingPoint;
   BreakPlace? _selectedDeboardingPoint;
   int price_tiket = 0;
@@ -73,14 +73,14 @@ class TripuserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  String getSeatType(int seatId) {
+  String getSeatType(String seatId) {
     // Implement your logic to determine the seat type based on seatId
     // For example:
-    if (seatId % 2 == 0) {
-      return "normal";
-    } else {
-      return "Vip";
-    }
+    // if (seatId % 2 == 0) {
+    return "normal";
+    // } else {
+    // return "Vip";
+    // }
   }
 
   // Total amount calculation based on ticket details
@@ -127,13 +127,13 @@ class TripuserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void selectBordingBreakPlcaeId(int idBreakPlace) {
+  void selectBordingBreakPlcaeId(String idBreakPlace) {
     select_place_bording_break_id = idBreakPlace;
     print('the break id select bording  : $select_place_bording_break_id');
     notifyListeners();
   }
 
-  void selectdeBordingBreakPlcaeId(int idBreakPlace) {
+  void selectdeBordingBreakPlcaeId(String idBreakPlace) {
     select_place_bording_break_id = idBreakPlace;
     print('the break id select deborading $select_place_bording_break_id');
     notifyListeners();
@@ -154,7 +154,7 @@ class TripuserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void selectSeat(List<int> seat) {
+  void selectSeat(List<String> seat) {
     selectedSeat = seat;
     notifyListeners();
   }
@@ -230,8 +230,8 @@ class TripuserProvider with ChangeNotifier {
     }
   }
 
-  Future<void> make_reservation(String accessToken, int type, List<int> seat,
-      int breakId, int bus_trip_id) async {
+  Future<void> make_reservation(String accessToken, int type, List<String> seat,
+      String breakId, int bus_trip_id) async {
     final url =
         Uri.parse(name_domain_server + 'user/store_reservation/${bus_trip_id}');
     final headers = {

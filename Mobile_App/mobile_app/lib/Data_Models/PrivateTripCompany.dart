@@ -1,7 +1,7 @@
 // models/private_trip_company.dart
 class PrivateTripCompany {
-  final int id;
-  final int userId;
+  final String id;
+  final String userId;
   final String from;
   final String to;
   final String date;

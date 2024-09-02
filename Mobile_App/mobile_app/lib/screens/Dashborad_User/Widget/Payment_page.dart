@@ -246,7 +246,7 @@ class PayButton extends StatelessWidget {
                     provider.trip_type,
                     provider.selectedSeat,
                     provider.selectedBoardingPoint!.breakId,
-                    provider.selectedBus!.busId);
+                    provider.selectedBus!.busId as int);
 
                 Navigator.push(
                   context,

@@ -79,6 +79,7 @@
 import axios from "axios";
 import SidebarAdmin from "@/components/SidebarAdmin.vue";
 import ShowUsers from "@/components/ShowUsers.vue";
+import router from "@/router";
 
 import store from "@/store";
 
@@ -119,6 +120,20 @@ export default {
         },
     },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const token = window.localStorage.getItem("access_token");
+            const userType = window.localStorage.getItem("type_user");
+
+            if (token && userType) {
+                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+                if (userType === "company") {
+                    router.push("/");
+                } else if (userType === "user") {
+                    router.push("/");
+                }
+            }
+        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
@@ -206,6 +221,8 @@ export default {
         },
     },
     mounted() {
+        this.checkToken();
+
         // التحقق من تفضيلات المستخدم المحفوظة في localStorage
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme === "enabled") {

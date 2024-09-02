@@ -1,7 +1,7 @@
 class TripByStatus {
-  int tripid;
+  String tripid;
   // int companyId;
-  int pathId;
+  String pathId;
   String status;
   double price;
   String createdAt;

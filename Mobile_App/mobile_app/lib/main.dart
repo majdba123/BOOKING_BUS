@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:mobile_app/Api_Services/Company/Bus_sataus.dart';
-import 'package:mobile_app/Provider/Admin/Area_Provider.dart';
-import 'package:mobile_app/Provider/Admin/Break_Area_Provider.dart';
+
 import 'package:mobile_app/Provider/Admin/charge_blanace_requsert_provider.dart';
-import 'package:mobile_app/Provider/Company/Assign_bus_provider.dart';
-import 'package:mobile_app/Provider/Company/Bus_Provider.dart';
+
 import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
 import 'package:mobile_app/Provider/Company/Private_Trip_provider.dart';
-import 'package:mobile_app/Provider/Company/Seat_Provider.dart';
-import 'package:mobile_app/Provider/Company/Trip_Provider.dart';
-import 'package:mobile_app/Provider/Company/Trip_Status.dart';
-import 'package:mobile_app/Provider/Company/path_provider.dart';
+
 import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/Provider/user/Address_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/Provider/user/Company_Info.dart';
@@ -23,12 +18,13 @@ import 'package:mobile_app/Provider/user/Update_password_provider.dart';
 import 'package:mobile_app/Provider/user/Wallet_provider.dart';
 import 'package:mobile_app/Provider/user/inquiry_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
-import 'package:mobile_app/screens/DashBorad_Company/Bus_managment/Bus_managment.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/journeys_screen.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/MainPage/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_User/MyBooking/MY_Reservation.dart';
 import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client.dart';
 import 'package:mobile_app/Provider/user/user_info_profile.dart';
-// import 'package:mobile_app/screens/Dashborad_User/Widget/Map_in_private_trip/MapProvider.dart';
 import 'package:mobile_app/screens/Dashborad_User/firstPageInApplication/welcome_page.dart';
 import 'package:provider/provider.dart';
 
@@ -39,18 +35,18 @@ void main() {
     KeyboardDismissOnTap(
       child: MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => PathProvider()),
-          ChangeNotifierProvider(
-              create: (BuildContext context) => BusProvider()),
+          // ChangeNotifierProvider(create: (_) => PathProvider()),
+          // ChangeNotifierProvider(
+          //     create: (BuildContext context) => BusProvider()),
           ChangeNotifierProvider(create: (_) => DriverProvider()),
-          ChangeNotifierProvider(create: (_) => SeatProvider()),
-          ChangeNotifierProvider(create: (_) => areaProvider()),
-          ChangeNotifierProvider(create: (_) => BreakAreaProvider()),
+          // ChangeNotifierProvider(create: (_) => SeatProvider()),
+          // ChangeNotifierProvider(create: (_) => areaProvider()),
+          // ChangeNotifierProvider(create: (_) => BreakAreaProvider()),
           ChangeNotifierProvider(create: (_) => AuthProvider()),
-          ChangeNotifierProvider(create: (_) => BusStatusProvider()),
-          ChangeNotifierProvider(create: (_) => AssingBusProvider()),
-          ChangeNotifierProvider(create: (_) => TripBusProvider()),
-          ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
+          // ChangeNotifierProvider(create: (_) => BusStatusProvider()),
+          // ChangeNotifierProvider(create: (_) => AssingBusProvider()),
+          // ChangeNotifierProvider(create: (_) => TripBusProvider()),
+          // ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
           ChangeNotifierProvider(create: (_) => TripuserProvider()),
           ChangeNotifierProvider(create: (_) => PrivateTripuserProvider()),
           ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),
@@ -64,10 +60,10 @@ void main() {
           ChangeNotifierProvider(create: (_) => RatingUserProvider()),
           ChangeNotifierProvider(create: (_) => CompanyInfoProvider()),
           ChangeNotifierProvider(create: (_) => InquiryProvider()),
-          // ChangeNotifierProvider(create: (_) => LocationProvider()),
+          ChangeNotifierProvider(create: (_) => DriverProvider()),
         ],
         child: MyApp(),
-      ), 
+      ),
     ),
   );
 }
@@ -81,23 +77,19 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
         routes: {
-          '/BusDash': (context) => Bus_management_Page(),
+          // '/BusDash': (context) => Bus_management_Page(),
           '/mainPageUser': (context) => DashboardUser(),
-          '/ProfilePage': (context) => ProfilePage(),
+          '/driverPageUser': (context) => DashboardDriver(),
+          '/JourneysScreen': (context) => JourneysScreen(),
+          '/BookingUser': (context) => BookingsScreen(),
+
+          // '/driverProfilePage': (context) => DriverProfilePage(),
         },
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Sign In Sign Up Ui',
-        theme: ThemeData(fontFamily: 'Inter'
-            // scaffoldBackgroundColor:  AppColors.primaryColor,
-            //  appBarTheme: AppBarTheme(
-            //     // color: Color.fromARGB(255, 116, 136, 146),
-            //   ),
-            ),
+        theme: ThemeData(fontFamily: 'Inter'),
         home: WelcomePage()
 
         //  ,
         );
   }
-
-  
 }

@@ -39,7 +39,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(trip, index) in Trips" :key="index">
-                                    <td>{{ trip.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ trip.status }}</td>
                                     <td>{{ trip.path?.from }}</td>
                                     <td>{{ trip.path?.to }}</td>
@@ -87,7 +87,7 @@
                                     v-for="(driver, index) in Drivers"
                                     :key="index"
                                 >
-                                    <td>{{ driver.driver_id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ driver.name }}</td>
                                     <td>
                                         <button
@@ -137,7 +137,7 @@
                                     v-for="(rating, index) in tripRatings"
                                     :key="index"
                                 >
-                                    <td>{{ rating.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ rating.user_id }}</td>
                                     <td>{{ rating.trip_id }}</td>
                                     <td>
@@ -189,7 +189,7 @@
                                     v-for="(rating, index) in driverRatings"
                                     :key="index"
                                 >
-                                    <td>{{ rating.driver_id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>
                                         <span
                                             v-for="star in 5"
@@ -249,7 +249,7 @@
                                         ) in tripRatingsDetails"
                                         :key="index"
                                     >
-                                        <td>{{ rating.user_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>
                                             <span
                                                 v-for="star in 5"
@@ -311,7 +311,7 @@
                                         ) in driverRatingsDetails"
                                         :key="index"
                                     >
-                                        <td>{{ rating.user_id }}</td>
+                                        <td>{{ index }}</td>
                                         <td>
                                             <span
                                                 v-for="star in 5"
@@ -560,7 +560,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .no-data-message {

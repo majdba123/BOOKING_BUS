@@ -13,6 +13,13 @@ class CompleteProfilePage extends StatefulWidget {
 }
 
 class _CompleteProfilePageState extends State<CompleteProfilePage> {
+  late AuthProvider authprovider;
+  @override
+  void initState() {
+    super.initState();
+    authprovider = Provider.of<AuthProvider>(context, listen: false);
+  }
+
   final _formKey = GlobalKey<FormState>();
   File? _image;
   final _phoneController = TextEditingController();
@@ -30,9 +37,14 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
 
   Future<void> _submitProfile(BuildContext context) async {
     if (_formKey.currentState!.validate() && _image != null) {
-      var accessToken =
-          Provider.of<AuthProvider>(context, listen: false).accessToken;
-      var uri = Uri.parse(name_domain_server + 'user/store_profile_info');
+      var accessToken = authprovider.accessToken;
+      var uri;
+      if (authprovider.userType == "user") {
+        uri = Uri.parse(name_domain_server + 'user/store_profile_info');
+      } else if (authprovider.userType == "driver") {
+        uri = Uri.parse(name_domain_server + 'driver/store_profile_info');
+      }
+
       var request = http.MultipartRequest('POST', uri)
         ..headers['Authorization'] = 'Bearer $accessToken'
         ..fields['phone'] = _phoneController.text
@@ -44,8 +56,13 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       // print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Handle success
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            '/mainPageUser', (Route<dynamic> route) => false);
+        if (authprovider.userType == "user") {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              '/mainPageUser', (Route<dynamic> route) => false);
+        } else if (authprovider.userType == "driver") {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              '/driverPageUser', (Route<dynamic> route) => false);
+        }
       } else {
         // Handle error
         ScaffoldMessenger.of(context).showSnackBar(

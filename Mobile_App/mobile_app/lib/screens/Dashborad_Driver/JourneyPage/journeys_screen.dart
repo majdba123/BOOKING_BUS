@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/filtter_bar.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/herader_section.dart';
+import 'package:mobile_app/screens/WidgetApp/filtter_Bar_main_ui.dart';
 import 'JourneyCard.dart';
 import 'toggle_button.dart';
 import 'JourneyHistoryScreen.dart'; // Import the new screen
@@ -149,7 +149,7 @@ class _JourneysScreenState extends State<JourneysScreen> {
           horizontal: screenWidth * 0.1,
           vertical: screenHeight * 0.02,
         ),
-        child: FilterBarJorney(
+        child: FilterBarUserUi(
           height: screenHeight * 0.07,
           iconSize: screenHeight * 0.03,
         ),

@@ -33,7 +33,7 @@
                                     v-for="(user, index) in filteredGovernment"
                                     :key="index"
                                 >
-                                    <td>{{ user.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.point }}</td>
@@ -215,7 +215,7 @@
                                     v-for="(driver, index) in Trip"
                                     :key="index"
                                 >
-                                    <td>{{ driver.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ driver.from }}</td>
                                     <td>{{ driver.to }}</td>
                                     <td>{{ driver.price_trip }}</td>
@@ -260,7 +260,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(driver, index) in Fav" :key="index">
-                                    <td>{{ driver.company_id }}</td>
+                                    <td>{{ index }}</td>
 
                                     <td>{{ driver.name_company }}</td>
                                     <td>
@@ -319,7 +319,7 @@
                                     v-for="(driver, index) in Order"
                                     :key="index"
                                 >
-                                    <td>{{ driver.Private_trip_id }}</td>
+                                    <td>{{ index }}</td>
 
                                     <td>{{ driver.from }}</td>
                                     <td>{{ driver.to }}</td>
@@ -408,7 +408,7 @@
                                     v-for="(driver, index) in Seat"
                                     :key="index"
                                 >
-                                    <td>{{ driver.seat_id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ driver.status }}</td>
                                 </tr>
                             </tbody>
@@ -857,7 +857,7 @@ table tbody tr:last-child td {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {

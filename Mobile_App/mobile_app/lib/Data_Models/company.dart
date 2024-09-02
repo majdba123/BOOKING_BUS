@@ -1,8 +1,6 @@
-import 'package:mobile_app/Data_Models/user.dart';
-
 class Company {
-  final int id;
-  final int userId;
+  final String id;
+  final String userId;
   final String nameCompany;
   final DateTime createdAt;
   final DateTime updatedAt;

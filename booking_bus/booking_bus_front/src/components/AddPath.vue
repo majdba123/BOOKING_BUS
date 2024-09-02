@@ -65,6 +65,7 @@
                                     <th>Name Start</th>
                                     <th>Name End</th>
                                     <th>Distance</th>
+                                    <th>Display In Map</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -73,10 +74,18 @@
                                     v-for="(path, index) in filteredPaths"
                                     :key="index"
                                 >
-                                    <td>{{ path.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ path.from }}</td>
                                     <td>{{ path.to }}</td>
                                     <td>{{ path.Distance }}</td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd"
+                                            @click="openMapModal(path.id)"
+                                        >
+                                            Display
+                                        </button>
+                                    </td>
                                     <td>
                                         <button
                                             class="edit-btn"
@@ -139,6 +148,26 @@
                 </div>
             </div>
         </div>
+        <div v-if="showMapModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Location on Map</div>
+                <div class="modal-body">
+                    <div class="map-containers">
+                        <DisplayMap
+                            :fromlat="this.frommapLat"
+                            :fromlong="this.frommapLog"
+                            :tolat="this.tomapLat"
+                            :tolong="this.tomapLog"
+                        />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeMapModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Delete Confirmation Modal -->
         <div v-if="showDeleteConfirmModal" class="dialog-container">
@@ -166,14 +195,20 @@ import axios from "axios";
 import store from "@/store";
 import MapPath from "./MapPath.vue";
 import { useToast } from "vue-toastification";
+import DisplayMap from "./DisplayMap.vue";
 
 export default {
     name: "AddPath",
-    components: { MapPath },
+    components: { MapPath, DisplayMap },
     data() {
         return {
+            frommapLat: null,
+            frommapLog: null,
+            tomapLat: null,
+            tomapLog: null,
+            showMapModal: false,
             loading: true,
-
+            id: "",
             showForm: true,
             Paths: [],
             StartPath: "",
@@ -190,6 +225,27 @@ export default {
         this.AllPaths();
     },
     methods: {
+        closeMapModal() {
+            this.showMapModal = false;
+        },
+        openMapModal(id) {
+            this.id = id;
+            const government = this.Paths.find((breack) => breack.id === id);
+            console.log(this.governments);
+            if (government) {
+                this.frommapLat = government.from_latitude;
+                this.frommapLog = government.from_longitude;
+                this.tomapLat = government.to_latitude;
+                this.tomapLog = government.to_longitude;
+                this.showMapModal = true;
+                console.log(
+                    this.tomapLog,
+                    this.frommapLat,
+                    this.frommapLog,
+                    this.tomapLat
+                );
+            }
+        },
         handleSubmit() {
             console.log("Form Submitted", this.StartPath, this.EndPath);
         },
@@ -514,7 +570,7 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {

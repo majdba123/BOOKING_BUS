@@ -14,12 +14,16 @@ class UserInfoProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> fetchUserInfo(String accessToken) async {
+  Future<void> fetchUserInfo(String accessToken, String typeUser) async {
     _isLoading = true;
     _errorMessage = null;
-    // notifyListeners();
+    var url;
+    if (typeUser == "user") {
+      url = Uri.parse(name_domain_server + 'user/my_info');
+    } else if (typeUser == "driver") {
+      url = Uri.parse(name_domain_server + 'driver/info_profile_driver');
+    }
 
-    final url = Uri.parse(name_domain_server + 'user/my_info');
     final headers = {
       'Authorization': 'Bearer $accessToken',
     };

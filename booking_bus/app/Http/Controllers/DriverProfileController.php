@@ -9,13 +9,27 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+
 class DriverProfileController extends Controller
 {
     public function index()
     {
         $user = auth()->user()->load(['profile', 'address']);
+        $profileImage = $user->profile ? $user->profile->image : null;
+        $phoneNumber = $user->profile ? $user->profile->phone : null;
 
-        return response()->json($user);
+        // Construct the response
+        $response = [
+            'id' => $user->id,
+            'name' => $user->name,
+            // 'type' => $user->type,
+            'email' => $user->email,
+            'point' => $user->point,
+            'profile_image' => $profileImage,
+            'phoneNumber' => $phoneNumber,
+            // 'address' => $user->address
+        ];
+        return response()->json($response);
     }
 
     public function store(Request $request)
@@ -31,7 +45,7 @@ class DriverProfileController extends Controller
         }
 
         try {
-            $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
+            $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
             $user = auth()->user();
             if ($user->profile) {
                 return response()->json([
@@ -76,11 +90,11 @@ class DriverProfileController extends Controller
         }
 
         try {
-            $user =auth()->user();
+            $user = auth()->user();
             $profile = $user->profile;
 
             if ($request->hasFile('image')) {
-                $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
+                $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
                 $imageUrl = asset('storage/profile_image/' . $imageName);
 
                 // Delete existing image
@@ -135,6 +149,4 @@ class DriverProfileController extends Controller
 
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
-
-
 }
