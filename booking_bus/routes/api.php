@@ -253,7 +253,8 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum', 'throttle:30,
     Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
 
     Route::post('/get_bus_trip/{id}', [BusTripController::class, 'getBusTripsByTripId']);
-    Route::post('/seatOfBus/{id}', [SeatController::class, 'seatOfBus']);
+   // Route::post('/seatOfBus/{id}', [SeatController::class, 'seatOfBus']);
+   Route::post('/seatOfBus/{BUS_TRIP_ID}', [SeatController::class, 'seatOfBus']);
     Route::get('/get_bus_trip_fillter', [BusTripController::class, 'getBusTripsByFillter']);
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
