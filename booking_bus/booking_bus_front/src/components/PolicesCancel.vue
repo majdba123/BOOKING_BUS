@@ -268,8 +268,7 @@
                 <div class="dialog-box">
                     <div class="dialog-header">Confirm Delete</div>
                     <div class="dialog-body">
-                        Are you sure you want to delete the reward with ID
-                        {{ rewardToDelete }}?
+                        Are you sure about the deletion process?
                     </div>
                     <div class="dialog-footer">
                         <button @click="deleteReward" class="confirm-btn">
@@ -277,7 +276,7 @@
                         </button>
                         <button
                             @click="closeDeleteConfirmModal"
-                            class="cancel-btnd"
+                            class="cancels-btn"
                         >
                             No
                         </button>
@@ -378,6 +377,7 @@
                             id="description"
                             required
                             placeholder="Enter description"
+                            class="description-input"
                         ></textarea>
                     </div>
                     <button type="submit" class="save-btn">
@@ -393,7 +393,7 @@
                 </div>
                 <div v-else>
                     <div
-                        v-if="!cancellationRules.length > 0"
+                        v-if="!cancellationRules.length"
                         class="no-data-message"
                     >
                         No Data Available
@@ -420,7 +420,9 @@
                                     <td>
                                         <button
                                             class="delete-btn"
-                                            @click="deleteRule(rule.id)"
+                                            @click="
+                                                openDeleteConfirmModal(rule)
+                                            "
                                         >
                                             <span class="material-icons"
                                                 >delete</span
@@ -443,13 +445,13 @@
                     </div>
                 </div>
             </div>
+
             <!-- Confirm Delete Rule Modal -->
             <div v-if="showDeleteConfirmModal" class="dialog-container">
                 <div class="dialog-box">
                     <div class="dialog-header">Confirm Delete</div>
                     <div class="dialog-body">
-                        Are you sure you want to delete the cancellation rule
-                        with ID {{ ruleToDelete.id }}?
+                        Are you sure you want to delete this cancellation rule?
                     </div>
                     <div class="dialog-footer">
                         <button
@@ -460,7 +462,7 @@
                         </button>
                         <button
                             @click="closeDeleteConfirmModal"
-                            class="cancel-btnd"
+                            class="cancels-btn"
                         >
                             No
                         </button>
@@ -509,6 +511,7 @@
                                 v-model="ruleDescription"
                                 id="description"
                                 required
+                                class="description-input"
                             ></textarea>
                         </div>
                         <div class="modal-actions">
@@ -574,8 +577,8 @@ export default {
             selectedRuleId: null,
             toast: useToast(),
             showDeleteConfirmModal: false,
-            ruleToDelete: null, // Holds the cancellation rule selected for deletion
-            rewardToDelete: null, // Holds the reward selected for deletion
+            ruleToDelete: null,
+            rewardToDelete: null,
         };
     },
     methods: {
@@ -842,7 +845,6 @@ export default {
                 });
             this.loading1 = true;
         },
-
         addRule() {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -866,7 +868,6 @@ export default {
                     this.toast.error("Error adding cancellation rule");
                 });
         },
-
         updateRule() {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -893,17 +894,14 @@ export default {
                     this.toast.error("Error updating cancellation rule");
                 });
         },
-
         openDeleteConfirmModal(rule) {
             this.ruleToDelete = rule;
             this.showDeleteConfirmModal = true;
         },
-
         closeDeleteConfirmModal() {
             this.showDeleteConfirmModal = false;
             this.ruleToDelete = null;
         },
-
         deleteConfirmedRule() {
             if (this.ruleToDelete && this.ruleToDelete.id) {
                 this.deleteRule(this.ruleToDelete.id);
@@ -912,7 +910,6 @@ export default {
             }
             this.closeDeleteConfirmModal();
         },
-
         deleteRule(id) {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -1065,6 +1062,8 @@ body {
     align-items: center;
     justify-content: flex-start;
     min-height: 100vh;
+    width: 100%;
+    max-width: 800px;
 }
 
 /* Header Styles */
@@ -1089,29 +1088,34 @@ body {
 
 .dialog-box {
     background: #fff;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
-    max-width: 500px;
+    max-width: 400px;
     width: 50%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    text-align: center;
 }
 
 .dialog-header,
 .dialog-body,
 .dialog-footer {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .dialog-header {
     font-size: 1.3rem;
     font-weight: bold;
-    display: flex;
-    justify-content: center;
+    text-align: center;
+}
+
+.dialog-body {
+    text-align: center;
 }
 
 .dialog-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    gap: 10px;
 }
 
 .confirm-btn {
@@ -1127,19 +1131,28 @@ body {
     background-color: #4cae4c;
 }
 
-.cancel-btnd {
+.cancels-btn {
     padding: 8px 16px;
     background-color: #d9534f;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 10px;
 }
 
-.cancel-btnd:hover {
+.cancels-btn:hover {
     background-color: #c9302c;
 }
+
+.close-modal {
+    padding: 8px 16px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 /* Modal background overlay */
 .modal {
     display: flex;
@@ -1235,6 +1248,7 @@ body {
     border-radius: var(--border-radius-3);
     box-shadow: var(--box-shadow);
     width: 100%;
+    max-width: 800px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
@@ -1601,26 +1615,22 @@ textarea {
     background-color: var(--clr-white);
     border-radius: var(--border-radius-3);
     width: 100%;
+    max-width: 800px;
 }
 
 .nav-btnd {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
+    border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
-}
-.button-group {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 15px;
+    width: 100%;
 }
 
 @keyframes gradientAnimation {
@@ -1638,8 +1648,15 @@ textarea {
 .nav-btnd:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    transition: 0.3s;
+    transition: 0.3s ease;
 }
+.button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
 /* General Table Styles */
 .recent_orders {
     width: 100%;

@@ -265,8 +265,7 @@
             <div class="dialog-box">
                 <div class="dialog-header">Confirm Delete</div>
                 <div class="dialog-body">
-                    Are you sure you want to delete driver with ID
-                    {{ driverIdToDelete }}?
+                    Are you sure about the deletion process?
                 </div>
                 <div class="dialog-footer">
                     <button @click="confirmDeleteDriver" class="confirm-btn">
@@ -616,29 +615,34 @@ body {
 
 .dialog-box {
     background: #fff;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
-    max-width: 500px;
+    max-width: 400px;
     width: 50%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    text-align: center;
 }
 
 .dialog-header,
 .dialog-body,
 .dialog-footer {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .dialog-header {
     font-size: 1.3rem;
     font-weight: bold;
-    display: flex;
-    justify-content: center;
+    text-align: center;
+}
+
+.dialog-body {
+    text-align: center;
 }
 
 .dialog-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    gap: 10px;
 }
 
 .confirm-btn {
@@ -648,7 +652,6 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 5px;
 }
 
 .confirm-btn:hover {
@@ -662,12 +665,12 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 10px;
 }
 
 .cancel-btn:hover {
     background-color: #c9302c;
 }
+
 .close-modal {
     padding: 8px 16px;
     background-color: #d9534f;
@@ -675,8 +678,8 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 5px;
 }
+
 .recent_orders h1 {
     margin: 18px;
     color: var(--clr-dark);
@@ -822,7 +825,7 @@ select:focus {
     margin-bottom: 10px;
     margin-top: 20px;
     background-color: var(--clr-white);
-    border-radius: 10px;
+    border-radius: var(--border-radius-3);
     width: 100%;
     max-width: 800px;
 }
@@ -839,6 +842,7 @@ select:focus {
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
+    width: 100%;
 }
 
 @keyframes gradientAnimation {

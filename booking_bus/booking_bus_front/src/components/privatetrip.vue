@@ -136,10 +136,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button @click="submitAcceptOrder" class="close-modal">
+                    <button @click="submitAcceptOrder" class="confirm-btn">
                         Submit
                     </button>
-                    <button @click="closeAcceptModal" class="close-modal">
+                    <button @click="closeAcceptModal" class="cancel-btn">
                         Close
                     </button>
                 </div>
@@ -158,8 +158,8 @@ export default {
         return {
             loading: true,
 
-            showForm: true, // Indicates if private trips should be displayed
-            showOrders: false, // Indicates if orders should be displayed
+            showForm: true,
+            showOrders: false,
             privateTrips: [],
             myOrders: [],
             currentPage: 1,
@@ -250,10 +250,12 @@ export default {
                     this.toast.success("Order accepted successfully!");
                     this.showAcceptModal = false;
                     this.fetchPrivateTrips();
+                    this.price = "";
                 })
                 .catch((error) => {
                     this.toast.error("Error accepting order.");
                     console.error(error);
+                    this.price = "";
                 });
         },
         closeAcceptModal() {
@@ -595,7 +597,7 @@ select:focus {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     flex-wrap: wrap;
 }
 
@@ -611,6 +613,8 @@ select:focus {
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
+    width: 100%;
+    max-width: 200px;
 }
 @keyframes gradientAnimation {
     0% {
@@ -652,7 +656,6 @@ select:focus {
     padding: 20px;
     border-radius: 10px;
     width: 100%;
-    margin-top: 50px;
     transition: background-color 0.3s ease;
 }
 
@@ -703,24 +706,27 @@ input:focus {
 /* Modal styling */
 .modal {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     position: fixed;
-    z-index: 1000;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
 .modal-content {
-    background: var(--clr-white);
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
-    box-shadow: 0 2rem 3rem var(--clr-light);
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .modal-header,
@@ -737,7 +743,32 @@ input:focus {
 
 .modal-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    gap: 10px;
+}
+
+.confirm-btn {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.confirm-btn:hover {
+    background-color: #4cae4c;
+}
+.cancel-btn {
+    padding: 8px 16px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background-color: #c9302c;
 }
 
 .close-modal {

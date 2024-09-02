@@ -193,8 +193,8 @@ export default {
         },
         updateDateTime() {
             const now = new Date();
-            this.currentDateTime.date = now.toISOString().split("T")[0]; // Format YYYY-MM-DD
-            this.currentDateTime.time = now.toTimeString().split(" ")[0]; // Format HH:MM:SS
+            this.currentDateTime.date = now.toISOString().split("T")[0];
+            this.currentDateTime.time = now.toTimeString().split(" ")[0];
         },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -229,14 +229,11 @@ export default {
         },
         search() {
             console.log("Searching for:", this.searchQuery);
-            // Add your search logic here
         },
     },
     mounted() {
-        // Set initial date and time
         this.updateDateTime();
 
-        // Update date and time every second
         setInterval(this.updateDateTime, 1000);
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme === "enabled") {
@@ -362,7 +359,7 @@ small {
     color: var(--clr-dark);
 }
 .profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
+    position: relative;
     display: flex;
     align-items: center;
 }
@@ -443,19 +440,30 @@ aside .logo {
 .date input {
     flex: 1;
 }
-
 .date button {
     padding: 0.5rem 1rem;
     border: none;
-    background-color: var(--clr-primary);
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
-    border-radius: 1rem;
+    border-radius: 9px;
     cursor: pointer;
+}
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .date button:hover {
-    background-color: var(--clr-primary-variant);
-    transition: 0.4s ease-in;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
 }
 
 /* Main section styles */
@@ -623,8 +631,8 @@ aside .logo {
     text-align: center;
     background: linear-gradient(135deg, #ff4d4d, #72c3ff);
     color: transparent;
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 .time-box span {

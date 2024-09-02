@@ -880,24 +880,29 @@ table tbody tr:last-child td {
     max-width: 500px;
     width: 50%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    text-align: center;
 }
 
 .dialog-header,
 .dialog-body,
 .dialog-footer {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .dialog-header {
     font-size: 1.3rem;
     font-weight: bold;
-    display: flex;
-    justify-content: center;
+    text-align: center;
+}
+
+.dialog-body {
+    text-align: center;
 }
 
 .dialog-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    gap: 10px;
 }
 
 .confirm-btn {
@@ -907,7 +912,6 @@ table tbody tr:last-child td {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 5px;
 }
 
 .confirm-btn:hover {
@@ -921,12 +925,12 @@ table tbody tr:last-child td {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 10px;
 }
 
 .cancel-btn:hover {
     background-color: #c9302c;
 }
+
 .close-modal {
     padding: 8px 16px;
     background-color: #d9534f;
@@ -934,7 +938,6 @@ table tbody tr:last-child td {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 5px;
 }
 /* ***Modal styling */
 .modal {
