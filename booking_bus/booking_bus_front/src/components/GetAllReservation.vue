@@ -425,7 +425,7 @@ export default {
             loading5: true,
             loading6: true,
 
-            showTripRatings: false,
+            showTripRatings: true,
             showDriverRatings: false,
             showAllReservationTheBus: false,
             showAllDrivers: false,
@@ -797,6 +797,8 @@ select:focus {
 
 /* Navigation styling */
 .navd {
+    margin-left: 4rem;
+
     display: flex;
     align-items: center;
     justify-content: center;
