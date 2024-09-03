@@ -11,7 +11,7 @@ use App\Models\Bus_Driver;
 use App\Models\Bus_Trip;
 use App\Models\Seat_Reservation;
 use App\Models\Pivoit;
-use App\Models\Bus;
+use App\Models\UserNotification;
 use App\Models\Seat;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -537,15 +537,20 @@ class ReservationController extends Controller
             $bookink->type = $request->input('type');
             $bookink->price = $price;
             $bookink->save();
-          //  print($bookink);
+
             $massage = " your booked is done : $bookink ";
+            event(new PrivateNotification($user_id, $massage));
+            UserNotification::create([
+                'user_id' => Auth::user()->id,
+                'notification' => $massage,
+            ]);
+            
             }catch (\Exception $e) {
                 DB::rollBack();
-                return response()->json(['error' => 'wwdwdw'], 500);
+                return response()->json(['error' =>$e->getMessage()], 500);
             }
 
-        /*    event(new PrivateNotification($user_id, $massage));
-            $bookink->save();*/
+
 
 
             foreach ($seats as $seat_id)
