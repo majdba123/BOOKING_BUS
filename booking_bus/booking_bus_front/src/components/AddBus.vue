@@ -1018,6 +1018,7 @@ input:focus {
     height: 86%;
     overflow-y: scroll;
     scrollbar-width: none;
+    margin: 10px;
 }
 
 .modal-content::-webkit-scrollbar {
