@@ -91,7 +91,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 import SidebarAdmin from "@/components/SidebarAdmin.vue";
@@ -182,57 +181,6 @@ export default {
         },
         search() {
             // هنا يمكنك تنفيذ وظيفة البحث
-        },
-        DeleteDriver(x) {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "delete",
-                url: `http://127.0.0.1:8000/api/company/delete_driver/${x}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Deleted Complete");
-                    this.AllDriver();
-                })
-                .catch(function (error) {
-                    window.alert("Error get Driver");
-                    console.error(x);
-                    console.error(error);
-                });
-        },
-        fetchBus() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.Bus = response.data;
-                })
-                .catch(function (error) {
-                    window.alert("Error get paths");
-                    console.error(error);
-                });
-        },
-        SelectDriver(event, userId) {
-            const busId = event.target.value;
-            const access_token = window.localStorage.getItem("access_token");
-
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
-                data: { driver_id: userId },
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Selected Complete");
-                    this.AllDriver();
-                })
-                .catch(function (error) {
-                    window.alert("Error getting Bus");
-                    console.error(error);
-                });
         },
     },
     mounted() {

@@ -353,7 +353,7 @@ export default {
             loading4: true,
             loading5: true,
 
-            showTripRatings: false,
+            showTripRatings: true,
             showDriverRatings: false,
             showAllTrips: false,
             showAllDrivers: false,

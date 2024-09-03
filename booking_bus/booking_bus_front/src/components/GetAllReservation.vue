@@ -1,6 +1,5 @@
 <template>
     <div class="containerd">
-        <HeaderCompany />
         <!-- Header with buttons -->
         <header class="navd">
             <button class="nav-btnd" @click="toggleTripRatings">
@@ -411,7 +410,6 @@
 </template>
 
 <script>
-import HeaderCompany from "./HeaderCompany.vue";
 import axios from "axios";
 
 export default {
@@ -427,7 +425,7 @@ export default {
             loading5: true,
             loading6: true,
 
-            showTripRatings: false,
+            showTripRatings: true,
             showDriverRatings: false,
             showAllReservationTheBus: false,
             showAllDrivers: false,
@@ -619,7 +617,6 @@ export default {
             this.showDriverRatingsModal = false;
         },
     },
-    components: { HeaderCompany },
 };
 </script>
 
@@ -800,6 +797,8 @@ select:focus {
 
 /* Navigation styling */
 .navd {
+    margin-left: 4rem;
+
     display: flex;
     align-items: center;
     justify-content: center;

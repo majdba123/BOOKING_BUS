@@ -415,7 +415,6 @@ export default {
                 .then((response) => {
                     this.Bus = response.data;
                     store.state.Bus = response.data;
-                    console.log(response.data);
                     this.loading = false;
                 })
                 .catch((error) => {

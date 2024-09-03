@@ -120,7 +120,7 @@ export default {
         },
         loadGoogleMapsScript() {
             const script = document.createElement("script");
-            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo&libraries=places,geometry`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44&libraries=places,geometry`;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
