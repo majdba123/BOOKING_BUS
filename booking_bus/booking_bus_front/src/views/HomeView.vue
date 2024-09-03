@@ -1,7 +1,7 @@
 <template>
     <div class="login-container">
         <div class="login-box" ref="loginBox">
-            <img src="@/assets/logoo.png" alt="Logo" class="logo" />
+            <img src="@/assets/logoo.svg" alt="Logo" class="logo" />
             <h1 v-if="isLogin">Login to Book Your Bus</h1>
             <h1 v-else>Register to Book Your Bus</h1>
             <form @submit.prevent="isLogin ? login() : register()">

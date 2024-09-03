@@ -9,6 +9,7 @@
             </button>
         </header>
 
+        <!-- Add Bus Form -->
         <div v-if="showForm" class="form-containerd">
             <form @submit.prevent="handleSubmit">
                 <div class="form-groupd">
@@ -38,6 +39,7 @@
             </form>
         </div>
 
+        <!-- Bus Table -->
         <div v-else class="recent_orders">
             <h1>All Bus</h1>
             <div class="table-container">
@@ -45,10 +47,7 @@
                     <div class="spinner"></div>
                 </div>
                 <div v-else>
-                    <div
-                        v-if="!filteredBuses.length > 0"
-                        class="no-data-message"
-                    >
+                    <div v-if="!filteredBuses.length" class="no-data-message">
                         No Data Available
                     </div>
                     <div v-else>
@@ -77,7 +76,6 @@
                                                 >edit</span
                                             >
                                         </button>
-
                                         <button
                                             class="delete-btn"
                                             @click="confirmDeleteBus(bus)"
@@ -87,11 +85,12 @@
                                             >
                                         </button>
                                     </td>
-
                                     <td>
                                         <button
                                             class="status-btn"
-                                            @click="showSeats(bus.id)"
+                                            @click="
+                                                openSeatsModal(bus.id, index)
+                                            "
                                         >
                                             <span class="material-icons"
                                                 >visibility</span
@@ -106,6 +105,7 @@
             </div>
         </div>
 
+        <!-- Bus Status Modal -->
         <div v-if="showBusStatusModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Bus Status</div>
@@ -127,7 +127,7 @@
                     </div>
                     <div v-else>
                         <div
-                            v-if="!busStatusData.length > 0"
+                            v-if="!busStatusData.length"
                             class="no-data-message"
                         >
                             No Data Available
@@ -163,9 +163,12 @@
             </div>
         </div>
 
+        <!-- Bus Seats Modal -->
         <div v-if="showSeatsModal" class="modal">
             <div class="modal-contentseat">
-                <div class="modal-header">Bus Seats</div>
+                <div class="modal-header">
+                    Bus Seats (Total: {{ seats.length }})
+                </div>
                 <div class="modal-body">
                     <div class="seats-container">
                         <div
@@ -177,9 +180,9 @@
                                 'seat' + (index + 1),
                             ]"
                         >
-                            <span class="material-icons">
-                                airline_seat_recline_normal
-                            </span>
+                            <span class="material-icons"
+                                >airline_seat_recline_normal</span
+                            >
                             {{ seat.seat_number }}
                         </div>
                     </div>
@@ -192,6 +195,7 @@
             </div>
         </div>
 
+        <!-- Edit Bus Modal -->
         <div v-if="showEditModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Edit Bus</div>
@@ -225,20 +229,21 @@
                 </div>
             </div>
         </div>
-        <div v-if="showDeleteConfirmModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Confirm Delete</div>
-                <div class="modal-body">
-                    Are you sure you want to delete bus number
-                    {{ busToDelete.number_bus }}?
+
+        <!-- Confirm Delete Modal -->
+        <div v-if="showDeleteConfirmModal" class="modals">
+            <div class="modals-content">
+                <div class="modals-header">Confirm Delete</div>
+                <div class="modals-body">
+                    Are you sure about the deletion process?
                 </div>
-                <div class="modal-footer">
-                    <button @click="deleteConfirmedBus" class="update-btn">
+                <div class="modals-footer">
+                    <button @click="deleteConfirmedBus" class="updates-btn">
                         Yes
                     </button>
                     <button
                         @click="closeDeleteConfirmModal"
-                        class="close-modal"
+                        class="closes-modal"
                     >
                         No
                     </button>
@@ -252,9 +257,9 @@
 import axios from "axios";
 import store from "@/store";
 import { useToast } from "vue-toastification";
+import { debounce } from "lodash";
 
 export default {
-    name: "AddBus",
     data() {
         return {
             loading: true,
@@ -277,6 +282,7 @@ export default {
             },
             editingIndex: null,
             toast: useToast(),
+            refreshInterval: null,
         };
     },
     mounted() {
@@ -288,6 +294,7 @@ export default {
         },
         closeSeatsModal() {
             this.showSeatsModal = false;
+            this.stopAutoRefresh();
         },
         closeEditModal() {
             this.showEditModal = false;
@@ -302,15 +309,17 @@ export default {
         AddBus() {
             const token = window.localStorage.getItem("access_token");
 
-            axios({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/company/store_bus",
-                data: {
-                    number_bus: this.number_bus.toString(),
-                    number_passenger: this.number_passenger.toString(),
-                },
-                headers: { Authorization: `Bearer ${token}` },
-            })
+            axios
+                .post(
+                    "http://127.0.0.1:8000/api/company/store_bus",
+                    {
+                        number_bus: this.number_bus.toString(),
+                        number_passenger: this.number_passenger.toString(),
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                )
                 .then((response) => {
                     console.log(response);
                     this.toast.success("Bus added successfully!");
@@ -324,16 +333,19 @@ export default {
         updateBus() {
             const access_token = window.localStorage.getItem("access_token");
             const busId = this.editedBus.id;
-            axios({
-                method: "put",
-                url: `http://127.0.0.1:8000/api/company/update_bus/${busId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-                data: {
-                    number_bus: this.editedBus.number_bus.toString(),
-                    number_passenger:
-                        this.editedBus.number_passenger.toString(),
-                },
-            })
+
+            axios
+                .put(
+                    `http://127.0.0.1:8000/api/company/update_bus/${busId}`,
+                    {
+                        number_bus: this.editedBus.number_bus.toString(),
+                        number_passenger:
+                            this.editedBus.number_passenger.toString(),
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
                 .then((response) => {
                     this.Bus.splice(this.editingIndex, 1, this.editedBus);
                     this.editingIndex = null;
@@ -356,18 +368,18 @@ export default {
         },
         AllBus() {
             const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
+
+            axios
+                .get("http://127.0.0.1:8000/api/company/all_bus", {
+                    headers: { Authorization: `Bearer ${access_token}` },
+                })
                 .then((response) => {
                     this.Bus = response.data;
                     store.state.Bus = response.data;
                     console.log(response.data);
                     this.loading = false;
                 })
-                .catch(function (error) {
+                .catch((error) => {
                     window.alert("Error Getting Bus");
                     console.error(error);
                 });
@@ -375,11 +387,14 @@ export default {
         },
         fetchBusStatus(status) {
             const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: ` http://127.0.0.1:8000/api/company/get_bus_status?status=${status}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
+
+            axios
+                .get(
+                    `http://127.0.0.1:8000/api/company/get_bus_status?status=${status}`,
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
                 .then((response) => {
                     this.busStatusData = response.data;
                     console.log(response.data);
@@ -401,7 +416,6 @@ export default {
             this.busToDelete = bus;
             this.showDeleteConfirmModal = true;
         },
-
         deleteConfirmedBus() {
             if (this.busToDelete && this.busToDelete.id) {
                 console.log("Deleting bus:", this.busToDelete);
@@ -411,47 +425,75 @@ export default {
             }
             this.closeDeleteConfirmModal();
         },
-
         DeleteBus(id) {
             const access_token = window.localStorage.getItem("access_token");
 
-            axios({
-                method: "delete",
-                url: `http://127.0.0.1:8000/api/company/delete_bus/${id}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
+            axios
+                .delete(`http://127.0.0.1:8000/api/company/delete_bus/${id}`, {
+                    headers: { Authorization: `Bearer ${access_token}` },
+                })
                 .then(() => {
                     this.Bus = this.Bus.filter((busItem) => busItem.id !== id);
-                    this.toast.success("Bus delete successfully");
+                    this.toast.success("Bus deleted successfully");
                     this.AllBus();
                 })
                 .catch((error) => {
                     console.error("Error during deletion:", error);
-                    this.toast.error("Error delete bus ");
+                    this.toast.error("Error deleting bus");
                 });
         },
-
         closeDeleteConfirmModal() {
             this.showDeleteConfirmModal = false;
             this.busToDelete = null;
         },
-        showSeats(busId) {
+        openSeatsModal(busId, index) {
+            console.log(
+                `Opening seats modal for busId: ${busId}, index: ${index}`
+            );
+            this.fetchSeats(busId, index);
+            this.startAutoRefresh(busId, index);
+        },
+        fetchSeats: debounce(function (busId, index) {
             const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/all_seat_of_bus/${busId}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
+
+            axios
+                .post(
+                    `http://127.0.0.1:8000/api/company/all_seat_of_bus/${busId}`,
+                    {},
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
                 .then((response) => {
+                    console.log("Fetched seats:", response.data);
+                    this.Bus[index].seats = response.data;
                     this.seats = response.data;
                     this.showSeatsModal = true;
-                    console.log(response.data);
                 })
                 .catch((error) => {
-                    window.alert("Error fetching bus seats");
-                    console.error(error);
+                    window.alert.toast("Error fetching bus seats");
+                    console.error("Fetch seats error:", error);
                 });
+        }, 300),
+        startAutoRefresh(busId, index) {
+            console.log("Starting auto-refresh...");
+            this.stopAutoRefresh();
+
+            this.refreshInterval = setInterval(() => {
+                console.log("Fetching seats...");
+                this.fetchSeats(busId, index);
+            }, 10000);
         },
+        stopAutoRefresh() {
+            console.log("Stopping auto-refresh...");
+            if (this.refreshInterval) {
+                clearInterval(this.refreshInterval);
+                this.refreshInterval = null;
+            }
+        },
+    },
+    beforeUnmount() {
+        this.stopAutoRefresh();
     },
     computed: {
         filteredBuses() {
@@ -516,8 +558,9 @@ export default {
     text-decoration: none;
 }
 
+/* Typography */
 body {
-    font-family: "Poppins", sans-serif;
+    font-family: "Roboto", sans-serif;
     width: 100%;
     height: 100%;
     font-size: 0.88rem;
@@ -526,16 +569,42 @@ body {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-weight: 700;
+    font-size: 2rem;
     color: var(--clr-dark);
 }
 
 h2 {
+    font-weight: 500;
+    font-size: 1.6rem;
+    color: var(--clr-dark);
+}
+
+h3 {
+    font-weight: 500;
     font-size: 1.4rem;
     color: var(--clr-dark);
 }
 
+h4 {
+    font-weight: 400;
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+}
+
+p {
+    font-weight: 400;
+    font-size: 1rem;
+    color: var(--clr-dark-variant);
+}
+
+small {
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--clr-dark-variant);
+}
+
+/* Table styling */
 .recent_orders {
     width: 100%;
     overflow-x: auto;
@@ -604,6 +673,7 @@ table tbody tr {
     color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
 }
+
 table tbody tr:hover {
     background-color: var(--clr-light);
 }
@@ -728,6 +798,7 @@ select:focus {
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
 }
+
 @keyframes gradientAnimation {
     0% {
         background-position: 0% 50%;
@@ -909,6 +980,75 @@ input:focus {
 
 .update-btn:hover {
     background-color: #4cae4c;
+}
+
+.modals {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modals-content {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.modals-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.modals-body {
+    margin-bottom: 20px;
+}
+
+.modals-footer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.updates-btn,
+.closes-modal {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.updates-btn {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.updates-btn:hover {
+    background-color: #3c8f3c;
+}
+
+.closes-modal {
+    background-color: #f44336;
+    color: #fff;
+}
+
+.closes-modal:hover {
+    background-color: #c9302c;
 }
 
 /* Seats styling */

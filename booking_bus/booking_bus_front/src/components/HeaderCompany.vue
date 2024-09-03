@@ -1,7 +1,23 @@
 <template>
     <main>
-        <h1>{{ x }}</h1>
         <div class="top-bar">
+            <h1>{{ x }}</h1>
+            <div class="datetime-container">
+                <div class="time">
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[0] }}
+                        <span>hour</span>
+                    </div>
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[1] }}
+                        <span>minutes</span>
+                    </div>
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[2] }}
+                        <span>seconds</span>
+                    </div>
+                </div>
+            </div>
             <div class="profile-menu">
                 <div
                     class="theme-toggler"
@@ -11,16 +27,24 @@
                     <span class="material-icons active">light_mode</span>
                     <span class="material-icons">dark_mode</span>
                 </div>
-                <img
-                    :src="profileImage"
-                    alt="Profile"
-                    class="profile-picture"
-                    @click="toggleProfileMenu"
-                />
-                <ul v-if="showProfileMenu" class="dropdown-menu">
-                    <li @click="goToProfile">Go to Profile</li>
-                    <li @click="logout">Logout</li>
-                </ul>
+                <div class="profile">
+                    <div class="info">
+                        <p><b>Babar</b></p>
+                        <p>Admin</p>
+                    </div>
+                    <div class="profile-photo">
+                        <img
+                            :src="profileImage"
+                            alt="Profile"
+                            class="profile-picture"
+                            @click="toggleProfileMenu"
+                        />
+                        <ul v-if="showProfileMenu" class="dropdown-menu">
+                            <li @click="goToProfile">Go to Profile</li>
+                            <li @click="logout">Logout</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -37,6 +61,10 @@ export default {
             showProfileMenu: false,
             profileImage: "",
             isDarkMode: false,
+            currentDateTime: {
+                date: "",
+                time: "",
+            },
         };
     },
     methods: {
@@ -57,6 +85,11 @@ export default {
                 }
             }
         },
+        updateDateTime() {
+            const now = new Date();
+            this.currentDateTime.date = now.toISOString().split("T")[0];
+            this.currentDateTime.time = now.toTimeString().split(" ")[0];
+        },
         goToProfile() {
             this.$router.push("/ProfileCompany");
         },
@@ -76,13 +109,22 @@ export default {
                 "dark-theme-variables",
                 this.isDarkMode
             );
+            localStorage.setItem(
+                "darkMode",
+                this.isDarkMode ? "enabled" : "disabled"
+            );
+
             const themeToggler = this.$refs.themeToggler;
-            themeToggler.querySelectorAll("span").forEach((span) => {
-                span.classList.toggle("active");
-            });
+            themeToggler
+                .querySelector("span:nth-child(1)")
+                .classList.toggle("active", !this.isDarkMode);
+            themeToggler
+                .querySelector("span:nth-child(2)")
+                .classList.toggle("active", this.isDarkMode);
         },
     },
     mounted() {
+        this.updateDateTime();
         this.fetchProfileInfo();
         if (document.body.classList.contains("dark-theme-variables")) {
             this.isDarkMode = true;
@@ -94,7 +136,6 @@ export default {
     },
 };
 </script>
-
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -160,7 +201,6 @@ a {
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
-    margin-top: 20px;
 }
 
 h2 {
@@ -187,7 +227,7 @@ small {
     display: flex;
     gap: 1rem;
     align-items: center;
-    justify-content: end;
+    justify-content: space-between;
 }
 
 .date {
@@ -225,85 +265,95 @@ small {
 }
 
 .profile-menu {
-    position: relative;
     display: flex;
     align-items: center;
-    cursor: pointer;
 }
 
 .theme-toggler {
-    background-color: var(--clr-white);
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    height: 1.7rem;
-    width: 3.1rem;
+    background: var(--clr-light);
+    padding: 0.5rem;
+    border-radius: 1rem;
     cursor: pointer;
-    border-radius: 8px;
-    margin-right: 20px;
+    margin-right: 4rem;
 }
 
 .theme-toggler span {
-    font-size: 1rem;
-    width: 50%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--clr-warning);
+    cursor: pointer;
 }
 
 .theme-toggler span.active {
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    border-radius: 8px;
+    color: var(--clr-primary);
 }
 
-.profile-picture {
-    width: 40px;
-    height: 40px;
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.info {
+    margin-right: 10px;
+}
+
+.info p {
+    margin-right: 1rem;
+    color: var(--clr-dark);
+}
+.profile-photo {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.profile-photo img {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     border: 2px solid var(--clr-primary);
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.profile-picture:hover {
+.profile-photo img:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
 }
-/* Dropdown Menu Styles */
+
 .dropdown-menu {
     position: absolute;
-    top: 50px;
+    top: 60px;
     right: 0;
     background-color: var(--clr-white);
-    border: 1px solid var(--clr-info-light);
+    border: 1px solid #ddd;
     border-radius: 0.5rem;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     list-style: none;
     padding: 10px 0;
     z-index: 1000;
     width: 150px;
+    animation: fadeIn 0.3s ease;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
 }
 
-/* Display the menu when active */
 .dropdown-menu.show {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
-/* Style list items in the dropdown */
 .dropdown-menu li {
     padding: 10px 15px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Change background on hover */
 .dropdown-menu li:hover {
     background-color: var(--clr-primary);
     color: var(--clr-white);
@@ -320,9 +370,51 @@ small {
         transform: translateY(0);
     }
 }
+.datetime-container {
+    text-align: center;
+    font-family: "Arial", sans-serif;
+    color: #ffffff;
+}
 
-/* Adding a subtle fade-in animation */
+.dateright {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #72c3ff;
+    background: linear-gradient(90deg, #72c3ff, #ff4d4d);
+    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
+    background-clip: text; /* Standard property (currently not supported widely) */
+    color: transparent;
+    margin-bottom: 10px;
+}
 
+.time {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.time-box {
+    background: #111111;
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    font-size: 1.5rem;
+    position: relative;
+    color: #ffffff;
+    text-align: center;
+    background: linear-gradient(135deg, #ff4d4d, #72c3ff);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.time-box span {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: normal;
+    margin-top: 0.5rem;
+    color: #c0c0c0;
+}
 /* Responsive Design */
 @media screen and (max-width: 1200px) {
     input {
@@ -354,6 +446,21 @@ small {
     }
 }
 
+@media screen and (max-width: 500px) {
+    input {
+        width: 100%;
+        font-size: 0.75rem;
+    }
+
+    .date {
+        padding: 5px;
+    }
+
+    .date button {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
 @media screen and (max-width: 500px) {
     input {
         width: 100%;

@@ -73,7 +73,7 @@ export default {
     --card-padding: 1.8rem;
     --padding-1: 1.2rem;
 
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    --box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 .dark-theme-variables {
     --clr-color-background: #181a1e;
@@ -101,7 +101,7 @@ body {
     overflow: hidden;
     font-size: 0.88rem;
     user-select: none;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
 }
 
 .container {
@@ -113,7 +113,7 @@ body {
 }
 
 a {
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 h1 {
@@ -149,11 +149,11 @@ small {
 }
 
 .text-muted {
-    color: #7d8da1;
+    color: var(--clr-info-dark);
 }
 
 .primary {
-    color: #7380ec;
+    color: var(--clr-primary);
 }
 
 .success {
@@ -161,15 +161,16 @@ small {
 }
 
 .danger {
-    color: #ff7782;
+    color: var(--clr-danger);
 }
 
 .warning {
-    color: #ffbb55;
+    color: var(--clr-warning);
 }
+
 aside {
     height: 100vh;
-    background-color: #fff;
+    background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -195,7 +196,7 @@ main input {
     background-color: transparent;
     border: 0;
     outline: 0;
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 main .top-bar {
@@ -206,7 +207,7 @@ main .top-bar {
 
 main .date {
     display: inline-block;
-    background-color: #fff;
+    background-color: var(--clr-white);
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 9px;
@@ -215,15 +216,15 @@ main .date {
 main .date button {
     padding: 0.5rem 1rem;
     border: none;
-    background-color: #007bff;
-    color: #fff;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     border-radius: 1rem;
     cursor: pointer;
     margin-left: 5px;
 }
 
 main .date button:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
     transition: 0.4s ease-in;
 }
 
@@ -234,11 +235,11 @@ main .insights {
 }
 
 main .insights > div {
-    background-color: #fff;
-    padding: 1.8rem;
-    border-radius: 2rem;
+    background-color: var(--clr-white);
+    padding: var(--card-padding);
+    border-radius: var(--card-border-radius);
     margin-top: 1rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: var(--box-shadow);
     transition: all 0.3s ease;
 }
 
@@ -250,16 +251,16 @@ main .insights > div span {
     background: coral;
     padding: 0.5rem;
     border-radius: 50%;
-    color: #fff;
+    color: var(--clr-white);
     font-size: 2rem;
 }
 
 main .insights > div.expenses span {
-    background: #ff7782;
+    background: var(--clr-danger);
 }
 
 main .insights > div.income span {
-    background: #41f1b6;
+    background: var(--clr-success);
 }
 
 main .insights > div .middle {
@@ -273,19 +274,19 @@ main .insights > div .middle h1 {
 }
 
 main h1 {
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 main .insights h1 {
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 main .insights h3 {
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 main .insights p {
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 main .insights .progress {
@@ -305,13 +306,13 @@ main .insights svg {
 
 main .insights svg circle.background-circle {
     fill: none;
-    stroke: #e4e9f7;
+    stroke: var(--clr-info-light);
     stroke-width: 6;
 }
 
 main .insights svg circle.sales-circle {
     fill: none;
-    stroke: #7380ec;
+    stroke: var(--clr-primary);
     stroke-width: 5;
     stroke-dasharray: 188.4;
     stroke-dashoffset: 37.68;
@@ -321,7 +322,7 @@ main .insights svg circle.sales-circle {
 
 main .insights svg circle.expenses-circle {
     fill: none;
-    stroke: #ff7782;
+    stroke: var(--clr-danger);
     stroke-width: 5;
     stroke-dasharray: 188.4;
     stroke-dashoffset: 37.68;
@@ -331,7 +332,7 @@ main .insights svg circle.expenses-circle {
 
 main .insights svg circle.income-circle {
     fill: none;
-    stroke: #41f1b6;
+    stroke: var(--clr-success);
     stroke-width: 5;
     stroke-dasharray: 188.4;
     stroke-dashoffset: 37.68;
@@ -345,23 +346,23 @@ main .insights .progress .number {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 1.2rem;
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 main .recent_orders h1 {
     margin: 18px;
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 main .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
-    border-radius: 2rem;
-    padding: 1.8rem;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
     text-align: center;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: var(--box-shadow);
     transition: all 0.3s ease;
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 main .recent_orders table:hover {
@@ -374,14 +375,14 @@ main table thead tr th {
 
 main table tbody tr {
     height: 3.8rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-white);
+    color: var(--clr-dark-variant);
 }
 
 main table tbody td {
     height: 3.8rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-dark);
+    color: var(--clr-dark-variant);
 }
 
 main table tbody tr:last-child td {
@@ -436,7 +437,7 @@ main .recent_orders a {
         position: fixed;
         width: 18rem;
         z-index: 3;
-        background-color: #fff;
+        background-color: var(--clr-white);
         display: none;
         left: -100px;
         animation: menuAni 1s forwards;
@@ -476,11 +477,11 @@ main .recent_orders a {
         justify-content: center;
         align-items: center;
         padding: 0 0.8rem;
-        background-color: #fff;
+        background-color: var(--clr-white);
         width: 100%;
         height: 4.6rem;
         z-index: 2;
-        box-shadow: 0 1rem 1rem 0 2rem 3rem rgba(132, 139, 200, 0.18);
+        box-shadow: var(--box-shadow);
         margin: 0;
     }
 
@@ -513,7 +514,7 @@ main .recent_orders a {
         display: inline-block;
         background: transparent;
         cursor: pointer;
-        color: #363949;
+        color: var(--clr-dark);
         position: absolute;
         left: 1rem;
     }
@@ -537,8 +538,8 @@ main .recent_orders a {
     }
 
     .theme-toggler span.active {
-        background-color: #7380ec;
-        color: #fff;
+        background-color: var(--clr-primary);
+        color: var(--clr-white);
         border-radius: 10px;
     }
 }
