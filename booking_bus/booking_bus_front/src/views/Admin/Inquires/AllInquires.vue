@@ -93,6 +93,7 @@ import SidebarAdmin from "@/components/SidebarAdmin.vue";
 import inquires from "@/components/inquires.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
+import router from "@/router";
 
 export default {
     name: "AllInquires",
@@ -121,7 +122,24 @@ export default {
             },
         };
     },
+    mounted() {
+        this.checkToken();
+    },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const token = window.localStorage.getItem("access_token");
+            const userType = window.localStorage.getItem("type_user");
+
+            if (token && userType) {
+                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+                if (userType === "company") {
+                    router.push("/HomeView");
+                } else if (userType === "user") {
+                    router.push("/HomeView");
+                }
+            }
+        },
         openMenu() {
             this.$refs.sideMenu.style.display = "block";
         },

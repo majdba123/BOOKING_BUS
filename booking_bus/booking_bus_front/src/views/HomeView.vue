@@ -82,6 +82,7 @@ export default {
     },
     data() {
         return {
+            x: "",
             email: "",
             password: "",
             username: "",
@@ -112,6 +113,7 @@ export default {
         },
     },
     mounted() {
+        this.checkToken();
         anime({
             targets: this.$refs.loginBox,
             translateY: [-50, 0],
@@ -121,6 +123,27 @@ export default {
         });
     },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const token = window.localStorage.getItem("access_token");
+            const userType = window.localStorage.getItem("type_user");
+
+            if (token && userType) {
+                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+                if (userType === "admin") {
+                    router.push("/AdminPage");
+                } else if (userType === "company") {
+                    router.push("/BookingLogin");
+                } else if (userType === "user") {
+                    router.push("/UserPage");
+                } else {
+                    router.push("/");
+                }
+            } else {
+                // إذا لم يكن هناك توكن، ابق في صفحة تسجيل الدخول
+                console.log("No token found, staying on login page.");
+            }
+        },
         startLoadingAnimation() {
             this.isLoading = true;
             this.$nextTick(() => {
@@ -257,7 +280,12 @@ export default {
                                 "access_token",
                                 response.data.access_token
                             );
+                            this.x = response.data.type_user;
                             const userType = response.data.type_user;
+                            window.localStorage.setItem(
+                                "type_user",
+                                response.data.type_user
+                            );
                             if (userType === "admin") {
                                 router.push("/AdminPage");
                             } else if (userType === "company") {

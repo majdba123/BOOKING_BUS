@@ -44,9 +44,14 @@
 import MainAdmin from "@/components/MainAdmin.vue";
 import DashboardChartsAdmin from "@/components/DashboardChartsAdmin.vue";
 import SidebarAdmin from "@/components/SidebarAdmin.vue";
+import router from "@/router";
+
 export default {
     mounted() {
         this.handleResize();
+
+        // Set initial date and time
+        this.checkToken();
 
         window.addEventListener("resize", this.handleResize);
     },
@@ -54,6 +59,21 @@ export default {
         window.removeEventListener("resize", this.handleResize);
     },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const userType = window.localStorage.getItem("type_user");
+
+            // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+            if (userType === "company") {
+                router.push("/");
+            } else if (userType === "user") {
+                router.push("/");
+            } else if (userType === "admin") {
+                router.push("/AdminPage");
+            } else {
+                router.push("/");
+            }
+        },
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {

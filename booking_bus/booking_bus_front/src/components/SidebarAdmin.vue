@@ -106,6 +106,9 @@ export default {
                         "access_token",
                         response.data.access_token
                     );
+                    window.localStorage.removeItem("type_user");
+                    window.localStorage.removeItem("access_token");
+
                     router.push("/");
                 }
             });

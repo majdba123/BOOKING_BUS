@@ -93,7 +93,7 @@
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import AddTrip from "@/components/AddTrip.vue";
-
+import router from "@/router";
 import store from "@/store";
 
 export default {
@@ -132,6 +132,20 @@ export default {
         },
     },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const token = window.localStorage.getItem("access_token");
+            const userType = window.localStorage.getItem("type_user");
+
+            if (token && userType) {
+                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+                if (userType === "admin") {
+                    router.push("/");
+                } else if (userType === "user") {
+                    router.push("/");
+                }
+            }
+        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
@@ -158,6 +172,9 @@ export default {
         search() {
             // Search functionality can be handled here
         },
+    },
+    mounted() {
+        this.checkToken();
     },
 };
 </script>

@@ -95,6 +95,7 @@ import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddBreak from "@/components/AddBreak.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
+import router from "@/router";
 
 export default {
     name: "AllBus",
@@ -132,6 +133,20 @@ export default {
         },
     },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const token = window.localStorage.getItem("access_token");
+            const userType = window.localStorage.getItem("type_user");
+
+            if (token && userType) {
+                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+                if (userType === "admin") {
+                    router.push("/HomeView");
+                } else if (userType === "user") {
+                    router.push("/HomeView");
+                }
+            }
+        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
@@ -209,6 +224,10 @@ export default {
                     console.error(error);
                 });
         },
+    },
+    mounted() {
+        // Set initial date and time
+        this.checkToken();
     },
 };
 </script>

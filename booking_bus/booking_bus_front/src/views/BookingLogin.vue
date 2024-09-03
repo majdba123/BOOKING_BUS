@@ -44,6 +44,7 @@ import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import MainCompany from "@/components/MainCompany.vue";
 import DashboardCharts from "@/components/DashboardCharts.vue";
+import router from "@/router";
 
 export default {
     data() {
@@ -52,6 +53,7 @@ export default {
         };
     },
     mounted() {
+        this.checkToken();
         this.handleResize();
         window.addEventListener("resize", this.handleResize);
 
@@ -62,6 +64,21 @@ export default {
         window.removeEventListener("resize", this.handleResize);
     },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const userType = window.localStorage.getItem("type_user");
+
+            // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+            if (userType === "admin") {
+                router.push("/");
+            } else if (userType === "user") {
+                router.push("/");
+            } else if (userType === "company") {
+                router.push("/BookingLogin");
+            } else {
+                router.push("/");
+            }
+        },
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {

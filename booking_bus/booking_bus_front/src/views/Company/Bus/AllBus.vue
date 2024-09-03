@@ -120,6 +120,7 @@ import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddBus from "@/components/AddBus.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
+import router from "@/router";
 
 export default {
     name: "AllDriver",
@@ -163,6 +164,20 @@ export default {
         },
     },
     methods: {
+        checkToken() {
+            // الحصول على التوكن من localStorage
+            const token = window.localStorage.getItem("access_token");
+            const userType = window.localStorage.getItem("type_user");
+
+            if (token && userType) {
+                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+                if (userType === "admin") {
+                    router.push("/HomeView");
+                } else if (userType === "user") {
+                    router.push("/HomeView");
+                }
+            }
+        },
         toggleProfileMenu() {
             this.showProfileMenu = !this.showProfileMenu;
             if (this.showProfileMenu) {
@@ -288,6 +303,7 @@ export default {
     mounted() {
         // Set initial date and time
         this.updateDateTime();
+        this.checkToken();
 
         // Update date and time every second
         setInterval(this.updateDateTime, 1000);
