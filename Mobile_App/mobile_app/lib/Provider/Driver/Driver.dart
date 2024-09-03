@@ -2,21 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Api_Services/Driver/DriverSerivce.dart';
 import 'package:mobile_app/Data_Models/Driver/MyBusModel.dart';
 import 'package:mobile_app/Data_Models/Driver/RatingDriverAndSpeed.dart';
+import 'package:mobile_app/Data_Models/Driver/TripDeatilesModel.dart';
 import 'package:mobile_app/Data_Models/Driver/TripForDriver.dart';
 
 class DriverProvider extends ChangeNotifier {
   TripForDriverModel? _TripDriver;
   List<TripForDriverModel>? _MyTrip;
   List<TripForDriverModel>? _hsitoryTrip;
+  TripDeatilesModel? _TripDriverDetail;
+
   RateDriverModel? _RateDriver;
   MyBusModel? _MyBus;
   bool _isLoading = false;
   String? _errorMessage;
   String _typePage = 'alltrip';
   String get typePage => _typePage;
+  late int _indextrip;
+  int get indextrip => _indextrip;
+  int _currentStopIndex = 0;
+  int _totalPassenger = 0;
+  int get currentStopIndex => _currentStopIndex;
+  int get totalPassenger => _totalPassenger;
+
+  void settotalPassengerEmpty() {
+    _totalPassenger = 0;
+    notifyListeners();
+  }
 
   TripForDriverModel? get TripDriver => _TripDriver;
-
+  TripDeatilesModel? get TripDriverDetail => _TripDriverDetail;
   List<TripForDriverModel>? get MyTrip => _MyTrip;
   List<TripForDriverModel>? get hsitoryTrip => _hsitoryTrip;
   RateDriverModel? get RateDriver => _RateDriver;
@@ -26,6 +40,21 @@ class DriverProvider extends ChangeNotifier {
 
   void setypePage(type) {
     _typePage = type;
+    notifyListeners();
+  }
+
+  void setIndexTrip(index) {
+    _indextrip = index;
+    notifyListeners();
+  }
+
+  void setCurrentStopIndex(index) {
+    _currentStopIndex = index;
+    notifyListeners();
+  }
+
+  void settotalPassenger(int index) {
+    _totalPassenger += index;
     notifyListeners();
   }
 
@@ -105,6 +134,24 @@ class DriverProvider extends ChangeNotifier {
 
     try {
       _MyBus = await DriverService().fetchMyBus(accessToken);
+      print(_MyBus);
+      print('after handling !!');
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchTripsDetails(String accessToken, int busTripId) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _TripDriverDetail =
+          await DriverService().fetchTripDetailes(accessToken, busTripId);
       print(_MyBus);
       print('after handling !!');
     } catch (error) {

@@ -133,7 +133,7 @@ class _MapViewState extends State<MapUI> {
       _isLoading = true;
     });
     final apiKey =
-        'AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo'; // Replace with your Google Maps API key
+        'AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44'; // Replace with your Google Maps API key
 
     try {
       if (_startAddress.isEmpty || _destinationAddress.isEmpty) {
@@ -774,7 +774,7 @@ class _MapViewState extends State<MapUI> {
   ) async {
     polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey: "AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo",
+      googleApiKey: "AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44",
       request: PolylineRequest(
         origin: PointLatLng(startLatitude, startLongitude),
         destination: PointLatLng(destinationLatitude, destinationLongitude),

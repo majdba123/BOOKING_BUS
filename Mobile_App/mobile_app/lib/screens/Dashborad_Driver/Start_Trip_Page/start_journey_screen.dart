@@ -67,8 +67,8 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
           SizedBox(height: screenHeight * 0.015),
           // Journey Information Header
           JourneyRouteInfo(
-            status: 'ONGOING',
-          ),
+              // status: 'ONGOING',
+              ),
           SizedBox(height: screenHeight * 0.02),
 
           // Journey Details Header
@@ -89,9 +89,9 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
 
           // Map and Route Details
           JourneyInfoBox(
-            routeCoordinates: _routeCoordinates,
-            initialPosition: _initialPosition,
-            destinationPosition: _destinationPosition,
+            // routeCoordinates: _routeCoordinates,
+            // initialPosition: _initialPosition,
+            // destinationPosition: _destinationPosition,
             onMapCreated: (controller) {
               mapController = controller;
             },

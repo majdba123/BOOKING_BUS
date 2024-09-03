@@ -24,7 +24,7 @@ class FullMapViewScreen extends StatefulWidget {
 
 class _FullMapViewScreenState extends State<FullMapViewScreen> {
   List<LatLng> _routeCoordinates = [];
-  final String _googleAPIKey = 'AIzaSyAeLUpyozCjrCIxNBNmwVfCERYrHZh3MbU';
+  final String _googleAPIKey = 'AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44';
   bool _showTimeline = true;
 
   @override
@@ -255,17 +255,17 @@ class _FullMapViewScreenState extends State<FullMapViewScreen> {
                         }
 
                         return TimelineTileWidget(
-                          time: timeText,
-                          description: description,
-                          location: location,
-                          up: '${index + 1}',
-                          down: '${index + 1}',
-                          total: '${index + 1}',
-                          isFirst: isFirst,
-                          isLast: isLast,
-                          isCurrent: isCurrent,
-                          passed: index < 2,
-                        );
+                            // time: timeText,
+                            // description: description,
+                            // location: location,
+                            // up: '${index + 1}',
+                            // // down: '${index + 1}',
+                            // total: '${index + 1}',
+                            // isFirst: isFirst,
+                            // isLast: isLast,
+                            // isCurrent: isCurrent,
+                            // passed: index < 2,
+                            );
                       }).toList(),
                     ),
                   SizedBox(height: screenHeight * 0.02),

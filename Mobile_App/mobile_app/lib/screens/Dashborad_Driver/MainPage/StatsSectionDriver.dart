@@ -4,7 +4,6 @@ import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/Provider/user/user_info_profile.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/MainPage/DrivingScoreSpeed.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class StateSection extends StatelessWidget {
   @override

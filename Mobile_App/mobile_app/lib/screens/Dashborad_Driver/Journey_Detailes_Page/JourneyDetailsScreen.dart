@@ -12,30 +12,31 @@ class JourneyDetailsScreen extends StatefulWidget {
 class _JourneyDetailsScreenState extends State<JourneyDetailsScreen> {
   late GoogleMapController mapController;
 
-  final LatLng _initialPosition = LatLng(11.0168, 76.9558); // Coimbatore
-  final LatLng _destinationPosition = LatLng(13.0827, 80.2707); // Chennai
+  // final LatLng _initialPosition = LatLng(11.0168, 76.9558); // Coimbatore
+  // final LatLng _destinationPosition = LatLng(13.0827, 80.2707); // Chennai
 
   // List of stops with their coordinates
-  final List<LatLng> _routeCoordinates = [
-    LatLng(11.0168, 76.9558), // Coimbatore
-    LatLng(11.004556, 76.961632), // Gandhipuram
-    LatLng(12.9165, 79.1325), // Vellore
-    LatLng(12.7904, 78.7047), // Ambur
-    LatLng(12.8342, 79.7036), // Kanchipuram
-    LatLng(13.0827, 80.2707), // Chennai
-  ];
+  // final List<LatLng> _routeCoordinates = [
+  //   LatLng(11.0168, 76.9558), // Coimbatore
+  //   LatLng(11.004556, 76.961632), // Gandhipuram
+  //   LatLng(12.9165, 79.1325), // Vellore
+  //   LatLng(12.7904, 78.7047), // Ambur
+  //   LatLng(12.8342, 79.7036), // Kanchipuram
+  //   LatLng(13.0827, 80.2707), // Chennai
+  // ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: JourneyAppBar(),
       body: JourneyBody(
-        routeCoordinates: _routeCoordinates,
-        initialPosition: _initialPosition,
-        destinationPosition: _destinationPosition,
+        // routeCoordinates: _routeCoordinates,
+        // initialPosition: _initialPosition,
+        // destinationPosition: _destinationPosition,
         onMapCreated: (controller) {
           mapController = controller;
         },
+        // routeCoordinates: [],
       ),
     );
   }

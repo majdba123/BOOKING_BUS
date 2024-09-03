@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Data_Models/Driver/TripForDriver.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
@@ -31,17 +32,10 @@ class JourneyCard extends StatelessWidget {
       }
 
       return Column(
-        children: trips.map((trip) {
-          // return
-          // InkWell(
-          //   onTap: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => JourneyDetailsScreen(),
-          //       ),
-          //     );
-          // },
+        children: trips.asMap().entries.map((entry) {
+          int index = entry.key;
+          TripForDriverModel trip = entry.value;
+
           Widget tripCard = Container(
             margin: EdgeInsets.only(bottom: screenHeight * 0.015),
             padding: EdgeInsets.all(19.0),
@@ -204,7 +198,14 @@ class JourneyCard extends StatelessWidget {
 
           if (provider.typePage == "alltrip") {
             return InkWell(
-              onTap: () {
+              onTap: () async {
+                // print(t);
+                provider.setIndexTrip(index);
+                var accessToken =
+                    Provider.of<AuthProvider>(context, listen: false)
+                        .accessToken;
+                await provider.fetchTripsDetails(accessToken, trip.id);
+                 provider.settotalPassengerEmpty;
                 Navigator.push(
                   context,
                   MaterialPageRoute(

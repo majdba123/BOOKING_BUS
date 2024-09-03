@@ -27,7 +27,7 @@ class JourneyHistoryScreen extends StatelessWidget {
         ),
         backgroundColor: AppColors.primaryColor,
         title: Text(
-          'Journey History',
+          'Trip History',
           style: TextStyle(
             fontSize: screenHeight * 0.03,
             fontWeight: FontWeight.w600,
@@ -42,59 +42,7 @@ class JourneyHistoryScreen extends StatelessWidget {
         child: ListView(
           children: [
             SizedBox(height: screenHeight * 0.03),
-
             JourneyCard(),
-
-            // JourneyCard(
-            //   from: 'Coimbatore',
-            //   to: 'Chennai',
-            //   timeLeft: 'DONE',
-            //   departureTime: '6:50AM',
-            //   arrivalTime: '12:15PM',
-            //   stops: '28 Stops',
-            //   passengers: '48 Passengers',
-            //   bgColor: Colors.white,
-            //   tagColor: Colors.green,
-            //   fontSize: screenHeight * 0.02,
-            //   iconSize: screenHeight * 0.025,
-            //   dashColor: Colors.grey,
-            //   showArrowIcon: false,
-            //   showDetailsButton: false, // Hide the "VIEW DETAILS" button
-            // ),
-            // SizedBox(height: screenHeight * 0.015),
-            // JourneyCard(
-            //   from: 'Chennai',
-            //   to: 'Bangalore',
-            //   timeLeft: 'DONE',
-            //   departureTime: '2:30PM',
-            //   arrivalTime: '8:15PM',
-            //   stops: '15 Stops',
-            //   passengers: '35 Passengers',
-            //   bgColor: Colors.white,
-            //   tagColor: Colors.green,
-            //   fontSize: screenHeight * 0.02,
-            //   iconSize: screenHeight * 0.025,
-            //   dashColor: Colors.grey,
-            //   showArrowIcon: false,
-            //   showDetailsButton: false, // Hide the "VIEW DETAILS" button
-            // ),
-            // SizedBox(height: screenHeight * 0.015),
-            // JourneyCard(
-            //   from: 'Bangalore',
-            //   to: 'Mumbai',
-            //   timeLeft: 'DONE',
-            //   departureTime: '5:00AM',
-            //   arrivalTime: '5:00PM',
-            //   stops: '20 Stops',
-            //   passengers: '60 Passengers',
-            //   bgColor: Colors.white,
-            //   tagColor: Colors.green,
-            //   fontSize: screenHeight * 0.02,
-            //   iconSize: screenHeight * 0.025,
-            //   dashColor: Colors.grey,
-            //   showArrowIcon: false,
-            //   showDetailsButton: false, // Hide the "VIEW DETAILS" button
-            // ),
           ],
         ),
       ),

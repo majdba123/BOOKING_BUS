@@ -323,24 +323,24 @@ class DriverController extends Controller
             $reservations = $pivoit->Reservation;
 
             $formattedReservations = $reservations->map(function ($reservation) {
-                return [
+                return
                     // 'reservation_id' => $reservation->id,
-                    'user_id' => $reservation->user_id,
-                    'user_name' => $reservation->user ? $reservation->user->name : 'Unknown',
+                    // 'user_id' => $reservation->user_id,
+                    $reservation->user ? $reservation->user->name : 'Unknown';
 
                     // 'price' => $reservation->price,
                     // 'status' => $reservation->status,
-                ];
-            });
+
+            })->toArray();
 
             $pivotData[] = [
                 'break_id' => $break->id,
                 'break_name' => $break->name,
-                'status' => $pivoit->status,
-                'latitude' => $break->latitude,
-                'longitude' => $break->longitude,
+                // 'status' => $pivoit->status,
+                'latitude' => doubleval($break->latitude),
+                'longitude' => doubleval($break->longitude),
                 'passengers_count' => $pivoit->Reservation->count(),  // Count of reservations at this break
-                'reservations' => $formattedReservations,              // Detailed reservation info
+                // 'reservations' => $formattedReservations,              // Detailed reservation info
             ];
         }
 
@@ -353,21 +353,21 @@ class DriverController extends Controller
         $response = [
             'bus_trip_id' => $trip->id,
             'bus_id' => $trip->bus_id,
-            'from' => $trip->trip->path->from ?? null,
-            'to' => $trip->trip->path->to ?? null,
-            'from_time' => $trip->from_time,
-            'to_time' => $trip->to_time,
-            'date' => $trip->date,
-            'Distance' => $trip->trip->path->Distance ?? null,
-            'from_lat' => $trip->trip->path->from_latitude ?? null,
-            'from_long' => $trip->trip->path->from_longitude ?? null,
-            'to_lat' => $trip->trip->path->to_latitude ?? null,
-            'to_long' => $trip->trip->path->to_longitude ?? null,
-            'tripDuration' => $tripDuration,
+            // 'from' => $trip->trip->path->from ?? null,
+            // 'to' => $trip->trip->path->to ?? null,
+            // 'from_time' => $trip->from_time,
+            // 'to_time' => $trip->to_time,
+            // 'date' => $trip->date,
+            // 'Distance' => $trip->trip->path->Distance ?? null,
+            'from_lat' =>  doubleval($trip->trip->path->from_latitude) ?? null,
+            'from_long' => doubleval($trip->trip->path->from_longitude) ?? null,
+            'to_lat' => doubleval($trip->trip->path->to_latitude) ?? null,
+            'to_long' => doubleval($trip->trip->path->to_longitude) ?? null,
+            // 'tripDuration' => $tripDuration,
             // 'number_of_seat_in_bus' => $trip->bus->number_passenger,
-            'Stops' => $trip->Pivoit()->count(),
-            'Passengers' =>  $trip->bus->getNumberOfReservationsAttribute(),
-            'event' => $trip->event,
+            // 'Stops' => $trip->Pivoit()->count(),
+            // 'Passengers' =>  $trip->bus->getNumberOfReservationsAttribute(),
+            // 'event' => $trip->event,
             // 'status' => $trip->status,
             'breaks_data' => $pivotData,
 
@@ -1025,53 +1025,5 @@ class DriverController extends Controller
             DB::rollBack();
             return response()->json(['error' => 'An error occurred while retrieving finished trips'], 500);
         }
-        $driver = Auth::user()->Driver;
-
-        if (!$driver) {
-            return response()->json(['error' => 'Driver not found'], 404);
-        }
-
-        $bus = Bus_Driver::where('status', 'finished')
-            ->where('driver_id', $driver->id)
-            ->first();
-
-        if (!$bus) {
-            return response()->json(['error' => 'No pending bus found for the driver'], 404);
-        }
-
-        $trips = Bus_Trip::where('status', 'finished_going')
-            ->where('bus_id', $bus->bus_id)
-            ->get();
-
-        if ($trips->isEmpty()) {
-            return response()->json(['error' => 'No pending trip found for the bus'], 404);
-        }
-
-        $response = [];
-        foreach ($trips as $trip) {
-            $pivotData = [];
-            foreach ($trip->Pivoit as $pivoit) {
-                $pivotData[] = [
-                    'id' => $pivoit->id,
-                    'bus_trip_id' => $pivoit->bus__trip_id,
-                    'break_name' => $pivoit->break_trip->break->name,
-                    'status' => $pivoit->status,
-                ];
-            }
-
-            $response[] = [
-                'bus_trip_id' => $trip->id,
-                'bus_id' => $trip->bus_id,
-                'from_time' => $trip->from_time,
-                'to_time' => $trip->to_time,
-                'date' => $trip->date,
-                'type' => $trip->type,
-                'event' => $trip->event,
-                'status' => $trip->status,
-                'breaks_data' => $pivotData,
-            ];
-        }
-
-        return response()->json($response);
     }
 }

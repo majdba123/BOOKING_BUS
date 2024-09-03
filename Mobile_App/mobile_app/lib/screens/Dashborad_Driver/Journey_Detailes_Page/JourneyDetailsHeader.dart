@@ -6,7 +6,7 @@ class JourneyDetailsHeader extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Text(
-      'Journey Details',
+      'Trip Details',
       style: TextStyle(
         fontSize: screenHeight * 0.022,
         fontWeight: FontWeight.w600,

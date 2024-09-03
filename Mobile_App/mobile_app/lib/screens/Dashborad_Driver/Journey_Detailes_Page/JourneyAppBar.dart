@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
+import 'package:provider/provider.dart';
 
 class JourneyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
+    var trip = driverProvider.MyTrip?[driverProvider.indextrip];
 
     return AppBar(
       backgroundColor: Color(0xFF0A3D5F),
-      leading: Icon(Icons.arrow_back, size: screenHeight * 0.03),
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        color: Colors.white,
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
       title: Text(
-        'Coimbatore to Chennai',
+        '${trip?.from} to ${trip?.to}',
         style: TextStyle(
           color: Colors.white,
           fontSize: screenHeight * 0.025,
