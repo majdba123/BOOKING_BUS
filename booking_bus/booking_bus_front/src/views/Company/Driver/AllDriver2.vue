@@ -163,12 +163,10 @@ export default {
     },
     methods: {
         checkToken() {
-            // الحصول على التوكن من localStorage
             const token = window.localStorage.getItem("access_token");
             const userType = window.localStorage.getItem("type_user");
 
             if (token && userType) {
-                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
                 if (userType === "admin") {
                     router.push("/");
                 } else if (userType === "user") {
@@ -449,7 +447,6 @@ aside .logo {
     background-color: var(--clr-white);
     border-radius: 0.9rem;
     padding: 9px;
-    margin-top: 15px;
     margin-left: 10px;
 }
 
