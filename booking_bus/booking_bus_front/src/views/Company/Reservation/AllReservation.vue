@@ -19,7 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>{{ x }}</h1>
+                <h1>Reservation</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -31,7 +31,7 @@
                         <button @click="search">Search</button>
                     </div>
                 </div>
-                <GetAllRating ref="GetAllRating" />
+                <GetAllReservation ref="GetAllReservation" />
             </main>
         </div>
         <div class="right">
@@ -116,14 +116,18 @@
 
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import GetAllRating from "@/components/GetAllRating.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 import router from "@/router";
+import GetAllReservation from "@/components/GetAllReservation.vue";
 
 export default {
     name: "AllDriver",
-    components: { SidebarCompany, GetAllRating, DriverChart },
+    components: {
+        SidebarCompany,
+        DriverChart,
+        GetAllReservation,
+    },
     data() {
         return {
             x: store.state.x,

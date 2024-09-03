@@ -1,6 +1,5 @@
 <template>
     <div class="containerd">
-        <HeaderCompany />
         <!-- Header with buttons -->
         <header class="navd">
             <button class="nav-btnd" @click="toggleTripRatings">
@@ -411,7 +410,6 @@
 </template>
 
 <script>
-import HeaderCompany from "./HeaderCompany.vue";
 import axios from "axios";
 
 export default {
@@ -619,7 +617,6 @@ export default {
             this.showDriverRatingsModal = false;
         },
     },
-    components: { HeaderCompany },
 };
 </script>
 
