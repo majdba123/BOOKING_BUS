@@ -597,7 +597,7 @@ export default {
 
 .containerd {
     padding: 20px;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -621,9 +621,9 @@ export default {
 .form-map-container {
     display: flex;
     gap: 10px;
-    background: white;
+    background: var(--clr-white);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: var(--border-radius-3);
     box-shadow: var(--box-shadow);
     width: 100%;
 }
@@ -698,7 +698,7 @@ label {
     align-items: center;
     justify-content: flex-start;
     font-weight: 500;
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 label .material-icons {
@@ -709,8 +709,8 @@ input,
 select,
 textarea {
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 1px solid var(--clr-dark-variant);
+    border-radius: var(--border-radius-2);
     transition: border-color 0.3s;
     width: 100%;
     font-size: 1rem;
@@ -719,7 +719,7 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-    border-color: #007bff;
+    border-color: var(--clr-primary);
 }
 
 .submit-btn {
@@ -729,23 +729,41 @@ textarea:focus {
 
 .submit-btn button {
     padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
+    margin: 10px;
+    width: 100%;
     border: none;
-    border-radius: 5px;
+    border-radius: 9px;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-size: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+}
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .submit-btn button:hover {
-    background-color: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
 }
 
 .map-container {
     flex: 1;
     min-width: 400px;
     height: 400px;
-    border-radius: 20px;
+    border-radius: var(--border-radius-3);
     overflow: hidden;
     box-shadow: var(--box-shadow);
     padding: 10px;
@@ -755,18 +773,18 @@ textarea:focus {
 /* Custom Select styling */
 .custom-select {
     appearance: none;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    background-color: var(--clr-white);
+    border: 1px solid var(--clr-dark-variant);
+    border-radius: var(--border-radius-2);
     padding: 10px;
     font-size: 1rem;
     transition: border-color 0.3s;
 }
 .custom-select option {
-    color: #007bff;
+    color: var(--clr-primary);
 }
 .custom-select:focus {
-    border-color: #007bff;
+    border-color: var(--clr-primary);
 }
 
 /* Table styling */
@@ -782,13 +800,13 @@ textarea:focus {
 }
 
 .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
-    border-radius: 1rem;
-    padding: 1rem;
+    border-radius: var(--border-radius-3);
+    padding: var(--card-padding);
     text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
+    box-shadow: var(--box-shadow);
+    color: var(--clr-dark);
     max-width: none;
     font-size: 0.85rem;
 }
@@ -804,19 +822,19 @@ table thead tr th {
 
 table tbody tr {
     height: 3rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-white);
+    color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
 }
 
 table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: var(--clr-light);
 }
 
 table tbody td {
     height: 3rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-dark);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr:last-child td {
@@ -828,7 +846,7 @@ table tbody tr:last-child td {
     padding: 2px 6px;
     border: none;
     margin: 10px;
-    border-radius: 3px;
+    border-radius: var(--border-radius-1);
     cursor: pointer;
     transition: background-color 0.3s;
     font-size: 12px;
@@ -840,28 +858,29 @@ table tbody tr:last-child td {
 }
 
 .edit-btn {
-    color: #4caf50;
-    background-color: #f1f1f1;
-    border-radius: 9px;
+    color: var(--clr-success);
+    background-color: var(--clr-light);
+    border-radius: var(--border-radius-2);
     padding: 3px;
     margin: 10px;
 }
 .edit-btn:hover {
-    color: #fff;
-    background-color: #4caf50;
+    color: var(--clr-white);
+    background-color: var(--clr-success);
 }
 
 .delete-btn {
-    color: #f44336;
-    background-color: #f1f1f1;
-    border-radius: 9px;
+    color: var(--clr-danger);
+    background-color: var(--clr-light);
+    border-radius: var(--border-radius-2);
     padding: 3px;
 }
 
 .delete-btn:hover {
-    color: #fff;
-    background-color: #f44336;
+    color: var(--clr-white);
+    background-color: var(--clr-danger);
 }
+
 .dialog-container {
     display: flex;
     justify-content: center;
@@ -876,12 +895,12 @@ table tbody tr:last-child td {
 }
 
 .dialog-box {
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: var(--border-radius-3);
     max-width: 500px;
     width: 50%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: var(--box-shadow);
     text-align: center;
 }
 
@@ -909,36 +928,36 @@ table tbody tr:last-child td {
 
 .confirm-btn {
     padding: 8px 16px;
-    background-color: #5cb85c;
-    color: white;
+    background-color: var(--clr-success);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
 }
 
 .confirm-btn:hover {
-    background-color: #4cae4c;
+    background-color: var(--clr-success);
 }
 
 .cancel-btn {
     padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
 }
 
 .cancel-btn:hover {
-    background-color: #c9302c;
+    background-color: var(--clr-danger);
 }
 
 .close-modal {
     padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
 }
 /* ***Modal styling */
@@ -956,12 +975,12 @@ table tbody tr:last-child td {
 }
 
 .modal-content {
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: var(--border-radius-3);
     max-width: 500px;
     width: 80%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: var(--box-shadow);
 }
 
 .modal-header,
@@ -982,17 +1001,17 @@ table tbody tr:last-child td {
 
 .close-modal {
     padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
     margin: 10px;
     transition: all 0.1s ease;
 }
 
 .close-modal:hover {
-    background-color: #c9302c;
+    background-color: var(--clr-danger);
 }
 
 /* Responsive Design */
