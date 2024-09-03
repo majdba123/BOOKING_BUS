@@ -1,46 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/full_map_view_screen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/journey_map_widget.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/Breck_Strop_screens/StopDetailsScreen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/timeline_tile_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:timeline_tile/timeline_tile.dart';
 
 class JourneyInfoBox extends StatefulWidget {
-  // final LatLng initialPosition;
-  // final LatLng destinationPosition;
-  final Function(GoogleMapController p1) onMapCreated;
-
-  JourneyInfoBox({
-    // required this.routeCoordinates,
-    // required this.initialPosition,
-    // required this.destinationPosition,
-    required this.onMapCreated,
-  });
-
   @override
   State<JourneyInfoBox> createState() => _JourneyInfoBoxState();
 }
 
 class _JourneyInfoBoxState extends State<JourneyInfoBox> {
-  late List<LatLng> routeCoordinates = [];
   @override
-  void initState() {
-    super.initState();
-    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
-    var breaksData = driverProvider.TripDriverDetail?.breaks_data ?? [];
-    setState(() {
-      routeCoordinates = breaksData
-          .map((breakData) => LatLng(
-                (breakData.latitude),
-                (breakData.longitude),
-              ))
-          .toList();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -64,7 +35,6 @@ class _JourneyInfoBoxState extends State<JourneyInfoBox> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Route Summary (Passengers, Duration, Distance)
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -121,31 +91,7 @@ class _JourneyInfoBoxState extends State<JourneyInfoBox> {
           ),
           SizedBox(height: screenHeight * 0.02),
 
-          // Map and Route Details
-          JourneyMapWidget(
-            initialPosition: LatLng(driverProvider.TripDriverDetail!.from_lat,
-                driverProvider.TripDriverDetail!.from_long),
-            routeCoordinates: routeCoordinates,
-            enableOpenMapButton: true,
-            onOpenMapPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FullMapViewScreen(
-                    initialPosition: LatLng(
-                        driverProvider.TripDriverDetail!.from_lat,
-                        driverProvider.TripDriverDetail!.from_long),
-                    routeCoordinates: routeCoordinates,
-                    destinationPosition: LatLng(
-                        driverProvider.TripDriverDetail!.to_lat,
-                        driverProvider.TripDriverDetail!.to_long),
-                    stopPlaces: routeCoordinates,
-                  ),
-                ),
-              );
-            },
-            mapController: widget.onMapCreated,
-          ),
+          JourneyMapWidget(),
           SizedBox(height: screenHeight * 0.02),
 
           // Timeline of Stops
@@ -156,22 +102,6 @@ class _JourneyInfoBoxState extends State<JourneyInfoBox> {
           ),
         ],
       ),
-    );
-  }
-
-  LatLngBounds _getLatLngBounds(List<LatLng> coordinates) {
-    double southWestLat =
-        coordinates.map((e) => e.latitude).reduce((a, b) => a < b ? a : b);
-    double southWestLng =
-        coordinates.map((e) => e.longitude).reduce((a, b) => a < b ? a : b);
-    double northEastLat =
-        coordinates.map((e) => e.latitude).reduce((a, b) => a > b ? a : b);
-    double northEastLng =
-        coordinates.map((e) => e.longitude).reduce((a, b) => a > b ? a : b);
-
-    return LatLngBounds(
-      southwest: LatLng(southWestLat, southWestLng),
-      northeast: LatLng(northEastLat, northEastLng),
     );
   }
 }

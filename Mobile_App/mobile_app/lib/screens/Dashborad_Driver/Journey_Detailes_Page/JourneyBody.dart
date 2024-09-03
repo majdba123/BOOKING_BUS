@@ -6,17 +6,11 @@ import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/Journe
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/StartJourneyButton.dart';
 
 class JourneyBody extends StatelessWidget {
-  // final List<LatLng> routeCoordinartes;
-  // final LatLng initialPosition;
-  // final LatLng destinationPosition;
-  final Function(GoogleMapController) onMapCreated;
+  // final Function(GoogleMapController) onMapCreated;
 
-  JourneyBody({
-    // required this.routeCoordinates,
-    // required this.initialPosition,
-    // required this.destinationPosition,
-    required this.onMapCreated,
-  });
+  // JourneyBody({
+  //   required this.onMapCreated,
+  // });
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +26,9 @@ class JourneyBody extends StatelessWidget {
         JourneyDetailsHeader(),
         SizedBox(height: screenHeight * 0.02),
         JourneyInfoBox(
-          // routeCoordinates: routeCoordinates,
-          // initialPosition: initialPosition,
-          // destinationPosition: destinationPosition,
-          onMapCreated: onMapCreated,
-        ),
+
+            // onMapCreated: onMapCreated,
+            ),
         SizedBox(height: screenHeight * 0.03),
         StartJourneyButton(),
       ],

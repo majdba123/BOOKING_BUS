@@ -328,8 +328,8 @@ class DriverController extends Controller
                     // 'user_id' => $reservation->user_id,
                     $reservation->user ? $reservation->user->name : 'Unknown';
 
-                    // 'price' => $reservation->price,
-                    // 'status' => $reservation->status,
+                // 'price' => $reservation->price,
+                // 'status' => $reservation->status,
 
             })->toArray();
 
@@ -339,8 +339,9 @@ class DriverController extends Controller
                 // 'status' => $pivoit->status,
                 'latitude' => doubleval($break->latitude),
                 'longitude' => doubleval($break->longitude),
-                'passengers_count' => $pivoit->Reservation->count(),  // Count of reservations at this break
-                // 'reservations' => $formattedReservations,              // Detailed reservation info
+                'passengers_count' => $pivoit->Reservation->count(),
+                'pivoit_id' => $pivoit->id,
+                // 'reservations' => $formattedReservations,
             ];
         }
 
@@ -370,6 +371,7 @@ class DriverController extends Controller
             // 'event' => $trip->event,
             // 'status' => $trip->status,
             'breaks_data' => $pivotData,
+
 
         ];
 
@@ -1025,5 +1027,39 @@ class DriverController extends Controller
             DB::rollBack();
             return response()->json(['error' => 'An error occurred while retrieving finished trips'], 500);
         }
+    }
+
+
+
+    public function getPassenegerAtPivoit($bus_trip_id, $pivot_id)
+    {
+        $driver = Auth::user()->Driver;
+
+        if (!$driver) {
+            return response()->json(['error' => 'Driver not found'], 404);
+        }
+        $trip = Bus_Trip::where('id', $bus_trip_id)
+            ->first();
+
+        if (!$trip) {
+            return response()->json(['error' => 'No  trip found for the bus'], 404);
+        }
+        $pivoit = $trip->Pivoit()->where('id', $pivot_id)->first();
+        if (!$pivoit) {
+            return response()->json(['error' => 'No specific pivot found for the trip'], 404);
+        }
+
+        $reservations = $pivoit->Reservation;
+
+        $formattedReservations = $reservations->map(function ($reservation) {
+            return
+
+                $reservation->user ? $reservation->user->name : 'Unknown';
+        })->toArray();
+
+
+
+
+        return response()->json(['reservations' => $formattedReservations]);
     }
 }

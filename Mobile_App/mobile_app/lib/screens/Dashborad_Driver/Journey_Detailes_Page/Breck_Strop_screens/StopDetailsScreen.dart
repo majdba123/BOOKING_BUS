@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/Breck_Strop_screens/PassengerInfoRow.dart';
+import 'package:provider/provider.dart';
 
 class StopDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-
+    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
+    var trip = driverProvider.MyTrip?[driverProvider.indextrip];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        leading: Icon(Icons.arrow_back, size: screenHeight * 0.03),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text(
           'Stop Details',
           style: TextStyle(
@@ -35,7 +45,7 @@ class StopDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Coimbatore to Chennai',
+                      '${trip?.from} to ${trip?.to}',
                       style: TextStyle(
                         fontSize: screenHeight * 0.02,
                         fontWeight: FontWeight.w600,
@@ -43,7 +53,7 @@ class StopDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: screenHeight * 0.005),
                     Text(
-                      '48 Passengers · 28 Stops',
+                      '${trip?.Passengers} Passengers · ${trip?.Stops} Stops',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: screenHeight * 0.018,
@@ -61,7 +71,7 @@ class StopDetailsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'IN 4 HOURS',
+                    '${trip?.status}',
                     style: TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.w600,
@@ -78,7 +88,7 @@ class StopDetailsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Stop 1 - Kanchipuram',
+                  'Stop ${(driverProvider.indexStop) + 1} - ${driverProvider.TripDriverDetail?.breaks_data[driverProvider.indexStop].break_name}',
                   style: TextStyle(
                     fontSize: screenHeight * 0.022,
                     fontWeight: FontWeight.w600,
@@ -118,7 +128,7 @@ class StopDetailsScreen extends StatelessWidget {
                           color: Colors.grey, size: screenHeight * 0.022),
                       SizedBox(width: screenWidth * 0.015),
                       Text(
-                        '12',
+                        '${driverProvider.totalPassenger}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: screenHeight * 0.018,
@@ -129,7 +139,7 @@ class StopDetailsScreen extends StatelessWidget {
                           color: Colors.grey, size: screenHeight * 0.022),
                       SizedBox(width: screenWidth * 0.015),
                       Text(
-                        '5',
+                        '${driverProvider.PassengerListAtPivoit?.length}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: screenHeight * 0.018,
@@ -138,9 +148,6 @@ class StopDetailsScreen extends StatelessWidget {
                       SizedBox(width: screenWidth * 0.015),
                       Icon(Icons.arrow_upward,
                           color: Colors.green, size: screenHeight * 0.022),
-                      SizedBox(width: screenWidth * 0.015),
-                      Icon(Icons.arrow_downward,
-                          color: Colors.red, size: screenHeight * 0.022),
                     ],
                   ),
                   SizedBox(height: screenHeight * 0.02),
@@ -148,61 +155,7 @@ class StopDetailsScreen extends StatelessWidget {
                   // Passenger List
                   Column(
                     children: [
-                      buildPassengerRow(
-                        icon: Icons.arrow_upward,
-                        color: Colors.green,
-                        id: 'UL11',
-                        name: 'Vignesh',
-                        age: 24,
-                        gender: 'Male',
-                        context: context,
-                      ),
-                      buildPassengerRow(
-                        icon: Icons.arrow_downward,
-                        color: Colors.red,
-                        id: 'UL12',
-                        name: 'Zashria',
-                        age: 22,
-                        gender: 'Female',
-                        context: context,
-                      ),
-                      buildPassengerRow(
-                        icon: Icons.arrow_upward,
-                        color: Colors.green,
-                        id: 'UL13',
-                        name: 'Adlin',
-                        age: 22,
-                        gender: 'Female',
-                        context: context,
-                      ),
-                      buildPassengerRow(
-                        icon: Icons.arrow_upward,
-                        color: Colors.green,
-                        id: 'UL14',
-                        name: 'Ashley',
-                        age: 22,
-                        gender: 'Female',
-                        context: context,
-                      ),
-                      buildPassengerRow(
-                        icon: Icons.arrow_upward,
-                        color: Colors.green,
-                        id: 'UL15',
-                        name: 'Zashria',
-                        age: 22,
-                        gender: 'Female',
-                        context: context,
-                      ),
-                      buildPassengerRow(
-                        icon: Icons.arrow_upward,
-                        color: Colors.green,
-                        id: 'UL16',
-                        name: 'Zashria',
-                        age: 22,
-                        gender: 'Female',
-                        context: context,
-                      ),
-                      // Repeat the same or add more passengers as needed
+                      PassengerListWidget(),
                     ],
                   ),
                 ],
@@ -241,44 +194,6 @@ class StopDetailsScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // Passenger Row Widget
-  Widget buildPassengerRow({
-    required IconData icon,
-    required Color color,
-    required String id,
-    required String name,
-    required int age,
-    required String gender,
-    required BuildContext context,
-  }) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.008),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: screenHeight * 0.022),
-          SizedBox(width: screenWidth * 0.02),
-          Text(
-            id,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: screenHeight * 0.018,
-            ),
-          ),
-          SizedBox(width: screenWidth * 0.02),
-          Text(
-            '- $name ${age.toString()} $gender',
-            style: TextStyle(
-              fontSize: screenHeight * 0.018,
-            ),
-          ),
-        ],
       ),
     );
   }

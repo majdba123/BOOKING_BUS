@@ -5,7 +5,6 @@ import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/Journe
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyInfoBox.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/full_map_view_screen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/journey_buttons_widget.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/timeline_tile_widget.dart';
 
 class StartJourneyScreen extends StatefulWidget {
   @override
@@ -15,28 +14,11 @@ class StartJourneyScreen extends StatefulWidget {
 class _StartJourneyScreenState extends State<StartJourneyScreen> {
   late GoogleMapController mapController;
 
-  final LatLng _initialPosition = LatLng(11.0168, 76.9558); // Coimbatore
-  final LatLng _destinationPosition = LatLng(13.0827, 80.2707); // Chennai
-
-  final List<LatLng> _routeCoordinates = [
-    LatLng(11.0168, 76.9558), // Coimbatore
-    LatLng(11.004556, 76.961632), // Gandhipuram
-    LatLng(12.9165, 79.1325), // Vellore
-    LatLng(12.7904, 78.7047), // Ambur
-    LatLng(12.8342, 79.7036), // Kanchipuram
-    LatLng(13.0827, 80.2707), // Chennai
-  ];
-
   void _onOpenMapPressed() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FullMapViewScreen(
-          initialPosition: _initialPosition,
-          routeCoordinates: _routeCoordinates,
-          destinationPosition: _destinationPosition,
-          stopPlaces: _routeCoordinates,
-        ),
+        builder: (context) => FullMapViewScreen(),
       ),
     );
   }
@@ -89,13 +71,13 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
 
           // Map and Route Details
           JourneyInfoBox(
-            // routeCoordinates: _routeCoordinates,
-            // initialPosition: _initialPosition,
-            // destinationPosition: _destinationPosition,
-            onMapCreated: (controller) {
-              mapController = controller;
-            },
-          ),
+              // routeCoordinates: _routeCoordinates,
+              // initialPosition: _initialPosition,
+              // destinationPosition: _destinationPosition,
+              // onMapCreated: (controller) {
+              //   mapController = controller;
+              // },
+              ),
           SizedBox(height: screenHeight * 0.02),
 
           // Timeline of Stops

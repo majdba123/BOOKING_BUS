@@ -137,4 +137,27 @@ class DriverService {
       throw Exception('Failed to load trips');
     }
   }
+
+  Future<List<String>> fetchPassengerAtPivoit(
+      String accessToken, int busTripId, String Pivoit_id) async {
+    final response = await http.get(
+      Uri.parse(name_domain_server +
+          'driver/getPassenegerAtPivoit/$busTripId/pivot/$Pivoit_id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Store the reservations directly into a List<String>
+      return List<String>.from(data['reservations']);
+    } else {
+      throw Exception('Failed to load trips');
+    }
+  }
 }

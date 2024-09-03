@@ -10,7 +10,8 @@ class DriverProvider extends ChangeNotifier {
   List<TripForDriverModel>? _MyTrip;
   List<TripForDriverModel>? _hsitoryTrip;
   TripDeatilesModel? _TripDriverDetail;
-
+  List<String>? _PassengerListAtPivoit;
+  List<String>? get PassengerListAtPivoit => _PassengerListAtPivoit;
   RateDriverModel? _RateDriver;
   MyBusModel? _MyBus;
   bool _isLoading = false;
@@ -18,7 +19,9 @@ class DriverProvider extends ChangeNotifier {
   String _typePage = 'alltrip';
   String get typePage => _typePage;
   late int _indextrip;
+  late int _indexStop;
   int get indextrip => _indextrip;
+  int get indexStop => _indexStop;
   int _currentStopIndex = 0;
   int _totalPassenger = 0;
   int get currentStopIndex => _currentStopIndex;
@@ -45,6 +48,11 @@ class DriverProvider extends ChangeNotifier {
 
   void setIndexTrip(index) {
     _indextrip = index;
+    notifyListeners();
+  }
+
+  void setIndexStop(index) {
+    _indexStop = index;
     notifyListeners();
   }
 
@@ -153,6 +161,25 @@ class DriverProvider extends ChangeNotifier {
       _TripDriverDetail =
           await DriverService().fetchTripDetailes(accessToken, busTripId);
       print(_MyBus);
+      print('after handling !!');
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchPassengerAtPivoit(
+      String accessToken, int busTripId, String pivot_id) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _PassengerListAtPivoit = await DriverService()
+          .fetchPassengerAtPivoit(accessToken, busTripId, pivot_id);
+      print(_PassengerListAtPivoit);
       print('after handling !!');
     } catch (error) {
       _errorMessage = error.toString();

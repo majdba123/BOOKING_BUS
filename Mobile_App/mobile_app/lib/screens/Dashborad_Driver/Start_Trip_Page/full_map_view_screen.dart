@@ -2,44 +2,44 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/CompleteJourneyPage/JourneyCompletedScreen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/journey_buttons_widget.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/timeline_tile_widget.dart';
+import 'package:provider/provider.dart';
 
 class FullMapViewScreen extends StatefulWidget {
-  final LatLng initialPosition;
-  final LatLng destinationPosition;
-  final List<LatLng> stopPlaces;
-
-  FullMapViewScreen({
-    required this.initialPosition,
-    required this.destinationPosition,
-    required this.stopPlaces,
-    required List<LatLng> routeCoordinates,
-  });
-
   @override
   _FullMapViewScreenState createState() => _FullMapViewScreenState();
 }
 
 class _FullMapViewScreenState extends State<FullMapViewScreen> {
-  List<LatLng> _routeCoordinates = [];
+  late List<LatLng> routeCoordinates = [];
   final String _googleAPIKey = 'AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44';
   bool _showTimeline = true;
-
-  @override
+  late LatLng initialPosition;
+  late LatLng destinationPosition;
   void initState() {
     super.initState();
+
+    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
+
+    initialPosition = LatLng(driverProvider.TripDriverDetail!.from_lat,
+        driverProvider.TripDriverDetail!.from_long);
+
+    destinationPosition = LatLng(driverProvider.TripDriverDetail!.to_lat,
+        driverProvider.TripDriverDetail!.to_long);
+
     _fetchRoute();
   }
 
   Future<void> _fetchRoute() async {
-    final stops = widget.stopPlaces
+    final stops = routeCoordinates
         .map((stop) => '${stop.latitude},${stop.longitude}')
         .join('|');
     final directionsResponse = await http.get(
       Uri.parse(
-        'https://maps.googleapis.com/maps/api/directions/json?origin=${widget.initialPosition.latitude},${widget.initialPosition.longitude}&destination=${widget.destinationPosition.latitude},${widget.destinationPosition.longitude}&waypoints=$stops&mode=driving&key=$_googleAPIKey',
+        'https://maps.googleapis.com/maps/api/directions/json?origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${destinationPosition.latitude},${destinationPosition.longitude}&waypoints=$stops&mode=driving&key=$_googleAPIKey',
       ),
     );
 
@@ -54,7 +54,7 @@ class _FullMapViewScreenState extends State<FullMapViewScreen> {
         List<LatLng> snappedRoute = await _snapToRoads(decodedRoute);
 
         setState(() {
-          _routeCoordinates = snappedRoute;
+          routeCoordinates = snappedRoute;
         });
       }
     } else {
@@ -131,29 +131,29 @@ class _FullMapViewScreenState extends State<FullMapViewScreen> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-
+    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
     return Scaffold(
       body: Stack(
         children: [
           GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: widget.initialPosition,
+              target: initialPosition,
               zoom: 14.0,
             ),
             markers: {
               Marker(
                 markerId: MarkerId('start'),
-                position: widget.initialPosition,
+                position: initialPosition,
                 icon: BitmapDescriptor.defaultMarkerWithHue(
                     BitmapDescriptor.hueGreen),
               ),
               Marker(
                 markerId: MarkerId('end'),
-                position: widget.destinationPosition,
+                position: destinationPosition,
                 icon: BitmapDescriptor.defaultMarkerWithHue(
                     BitmapDescriptor.hueRed),
               ),
-              ...widget.stopPlaces.map((stop) => Marker(
+              ...routeCoordinates.map((stop) => Marker(
                     markerId: MarkerId(stop.toString()),
                     position: stop,
                     icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -161,10 +161,10 @@ class _FullMapViewScreenState extends State<FullMapViewScreen> {
                   )),
             },
             polylines: {
-              if (_routeCoordinates.isNotEmpty)
+              if (routeCoordinates.isNotEmpty)
                 Polyline(
                   polylineId: PolylineId('route'),
-                  points: _routeCoordinates,
+                  points: routeCoordinates,
                   color: Color(0xFF0A3D5F),
                   width: 4,
                 ),
@@ -225,56 +225,13 @@ class _FullMapViewScreenState extends State<FullMapViewScreen> {
                   if (_showTimeline) SizedBox(height: screenHeight * 0.02),
                   if (_showTimeline)
                     Column(
-                      children: widget.stopPlaces.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        LatLng stop = entry.value;
-
-                        String timeText;
-                        String description;
-                        String location;
-                        bool isFirst = index == 0;
-                        bool isLast = index == widget.stopPlaces.length - 1;
-                        bool isCurrent = index == 2; // Example for current stop
-
-                        if (isFirst) {
-                          timeText = '6:00 AM';
-                          description = 'Starting Point';
-                          location = 'Coimbatore';
-                        } else if (isLast) {
-                          timeText = '12:30 PM';
-                          description = 'Ending Point';
-                          location = 'Chennai';
-                        } else if (isCurrent) {
-                          timeText = '10:00 AM';
-                          description = 'Current Stop';
-                          location = 'Vellore';
-                        } else {
-                          timeText = '10:40 AM';
-                          description = 'Stop ${index}';
-                          location = 'Location ${index}';
-                        }
-
-                        return TimelineTileWidget(
-                            // time: timeText,
-                            // description: description,
-                            // location: location,
-                            // up: '${index + 1}',
-                            // // down: '${index + 1}',
-                            // total: '${index + 1}',
-                            // isFirst: isFirst,
-                            // isLast: isLast,
-                            // isCurrent: isCurrent,
-                            // passed: index < 2,
-                            );
-                      }).toList(),
+                      children: [TimelineTileWidget()],
                     ),
                   SizedBox(height: screenHeight * 0.02),
                   JourneyButtons(
                     screenHeight: screenHeight,
                     screenWidth: screenWidth,
-                    onEmergencyStopPressed: () {
-                      // Emergency Stop logic
-                    },
+                    onEmergencyStopPressed: () {},
                     onEndJourneyPressed: () {
                       Navigator.push(
                         context,

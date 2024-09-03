@@ -4,13 +4,14 @@ class BreakData {
   final double latitude;
   final double longitude;
   final int passengers_count;
-
+  final String pivoit_id;
   BreakData({
     required this.break_id,
     required this.break_name,
     required this.latitude,
     required this.longitude,
     required this.passengers_count,
+    required this.pivoit_id,
   });
 
   factory BreakData.fromJson(Map<String, dynamic> json) {
@@ -20,6 +21,7 @@ class BreakData {
       latitude: json['latitude'],
       longitude: json['longitude'],
       passengers_count: json['passengers_count'],
+      pivoit_id: json['pivoit_id'],
     );
   }
 

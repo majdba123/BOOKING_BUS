@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +11,7 @@ class JourneyAppBar extends StatelessWidget implements PreferredSizeWidget {
     var trip = driverProvider.MyTrip?[driverProvider.indextrip];
 
     return AppBar(
-      backgroundColor: Color(0xFF0A3D5F),
+      backgroundColor: AppColors.primaryColor,
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         color: Colors.white,

@@ -171,7 +171,6 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     });
 
     Route::post('/get_profit_1', [DashboardController::class, 'getPriceData']);
-
 });
 
 
@@ -254,8 +253,8 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum', 'throttle:30,
     Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
 
     Route::post('/get_bus_trip/{id}', [BusTripController::class, 'getBusTripsByTripId']);
-   // Route::post('/seatOfBus/{id}', [SeatController::class, 'seatOfBus']);
-   Route::post('/seatOfBus/{BUS_TRIP_ID}', [SeatController::class, 'seatOfBus']);
+    // Route::post('/seatOfBus/{id}', [SeatController::class, 'seatOfBus']);
+    Route::post('/seatOfBus/{BUS_TRIP_ID}', [SeatController::class, 'seatOfBus']);
     Route::get('/get_bus_trip_fillter', [BusTripController::class, 'getBusTripsByFillter']);
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
@@ -360,4 +359,5 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum', 'throttle:3
 
     Route::get('/first-trip', [BusDriverController::class, 'getFirstTrip']);
     Route::get('/point', [BusDriverController::class, 'getPointofDriver']);
+    Route::get('/getPassenegerAtPivoit/{bus_trip_id}/pivot/{pivot_id}/', [DriverController::class, 'getPassenegerAtPivoit']);
 });
