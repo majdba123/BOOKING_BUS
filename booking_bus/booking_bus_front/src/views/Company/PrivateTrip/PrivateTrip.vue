@@ -163,12 +163,10 @@ export default {
     },
     methods: {
         checkToken() {
-            // الحصول على التوكن من localStorage
             const token = window.localStorage.getItem("access_token");
             const userType = window.localStorage.getItem("type_user");
 
             if (token && userType) {
-                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
                 if (userType === "admin") {
                     router.push("/");
                 } else if (userType === "user") {
@@ -379,7 +377,7 @@ small {
     color: var(--clr-dark);
 }
 .profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
+    position: relative;
     display: flex;
     align-items: center;
 }

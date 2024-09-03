@@ -558,7 +558,6 @@ export default {
     text-decoration: none;
 }
 
-/* Typography */
 body {
     font-family: "Roboto", sans-serif;
     width: 100%;
@@ -632,12 +631,12 @@ small {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 30vh;
 }
 
 .spinner {
-    border: 4px solid var(--clr-light);
-    border-left-color: var(--clr-primary);
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
     border-radius: 50%;
     width: 40px;
     height: 40px;
