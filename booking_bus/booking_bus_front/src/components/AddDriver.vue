@@ -64,7 +64,10 @@
                     <div class="spinner"></div>
                 </div>
                 <div v-else>
-                    <div v-if="!filteredDrivers.length" class="no-data-message">
+                    <div
+                        v-if="!filteredDrivers.length > 0"
+                        class="no-data-message"
+                    >
                         No Data Available
                     </div>
                     <div v-else>
@@ -84,7 +87,7 @@
                                     v-for="(user, index) in filteredDrivers"
                                     :key="index"
                                 >
-                                    <td>{{ user.id }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email_driver }}</td>
                                     <td>{{ user.status }}</td>
@@ -138,27 +141,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <!-- Pagination Controls -->
-                        <div class="pagination">
-                            <button
-                                @click="prevPage"
-                                :disabled="currentPage === 1"
-                            >
-                                <span class="material-icons">
-                                    skip_previous
-                                </span>
-                            </button>
-                            <span
-                                >Page {{ currentPage }} of
-                                {{ totalPages }}</span
-                            >
-                            <button
-                                @click="nextPage"
-                                :disabled="currentPage === totalPages"
-                            >
-                                <span class="material-icons"> skip_next </span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -313,6 +295,7 @@ export default {
             loading: true,
             loading1: false,
             loading2: true,
+
             showForm: true,
             Driver: [],
             Bus: [],
@@ -327,8 +310,6 @@ export default {
             isDarkMode: false,
             showDeleteConfirmModal: false,
             driverIdToDelete: null,
-            currentPage: 1,
-            itemsPerPage: 14,
         };
     },
     mounted() {
@@ -525,27 +506,6 @@ export default {
             );
             localStorage.setItem("theme", this.isDarkMode ? "dark" : "light");
         },
-        prevPage() {
-            if (this.currentPage > 1) {
-                this.currentPage--;
-                this.updateFilteredDrivers();
-            }
-        },
-        nextPage() {
-            if (this.currentPage < this.totalPages) {
-                this.currentPage++;
-                this.updateFilteredDrivers();
-            }
-        },
-        goToPage(pageNumber) {
-            if (pageNumber >= 1 && pageNumber <= this.totalPages) {
-                this.currentPage = pageNumber;
-                this.updateFilteredDrivers();
-            }
-        },
-        updateFilteredDrivers() {
-            this.filteredDrivers = this.paginatedDrivers;
-        },
     },
     computed: {
         filteredDrivers() {
@@ -562,14 +522,6 @@ export default {
                         .includes(store.state.searchQuery.toLowerCase())
                 );
             });
-        },
-        paginatedDrivers() {
-            const start = (this.currentPage - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.Driver.slice(start, end);
-        },
-        totalPages() {
-            return Math.ceil(this.Driver.length / this.itemsPerPage);
         },
     },
 };
@@ -838,7 +790,7 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh;
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {
@@ -871,6 +823,7 @@ select:focus {
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
+    margin-top: 20px;
     background-color: var(--clr-white);
     border-radius: var(--border-radius-3);
     width: 100%;
@@ -1073,34 +1026,6 @@ input:focus {
 
 .status-btn:hover {
     background-color: var(--clr-primary-variant);
-}
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.pagination button {
-    padding: 6px 10px;
-    margin: 0 5px;
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s;
-}
-
-.pagination button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.pagination span {
-    margin: 0 10px;
-    font-size: 0.7rem;
-    color: var(--clr-dark);
 }
 
 /* Responsive Design */
