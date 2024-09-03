@@ -61,16 +61,17 @@ export default {
     methods: {
         checkToken() {
             // الحصول على التوكن من localStorage
-            const token = window.localStorage.getItem("access_token");
             const userType = window.localStorage.getItem("type_user");
 
-            if (token && userType) {
-                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
-                if (userType === "company") {
-                    router.push("/");
-                } else if (userType === "user") {
-                    router.push("/");
-                }
+            // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
+            if (userType === "company") {
+                router.push("/");
+            } else if (userType === "user") {
+                router.push("/");
+            } else if (userType === "admin") {
+                router.push("/AdminPage");
+            } else {
+                router.push("/");
             }
         },
         handleResize() {

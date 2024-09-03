@@ -141,9 +141,9 @@ export default {
             if (token && userType) {
                 // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
                 if (userType === "admin") {
-                    router.push("/");
+                    router.push("/HomeView");
                 } else if (userType === "user") {
-                    router.push("/");
+                    router.push("/HomeView");
                 }
             }
         },
