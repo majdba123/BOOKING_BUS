@@ -1,10 +1,9 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Trip;
-use App\Models\Breaks;
 
 return new class extends Migration
 {
@@ -13,11 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('breaks_trips', function (Blueprint $table) {
+        Schema::create('user_notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignIdFor(Breaks::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->text('notification');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('breaks_trips');
+        Schema::dropIfExists('user_notifications');
     }
 };

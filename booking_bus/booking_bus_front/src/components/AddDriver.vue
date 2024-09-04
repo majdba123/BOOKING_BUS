@@ -16,6 +16,7 @@
             </button>
         </header>
 
+        <!-- Form to add/edit driver -->
         <div v-if="showForm" class="form-containerd">
             <form @submit.prevent="handleSubmit">
                 <div class="form-groupd">
@@ -57,6 +58,7 @@
             </form>
         </div>
 
+        <!-- Table of all drivers -->
         <div v-else class="recent_orders">
             <h1>All Drivers</h1>
             <div class="table-container">
@@ -65,7 +67,7 @@
                 </div>
                 <div v-else>
                     <div
-                        v-if="!filteredDrivers.length > 0"
+                        v-if="!paginatedDrivers.length"
                         class="no-data-message"
                     >
                         No Data Available
@@ -84,10 +86,10 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(user, index) in filteredDrivers"
+                                    v-for="(user, index) in paginatedDrivers"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ user.id }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email_driver }}</td>
                                     <td>{{ user.status }}</td>
@@ -141,11 +143,33 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <!-- Pagination Controls -->
+                        <div class="pagination">
+                            <button
+                                @click="prevPage('driver')"
+                                :disabled="currentPage === 1"
+                            >
+                                <span class="material-icons"
+                                    >skip_previous</span
+                                >
+                            </button>
+                            <span
+                                >Page {{ currentPage }} of
+                                {{ totalPages }}</span
+                            >
+                            <button
+                                @click="nextPage('driver')"
+                                :disabled="currentPage === totalPages"
+                            >
+                                <span class="material-icons">skip_next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Modal for Driver Status -->
         <div v-if="showDriverStatusModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Driver Status</div>
@@ -172,7 +196,10 @@
                         <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <div v-if="!driverStatusData" class="no-data-message">
+                        <div
+                            v-if="!paginatedDriverStatusData.length"
+                            class="no-data-message"
+                        >
                             No Data Available
                         </div>
                         <div v-else>
@@ -189,7 +216,7 @@
                                     <tr
                                         v-for="(
                                             driver, index
-                                        ) in driverStatusData"
+                                        ) in paginatedDriverStatusData"
                                         :key="index"
                                     >
                                         <td>{{ index }}</td>
@@ -199,6 +226,30 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <div class="pagination">
+                                <button
+                                    @click="prevPage('status')"
+                                    :disabled="currentPageStatus === 1"
+                                >
+                                    <span class="material-icons"
+                                        >skip_previous</span
+                                    >
+                                </button>
+                                <span
+                                    >Page {{ currentPageStatus }} of
+                                    {{ totalPagesStatus }}</span
+                                >
+                                <button
+                                    @click="nextPage('status')"
+                                    :disabled="
+                                        currentPageStatus === totalPagesStatus
+                                    "
+                                >
+                                    <span class="material-icons"
+                                        >skip_next</span
+                                    >
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,6 +261,7 @@
             </div>
         </div>
 
+        <!-- Modal for Drivers with Bus -->
         <div v-if="showDriverWithBusModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">All Drivers with Bus</div>
@@ -218,7 +270,10 @@
                         <div class="spinner"></div>
                     </div>
                     <div v-else>
-                        <div v-if="!driverWithBusData" class="no-data-message">
+                        <div
+                            v-if="!paginatedDriverWithBusData.length"
+                            class="no-data-message"
+                        >
                             No Data Available
                         </div>
                         <div v-else>
@@ -236,7 +291,7 @@
                                     <tr
                                         v-for="(
                                             driver, index
-                                        ) in driverWithBusData"
+                                        ) in paginatedDriverWithBusData"
                                         :key="index"
                                     >
                                         <td>{{ index }}</td>
@@ -247,6 +302,28 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <div class="pagination">
+                                <button
+                                    @click="prevPage('bus')"
+                                    :disabled="currentPageBus === 1"
+                                >
+                                    <span class="material-icons"
+                                        >skip_previous</span
+                                    >
+                                </button>
+                                <span
+                                    >Page {{ currentPageBus }} of
+                                    {{ totalPagesBus }}</span
+                                >
+                                <button
+                                    @click="nextPage('bus')"
+                                    :disabled="currentPageBus === totalPagesBus"
+                                >
+                                    <span class="material-icons"
+                                        >skip_next</span
+                                    >
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -260,6 +337,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Delete Confirmation Modal -->
         <div v-if="showDeleteConfirmModal" class="dialog-container">
             <div class="dialog-box">
@@ -295,7 +373,6 @@ export default {
             loading: true,
             loading1: false,
             loading2: true,
-
             showForm: true,
             Driver: [],
             Bus: [],
@@ -310,6 +387,11 @@ export default {
             isDarkMode: false,
             showDeleteConfirmModal: false,
             driverIdToDelete: null,
+            currentPage: 1,
+            itemsPerPage: 8,
+
+            currentPageStatus: 1,
+            currentPageBus: 1,
         };
     },
     mounted() {
@@ -504,6 +586,64 @@ export default {
             );
             localStorage.setItem("theme", this.isDarkMode ? "dark" : "light");
         },
+        prevPage(type) {
+            if (type === "driver" && this.currentPage > 1) {
+                this.currentPage--;
+            } else if (type === "status" && this.currentPageStatus > 1) {
+                this.currentPageStatus--;
+            } else if (type === "bus" && this.currentPageBus > 1) {
+                this.currentPageBus--;
+            }
+            this.updateFilteredData(type);
+        },
+        nextPage(type) {
+            if (type === "driver" && this.currentPage < this.totalPages) {
+                this.currentPage++;
+            } else if (
+                type === "status" &&
+                this.currentPageStatus < this.totalPagesStatus
+            ) {
+                this.currentPageStatus++;
+            } else if (
+                type === "bus" &&
+                this.currentPageBus < this.totalPagesBus
+            ) {
+                this.currentPageBus++;
+            }
+            this.updateFilteredData(type);
+        },
+        goToPage(pageNumber, type) {
+            if (
+                type === "driver" &&
+                pageNumber >= 1 &&
+                pageNumber <= this.totalPages
+            ) {
+                this.currentPage = pageNumber;
+            } else if (
+                type === "status" &&
+                pageNumber >= 1 &&
+                pageNumber <= this.totalPagesStatus
+            ) {
+                this.currentPageStatus = pageNumber;
+            } else if (
+                type === "bus" &&
+                pageNumber >= 1 &&
+                pageNumber <= this.totalPagesBus
+            ) {
+                this.currentPageBus = pageNumber;
+            }
+            this.updateFilteredData(type);
+        },
+        updateFilteredData(type) {
+            if (type === "driver") {
+                this.filteredDrivers = this.paginatedDrivers;
+            } else if (type === "status") {
+                this.filteredDriverStatusData = this.paginatedDriverStatusData;
+            } else if (type === "bus") {
+                this.filteredDriverWithBusData =
+                    this.paginatedDriverWithBusData;
+            }
+        },
     },
     computed: {
         filteredDrivers() {
@@ -520,6 +660,30 @@ export default {
                         .includes(store.state.searchQuery.toLowerCase())
                 );
             });
+        },
+        paginatedDrivers() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.Driver.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.Driver.length / this.itemsPerPage);
+        },
+        paginatedDriverStatusData() {
+            const start = (this.currentPageStatus - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.driverStatusData.slice(start, end);
+        },
+        totalPagesStatus() {
+            return Math.ceil(this.driverStatusData.length / this.itemsPerPage);
+        },
+        paginatedDriverWithBusData() {
+            const start = (this.currentPageBus - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.driverWithBusData.slice(start, end);
+        },
+        totalPagesBus() {
+            return Math.ceil(this.driverWithBusData.length / this.itemsPerPage);
         },
     },
 };
@@ -592,11 +756,11 @@ body {
     align-items: center;
     height: 150px;
     font-size: 1.2rem;
-    color: #677483;
+    color: var(--clr-dark);
     text-align: center;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background: var(--clr-white);
 }
 .dialog-container {
     display: flex;
@@ -608,11 +772,10 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
 }
 
 .dialog-box {
-    background: #fff;
+    background: var(--clr-white);
     padding: 15px;
     border-radius: 10px;
     max-width: 400px;
@@ -788,7 +951,7 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh;
 }
 
 .spinner {
@@ -821,7 +984,6 @@ select:focus {
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
-    margin-top: 20px;
     background-color: var(--clr-white);
     border-radius: var(--border-radius-3);
     width: 100%;
@@ -886,6 +1048,7 @@ label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: var(--clr-dark);
 }
 
 input {
@@ -942,13 +1105,20 @@ input:focus {
     border-radius: 10px;
     max-width: 500px;
     width: 80%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    height: 86%;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none;
 }
 
 .modal-header,
 .modal-body,
 .modal-footer {
     margin-bottom: 10px;
+    color: var(--clr-dark);
 }
 
 .modal-header {
@@ -963,41 +1133,58 @@ input:focus {
 .modal-body table {
     width: 100%;
     border-collapse: collapse;
+    color: var(--clr-dark);
+    text-align: center;
 }
 
 .modal-body table th,
 .modal-body table td {
-    text-align: center;
-    vertical-align: middle;
     padding: 8px;
+    text-align: center;
+    border: 1px solid var(--clr-dark);
+    border-left: none;
+    border-right: none;
+    vertical-align: middle;
 }
 
 .modal-body table tbody tr {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-top: 1px solid var(--clr-dark);
 }
 
 .modal-body table thead {
-    display: flex;
-    justify-content: center;
+    border-bottom: 2px solid var(--clr-dark);
 }
 
-.modal-body table tbody {
-    display: flex;
-    flex-direction: column;
+.modal-body table tr th:first-child,
+.modal-body table tr td:first-child {
+    border-left: 1px solid var(--clr-dark);
 }
 
-.modal-body table tr {
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
+.modal-body table tr th:last-child,
+.modal-body table tr td:last-child {
+    border-right: 1px solid var(--clr-dark);
 }
 
+.modal-body table th,
 .modal-body table td {
-    flex: 1;
+    height: 100%;
 }
 
+.modal-body table td:first-child {
+    border-left: 1px solid var(--clr-dark);
+}
+
+.modal-body table td:last-child {
+    border-right: 1px solid var(--clr-dark);
+}
+
+.modal-body table th:first-child {
+    border-left: 1px solid var(--clr-dark);
+}
+
+.modal-body table th:last-child {
+    border-right: 1px solid var(--clr-dark);
+}
 .close-modal {
     padding: 8px 16px;
     background-color: #d9534f;
@@ -1024,6 +1211,34 @@ input:focus {
 
 .status-btn:hover {
     background-color: var(--clr-primary-variant);
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    padding: 6px 10px;
+    margin: 0 5px;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    margin: 0 10px;
+    font-size: 0.7rem;
+    color: var(--clr-dark);
 }
 
 /* Responsive Design */

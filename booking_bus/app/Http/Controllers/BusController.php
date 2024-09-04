@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bus;
+use App\Models\Bus_Driver;
 use Illuminate\Http\Request;
 use App\Models\Seat;
 
@@ -164,6 +165,21 @@ class BusController extends Controller
         }
 
         $bus->delete();
+
+        $pendingBusDrivers = Bus_Driver::where('bus_id', $id)
+        ->where('status', 'pending')
+        ->first();
+        if($pendingBusDrivers)
+        {
+            $pendingBusDrivers->status = 'cancelled';
+            $pendingBusDrivers->save();
+            $driver = $pendingBusDrivers->driver;
+            $driver->status = 'available';
+            $driver->save();
+            $bus->delete();
+        }else{
+            $bus->delete();
+        }
 
         return response()->json([
             'message' => 'bus deleted',
