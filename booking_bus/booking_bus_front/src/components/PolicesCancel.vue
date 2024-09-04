@@ -1072,7 +1072,8 @@ body {
     text-align: center;
     margin-bottom: 20px;
     color: var(--clr-dark);
-} /* Modal Styling delete*/
+}
+/* Modal Styling delete*/
 .dialog-container {
     display: flex;
     justify-content: center;
@@ -1087,7 +1088,8 @@ body {
 }
 
 .dialog-box {
-    background: #fff;
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
     padding: 15px;
     border-radius: 10px;
     max-width: 400px;
@@ -1714,7 +1716,7 @@ table tbody tr:last-child td {
     padding: 2px 6px;
     border: none;
     margin: 8px;
-    border-radius: 3px;
+    border-radius: 9px;
     cursor: pointer;
     transition: background-color 0.3s;
     font-size: 9px;
@@ -1727,18 +1729,20 @@ table tbody tr:last-child td {
 
 .edit-btn {
     color: #4caf50;
+    background-color: var(--clr-white);
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
 }
 
 .edit-btn:hover {
-    color: #fff;
-    background-color: #4caf50;
+    color: var(--clr-white);
+    background-color: var(--clr-success);
 }
 
 .delete-btn {
     color: #f44336;
+    background-color: var(--clr-white);
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
@@ -1798,6 +1802,8 @@ table tbody tr:last-child td {
 .modal-content {
     background: var(--clr-white);
     border-radius: var(--border-radius-3);
+    color: var(--clr-dark);
+
     padding: var(--padding-1);
     width: 90%;
     max-width: 500px;

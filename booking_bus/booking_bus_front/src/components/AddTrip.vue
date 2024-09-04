@@ -234,13 +234,11 @@
 
                                     <td>
                                         <button
-                                            class="delete-btn"
-                                            @click="
-                                                openDeleteConfirmModal(trip)
-                                            "
+                                            class="edit-btn"
+                                            @click="editTrip(index, trip.id)"
                                         >
                                             <span class="material-icons"
-                                                >delete</span
+                                                >edit</span
                                             >
                                         </button>
                                     </td>
@@ -967,57 +965,71 @@ h2 {
 }
 
 .dialog-box {
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: var(--border-radius-3);
     max-width: 500px;
     width: 50%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: var(--box-shadow);
+    text-align: center;
+    color: var(--clr-dark);
 }
 
 .dialog-header,
 .dialog-body,
 .dialog-footer {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .dialog-header {
     font-size: 1.3rem;
     font-weight: bold;
-    display: flex;
-    justify-content: center;
+    text-align: center;
+}
+
+.dialog-body {
+    text-align: center;
 }
 
 .dialog-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    gap: 10px;
 }
 
 .confirm-btn {
     padding: 8px 16px;
-    background-color: #5cb85c;
-    color: white;
+    background-color: var(--clr-success);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
 }
 
 .confirm-btn:hover {
-    background-color: #4cae4c;
+    background-color: var(--clr-success);
 }
 
 .cancel-btn {
     padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
-    margin-left: 10px;
 }
 
 .cancel-btn:hover {
-    background-color: #c9302c;
+    background-color: var(--clr-danger);
+}
+
+.close-modal {
+    padding: 8px 16px;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
+    border: none;
+    border-radius: var(--border-radius-2);
+    cursor: pointer;
 }
 .recent_orders {
     width: 100%;
@@ -1139,17 +1151,21 @@ select:focus {
 
 .edit-btn {
     color: #4caf50;
+    background-color: var(--clr-white);
+
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
 }
 .edit-btn:hover {
-    color: #fff;
-    background-color: #4caf50;
+    color: var(--clr-white);
+    background-color: var(--clr-success);
 }
 
 .delete-btn {
     color: #f44336;
+    background-color: var(--clr-white);
+
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
@@ -1162,6 +1178,8 @@ select:focus {
 
 .details-btn {
     color: #007bff;
+    background-color: var(--clr-white);
+
     border-radius: 9px;
     padding: 3px;
 }
@@ -1171,7 +1189,8 @@ select:focus {
     background-color: #31b0d5;
 }
 .status-btn {
-    background-color: #007bff;
+    background-color: var(--clr-white);
+
     margin-bottom: 10px;
 }
 
@@ -1196,11 +1215,11 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
     background-color: var(--clr-white);
     border-radius: var(--border-radius-3);
     width: 100%;
     max-width: 800px;
+    margin-top: 1.1rem;
 }
 
 .nav-btnd {
@@ -1332,6 +1351,7 @@ input:focus {
 
 .submit-btnd {
     padding: 10px 20px;
+    margin: 5px;
     border: none;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
@@ -1400,6 +1420,7 @@ input:focus {
 }
 
 /* Modal Styling */
+
 .modal {
     display: flex;
     justify-content: center;
@@ -1415,6 +1436,7 @@ input:focus {
 
 .modal-content {
     background-color: var(--clr-white);
+    color: var(--clr-dark);
     padding: 20px;
     border-radius: 10px;
     max-width: 600px;
@@ -1424,10 +1446,18 @@ input:focus {
     max-height: 90vh;
 }
 
+.modal-content::-webkit-scrollbar {
+    display: none;
+}
+
+.modal-content {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
 .modal-content h2 {
     display: flex;
     justify-content: center;
-    margin: 20px;
 }
 
 .modal-content span {

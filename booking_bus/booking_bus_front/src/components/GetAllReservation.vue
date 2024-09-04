@@ -674,13 +674,13 @@ h2 {
 }
 
 .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
     border-radius: 1rem;
     padding: 1rem;
     text-align: center;
     box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
+    color: var(--clr-dark);
     max-width: none;
     font-size: 0.85rem;
 }
@@ -692,7 +692,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh;
 }
 .no-data-message {
     display: flex;
@@ -700,11 +700,11 @@ h2 {
     align-items: center;
     height: 150px;
     font-size: 1.2rem;
-    color: #677483;
+    color: var(--clr-dark);
     text-align: center;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background-color: var(--clr-white);
 }
 
 .spinner {
@@ -723,18 +723,12 @@ table thead tr th {
 table tbody tr {
     height: 3rem;
     border-bottom: 1px solid #fff;
-    color: #677483;
     transition: background-color 0.3s ease;
-}
-
-table tbody tr:hover {
-    background-color: #f1f1f1;
 }
 
 table tbody td {
     height: 3rem;
     border-bottom: 1px solid #363949;
-    color: #677483;
 }
 
 table tbody tr:last-child td {
@@ -917,7 +911,8 @@ input:focus {
 }
 
 .modal-content {
-    background: #fff;
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
     padding: 20px;
     border-radius: 10px;
     max-width: 500px;
