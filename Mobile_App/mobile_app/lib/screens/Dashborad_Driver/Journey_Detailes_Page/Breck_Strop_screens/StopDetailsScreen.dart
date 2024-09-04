@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/Breck_Strop_screens/PassengerInfoRow.dart';
+import 'package:mobile_app/screens/WidgetApp/BackToTripbutton.dart';
 import 'package:provider/provider.dart';
 
 class StopDetailsScreen extends StatelessWidget {
@@ -163,35 +164,7 @@ class StopDetailsScreen extends StatelessWidget {
             ),
             SizedBox(height: screenHeight * 0.04),
 
-            // Back to Journey Button
-            Padding(
-              padding: EdgeInsets.only(
-                bottom: screenHeight * 0.02,
-                left: screenWidth * 0.04,
-                right: screenWidth * 0.04,
-              ),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    vertical: screenHeight * 0.02,
-                  ),
-                  backgroundColor: AppColors.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  'Back to Journey',
-                  style: TextStyle(
-                    fontSize: screenHeight * 0.02,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
+            BackButtonToTrip(context),
           ],
         ),
       ),

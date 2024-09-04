@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/CompleteJourneyPage/JourneyCompletedScreen.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyAppBar.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyRouteInfo.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyInfoBox.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/full_map_view_screen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/journey_buttons_widget.dart';
+import 'package:provider/provider.dart';
 
 class StartJourneyScreen extends StatefulWidget {
   @override
@@ -29,31 +32,14 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFF0A3D5F),
-        leading: Icon(Icons.arrow_back, size: screenHeight * 0.03),
-        title: Text(
-          'Coimbatore to Chennai',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: screenHeight * 0.025,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      appBar: JourneyAppBar(),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
         children: [
           SizedBox(height: screenHeight * 0.015),
-          // Journey Information Header
-          JourneyRouteInfo(
-              // status: 'ONGOING',
-              ),
+          JourneyRouteInfo(),
           SizedBox(height: screenHeight * 0.02),
 
-          // Journey Details Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -69,21 +55,9 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
           ),
           SizedBox(height: screenHeight * 0.02),
 
-          // Map and Route Details
-          JourneyInfoBox(
-              // routeCoordinates: _routeCoordinates,
-              // initialPosition: _initialPosition,
-              // destinationPosition: _destinationPosition,
-              // onMapCreated: (controller) {
-              //   mapController = controller;
-              // },
-              ),
+          JourneyInfoBox(),
           SizedBox(height: screenHeight * 0.02),
 
-          // Timeline of Stops
-          // Column(
-          //   children: _buildTimelineTiles(),
-          // ),
           SizedBox(height: screenHeight * 0.03),
 
           // Emergency and End Journey Buttons
@@ -94,6 +68,9 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
               // Emergency Stop logic
             },
             onEndJourneyPressed: () {
+              var driverProvider =
+                  Provider.of<DriverProvider>(context, listen: false);
+              driverProvider.setStartTrip(false);
               Navigator.push(
                 context,
                 MaterialPageRoute(

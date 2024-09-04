@@ -31,7 +31,7 @@ class TimelineTileWidget extends StatelessWidget {
                 var auth = Provider.of<AuthProvider>(context, listen: false);
                 provider.fetchPassengerAtPivoit(auth.accessToken,
                     provider.TripDriverDetail!.bus_trip_id, stop.pivoit_id);
-                 provider.setIndexStop(index);
+                provider.setIndexStop(index);
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => StopDetailsScreen()));
               },

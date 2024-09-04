@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:mobile_app/Data_Models/Driver/MyBusModel.dart';
 import 'package:mobile_app/Data_Models/Driver/RatingDriverAndSpeed.dart';
 import 'package:mobile_app/Data_Models/Driver/TripDeatilesModel.dart';
+
 import 'package:mobile_app/Data_Models/Driver/TripForDriver.dart';
 
 import 'package:mobile_app/constants.dart';
@@ -139,7 +140,7 @@ class DriverService {
   }
 
   Future<List<String>> fetchPassengerAtPivoit(
-      String accessToken, int busTripId, String Pivoit_id) async {
+      String accessToken, int busTripId, int Pivoit_id) async {
     final response = await http.get(
       Uri.parse(name_domain_server +
           'driver/getPassenegerAtPivoit/$busTripId/pivot/$Pivoit_id'),

@@ -74,7 +74,7 @@ dependencies:
   tap_debouncer: ^2.2.0
   ticket_widget: ^1.0.2
   awesome_dialog: ^3.2.1
-
+  permission_handler: ^11.2.0
 
 
 

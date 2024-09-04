@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/PopUp_widget/SafetyInformationPopup.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/start_journey_screen.dart';
+import 'package:provider/provider.dart';
 
 class StartJourneyButton extends StatelessWidget {
   @override
@@ -39,6 +41,9 @@ class StartJourneyButton extends StatelessWidget {
         return SafetyInformationPopup(
           onAgreePressed: () {
             Navigator.pop(context); // Close the dialog
+            var driverProvider =
+                Provider.of<DriverProvider>(context, listen: false);
+            driverProvider.setStartTrip(true);
             Navigator.push(
               context,
               MaterialPageRoute(

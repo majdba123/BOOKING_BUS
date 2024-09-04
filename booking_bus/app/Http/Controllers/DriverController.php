@@ -337,10 +337,10 @@ class DriverController extends Controller
             // $reservations = $pivoit->Reservation;
 
             // $formattedReservations = $reservations->map(function ($reservation) {
-            //     return
+                // return
             //         // 'reservation_id' => $reservation->id,
             //         // 'user_id' => $reservation->user_id,
-            //         $reservation->user ? $reservation->user->name : 'Unknown';
+                    // $reservation->user ? $reservation->user->name : 'Unknown';
 
             //     // 'price' => $reservation->price,
             //     // 'status' => $reservation->status,

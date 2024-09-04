@@ -15,6 +15,7 @@ class DriverProvider extends ChangeNotifier {
   RateDriverModel? _RateDriver;
   MyBusModel? _MyBus;
   bool _isLoading = false;
+  bool _isStartTrip = false;
   String? _errorMessage;
   String _typePage = 'alltrip';
   String get typePage => _typePage;
@@ -39,10 +40,16 @@ class DriverProvider extends ChangeNotifier {
   RateDriverModel? get RateDriver => _RateDriver;
   MyBusModel? get MyBus => _MyBus;
   bool get isLoading => _isLoading;
+  bool get isStartTrip => _isStartTrip;
   String? get errorMessage => _errorMessage;
 
   void setypePage(type) {
     _typePage = type;
+    notifyListeners();
+  }
+
+  void setStartTrip(status) {
+    _isStartTrip = status;
     notifyListeners();
   }
 
@@ -171,7 +178,7 @@ class DriverProvider extends ChangeNotifier {
   }
 
   Future<void> fetchPassengerAtPivoit(
-      String accessToken, int busTripId, String pivot_id) async {
+      String accessToken, int busTripId, int pivot_id) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();

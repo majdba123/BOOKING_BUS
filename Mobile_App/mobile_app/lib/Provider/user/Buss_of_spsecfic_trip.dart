@@ -4,10 +4,7 @@ import 'package:http/http.dart'
 import 'package:mobile_app/Api_Services/Company/Bus_trip.dart';
 import 'package:mobile_app/Api_Services/Company/Trip.dart';
 import 'package:mobile_app/Data_Models/SeatModel.dart';
-import 'dart:convert';
-import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/Data_Models/show_buss_spsecifc_trip.dart';
-import 'package:mobile_app/constants.dart'; // To decode JSON responses
 
 class BussofSpsccifTripProvider with ChangeNotifier {
   List<BusResponse> _busResponses = [];

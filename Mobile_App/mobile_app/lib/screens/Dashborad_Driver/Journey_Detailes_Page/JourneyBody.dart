@@ -25,10 +25,7 @@ class JourneyBody extends StatelessWidget {
         SizedBox(height: screenHeight * 0.02),
         JourneyDetailsHeader(),
         SizedBox(height: screenHeight * 0.02),
-        JourneyInfoBox(
-
-            // onMapCreated: onMapCreated,
-            ),
+        JourneyInfoBox(),
         SizedBox(height: screenHeight * 0.03),
         StartJourneyButton(),
       ],

@@ -106,13 +106,23 @@ class JourneyMapWidget extends StatelessWidget {
                 children: [
                   Icon(Icons.map, color: Colors.white),
                   SizedBox(width: 8),
-                  Text(
-                    'Open in Map',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenHeight * 0.018,
+                  if (driverProvider.isStartTrip) ...[
+                    Text(
+                      'Track On Map',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenHeight * 0.018,
+                      ),
                     ),
-                  ),
+                  ] else if (!driverProvider.isStartTrip) ...[
+                    Text(
+                      'Open in Map',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenHeight * 0.018,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

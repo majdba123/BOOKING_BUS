@@ -1,10 +1,10 @@
 class BreakData {
-  final String break_id;
+  final int break_id;
   final String break_name;
   final double latitude;
   final double longitude;
   final int passengers_count;
-  final String pivoit_id;
+  final int pivoit_id;
   BreakData({
     required this.break_id,
     required this.break_name,
