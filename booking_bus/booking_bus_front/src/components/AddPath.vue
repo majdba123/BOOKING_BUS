@@ -642,7 +642,7 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh;
 }
 
 .spinner {
