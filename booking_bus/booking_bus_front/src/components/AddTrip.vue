@@ -1328,24 +1328,22 @@ input:focus {
 .submit-btnnd {
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
 .submit-btnd {
     padding: 10px 20px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s;
-    margin: 10px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-btnd:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
+    transform: translateY(-3px);
 }
-
 .map-container {
     flex: 1;
     margin-left: 20px;

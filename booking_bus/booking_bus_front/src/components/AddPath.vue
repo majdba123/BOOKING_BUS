@@ -43,6 +43,7 @@
                 <MapPath />
             </div>
         </div>
+
         <div v-else class="recent_orders">
             <h1>All Paths</h1>
             <div class="table-container">
@@ -50,7 +51,10 @@
                     <div class="spinner"></div>
                 </div>
                 <div v-else>
-                    <div v-if="!paginatedPaths.length" class="no-data-message">
+                    <div
+                        v-if="!filteredPaths.length > 0"
+                        class="no-data-message"
+                    >
                         No Data Available
                     </div>
                     <div v-else>
@@ -67,7 +71,7 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(path, index) in paginatedPaths"
+                                    v-for="(path, index) in filteredPaths"
                                     :key="index"
                                 >
                                     <td>{{ index }}</td>
@@ -105,28 +109,6 @@
                                 </tr>
                             </tbody>
                         </table>
-
-                        <!-- Pagination Controls -->
-                        <div class="pagination">
-                            <button
-                                @click="prevPage"
-                                :disabled="currentPage === 1"
-                            >
-                                <span class="material-icons"
-                                    >skip_previous</span
-                                >
-                            </button>
-                            <span
-                                >Page {{ currentPage }} of
-                                {{ totalPages }}</span
-                            >
-                            <button
-                                @click="nextPage"
-                                :disabled="currentPage === totalPages"
-                            >
-                                <span class="material-icons">skip_next</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -438,36 +420,10 @@ export default {
                     this.closeEditModal();
                 });
         },
-        prevPage() {
-            if (this.currentPage > 1) {
-                this.currentPage--;
-            }
-            this.updateFilteredData();
-        },
-        nextPage() {
-            if (this.currentPage < this.totalPages) {
-                this.currentPage++;
-            }
-            this.updateFilteredData();
-        },
-        goToPage(pageNumber) {
-            if (pageNumber >= 1 && pageNumber <= this.totalPages) {
-                this.currentPage = pageNumber;
-            }
-            this.updateFilteredData();
-        },
-        updateFilteredData() {
-            this.filteredPaths = this.paginatedPaths;
-        },
     },
     computed: {
-        paginatedPaths() {
-            const start = (this.currentPage - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.Paths.slice(start, end);
-        },
-        totalPages() {
-            return Math.ceil(this.Paths.length / this.itemsPerPage);
+        filteredPaths() {
+            return this.Paths;
         },
     },
 };
@@ -610,39 +566,11 @@ select:focus {
     margin: 5px;
     transition: background-color 0.3s;
 }
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.pagination button {
-    padding: 6px 10px;
-    margin: 0 5px;
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s;
-}
-
-.pagination button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.pagination span {
-    margin: 0 10px;
-    font-size: 0.7rem;
-    color: var(--clr-dark);
-}
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh;
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {
