@@ -451,8 +451,6 @@ export default {
                 .then(() => {
                     console.log("Selection Complete for Bus ID:", busId);
                     this.toast.success("Driver assigned to bus successfully!");
-
-                    localStorage.setItem(`driver_${userId}_busId`, busId);
                 })
                 .catch((error) => {
                     this.toast.error("Error assigning driver to bus.");
