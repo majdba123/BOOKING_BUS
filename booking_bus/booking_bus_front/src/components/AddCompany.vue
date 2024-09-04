@@ -133,6 +133,28 @@
                     </div>
                 </div>
             </div>
+            <button
+                type="button"
+                @click="
+                    current_page == first_page
+                        ? (current_page = last_page)
+                        : (current_page -= 1);
+                    AllCompany();
+                "
+            >
+                &#10508;
+            </button>
+            <button
+                type="button"
+                @click="
+                    current_page == last_page
+                        ? (current_page = first_page)
+                        : (current_page += 1);
+                    AllCompany();
+                "
+            >
+                &#10511;
+            </button>
         </div>
 
         <div v-if="showDriverStatusModal" class="modal">
@@ -591,6 +613,9 @@ export default {
     name: "AddCompany",
     data() {
         return {
+            current_page: 1,
+            last_page: null,
+            first_page: null,
             loading: true,
             loading4: true,
             loading5: true,
@@ -600,7 +625,6 @@ export default {
             loading1: false,
             loading2: true,
             loading3: true,
-
             currentCompanyId: null,
             idd: "",
             showForm: true,
@@ -791,11 +815,15 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/admin/all_company",
+                url:
+                    "http://127.0.0.1:8000/api/admin/all_company?page=" +
+                    this.current_page,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     this.Company = response.data.data;
+                    this.first_page = response.data.from;
+                    this.last_page = response.data.last_page;
                     store.state.Company = response.data;
                     console.log(store.state.Company);
                     this.loading = false;

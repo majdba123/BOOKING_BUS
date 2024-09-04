@@ -32,16 +32,16 @@ export default {
                 .then((response) => {
                     this.chartData = [
                         {
-                            label: "In Progress",
-                            value: response.data.inProgress_PrivateTrips,
+                            label: "Pending",
+                            value: response.data.pending_drivers,
                         },
                         {
                             label: "Completed",
-                            value: response.data.completed_PrivateTrips,
+                            value: response.data.completed_driver,
                         },
                         {
-                            label: "Canceled",
-                            value: response.data.canceled_PrivateTrips,
+                            label: "Avalibale",
+                            value: response.data.available_drivers,
                         },
                     ];
 
@@ -65,7 +65,7 @@ export default {
                             labels: this.chartData.map((item) => item.label),
                             datasets: [
                                 {
-                                    label: "Number of Private Trips",
+                                    label: "Number Of Driver",
                                     data: this.chartData.map(
                                         (item) => item.value
                                     ),
