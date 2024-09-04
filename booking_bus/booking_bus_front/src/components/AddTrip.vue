@@ -1033,7 +1033,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh;
+    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
 }
 
 .spinner {
@@ -1054,10 +1054,10 @@ h2 {
     text-align: center;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
-    background-color: var(--clr-white);
+    background-color: #f6f6f9;
 }
 .recent_orders table {
-    background-color: var(--clr-white);
+    background-color: #fff;
     width: 100%;
     border-radius: 1rem;
     padding: 1rem;
@@ -1105,7 +1105,7 @@ select {
     padding: 10px;
     border: 2px solid #007bff;
     border-radius: 5px;
-    background-color: var(--clr-white);
+    background-color: #f6f6f9;
     color: #363949;
     font-size: 16px;
     width: 100%;
@@ -1197,25 +1197,24 @@ select:focus {
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
-    background-color: var(--clr-white);
-    border-radius: var(--border-radius-3);
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 10px;
     width: 100%;
-    max-width: 800px;
 }
 
 .nav-btnd {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 9px;
-    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
-    color: var(--clr-white);
+    border-radius: 25px;
+    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
+    color: white;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 12px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
-    width: 100%;
 }
 
 @keyframes gradientAnimation {
@@ -1249,7 +1248,7 @@ select:focus {
     flex-direction: column;
     justify-content: center;
     padding: 20px;
-    background-color: var(--clr-white);
+    background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     width: 100%;
@@ -1266,11 +1265,11 @@ select:focus {
 .select-container select {
     width: 100%;
     padding: 10px;
-    border: 1px solid var(--clr-primary);
+    border: 2px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
     color: #007bff;
-    background-color: var(--clr-white);
+    background-color: #fff;
     box-sizing: border-box;
     appearance: none;
     text-align: center;
@@ -1284,7 +1283,7 @@ select:focus {
 }
 
 .select-container select:hover {
-    background-color: var(--clr-white);
+    background-color: #f0f0f0;
     border-color: #007bff;
 }
 
@@ -1310,11 +1309,11 @@ label {
 input {
     width: 100%;
     padding: 10px;
-    border: 1px solid var(--clr-primary);
+    border: 2px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
     color: #007bff;
-    background-color: var(--clr-white);
+    background-color: #fff;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
     text-align: center;
@@ -1328,22 +1327,24 @@ input:focus {
 .submit-btnnd {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .submit-btnd {
     padding: 10px 20px;
     border: none;
-    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
-    color: var(--clr-white);
+    background-color: #007bff;
+    color: white;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s;
+    margin: 10px;
 }
 
 .submit-btnd:hover {
-    background-color: var(--clr-primary-variant);
-    transform: translateY(-3px);
+    background-color: #0056b3;
 }
+
 .map-container {
     flex: 1;
     margin-left: 20px;
@@ -1414,7 +1415,7 @@ input:focus {
 }
 
 .modal-content {
-    background-color: var(--clr-white);
+    background: #fff;
     padding: 20px;
     border-radius: 10px;
     max-width: 600px;
@@ -1440,7 +1441,6 @@ input:focus {
 .modal-body div div,
 .modal-footer {
     margin-bottom: 10px;
-    color: var(--clr-dark);
 }
 
 .modal-header {
@@ -1571,7 +1571,7 @@ input:focus {
     border: 1px solid #ddd;
     padding: 0 12px;
     font-size: 16px;
-    background-color: var(--clr-white);
+    background-color: #fff;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
 }

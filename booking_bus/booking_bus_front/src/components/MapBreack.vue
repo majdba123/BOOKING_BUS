@@ -54,13 +54,14 @@ export default {
             map: null,
             directionsService: null,
             directionsRenderer: null,
-            routePath: null,
-            selectedMarker: null,
+            routePath: null, // مسار الطريق
+            selectedMarker: null, // دبوس النقطة المختارة
             polyline: null,
         };
     },
     computed: {
         shouldDisplayMap() {
+            // التحقق من أن القيم كلها صالحة
             return (
                 this.fromlat &&
                 this.fromlng &&
@@ -73,6 +74,7 @@ export default {
             );
         },
         shouldDisplayMarker() {
+            // التحقق من أن lat و long صالحة
             return (
                 this.lat &&
                 this.long &&
@@ -162,10 +164,12 @@ export default {
 
                 this.calculateAndDisplayRoute();
 
+                // Add listener for map clicks
                 this.map.addListener("click", (event) => {
                     this.handleMapClick(event.latLng);
                 });
 
+                // إضافة الماركر إذا كانت القيم صالحة
                 if (this.shouldDisplayMarker) {
                     this.addMarker();
                 }
@@ -314,6 +318,5 @@ export default {
 #map {
     height: 100%;
     width: 100%;
-    border-radius: 9px;
 }
 </style>

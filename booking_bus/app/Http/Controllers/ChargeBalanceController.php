@@ -168,9 +168,7 @@ class ChargeBalanceController extends Controller
         if (!$chargeBalance) {
             return response()->json(['error' => 'Not found'], 404);
         }
-        if ($chargeBalance->status != 'padding') {
-            return response()->json(['error' => 'not padding'], 404);
-        }
+
         $chargeBalance->status = 'completed';
         $chargeBalance->save();
 
@@ -191,9 +189,6 @@ class ChargeBalanceController extends Controller
         $chargeBalance = Charge_Balance::find($id);
         if (!$chargeBalance) {
             return response()->json(['error' => 'Not found'], 404);
-        }
-        if ($chargeBalance->status != 'padding') {
-            return response()->json(['error' => 'not padding'], 404);
         }
         $user = $chargeBalance->user; // assuming you have a user relationship in Charge_Balance model
 

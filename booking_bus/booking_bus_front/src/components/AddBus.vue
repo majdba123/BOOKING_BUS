@@ -47,7 +47,7 @@
                     <div class="spinner"></div>
                 </div>
                 <div v-else>
-                    <div v-if="!paginatedBuses.length" class="no-data-message">
+                    <div v-if="!filteredBuses.length" class="no-data-message">
                         No Data Available
                     </div>
                     <div v-else>
@@ -62,7 +62,7 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(bus, index) in paginatedBuses"
+                                    v-for="(bus, index) in filteredBuses"
                                     :key="index"
                                 >
                                     <td>{{ bus.number_bus }}</td>
@@ -100,26 +100,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="pagination">
-                            <button
-                                :disabled="currentPage === 1"
-                                @click="changePage(currentPage - 1)"
-                            >
-                                <span class="material-icons"
-                                    >skip_previous</span
-                                >
-                            </button>
-                            <span
-                                >Page {{ currentPage }} of
-                                {{ totalPages }}</span
-                            >
-                            <button
-                                :disabled="currentPage === totalPages"
-                                @click="changePage(currentPage + 1)"
-                            >
-                                <span class="material-icons">skip_next</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -147,7 +127,7 @@
                     </div>
                     <div v-else>
                         <div
-                            v-if="!paginatedBusStatusData.length"
+                            v-if="!busStatusData.length"
                             class="no-data-message"
                         >
                             No Data Available
@@ -163,9 +143,7 @@
                                 </thead>
                                 <tbody>
                                     <tr
-                                        v-for="(
-                                            bus, index
-                                        ) in paginatedBusStatusData"
+                                        v-for="(bus, index) in busStatusData"
                                         :key="index"
                                     >
                                         <td>{{ bus.number_bus }}</td>
@@ -174,20 +152,6 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="pagination">
-                            <button @click="prevPage('busStatus')">
-                                <span class="material-icons"
-                                    >skip_previous</span
-                                >
-                            </button>
-                            <span
-                                >Page {{ currentPageBusStatus }} of
-                                {{ totalPagesBusStatus }}</span
-                            >
-                            <button @click="nextPage('busStatus')">
-                                <span class="material-icons">skip_next</span>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -288,6 +252,7 @@
         </div>
     </div>
 </template>
+
 <script>
 import axios from "axios";
 import store from "@/store";
@@ -318,10 +283,6 @@ export default {
             editingIndex: null,
             toast: useToast(),
             refreshInterval: null,
-            currentPage: 1,
-            itemsPerPage: 8,
-            currentPageBusStatus: 1,
-            searchQueryBusStatus: "",
         };
     },
     mounted() {
@@ -435,6 +396,7 @@ export default {
                 )
                 .then((response) => {
                     this.busStatusData = response.data;
+                    console.log(response.data);
                     this.loading1 = false;
                 })
                 .catch((error) => {
@@ -508,7 +470,7 @@ export default {
                     this.showSeatsModal = true;
                 })
                 .catch((error) => {
-                    window.alert("Error fetching bus seats");
+                    window.alert.toast("Error fetching bus seats");
                     console.error("Fetch seats error:", error);
                 });
         }, 300),
@@ -528,72 +490,18 @@ export default {
                 this.refreshInterval = null;
             }
         },
-        changePage(page) {
-            if (page < 1 || page > this.totalPages) return;
-            this.currentPage = page;
-        },
-        prevPage(modalType) {
-            if (modalType === "busStatus") {
-                if (this.currentPageBusStatus > 1) {
-                    this.currentPageBusStatus--;
-                }
-            } else if (modalType === "bus") {
-                if (this.currentPage > 1) {
-                    this.currentPage--;
-                }
-            }
-        },
-        nextPage(modalType) {
-            if (modalType === "busStatus") {
-                if (this.currentPageBusStatus < this.totalPagesBusStatus) {
-                    this.currentPageBusStatus++;
-                }
-            } else if (modalType === "bus") {
-                if (this.currentPage < this.totalPages) {
-                    this.currentPage++;
-                }
-            }
-        },
+    },
+    beforeUnmount() {
+        this.stopAutoRefresh();
     },
     computed: {
-        filteredBusStatusData() {
-            if (!this.searchQueryBusStatus) {
-                return this.busStatusData;
-            }
-            return this.busStatusData.filter((bus) => {
-                const searchQuery = this.searchQueryBusStatus.toLowerCase();
-                return bus.number_bus
-                    .toString()
-                    .toLowerCase()
-                    .includes(searchQuery);
-            });
-        },
-        paginatedBusStatusData() {
-            const start = (this.currentPageBusStatus - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.filteredBusStatusData.slice(start, end);
-        },
-        totalPagesBusStatus() {
-            return Math.ceil(
-                this.filteredBusStatusData.length / this.itemsPerPage
-            );
-        },
         filteredBuses() {
             return store.state.Bus.filter((bus) => {
-                const searchQuery = store.state.searchQuery.toLowerCase();
                 return bus.number_bus
                     .toString()
                     .toLowerCase()
-                    .includes(searchQuery);
+                    .includes(store.state.searchQuery.toLowerCase());
             });
-        },
-        paginatedBuses() {
-            const start = (this.currentPage - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.filteredBuses.slice(start, end);
-        },
-        totalPages() {
-            return Math.ceil(this.filteredBuses.length / this.itemsPerPage);
         },
     },
 };
@@ -718,39 +626,12 @@ small {
     max-width: none;
     font-size: 0.85rem;
 }
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
 
-.pagination button {
-    padding: 6px 10px;
-    margin: 0 5px;
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s;
-}
-
-.pagination button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.pagination span {
-    margin: 0 10px;
-    font-size: 0.7rem;
-    color: var(--clr-dark);
-}
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh;
+    height: 100vh;
 }
 
 .spinner {
@@ -960,7 +841,6 @@ label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: var(--clr-dark);
 }
 
 input {
@@ -1008,20 +888,14 @@ input:focus {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
+
 .modal-content {
     background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     max-width: 500px;
     width: 80%;
-    height: 86%;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    margin: 10px;
-}
-
-.modal-content::-webkit-scrollbar {
-    display: none;
+    box-shadow: 0 2rem 3rem var(--clr-light);
 }
 
 .modal-header,
@@ -1109,23 +983,26 @@ input:focus {
 
 .modals {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     position: fixed;
-    z-index: 1000;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
 .modals-content {
-    background: var(--clr-white);
+    background: #fff;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 8px;
     max-width: 400px;
-    width: 50%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
 }
 

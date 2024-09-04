@@ -29,7 +29,12 @@
                             />
                         </div>
                         <div class="form-group">
-                            <label for="government"> Select Path </label>
+                            <label for="government">
+                                <span class="material-icons"
+                                    >location_city</span
+                                >
+                                Select Path
+                            </label>
                             <select
                                 id="government"
                                 v-model="Idgovernment"
@@ -37,9 +42,7 @@
                                 required
                                 class="custom-select"
                             >
-                                <option value="" disabled class="custom-select">
-                                    Select Path
-                                </option>
+                                <option value="" disabled>Select Path</option>
                                 <option
                                     v-for="gov in governments"
                                     :key="gov.id"
@@ -726,12 +729,17 @@ textarea:focus {
 
 .submit-btn button {
     padding: 10px 20px;
+    margin: 10px;
+    width: 100%;
     border: none;
+    border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s, transform 0.2s;
+    font-size: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
 }
 @keyframes gradientAnimation {
     0% {
@@ -746,8 +754,9 @@ textarea:focus {
 }
 
 .submit-btn button:hover {
-    background-color: var(--clr-primary-variant);
-    transform: translateY(-3px);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
 }
 
 .map-container {
@@ -756,6 +765,7 @@ textarea:focus {
     height: 400px;
     border-radius: var(--border-radius-3);
     overflow: hidden;
+    box-shadow: var(--box-shadow);
     padding: 10px;
     margin-bottom: 30px;
 }
@@ -781,6 +791,7 @@ textarea:focus {
 .recent_orders {
     width: 100%;
     overflow-x: auto;
+    margin-top: 20px;
 }
 
 .table-container {

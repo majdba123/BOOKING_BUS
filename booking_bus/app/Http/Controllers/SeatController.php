@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Seat;
 use Illuminate\Http\Request;
 use App\Models\Bus;
-use App\Models\Bus_Trip;
-use App\Models\Reservation;
-use App\Models\Seat_Reservation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -191,7 +188,7 @@ class SeatController extends Controller
 
     //hamza
 
-    /*public function seatOfBus($bus_id)
+    public function seatOfBus($bus_id)
     {
         $bus = Bus::find($bus_id);
         if (!$bus) {
@@ -201,45 +198,5 @@ class SeatController extends Controller
         $seats = Seat::where('bus_id', $bus_id)->get(['id', 'status']);
 
         return response()->json($seats);
-    }*/
-
-    public function seatOfBus($bus_trip_id)
-    {
-        $bus_trip = Bus_Trip::findOrfail($bus_trip_id);
-        $bus_seats = $bus_trip->bus->seat->pluck('id')->all();
-        $result = [];
-
-        foreach ($bus_seats as $seat_id) {
-            $seat_reservations = seat_reservation::whereHas('reservation', function ($query) use ($bus_trip_id) {
-                $query->where('bus__trip_id', $bus_trip_id);
-            })->where('seat_id', $seat_id)->get();
-
-            if ($seat_reservations->count() > 1) {
-                $statuses = $seat_reservations->pluck('status')->all();
-                if (in_array(1, $statuses) && in_array(2, $statuses)) {
-                    $result[] = [
-                        'seat_id' => $seat_id,
-                        'status' => 3,
-                    ];
-                    continue;
-                }
-            }
-
-            $seat_reservation = $seat_reservations->first();
-
-            if ($seat_reservation) {
-                $result[] = [
-                    'seat_id' => $seat_id,
-                    'status' => $seat_reservation->status,
-                ];
-            } else {
-                $result[] = [
-                    'seat_id' => $seat_id,
-                    'status' => Seat::find($seat_id)->status
-                ];
-            }
-        }
-
-        return $result;
     }
 }
