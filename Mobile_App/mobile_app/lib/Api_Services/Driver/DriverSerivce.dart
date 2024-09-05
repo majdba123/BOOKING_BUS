@@ -161,4 +161,25 @@ class DriverService {
       throw Exception('Failed to load trips');
     }
   }
+
+  Future<bool> checkReservation(
+    String accessToken,
+    String ReservationId,
+  ) async {
+    final response = await http.post(
+      Uri.parse(name_domain_server + 'driver/Qr_for_complete/$ReservationId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

@@ -77,7 +77,10 @@ dependencies:
   permission_handler: ^11.2.0
   flutter_qr_bar_scanner: ^3.0.2
   mobile_scanner: ^5.2.1
-
+  google_ml_kit: ^0.7.2
+  qr_code_scanner: ^1.0.1
+  flutter_barcode_scanner: ^2.0.0
+  camera: ^0.10.0+1 
 
   # permission_handler: ^11.3.1
   # path_provider: ^2.0.11

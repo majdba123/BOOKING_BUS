@@ -191,7 +191,13 @@ class FullMapViewScreen extends StatelessWidget {
                           isJourneyComplete: true,
                         ),
                       ] else if (!driverProvider.isStartTrip) ...[
-                        Container(width: 500, child: BackButtonToTrip(context)),
+                        Container(
+                            width: 500,
+                            child: CustomeButton(
+                              context,
+                              'Back to Trip',
+                              () => Navigator.pop(context),
+                            )),
                       ],
                     ],
                   );

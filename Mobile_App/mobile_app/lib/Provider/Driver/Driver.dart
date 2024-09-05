@@ -16,6 +16,7 @@ class DriverProvider extends ChangeNotifier {
   MyBusModel? _MyBus;
   bool _isLoading = false;
   bool _isStartTrip = false;
+  bool _isCheckedReservation = false;
   String? _errorMessage;
   String _typePage = 'alltrip';
   String get typePage => _typePage;
@@ -34,6 +35,7 @@ class DriverProvider extends ChangeNotifier {
   MyBusModel? get MyBus => _MyBus;
   bool get isLoading => _isLoading;
   bool get isStartTrip => _isStartTrip;
+  bool get isCheckedReservation => _isCheckedReservation;
   String? get errorMessage => _errorMessage;
 
   void setypePage(type) {
@@ -175,6 +177,27 @@ class DriverProvider extends ChangeNotifier {
       _PassengerListAtPivoit = await DriverService()
           .fetchPassengerAtPivoit(accessToken, busTripId, pivot_id);
       print(_PassengerListAtPivoit);
+      print('after handling !!');
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> checkReservation(
+    String accessToken,
+    String ReservationId,
+  ) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _isCheckedReservation =
+          await DriverService().checkReservation(accessToken, ReservationId);
+      print(_isCheckedReservation);
       print('after handling !!');
     } catch (error) {
       _errorMessage = error.toString();

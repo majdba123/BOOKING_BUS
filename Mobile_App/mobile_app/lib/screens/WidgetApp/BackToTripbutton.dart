@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 
-Widget BackButtonToTrip(BuildContext context) {
+Widget CustomeButton(BuildContext context, String text, Function()? action) {
   double screenHeight = MediaQuery.of(context).size.height;
   double screenWidth = MediaQuery.of(context).size.width;
   return Padding(
@@ -11,9 +11,7 @@ Widget BackButtonToTrip(BuildContext context) {
       right: screenWidth * 0.04,
     ),
     child: ElevatedButton(
-      onPressed: () {
-        Navigator.pop(context);
-      },
+      onPressed: action,
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.symmetric(
           vertical: screenHeight * 0.02,
@@ -24,7 +22,7 @@ Widget BackButtonToTrip(BuildContext context) {
         ),
       ),
       child: Text(
-        'Back to Trip',
+        '$text',
         style: TextStyle(
           fontSize: screenHeight * 0.02,
           color: Colors.white,

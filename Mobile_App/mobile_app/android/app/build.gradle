@@ -69,5 +69,8 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.android.gms:play-services-maps:18.0.0'  // Update to the latest version
+    implementation 'com.google.mlkit:barcode-scanning:17.0.2'
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
+
 
 }

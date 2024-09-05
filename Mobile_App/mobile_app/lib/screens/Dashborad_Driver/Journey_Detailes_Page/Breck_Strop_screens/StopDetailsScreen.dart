@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/Breck_Strop_screens/PassengerInfoRow.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/scanQr.dart';
 import 'package:mobile_app/screens/WidgetApp/BackToTripbutton.dart';
 import 'package:provider/provider.dart';
 
@@ -136,16 +137,6 @@ class StopDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: screenWidth * 0.002),
-                      // Icon(Icons.compare_arrows,
-                      //     color: Colors.grey, size: screenHeight * 0.022),
-                      // SizedBox(width: screenWidth * 0.015),
-                      // Text(
-                      //   '${driverProvider.PassengerListAtPivoit?.length}',
-                      //   style: TextStyle(
-                      //     fontWeight: FontWeight.bold,
-                      //     fontSize: screenHeight * 0.018,
-                      //   ),
-                      // ),
                       SizedBox(width: screenWidth * 0.015),
                       Icon(Icons.arrow_upward,
                           color: Colors.green, size: screenHeight * 0.022),
@@ -164,7 +155,17 @@ class StopDetailsScreen extends StatelessWidget {
             ),
             SizedBox(height: screenHeight * 0.04),
 
-            BackButtonToTrip(context),
+            if (driverProvider.isStartTrip) ...[
+              CustomeButton(context, 'Scan QR ', () async {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext Context) => QRScanScreen()));
+              }),
+              CustomeButton(
+                  context, 'Back to Trip', () => Navigator.pop(context)),
+            ] else if (!driverProvider.isStartTrip) ...[
+              CustomeButton(
+                  context, 'Back to Trip', () => Navigator.pop(context)),
+            ],
           ],
         ),
       ),

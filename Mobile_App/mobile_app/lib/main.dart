@@ -14,6 +14,7 @@ import 'package:mobile_app/Provider/user/Wallet_provider.dart';
 import 'package:mobile_app/Provider/user/inquiry_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/journeys_screen.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/Breck_Strop_screens/StopDetailsScreen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/MainPage/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/Mapprovider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
@@ -73,20 +74,23 @@ class MyApp extends StatelessWidget {
     //     KeyboardVisibilityService(context);
 
     return MaterialApp(
-        routes: {
-          // '/BusDash': (context) => Bus_management_Page(),
-          '/mainPageUser': (context) => DashboardUser(),
-          '/driverPageUser': (context) => DashboardDriver(),
-          '/JourneysScreen': (context) => JourneysScreen(),
-          '/BookingUser': (context) => BookingsScreen(),
+      routes: {
+        // '/BusDash': (context) => Bus_management_Page(),
+        '/mainPageUser': (context) => DashboardUser(),
+        '/driverPageUser': (context) => DashboardDriver(),
+        '/JourneysScreen': (context) => JourneysScreen(),
+        '/BookingUser': (context) => BookingsScreen(),
 
-          '/ProfilePage': (context) => ProfilePage(),
-        },
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'Inter'),
-        home: WelcomePage()
+        '/ProfilePage': (context) => ProfilePage(),
+        '/StopDetailes': (context) => StopDetailsScreen(),
+      },
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'Inter'),
+      home: WelcomePage(),
 
-        //  ,
-        );
+      // WelcomePage()
+
+      //  ,
+    );
   }
 }
