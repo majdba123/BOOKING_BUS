@@ -24,14 +24,7 @@ class DriverProvider extends ChangeNotifier {
   int get indextrip => _indextrip;
   int get indexStop => _indexStop;
   int _currentStopIndex = 0;
-  int _totalPassenger = 0;
   int get currentStopIndex => _currentStopIndex;
-  int get totalPassenger => _totalPassenger;
-
-  void settotalPassengerEmpty() {
-    _totalPassenger = 0;
-    notifyListeners();
-  }
 
   TripForDriverModel? get TripDriver => _TripDriver;
   TripDeatilesModel? get TripDriverDetail => _TripDriverDetail;
@@ -65,11 +58,6 @@ class DriverProvider extends ChangeNotifier {
 
   void setCurrentStopIndex(index) {
     _currentStopIndex = index;
-    notifyListeners();
-  }
-
-  void settotalPassenger(int index) {
-    _totalPassenger += index;
     notifyListeners();
   }
 

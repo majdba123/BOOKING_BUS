@@ -15,6 +15,7 @@ class TimelineTileWidget extends StatelessWidget {
         if (stops == null || stops.isEmpty) {
           return Center(child: Text('No stop details available'));
         }
+        int cumulativePassengers = 0;
 
         return Column(
           children: stops.asMap().entries.map((entry) {
@@ -24,16 +25,18 @@ class TimelineTileWidget extends StatelessWidget {
             bool isLast = index == stops.length - 1;
             bool isCurrent = index == provider.currentStopIndex;
             bool passed = index < provider.currentStopIndex;
-            provider.settotalPassenger(stop.passengers_count);
+            cumulativePassengers += stop.passengers_count;
 
             return InkWell(
               onTap: () {
-                var auth = Provider.of<AuthProvider>(context, listen: false);
-                provider.fetchPassengerAtPivoit(auth.accessToken,
-                    provider.TripDriverDetail!.bus_trip_id, stop.pivoit_id);
-                provider.setIndexStop(index);
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => StopDetailsScreen()));
+                WidgetsBinding.instance.addPostFrameCallback((_) async {
+                  var auth = Provider.of<AuthProvider>(context, listen: false);
+                  provider.fetchPassengerAtPivoit(auth.accessToken,
+                      provider.TripDriverDetail!.bus_trip_id, stop.pivoit_id);
+                  provider.setIndexStop(index);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => StopDetailsScreen()));
+                });
               },
               child: TimelineTile(
                 alignment: TimelineAlign.center,
@@ -106,7 +109,7 @@ class TimelineTileWidget extends StatelessWidget {
                         children: [
                           Icon(Icons.person, color: Colors.grey, size: 18),
                           SizedBox(height: 4),
-                          Text('${provider.totalPassenger}',
+                          Text('$cumulativePassengers',
                               style: TextStyle(fontSize: 16)),
                         ],
                       ),

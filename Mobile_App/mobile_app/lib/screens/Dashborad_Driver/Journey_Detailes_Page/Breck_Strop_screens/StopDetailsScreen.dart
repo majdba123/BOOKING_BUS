@@ -129,23 +129,23 @@ class StopDetailsScreen extends StatelessWidget {
                           color: Colors.grey, size: screenHeight * 0.022),
                       SizedBox(width: screenWidth * 0.015),
                       Text(
-                        '${driverProvider.totalPassenger}',
+                        'Name of Passengers ',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: screenHeight * 0.018,
                         ),
                       ),
-                      SizedBox(width: screenWidth * 0.015),
-                      Icon(Icons.compare_arrows,
-                          color: Colors.grey, size: screenHeight * 0.022),
-                      SizedBox(width: screenWidth * 0.015),
-                      Text(
-                        '${driverProvider.PassengerListAtPivoit?.length}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: screenHeight * 0.018,
-                        ),
-                      ),
+                      SizedBox(width: screenWidth * 0.002),
+                      // Icon(Icons.compare_arrows,
+                      //     color: Colors.grey, size: screenHeight * 0.022),
+                      // SizedBox(width: screenWidth * 0.015),
+                      // Text(
+                      //   '${driverProvider.PassengerListAtPivoit?.length}',
+                      //   style: TextStyle(
+                      //     fontWeight: FontWeight.bold,
+                      //     fontSize: screenHeight * 0.018,
+                      //   ),
+                      // ),
                       SizedBox(width: screenWidth * 0.015),
                       Icon(Icons.arrow_upward,
                           color: Colors.green, size: screenHeight * 0.022),

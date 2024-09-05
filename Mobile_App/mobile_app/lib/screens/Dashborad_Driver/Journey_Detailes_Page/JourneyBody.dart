@@ -6,12 +6,6 @@ import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/Journe
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/StartJourneyButton.dart';
 
 class JourneyBody extends StatelessWidget {
-  // final Function(GoogleMapController) onMapCreated;
-
-  // JourneyBody({
-  //   required this.onMapCreated,
-  // });
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;

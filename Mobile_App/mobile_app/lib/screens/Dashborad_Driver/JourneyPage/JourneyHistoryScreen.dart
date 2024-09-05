@@ -17,12 +17,14 @@ class JourneyHistoryScreen extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           color: Colors.white,
           onPressed: () {
-            var auth = Provider.of<AuthProvider>(context, listen: false);
-            var driverProvider =
-                Provider.of<DriverProvider>(context, listen: false);
-            driverProvider.fetchMyTrip(auth.accessToken);
-            driverProvider.setypePage('alltrip');
-            Navigator.of(context).pop();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              var auth = Provider.of<AuthProvider>(context, listen: false);
+              var driverProvider =
+                  Provider.of<DriverProvider>(context, listen: false);
+              driverProvider.fetchMyTrip(auth.accessToken);
+              driverProvider.setypePage('alltrip');
+              Navigator.of(context).pop();
+            });
           },
         ),
         backgroundColor: AppColors.primaryColor,

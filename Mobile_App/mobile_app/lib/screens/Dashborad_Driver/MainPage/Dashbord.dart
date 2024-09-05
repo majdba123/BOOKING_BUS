@@ -14,17 +14,17 @@ class DashboardDriver extends StatefulWidget {
 }
 
 class _DashboardDriverState extends State<DashboardDriver> {
-  late AuthProvider auth;
   @override
   void initState() {
     super.initState();
-    auth = Provider.of<AuthProvider>(context, listen: false);
-    Provider.of<DriverProvider>(context, listen: false)
-        .fetchFirstTrip(auth.accessToken);
-    Provider.of<DriverProvider>(context, listen: false)
-        .fetchRateDriver(auth.accessToken);
-    Provider.of<DriverProvider>(context, listen: false)
-        .fetchMyBus(auth.accessToken);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+      var driverProvider = Provider.of<DriverProvider>(context, listen: false);
+
+      driverProvider.fetchFirstTrip(auth.accessToken);
+      driverProvider.fetchRateDriver(auth.accessToken);
+      driverProvider.fetchMyBus(auth.accessToken);
+    });
   }
 
   @override

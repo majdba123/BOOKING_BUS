@@ -13,12 +13,15 @@ class JourneysScreen extends StatefulWidget {
 }
 
 class _JourneysScreenState extends State<JourneysScreen> {
-  late AuthProvider auth;
   void initState() {
     super.initState();
-    auth = Provider.of<AuthProvider>(context, listen: false);
-    Provider.of<DriverProvider>(context, listen: false)
-        .fetchMyTrip(auth.accessToken);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+      var driverProvider = Provider.of<DriverProvider>(context, listen: false);
+      auth = Provider.of<AuthProvider>(context, listen: false);
+      driverProvider.fetchMyTrip(auth.accessToken);
+    });
   }
 
   @override
@@ -55,10 +58,16 @@ class _JourneysScreenState extends State<JourneysScreen> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Provider.of<DriverProvider>(context, listen: false)
-                      .history(auth.accessToken);
-                  Provider.of<DriverProvider>(context, listen: false)
-                      .setypePage('history');
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    AuthProvider auth =
+                        Provider.of<AuthProvider>(context, listen: false);
+                    var driverProvider =
+                        Provider.of<DriverProvider>(context, listen: false);
+
+                    driverProvider.history(auth.accessToken);
+                    driverProvider.setypePage('history');
+                  });
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(

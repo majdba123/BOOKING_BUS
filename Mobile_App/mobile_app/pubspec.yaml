@@ -75,8 +75,8 @@ dependencies:
   ticket_widget: ^1.0.2
   awesome_dialog: ^3.2.1
   permission_handler: ^11.2.0
-
-
+  flutter_qr_bar_scanner: ^3.0.2
+  mobile_scanner: ^5.2.1
 
 
   # permission_handler: ^11.3.1

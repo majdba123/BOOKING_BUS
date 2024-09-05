@@ -36,10 +36,13 @@ class FullMapViewScreen extends StatelessWidget {
     // Fetch the route when the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       mapProvider.fetchRoute(initialPosition, destinationPosition);
-      if (driverProvider.isStartTrip) {
-        mapProvider.startLocationTracking(context, true,
-            driverProvider.TripDriverDetail!.bus_trip_id, accesstoken);
-      }
+      // if (driverProvider.isStartTrip) {
+      //   mapProvider.startLocationTracking(
+      //       context,
+      //       driverProvider.TripDriverDetail!.bus_trip_id,
+      //       accesstoken,
+      //       mapController);
+      // }
     });
 
     return Scaffold(

@@ -14,56 +14,102 @@ class MapProvider with ChangeNotifier {
   LatLng _currentLocation = LatLng(0.0, 0.0);
   LatLng? _previousLocation;
   late GoogleMapController _mapController;
+  StreamSubscription<Position>? _positionStream;
+
   Timer? _timer;
-  void startLocationTracking(BuildContext context, bool isTripActive,
-      int busTrip, String accessToken) async {
-    // Check and request permissions before starting tracking
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
+  Timer? _locationTimer; // Timer for periodic location updates
+
+  Future<void> startLocationTracking(BuildContext context, int busTrip,
+      String accessToken, GoogleMapController mapController) async {
+    bool gpsEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!gpsEnabled) {
+      _showPermissionDeniedDialog(context);
+      return;
     }
 
-    if (permission == LocationPermission.denied) {
-      _showPermissionDeniedDialog(context);
-    } else if (permission == LocationPermission.deniedForever) {
-      _showPermissionDeniedForeverDialog(context);
-    } else {
-      // Permission is granted
-      if (isTripActive) {
-        _timer = Timer.periodic(Duration(milliseconds: 30), (timer) {
-          _getCurrentLocation(busTrip, accessToken);
-        });
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _showPermissionDeniedDialog(context);
+        return;
       }
     }
+
+    // Set the map controller
+    _mapController = mapController;
+
+    // Initialize and start the location update timer
+    _locationTimer = Timer.periodic(Duration(seconds: 10), (timer) async {
+      print('get current location');
+      await _getCurrentLocation(busTrip, accessToken, mapController);
+    });
+
+    // Start listening to location updates
+    _positionStream = Geolocator.getPositionStream(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10, // Update only if location changes by 10 meters
+      ),
+    ).listen((Position position) {
+      LatLng newLocation = LatLng(position.latitude, position.longitude);
+      print(
+          'Location updated: ${newLocation.latitude}, ${newLocation.longitude}');
+
+      if (_previousLocation == null ||
+          _hasSignificantChange(_previousLocation!, newLocation)) {
+        _currentLocation = newLocation;
+        routeCoordinates.add(newLocation);
+        _previousLocation = newLocation;
+        _updateMarker();
+        _updatePolyline();
+        _sendLocationToServer(newLocation, busTrip, accessToken);
+
+        // Update map camera position
+        _mapController.animateCamera(
+          CameraUpdate.newLatLng(_currentLocation),
+        );
+
+        // Notify listeners for UI updates
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
+      }
+    });
   }
 
   void stopLocationTracking() {
-    _timer?.cancel();
+    _positionStream?.cancel();
+    _locationTimer
+        ?.cancel(); // Cancel the timer when stopping location tracking
   }
 
-  Future<void> _getCurrentLocation(int busTrip, String accessToken) async {
+  Future<void> _getCurrentLocation(int busTrip, String accessToken,
+      GoogleMapController mapController) async {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
 
     LatLng newLocation = LatLng(position.latitude, position.longitude);
-    if (_previousLocation == null ||
-        _hasSignificantChange(_previousLocation!, newLocation)) {
-      _currentLocation = newLocation;
-      routeCoordinates.add(newLocation);
-      _previousLocation = newLocation;
-      _updateMarker();
-      _updatePolyline();
+    print(
+        'Fetching current location: ${newLocation.latitude}, ${newLocation.longitude}');
+
+    _currentLocation = newLocation;
+    routeCoordinates.add(newLocation);
+    _previousLocation = newLocation;
+    _updateMarker();
+    _updatePolyline();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
+    });
 
-      // Send location to server
-      _sendLocationToServer(newLocation, busTrip, accessToken);
+    mapController.animateCamera(
+      CameraUpdate.newLatLng(_currentLocation),
+    );
 
-      // Move the map camera
-      _mapController.animateCamera(
-        CameraUpdate.newLatLng(_currentLocation),
-      );
-    }
+    _sendLocationToServer(newLocation, busTrip, accessToken);
   }
 
   bool _hasSignificantChange(LatLng oldLocation, LatLng newLocation) {
@@ -73,7 +119,8 @@ class MapProvider with ChangeNotifier {
       newLocation.latitude,
       newLocation.longitude,
     );
-    return distance > 10; // Threshold for significant change
+    return true;
+    // return distance > 10; // Threshold for significant change
   }
 
   void _updateMarker() {
@@ -99,9 +146,8 @@ class MapProvider with ChangeNotifier {
   Future<void> _sendLocationToServer(
       LatLng position, int busTrip, String accessToken) async {
     final url = Uri.parse(name_domain_server + 'driver/geolocation/$busTrip');
-
-    print(position.latitude);
-    print(position.longitude);
+    print(
+        'Sending location to server: ${position.latitude}, ${position.longitude}');
 
     var res = await http.post(
       url,
@@ -139,7 +185,9 @@ class MapProvider with ChangeNotifier {
       if (data['routes'] != null && data['routes'].isNotEmpty) {
         final route = data['routes'][0]['overview_polyline']['points'];
         routeCoordinates = _decodePolyline(route);
-        notifyListeners(); // Notify listeners to update the UI
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
       } else {
         throw Exception('No routes found');
       }
