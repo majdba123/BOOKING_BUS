@@ -87,7 +87,7 @@
                                 <td>{{ breack.break_name }}</td>
                                 <td>
                                     <button
-                                        class="nav-btnd"
+                                        class="nav-btnds"
                                         @click="
                                             openMapModal(
                                                 breack.id,
@@ -95,7 +95,9 @@
                                             )
                                         "
                                     >
-                                        Display
+                                        <span class="material-icons">
+                                            travel_explore
+                                        </span>
                                     </button>
                                 </td>
                                 <td>
@@ -148,10 +150,12 @@
                                 <td>{{ breack.Distance }}</td>
                                 <td>
                                     <button
-                                        class="nav-btnd"
+                                        class="nav-btnds"
                                         @click="openbreackmodel(breack.id)"
                                     >
-                                        Display
+                                        <span class="material-icons">
+                                            travel_explore
+                                        </span>
                                     </button>
                                 </td>
                             </tr>
@@ -212,7 +216,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button @click="updateBreak" class="close-modal">
+                    <button @click="updateBreak" class="update-btn">
                         Update
                     </button>
                     <button @click="closeEditModal" class="close-modal">
@@ -295,14 +299,14 @@ export default {
             showbreachpath: false,
             name: "",
             pathid: "",
-            frommapLat: 30.033333, // Default latitude for Cairo, Egypt
+            frommapLat: 30.033333,
             frommapLng: 31.233334,
-            tomapLat: 30.033333, // Default latitude for Cairo, Egypt
-            tomapLng: 31.233334, // Default longitude for Cairo, Egypt
-            frommapLatt: 30.033333, // Default latitude for Cairo, Egypt
+            tomapLat: 30.033333,
+            tomapLng: 31.233334,
+            frommapLatt: 30.033333,
             frommapLngt: 31.233334,
-            tomapLatt: 30.033333, // Default latitude for Cairo, Egypt
-            tomapLngt: 31.233334, // Default longitude for Cairo, Egypt
+            tomapLatt: 30.033333,
+            tomapLngt: 31.233334,
             Idgovernment: "",
             name_break: "",
             showForm: 1,
@@ -640,8 +644,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
     background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
@@ -769,6 +771,24 @@ textarea:focus {
     padding: 10px;
     margin-bottom: 30px;
 }
+.nav-btnds {
+    padding: 4px 9px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
+    cursor: pointer;
+    font-size: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+}
+
+.nav-btnds:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
+}
 
 /* Custom Select styling */
 .custom-select {
@@ -827,10 +847,6 @@ table tbody tr {
     transition: background-color 0.3s ease;
 }
 
-table tbody tr:hover {
-    background-color: var(--clr-light);
-}
-
 table tbody td {
     height: 3rem;
     border-bottom: 1px solid var(--clr-dark);
@@ -858,11 +874,11 @@ table tbody tr:last-child td {
 }
 
 .edit-btn {
-    color: var(--clr-success);
-    background-color: var(--clr-light);
-    border-radius: var(--border-radius-2);
+    color: #4caf50;
+    background-color: var(--clr-white);
+    border-radius: 9px;
     padding: 3px;
-    margin: 10px;
+    margin: 5px;
 }
 .edit-btn:hover {
     color: var(--clr-white);
@@ -870,17 +886,17 @@ table tbody tr:last-child td {
 }
 
 .delete-btn {
-    color: var(--clr-danger);
-    background-color: var(--clr-light);
-    border-radius: var(--border-radius-2);
+    color: #f44336;
+    background-color: var(--clr-white);
+    border-radius: 9px;
     padding: 3px;
+    margin: 5px;
 }
 
 .delete-btn:hover {
-    color: var(--clr-white);
-    background-color: var(--clr-danger);
+    color: #fff;
+    background-color: #f44336;
 }
-
 .dialog-container {
     display: flex;
     justify-content: center;
@@ -902,6 +918,7 @@ table tbody tr:last-child td {
     width: 50%;
     box-shadow: var(--box-shadow);
     text-align: center;
+    color: var(--clr-dark);
 }
 
 .dialog-header,
@@ -975,12 +992,24 @@ table tbody tr:last-child td {
 }
 
 .modal-content {
-    background: var(--clr-white);
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
     padding: 20px;
-    border-radius: var(--border-radius-3);
-    max-width: 500px;
-    width: 80%;
-    box-shadow: var(--box-shadow);
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none;
+}
+
+.modal-content {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .modal-header,
@@ -988,15 +1017,16 @@ table tbody tr:last-child td {
 .modal-footer {
     margin-bottom: 10px;
 }
-
 .modal-header {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: bold;
+    display: flex;
+    justify-content: center;
 }
 
 .modal-footer {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
 }
 
 .close-modal {
@@ -1004,16 +1034,27 @@ table tbody tr:last-child td {
     background-color: var(--clr-danger);
     color: var(--clr-white);
     border: none;
-    border-radius: var(--border-radius-2);
+    border-radius: var(--border-radius-1);
     cursor: pointer;
-    margin: 10px;
-    transition: all 0.1s ease;
 }
 
 .close-modal:hover {
-    background-color: var(--clr-danger);
+    background-color: #c9302c;
 }
 
+.update-btn {
+    padding: 8px 16px;
+    background-color: var(--clr-success);
+    color: var(--clr-white);
+    border: none;
+    border-radius: var(--border-radius-1);
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.update-btn:hover {
+    background-color: #489248;
+}
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .containerd {

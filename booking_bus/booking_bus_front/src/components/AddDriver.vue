@@ -612,7 +612,8 @@ body {
 }
 
 .dialog-box {
-    background: #fff;
+    background: var(--clr-white);
+    color: var(--clr-dark);
     padding: 15px;
     border-radius: 10px;
     max-width: 400px;
@@ -654,19 +655,6 @@ body {
 
 .confirm-btn:hover {
     background-color: #4cae4c;
-}
-
-.cancel-btn {
-    padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.cancel-btn:hover {
-    background-color: #c9302c;
 }
 
 .close-modal {
@@ -757,7 +745,21 @@ select:focus {
     border-color: var(--clr-primary);
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30vh;
+}
 
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
 /* Delete button styling */
 
 .delete-btn.material-icons,
@@ -777,38 +779,22 @@ select:focus {
 }
 
 .cancel-btn {
-    color: #4caf50;
-    background-color: #f1f1f1;
     border-radius: 9px;
     width: 29px;
     padding: 2px;
     margin: 5px;
-}
-.spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
-}
-
-.spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
+    color: #f44336;
+    background-color: var(--clr-white);
 }
 .cancel-btn:hover {
     color: #fff;
-    background-color: #4caf50;
+    background-color: #f44336;
 }
-
 .delete-btn {
     color: #f44336;
-    background-color: #f1f1f1;
     border-radius: 9px;
     padding: 3px;
+    background-color: var(--clr-white);
 }
 
 .delete-btn:hover {

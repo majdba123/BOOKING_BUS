@@ -80,10 +80,12 @@
                                     <td>{{ path.Distance }}</td>
                                     <td>
                                         <button
-                                            class="nav-btnd"
+                                            class="nav-btnds"
                                             @click="openMapModal(path.id)"
                                         >
-                                            Display
+                                            <span class="material-icons">
+                                                travel_explore
+                                            </span>
                                         </button>
                                     </td>
                                     <td>
@@ -440,13 +442,27 @@ export default {
     --clr-primary-variant: #111e88;
     --clr-dark-variant: #677483;
     --clr-color-background: #f6f6f9;
-
     --border-radius-1: 0.4rem;
     --border-radius-2: 0.8rem;
-
+    --border-radius-3: 0.9rem;
     --padding-1: 1.2rem;
+    --box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
 
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+/* Dark theme variables */
+.dark-theme-variables {
+    --clr-primary: #bb86fc;
+    --clr-danger: #cf6679;
+    --clr-success: #03dac6;
+    --clr-white: #121212;
+    --clr-info-dark: #bb86fc;
+    --clr-info-light: #292929;
+    --clr-dark: #f6f6f9;
+    --clr-warning: #ffbb55;
+    --clr-light: rgba(255, 255, 255, 0.2);
+    --clr-primary-variant: #3700b3;
+    --clr-dark-variant: #1f1f1f;
+    --clr-color-background: #121212;
 }
 
 * {
@@ -464,17 +480,19 @@ body {
     width: 100%;
     height: 100%;
     font-size: 0.88rem;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
     overflow-y: auto;
 }
 
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
+    color: var(--clr-dark);
 }
 
 h2 {
     font-size: 1.4rem;
+    color: var(--clr-dark);
 }
 
 .recent_orders {
@@ -489,15 +507,15 @@ h2 {
 }
 
 .recent_orders table {
-    background-color: #fff;
     width: 100%;
-    border-radius: 1rem;
-    padding: 1rem;
+    border-radius: var(--border-radius-1);
+    padding: var(--padding-1);
     text-align: center;
-    box-shadow: 0 1rem 1.5rem rgba(132, 139, 200, 0.18);
-    color: #363949;
+    box-shadow: var(--box-shadow);
+    color: var(--clr-dark);
     max-width: none;
     font-size: 0.85rem;
+    background-color: var(--clr-white);
 }
 
 .recent_orders table:hover {
@@ -511,14 +529,14 @@ table thead tr th {
 
 table tbody tr {
     height: 3rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-white);
+    color: var(--clr-dark-variant);
 }
 
 table tbody td {
     height: 3rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-dark);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr:last-child td {
@@ -530,7 +548,10 @@ table tbody tr:last-child td {
     display: block;
     margin: 1rem;
     font-size: 0.85rem;
+    color: var(--clr-primary);
 }
+
+/* No data message */
 .no-data-message {
     display: flex;
     justify-content: center;
@@ -547,46 +568,62 @@ table tbody tr:last-child td {
 /* Select styling */
 select {
     padding: 8px;
-    border: 1px solid #7380ec;
+    border: 1px solid var(--clr-primary);
     border-radius: 4px;
-    background-color: #fff;
-    color: #363949;
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
 }
 
 select:focus {
-    border-color: #007bff;
+    border-color: var(--clr-primary-variant);
 }
 
 /* Button styling */
 .edit-btns {
-    color: #f1f1f1;
-    background-color: #4caf50;
-    border-radius: 9px;
+    color: var(--clr-white);
+    background-color: var(--clr-success);
+    border-radius: var(--border-radius-2);
     padding: 10px;
     margin: 5px;
     transition: background-color 0.3s;
 }
+
+.edit-btns:hover {
+    background-color: var(--clr-dark-variant);
+}
+
+/* Spinner */
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh;
 }
 
 .spinner {
     border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
+    border-left-color: var(--clr-primary);
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
 }
-.edit-btns:hover {
-    background-color: #3a8d3c;
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
+
+/* Button styles with icons */
 .edit-btn.material-icons,
 .delete-btn.material-icons,
 .status-btn.material-icons {
+    padding: 2px 6px;
+    border: none;
     padding: 2px 6px;
     border: none;
     margin: 8px;
@@ -604,27 +641,29 @@ select:focus {
 
 .edit-btn {
     color: #4caf50;
-    background-color: #f1f1f1;
+    background-color: var(--clr-white);
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
 }
 .edit-btn:hover {
-    color: #fff;
-    background-color: #4caf50;
+    color: var(--clr-white);
+    background-color: var(--clr-success);
 }
 
 .delete-btn {
     color: #f44336;
-    background-color: #f1f1f1;
+    background-color: var(--clr-white);
     border-radius: 9px;
     padding: 3px;
+    margin: 5px;
 }
 
 .delete-btn:hover {
     color: #fff;
     background-color: #f44336;
 }
+
 /* Navigation styling */
 .navd {
     display: flex;
@@ -641,9 +680,9 @@ select:focus {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
+    border-radius: var(--border-radius-2);
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
     font-size: 12px;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -669,6 +708,25 @@ select:focus {
     transition: 0.3s ease;
 }
 
+.nav-btnds {
+    padding: 4px 9px;
+    border: none;
+    border-radius: var(--border-radius-2);
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
+    cursor: pointer;
+    font-size: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+}
+
+.nav-btnds:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
+}
+
 /* Form and Map styling */
 .form-map-container {
     display: flex;
@@ -677,6 +735,7 @@ select:focus {
     margin-top: 20px;
     height: 350px;
 }
+
 .form-containerd {
     display: flex;
     flex-direction: column;
@@ -684,18 +743,20 @@ select:focus {
     align-items: center;
     height: 100%;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    border-radius: 10px;
+    background: var(--clr-white);
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius-2);
     max-width: 400px;
     width: 100%;
     text-align: center;
 }
+
 h2 {
     margin-bottom: 20px;
     font-size: 1.5rem;
     color: #333;
 }
+
 .form-groupd {
     width: 100%;
     margin-bottom: 15px;
@@ -712,12 +773,12 @@ input {
     width: 100%;
     padding: 10px;
     border: 2px solid #ccc;
-    border-radius: 5px;
+    border-radius: var(--border-radius-1);
     transition: border-color 0.3s;
 }
 
 input:focus {
-    border-color: #007bff;
+    border-color: var(--clr-primary);
 }
 
 .submit-btnnd {
@@ -732,8 +793,8 @@ input:focus {
     background-color: #007bff;
     color: white;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    border-radius: var(--border-radius-1);
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-btnd:hover {
@@ -746,6 +807,7 @@ input:focus {
     min-width: 400px;
     border-radius: 20px;
 }
+
 .map-containers {
     flex: 1;
     margin-top: 20px;
@@ -753,7 +815,8 @@ input:focus {
     border-radius: 20px;
 }
 
-/* Modal Styling delete*/
+/* Modal Styling delete */
+
 .dialog-container {
     display: flex;
     justify-content: center;
@@ -768,8 +831,9 @@ input:focus {
 }
 
 .dialog-box {
-    background: #fff;
-    padding: 20px;
+    background: var(--clr-white);
+    color: var(--clr-dark);
+    padding: 15px;
     border-radius: 10px;
     max-width: 500px;
     width: 50%;
@@ -779,27 +843,31 @@ input:focus {
 .dialog-header,
 .dialog-body,
 .dialog-footer {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .dialog-header {
     font-size: 1.3rem;
     font-weight: bold;
-    display: flex;
-    justify-content: center;
+    text-align: center;
+}
+
+.dialog-body {
+    text-align: center;
 }
 
 .dialog-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    gap: 10px;
 }
 
 .confirm-btn {
     padding: 8px 16px;
-    background-color: #5cb85c;
-    color: white;
+    background-color: var(--clr-success);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-1);
     cursor: pointer;
 }
 
@@ -809,10 +877,10 @@ input:focus {
 
 .cancel-btn {
     padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-1);
     cursor: pointer;
     margin-left: 10px;
 }
@@ -821,7 +889,6 @@ input:focus {
     background-color: #c9302c;
 }
 
-/* Modal Styling */
 /* Edit Modal Styling */
 .modal {
     display: flex;
@@ -837,20 +904,31 @@ input:focus {
 }
 
 .modal-content {
-    background: #fff;
+    background-color: var(--clr-white);
+    color: var(--clr-dark);
     padding: 20px;
     border-radius: 10px;
-    max-width: 500px;
-    width: 50%;
-    height: 85%;
+    max-width: 600px;
+    width: 90%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    overflow: scroll;
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none;
+}
+
+.modal-content {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .modal-header,
 .modal-body,
 .modal-footer {
     margin-bottom: 10px;
+    color: var(--clr-dark);
 }
 
 .modal-header {
@@ -867,10 +945,10 @@ input:focus {
 
 .close-modal {
     padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-1);
     cursor: pointer;
 }
 
@@ -880,16 +958,18 @@ input:focus {
 
 .update-btn {
     padding: 8px 16px;
-    background-color: #5cb85c;
-    color: white;
+    background-color: var(--clr-success);
+    color: var(--clr-white);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-1);
     cursor: pointer;
     margin-right: 10px;
 }
+
 .update-btn:hover {
     background-color: #489248;
 }
+
 @media screen and (max-width: 1200px) {
     .form-map-container {
         flex-direction: column;
