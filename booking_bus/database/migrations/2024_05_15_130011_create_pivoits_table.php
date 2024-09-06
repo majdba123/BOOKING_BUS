@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pivoits', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignIdFor(Bus_Trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Breaks_trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('status')->default('pending');

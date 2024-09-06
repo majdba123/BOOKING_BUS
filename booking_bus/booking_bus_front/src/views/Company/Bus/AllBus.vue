@@ -115,7 +115,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddBus from "@/components/AddBus.vue";
 import DriverChart from "@/components/DriverChart.vue";
@@ -248,57 +247,6 @@ export default {
             console.log("Searching for:", this.searchQuery);
             // Add your search logic here
         },
-        DeleteDriver(x) {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "delete",
-                url: `http://127.0.0.1:8000/api/company/delete_driver/${x}`,
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Deleted Complete");
-                    this.AllDriver();
-                })
-                .catch(function (error) {
-                    window.alert("Error get Driver");
-                    console.error(x);
-                    console.error(error);
-                });
-        },
-        fetchBus() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_bus",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.Bus = response.data;
-                })
-                .catch(function (error) {
-                    window.alert("Error get paths");
-                    console.error(error);
-                });
-        },
-        SelectDriver(event, userId) {
-            const busId = event.target.value;
-            const access_token = window.localStorage.getItem("access_token");
-
-            axios({
-                method: "post",
-                url: `http://127.0.0.1:8000/api/company/select_driver_to_bus/${busId}`,
-                data: { driver_id: userId },
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then(() => {
-                    window.alert("Selected Complete");
-                    this.AllDriver();
-                })
-                .catch(function (error) {
-                    window.alert("Error getting Bus");
-                    console.error(error);
-                });
-        },
     },
     mounted() {
         // Set initial date and time
@@ -400,9 +348,9 @@ a {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
-    margin-top: 20px;
+    margin-top: 13px;
+    font-weight: 700;
+    font-size: 2rem;
     color: var(--clr-dark);
 }
 
@@ -430,11 +378,13 @@ small {
     font-size: 0.75rem;
     color: var(--clr-dark);
 }
+
 .profile-photo {
     position: relative; /* Allows absolute positioning for the dropdown menu */
     display: flex;
     align-items: center;
 }
+
 .profile-photo img {
     width: 50px;
     height: 50px;
@@ -443,10 +393,12 @@ small {
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
 .profile-photo img:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
 }
+
 .text-muted {
     color: #7d8da1;
 }
@@ -488,6 +440,7 @@ aside .logo {
     display: flex;
     gap: 1rem;
 }
+
 #menu_bar {
     display: none;
 }
@@ -516,15 +469,28 @@ aside .logo {
 .date button {
     padding: 0.5rem 1rem;
     border: none;
-    background-color: var(--clr-primary);
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
-    border-radius: 1rem;
+    border-radius: 9px;
     cursor: pointer;
 }
 
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 .date button:hover {
-    background-color: var(--clr-primary-variant);
-    transition: 0.4s ease-in;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
 }
 
 /* Main section styles */
@@ -580,6 +546,7 @@ aside .logo {
 .right .theme-toggler span.active {
     color: var(--clr-primary);
 }
+
 .right .profile {
     position: relative;
     display: flex;
@@ -619,6 +586,7 @@ aside .logo {
     font-weight: bold;
     color: var(--clr-primary);
 }
+
 .driver_status {
     background: var(--clr-white);
     padding: 20px;
@@ -657,6 +625,7 @@ aside .logo {
     margin: 0;
     color: var(--clr-dark);
 }
+
 /* Styling for datetime container */
 .datetime-container {
     text-align: center;
@@ -701,6 +670,7 @@ aside .logo {
     margin-top: 0.5rem;
     color: #c0c0c0;
 }
+
 /* Select styling */
 select {
     padding: 10px;
@@ -716,6 +686,7 @@ select {
 select:focus {
     border-color: var(--clr-primary-variant);
 }
+
 .dropdown-menu {
     position: absolute;
     top: 50px;
@@ -933,6 +904,7 @@ select:focus {
         color: var(--clr-white);
         border-radius: 10px;
     }
+
     #menu_bar {
         display: block;
         background: var(--clr-primary);

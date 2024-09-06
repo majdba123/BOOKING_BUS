@@ -17,7 +17,7 @@
             authEndpoint: '/pusher/auth', // endpoint to authenticate and authorize
             auth: {
                 params: {
-                    userId: '{{ auth()->id() }}' // pass the user ID to the auth endpoint
+                    userId: {{ auth()->id() }} // pass the user ID to the auth endpoint
                 }
             }
         });

@@ -1,6 +1,5 @@
 <template>
     <div class="containerd">
-        <HeaderCompany />
         <!-- Header with buttons -->
         <header class="navd">
             <button class="nav-btnd" @click="toggleTripRatings">
@@ -411,7 +410,6 @@
 </template>
 
 <script>
-import HeaderCompany from "./HeaderCompany.vue";
 import axios from "axios";
 
 export default {
@@ -427,7 +425,7 @@ export default {
             loading5: true,
             loading6: true,
 
-            showTripRatings: false,
+            showTripRatings: true,
             showDriverRatings: false,
             showAllReservationTheBus: false,
             showAllDrivers: false,
@@ -619,7 +617,6 @@ export default {
             this.showDriverRatingsModal = false;
         },
     },
-    components: { HeaderCompany },
 };
 </script>
 
@@ -800,28 +797,32 @@ select:focus {
 
 /* Navigation styling */
 .navd {
+    margin-left: 4rem;
+
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
-    background-color: #fff;
-    border-radius: 10px;
+    background-color: var(--clr-white);
+    border-radius: var(--border-radius-3);
     width: 100%;
+    max-width: 800px;
 }
 
 .nav-btnd {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
+    border-radius: 9px;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
+    width: 100%;
 }
 
 @keyframes gradientAnimation {

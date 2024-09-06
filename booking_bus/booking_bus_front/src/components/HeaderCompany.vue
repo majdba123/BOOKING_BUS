@@ -2,6 +2,22 @@
     <main>
         <div class="top-bar">
             <h1>{{ x }}</h1>
+            <div class="datetime-container">
+                <div class="time">
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[0] }}
+                        <span>hour</span>
+                    </div>
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[1] }}
+                        <span>minutes</span>
+                    </div>
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[2] }}
+                        <span>seconds</span>
+                    </div>
+                </div>
+            </div>
             <div class="profile-menu">
                 <div
                     class="theme-toggler"
@@ -45,6 +61,10 @@ export default {
             showProfileMenu: false,
             profileImage: "",
             isDarkMode: false,
+            currentDateTime: {
+                date: "",
+                time: "",
+            },
         };
     },
     methods: {
@@ -65,6 +85,11 @@ export default {
                 }
             }
         },
+        updateDateTime() {
+            const now = new Date();
+            this.currentDateTime.date = now.toISOString().split("T")[0];
+            this.currentDateTime.time = now.toTimeString().split(" ")[0];
+        },
         goToProfile() {
             this.$router.push("/ProfileCompany");
         },
@@ -84,13 +109,22 @@ export default {
                 "dark-theme-variables",
                 this.isDarkMode
             );
+            localStorage.setItem(
+                "darkMode",
+                this.isDarkMode ? "enabled" : "disabled"
+            );
+
             const themeToggler = this.$refs.themeToggler;
-            themeToggler.querySelectorAll("span").forEach((span) => {
-                span.classList.toggle("active");
-            });
+            themeToggler
+                .querySelector("span:nth-child(1)")
+                .classList.toggle("active", !this.isDarkMode);
+            themeToggler
+                .querySelector("span:nth-child(2)")
+                .classList.toggle("active", this.isDarkMode);
         },
     },
     mounted() {
+        this.updateDateTime();
         this.fetchProfileInfo();
         if (document.body.classList.contains("dark-theme-variables")) {
             this.isDarkMode = true;
@@ -243,7 +277,7 @@ small {
     padding: 0.5rem;
     border-radius: 1rem;
     cursor: pointer;
-    margin-right: 20px;
+    margin-right: 4rem;
 }
 
 .theme-toggler span {
@@ -336,7 +370,51 @@ small {
         transform: translateY(0);
     }
 }
+.datetime-container {
+    text-align: center;
+    font-family: "Arial", sans-serif;
+    color: #ffffff;
+}
 
+.dateright {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #72c3ff;
+    background: linear-gradient(90deg, #72c3ff, #ff4d4d);
+    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
+    background-clip: text; /* Standard property (currently not supported widely) */
+    color: transparent;
+    margin-bottom: 10px;
+}
+
+.time {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.time-box {
+    background: #111111;
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    font-size: 1.5rem;
+    position: relative;
+    color: #ffffff;
+    text-align: center;
+    background: linear-gradient(135deg, #ff4d4d, #72c3ff);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.time-box span {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: normal;
+    margin-top: 0.5rem;
+    color: #c0c0c0;
+}
 /* Responsive Design */
 @media screen and (max-width: 1200px) {
     input {
@@ -368,6 +446,21 @@ small {
     }
 }
 
+@media screen and (max-width: 500px) {
+    input {
+        width: 100%;
+        font-size: 0.75rem;
+    }
+
+    .date {
+        padding: 5px;
+    }
+
+    .date button {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
 @media screen and (max-width: 500px) {
     input {
         width: 100%;

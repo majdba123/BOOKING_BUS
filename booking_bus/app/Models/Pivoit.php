@@ -9,7 +9,16 @@ use Illuminate\Support\Str;
 class Pivoit extends Model
 {
     use HasFactory;
+    protected $keyType = 'string'; // Set the key type to UUID
+    public $incrementing = false; // Disable auto-incrementing
 
+    public static function boot() {
+        parent::boot();
+        // Auto generate UUID when creating data User
+        static::creating(function ($model) {
+            $model->id = Str::uuid();
+        });
+    }
     protected $fillable = [
         'bus__trip_id',
         'breaks_trip_id',

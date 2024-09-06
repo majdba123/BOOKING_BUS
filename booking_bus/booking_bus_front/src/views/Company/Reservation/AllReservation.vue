@@ -19,7 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>{{ x }}</h1>
+                <h1>Reservation</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -31,7 +31,7 @@
                         <button @click="search">Search</button>
                     </div>
                 </div>
-                <GetAllRating ref="GetAllRating" />
+                <GetAllReservation ref="GetAllReservation" />
             </main>
         </div>
         <div class="right">
@@ -116,14 +116,18 @@
 
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import GetAllRating from "@/components/GetAllRating.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 import router from "@/router";
+import GetAllReservation from "@/components/GetAllReservation.vue";
 
 export default {
     name: "AllDriver",
-    components: { SidebarCompany, GetAllRating, DriverChart },
+    components: {
+        SidebarCompany,
+        DriverChart,
+        GetAllReservation,
+    },
     data() {
         return {
             x: store.state.x,
@@ -464,17 +468,28 @@ aside .logo {
 .date button {
     padding: 0.5rem 1rem;
     border: none;
-    background-color: var(--clr-primary);
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
-    border-radius: 1rem;
+    border-radius: 9px;
     cursor: pointer;
+}
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .date button:hover {
-    background-color: var(--clr-primary-variant);
-    transition: 0.4s ease-in;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
 }
-
 /* Main section styles */
 /*
           start right side

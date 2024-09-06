@@ -353,7 +353,7 @@ export default {
             loading4: true,
             loading5: true,
 
-            showTripRatings: false,
+            showTripRatings: true,
             showDriverRatings: false,
             showAllTrips: false,
             showAllDrivers: false,
@@ -681,11 +681,12 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: var(--padding-1);
+    margin-bottom: 10px;
     margin-top: 20px;
     background-color: var(--clr-white);
-    border-radius: var(--border-radius-2);
-    width: 90%;
+    border-radius: var(--border-radius-3);
+    width: 100%;
+    max-width: 800px;
 }
 
 .nav-btnd {
@@ -700,6 +701,7 @@ select:focus {
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
+    width: 100%;
 }
 
 @keyframes gradientAnimation {
