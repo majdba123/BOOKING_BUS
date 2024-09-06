@@ -374,13 +374,31 @@ h2 {
     width: 100%;
 }
 
+.spinner {
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh;
 }
 
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 .no-data-message {
     display: flex;
     justify-content: center;
@@ -392,15 +410,6 @@ h2 {
     border: 1px solid var(--clr-dark-variant);
     border-radius: var(--border-radius-2);
     background-color: var(--clr-color-background);
-}
-
-.spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: var(--clr-primary);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
 }
 
 .recent_orders div table {

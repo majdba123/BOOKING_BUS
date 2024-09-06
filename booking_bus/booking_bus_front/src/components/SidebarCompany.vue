@@ -136,30 +136,25 @@ export default {
     },
     methods: {
         showAlertWithLottie(message) {
-            // قم بتحديد العنصر الذي سيحتوي على الحركة
             const container = document.createElement("div");
             container.style.width = "200px";
             container.style.height = "200px";
             container.style.margin = "0 auto";
-
-            // قم بإضافة العنصر إلى صفحة HTML
             document.body.appendChild(container);
 
-            // قم بتشغيل حركة Lottie
             lottie.loadAnimation({
-                container: container, // العنصر الذي سيحتوي الحركة
+                container: container,
                 renderer: "svg",
                 loop: true,
                 autoplay: true,
-                path: "path_to_your_lottie_file.json", // مسار ملف Lottie
+                path: "path_to_your_lottie_file.json",
             });
 
-            // عرض التنبيه التقليدي بعد فترة قصيرة من عرض الحركة
             setTimeout(() => {
                 alert(message);
-                // إزالة الحركة بعد الانتهاء
+
                 document.body.removeChild(container);
-            }, 1000); // مدة الانتظار قبل عرض التنبيه (يمكنك تعديلها)
+            }, 1000);
         },
 
         logout() {

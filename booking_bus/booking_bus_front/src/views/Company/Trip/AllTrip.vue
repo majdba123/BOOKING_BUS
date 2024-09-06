@@ -162,13 +162,31 @@ export default {
         },
     },
     methods: {
+        handleResize() {
+            const sideMenu = this.$refs.sideMenu;
+            if (window.innerWidth > 768) {
+                sideMenu.style.display = "block"; // Show sidebar on large screens
+            } else {
+                sideMenu.style.display = "none"; // Hide sidebar on small screens
+            }
+        },
+        openMenu() {
+            const sideMenu = this.$refs.sideMenu;
+            if (sideMenu) {
+                sideMenu.style.display = "block";
+            }
+        },
+        closeMenu() {
+            const sideMenu = this.$refs.sideMenu;
+            if (sideMenu) {
+                sideMenu.style.display = "none";
+            }
+        },
         checkToken() {
-            // الحصول على التوكن من localStorage
             const token = window.localStorage.getItem("access_token");
             const userType = window.localStorage.getItem("type_user");
 
             if (token && userType) {
-                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
                 if (userType === "admin") {
                     router.push("/");
                 } else if (userType === "user") {
@@ -211,18 +229,6 @@ export default {
             this.currentDateTime.date = now.toISOString().split("T")[0];
             this.currentDateTime.time = now.toTimeString().split(" ")[0];
         },
-        openMenu() {
-            const sideMenu = this.$refs.sideMenu;
-            if (sideMenu) {
-                sideMenu.style.display = "block";
-            }
-        },
-        closeMenu() {
-            const sideMenu = this.$refs.sideMenu;
-            if (sideMenu) {
-                sideMenu.style.display = "none";
-            }
-        },
         toggleTheme() {
             this.isDarkMode = !this.isDarkMode;
             document.body.classList.toggle(
@@ -244,11 +250,15 @@ export default {
         },
         search() {
             console.log("Searching for:", this.searchQuery);
+            // Add your search logic here
         },
     },
     mounted() {
-        this.updateDateTime();
         this.checkToken();
+        this.handleResize();
+        window.addEventListener("resize", this.handleResize);
+
+        this.updateDateTime();
 
         setInterval(this.updateDateTime, 1000);
         const savedTheme = localStorage.getItem("darkMode");
@@ -267,6 +277,9 @@ export default {
         themeToggler
             .querySelector("span:nth-child(2)")
             .classList.toggle("active", this.isDarkMode);
+    },
+    beforeUnmount() {
+        window.removeEventListener("resize", this.handleResize);
     },
 };
 </script>

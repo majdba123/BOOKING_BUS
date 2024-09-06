@@ -38,7 +38,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(trip, index) in Trips" :key="index">
+                                <tr
+                                    v-for="(trip, index) in paginatedTrips"
+                                    :key="index"
+                                >
                                     <td>{{ index }}</td>
                                     <td>{{ trip.status }}</td>
                                     <td>{{ trip.path?.from }}</td>
@@ -57,6 +60,26 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="pagination">
+                            <button
+                                @click="currentPageTrips--"
+                                :disabled="currentPageTrips === 1"
+                            >
+                                <span class="material-icons"
+                                    >skip_previous</span
+                                >
+                            </button>
+                            <span>Page {{ currentPageTrips }}</span>
+                            <button
+                                @click="currentPageTrips++"
+                                :disabled="
+                                    currentPageTrips >=
+                                    Math.ceil(Trips.length / itemsPerPage)
+                                "
+                            >
+                                <span class="material-icons">skip_next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,7 +107,7 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(driver, index) in Drivers"
+                                    v-for="(driver, index) in paginatedDrivers"
                                     :key="index"
                                 >
                                     <td>{{ index }}</td>
@@ -104,6 +127,26 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="pagination">
+                            <button
+                                @click="currentPageDrivers--"
+                                :disabled="currentPageDrivers === 1"
+                            >
+                                <span class="material-icons"
+                                    >skip_previous</span
+                                >
+                            </button>
+                            <span>Page {{ currentPageDrivers }}</span>
+                            <button
+                                @click="currentPageDrivers++"
+                                :disabled="
+                                    currentPageDrivers >=
+                                    Math.ceil(Drivers.length / itemsPerPage)
+                                "
+                            >
+                                <span class="material-icons">skip_next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -352,7 +395,6 @@ export default {
             loading3: true,
             loading4: true,
             loading5: true,
-
             showTripRatings: true,
             showDriverRatings: false,
             showAllTrips: false,
@@ -365,8 +407,26 @@ export default {
             Drivers: [],
             tripRatingsDetails: [],
             driverRatingsDetails: [],
+
+            // Pagination variables
+            currentPageTrips: 1,
+            currentPageDrivers: 1,
+            itemsPerPage: 10, // عدد العناصر في كل صفحة
         };
     },
+    computed: {
+        paginatedTrips() {
+            const start = (this.currentPageTrips - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.Trips.slice(start, end);
+        },
+        paginatedDrivers() {
+            const start = (this.currentPageDrivers - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.Drivers.slice(start, end);
+        },
+    },
+
     methods: {
         toggleTripRatings() {
             this.showTripRatings = true;
@@ -556,18 +616,41 @@ export default {
     text-decoration: none;
 }
 
-.spinner-container {
+.pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.pagination button {
+    padding: 6px 10px;
+    margin: 0 5px;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    margin: 0 10px;
+    font-size: 0.7rem;
+    color: var(--clr-dark);
 }
 
 .no-data-message {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px; /* Adjust as needed */
+    height: 150px;
     font-size: 1.2rem;
     color: var(--clr-dark-variant);
     text-align: center;
@@ -585,6 +668,22 @@ export default {
     animation: spin 1s linear infinite;
 }
 
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30vh;
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 body {
     font-family: "Poppins", sans-serif;
     width: 100%;

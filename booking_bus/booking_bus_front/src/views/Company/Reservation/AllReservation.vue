@@ -166,13 +166,31 @@ export default {
         },
     },
     methods: {
+        handleResize() {
+            const sideMenu = this.$refs.sideMenu;
+            if (window.innerWidth > 768) {
+                sideMenu.style.display = "block"; // Show sidebar on large screens
+            } else {
+                sideMenu.style.display = "none"; // Hide sidebar on small screens
+            }
+        },
+        openMenu() {
+            const sideMenu = this.$refs.sideMenu;
+            if (sideMenu) {
+                sideMenu.style.display = "block";
+            }
+        },
+        closeMenu() {
+            const sideMenu = this.$refs.sideMenu;
+            if (sideMenu) {
+                sideMenu.style.display = "none";
+            }
+        },
         checkToken() {
-            // الحصول على التوكن من localStorage
             const token = window.localStorage.getItem("access_token");
             const userType = window.localStorage.getItem("type_user");
 
             if (token && userType) {
-                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
                 if (userType === "admin") {
                     router.push("/");
                 } else if (userType === "user") {
@@ -212,20 +230,8 @@ export default {
         },
         updateDateTime() {
             const now = new Date();
-            this.currentDateTime.date = now.toISOString().split("T")[0]; // Format YYYY-MM-DD
-            this.currentDateTime.time = now.toTimeString().split(" ")[0]; // Format HH:MM:SS
-        },
-        openMenu() {
-            const sideMenu = this.$refs.sideMenu;
-            if (sideMenu) {
-                sideMenu.style.display = "block";
-            }
-        },
-        closeMenu() {
-            const sideMenu = this.$refs.sideMenu;
-            if (sideMenu) {
-                sideMenu.style.display = "none";
-            }
+            this.currentDateTime.date = now.toISOString().split("T")[0];
+            this.currentDateTime.time = now.toTimeString().split(" ")[0];
         },
         toggleTheme() {
             this.isDarkMode = !this.isDarkMode;
@@ -253,11 +259,11 @@ export default {
     },
     mounted() {
         this.checkToken();
+        this.handleResize();
+        window.addEventListener("resize", this.handleResize);
 
-        // Set initial date and time
         this.updateDateTime();
 
-        // Update date and time every second
         setInterval(this.updateDateTime, 1000);
         const savedTheme = localStorage.getItem("darkMode");
         if (savedTheme === "enabled") {
@@ -276,9 +282,11 @@ export default {
             .querySelector("span:nth-child(2)")
             .classList.toggle("active", this.isDarkMode);
     },
+    beforeUnmount() {
+        window.removeEventListener("resize", this.handleResize);
+    },
 };
 </script>
-
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -382,23 +390,36 @@ small {
     font-size: 0.75rem;
     color: var(--clr-dark);
 }
+@keyframes borderColorShift {
+    0% {
+        border-color: yellow;
+    }
+    50% {
+        border-color: blue;
+    }
+    100% {
+        border-color: yellow;
+    }
+}
+
 .profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
+    position: relative;
     display: flex;
     align-items: center;
-}
-.profile-photo img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid var(--clr-primary);
+    border: 2px solid yellow; /* لون الحدود الأولي */
+    animation: borderColorShift 3s infinite; /* تحريك لون الحدود */
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-.profile-photo img:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.05);
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
 }
+
 .text-muted {
     color: #7d8da1;
 }
@@ -420,13 +441,35 @@ small {
 }
 
 /* aside */
+@keyframes colorShift {
+    0% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+    50% {
+        border-top-color: rgb(255, 255, 0);
+        border-bottom-color: rgb(0, 0, 255);
+        border-right-color: rgb(255, 105, 180);
+    }
+    100% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+}
+
 aside {
     height: 100vh;
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
-    border-radius: 0 2rem 2rem 0;
+    border-radius: 0 2.5rem 2.5rem 0;
     padding: 1rem;
+    border-bottom: 3px solid rgb(255, 0, 0);
+    border-top: 3px solid rgb(0, 0, 255);
+    border-left: 3px solid transparent;
+    animation: colorShift 5s infinite;
 }
 
 aside .top {
@@ -621,6 +664,17 @@ aside .logo {
     color: var(--clr-dark);
 }
 /* Styling for datetime container */
+@keyframes borderShift {
+    0% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+    50% {
+        border-image-source: linear-gradient(to left, yellow, blue);
+    }
+    100% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+}
 .datetime-container {
     text-align: center;
     font-family: "Arial", sans-serif;
@@ -632,12 +686,11 @@ aside .logo {
     font-weight: bold;
     color: #72c3ff;
     background: linear-gradient(90deg, #72c3ff, #ff4d4d);
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
     margin-bottom: 10px;
 }
-
 .time {
     display: flex;
     gap: 1rem;
@@ -647,6 +700,9 @@ aside .logo {
 .time-box {
     background: #111111;
     border-radius: 0.5rem;
+    border-bottom: 1px solid yellow;
+    border-top: 1px solid yellow;
+    animation: borderColorShift 3s infinite;
     padding: 1rem 1.5rem;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;
@@ -666,6 +722,7 @@ aside .logo {
     margin-top: 0.5rem;
     color: #c0c0c0;
 }
+
 /* Select styling */
 select {
     padding: 10px;

@@ -1041,6 +1041,15 @@ h2 {
     width: 100%;
     overflow-x: auto;
 }
+.spinner {
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
 .spinner-container {
     display: flex;
     justify-content: center;
@@ -1048,13 +1057,14 @@ h2 {
     height: 30vh;
 }
 
-.spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 .no-data-message {
     display: flex;
@@ -1152,7 +1162,6 @@ select:focus {
 .edit-btn {
     color: #4caf50;
     background-color: var(--clr-white);
-
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
@@ -1165,7 +1174,6 @@ select:focus {
 .delete-btn {
     color: #f44336;
     background-color: var(--clr-white);
-
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
@@ -1190,7 +1198,6 @@ select:focus {
 }
 .status-btn {
     background-color: var(--clr-white);
-
     margin-bottom: 10px;
 }
 

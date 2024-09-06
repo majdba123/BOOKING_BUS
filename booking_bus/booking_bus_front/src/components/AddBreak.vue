@@ -186,7 +186,6 @@
                 </button>
             </div>
         </div>
-
         <div v-if="showEditModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Edit Break</div>

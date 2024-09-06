@@ -746,13 +746,6 @@ small {
     font-size: 0.7rem;
     color: var(--clr-dark);
 }
-.spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 30vh;
-}
-
 .spinner {
     border: 4px solid var(--clr-light);
     border-left-color: var(--clr-primary);
@@ -762,6 +755,22 @@ small {
     animation: spin 1s linear infinite;
 }
 
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30vh;
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 .no-data-message {
     display: flex;
     justify-content: center;

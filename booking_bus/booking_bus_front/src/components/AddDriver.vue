@@ -910,6 +910,15 @@ select:focus {
     border-color: var(--clr-primary);
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+.spinner {
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
 .spinner-container {
     display: flex;
     justify-content: center;
@@ -917,13 +926,24 @@ select:focus {
     height: 30vh;
 }
 
-.spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 /* Delete button styling */
 
