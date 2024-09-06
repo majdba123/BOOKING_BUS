@@ -43,10 +43,10 @@ class DriverProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setStartTrip(status) {
-    _isStartTrip = status;
-    notifyListeners();
-  }
+  // void setStartTrip(status) {
+  //   _isStartTrip = status;
+  //   notifyListeners();
+  // }
 
   void setIndexTrip(index) {
     _indextrip = index;
@@ -199,6 +199,64 @@ class DriverProvider extends ChangeNotifier {
           await DriverService().checkReservation(accessToken, ReservationId);
       print(_isCheckedReservation);
       print('after handling !!');
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> startTrip(
+    String accessToken,
+  ) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _isStartTrip = await DriverService().startTrip(accessToken);
+      print(_isStartTrip);
+      print('after start trips!!');
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> accessBreak(
+    BuildContext context,
+    String accessToken,
+    int PivoitId,
+  ) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await DriverService().accessBreak(context, accessToken, PivoitId);
+
+      print('after acecess Breack !!');
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> finishBreack(
+      BuildContext context, String accessToken, int pivoitId) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await DriverService().finsishBreack(context, accessToken, pivoitId);
+      print(_isCheckedReservation);
+      print('after finsinsh breack !!');
     } catch (error) {
       _errorMessage = error.toString();
     } finally {

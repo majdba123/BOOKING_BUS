@@ -37,7 +37,7 @@ class JourneyButtons extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Emergency Stop',
+                'Acess Brack',
                 style: TextStyle(
                   fontSize: screenHeight * 0.02,
                   color: Colors.white,
@@ -62,7 +62,7 @@ class JourneyButtons extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'End Journey',
+                'Finish Break',
                 style: TextStyle(
                   fontSize: screenHeight * 0.02,
                   color:
@@ -164,16 +164,16 @@ class JourneyButtons extends StatelessWidget {
                         onPressed: () {
                           Navigator.pop(context);
                           // Navigate to JourneyCompletedScreen
-                          var driverProvider = Provider.of<DriverProvider>(
-                              context,
-                              listen: false);
-                          driverProvider.setStartTrip(false);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => JourneyCompletedScreen(),
-                            ),
-                          );
+                          // var driverProvider = Provider.of<DriverProvider>(
+                          //     context,
+                          //     listen: false);
+                          // // driverProvider.setStartTrip(false);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => JourneyCompletedScreen(),
+                          //   ),
+                          // );
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(

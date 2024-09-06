@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobile_app/Data_Models/Driver/MyBusModel.dart';
 import 'package:mobile_app/Data_Models/Driver/RatingDriverAndSpeed.dart';
@@ -180,6 +181,98 @@ class DriverService {
       return true;
     } else {
       return false;
+    }
+  }
+
+  Future<bool> startTrip(
+    String accessToken,
+  ) async {
+    final response = await http.get(
+      Uri.parse(name_domain_server + 'driver/start_trip'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> accessBreak(
+    BuildContext context,
+    String accessToken,
+    int PivoitId,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse(name_domain_server + 'driver/access_to_break/$PivoitId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+      print(response.statusCode);
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        if (responseData is Map && responseData.containsKey('message')) {
+          String message = responseData['message'];
+          showSuccessDialog(context, message);
+        } else {
+          if (responseData is List) {
+            String message = "access Break Successfully ";
+            showSuccessDialog(context, message);
+          }
+        }
+      } else {
+        showErrorDialog(context, "Error In Network: ${response.statusCode}");
+      }
+    } catch (error) {
+      showErrorDialog(context, "Failed to load data: $error");
+    }
+  }
+
+  Future<void> finsishBreack(
+      BuildContext context, String accessToken, int pivoitId) async {
+    try {
+      final response = await http.post(
+        Uri.parse(name_domain_server + 'driver/finish_breaks/$pivoitId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        if (responseData is Map && responseData.containsKey('massage')) {
+          String message = responseData['massage'];
+
+          if (message.isNotEmpty) {
+            showSuccessDialog(context, message);
+          } else {
+            showErrorDialog(context, message);
+          }
+        } else {
+          showErrorDialog(context, "Unexpected response format.");
+        }
+      } else {
+        showErrorDialog(context, "Error: ${response.statusCode}");
+      }
+    } catch (error) {
+      showErrorDialog(context, "Failed to load data: $error");
     }
   }
 }

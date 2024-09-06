@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/CompleteJourneyPage/JourneyCompletedScreen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyAppBar.dart';
@@ -70,7 +71,8 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
             onEndJourneyPressed: () {
               var driverProvider =
                   Provider.of<DriverProvider>(context, listen: false);
-              driverProvider.setStartTrip(false);
+              var auth = Provider.of<AuthProvider>(context, listen: false);
+              driverProvider.startTrip(auth.accessToken);
               Navigator.push(
                 context,
                 MaterialPageRoute(

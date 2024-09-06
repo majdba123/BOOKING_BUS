@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 
 // Colors
@@ -26,8 +27,8 @@ final Color veppoBlue = Color(0xFF1363FF);
 const kBodyText2 =
     TextStyle(fontSize: 28, fontWeight: FontWeight.w500, color: Colors.white);
 
-// const name_domain_server = "http://192.168.1.4:8000/api/";
-const name_domain_server = "http://192.168.43.125:8000/api/";
+const name_domain_server = "http://192.168.1.4:8000/api/";
+// const name_domain_server = "http://192.168.43.125:8000/api/";
 Route animetedRoutePage(Widget child) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => child,
@@ -61,4 +62,26 @@ Widget backImage(BuildContext context) {
       ),
     ),
   );
+}
+
+void showSuccessDialog(BuildContext context, String message) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.success,
+    animType: AnimType.rightSlide,
+    title: 'Success',
+    desc: message,
+    btnOkOnPress: () {},
+  ).show();
+}
+
+void showErrorDialog(BuildContext context, String message) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.error,
+    animType: AnimType.rightSlide,
+    title: 'Error',
+    desc: message,
+    btnOkOnPress: () {},
+  ).show();
 }

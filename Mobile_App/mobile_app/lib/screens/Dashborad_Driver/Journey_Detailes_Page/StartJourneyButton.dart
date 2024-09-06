@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/PopUp_widget/SafetyInformationPopup.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/start_journey_screen.dart';
@@ -43,7 +44,9 @@ class StartJourneyButton extends StatelessWidget {
             Navigator.pop(context); // Close the dialog
             var driverProvider =
                 Provider.of<DriverProvider>(context, listen: false);
-            driverProvider.setStartTrip(true);
+            var auth = Provider.of<AuthProvider>(context, listen: false);
+            driverProvider.startTrip(auth.accessToken);
+            // driverProvider.setStartTrip(true);
             Navigator.push(
               context,
               MaterialPageRoute(
