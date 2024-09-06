@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Driver;
 use Illuminate\Http\Request;
-use App\Models\Company;
 use App\Models\Pivoit;
 use App\Models\Bus_Driver;
 use App\Models\Reservation;
 use App\Models\Bus_Trip;
 use App\Models\user;
 use App\Events\BreakTripEvent;
-use App\Events\CompanyNotification;
+use App\Events\PrivateNotification;
+use App\Models\UserNotification;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -83,8 +83,26 @@ class DriverController extends Controller
             'company_id' => $company_id->id,
         ]);
         $drivaer_name = $driver->user->name;
-        $notification = "new Driver Regiseter $drivaer_name ";
-        event(new CompanyNotification($company_id, $notification));
+
+
+        $massage = "Oh great, another driver registered: $drivaer_name";
+        event(new PrivateNotification($company_id->user->id, $massage));
+        UserNotification::create([
+            'user_id' => $company_id->user->id,
+            'notification' => $massage,
+        ]);
+        
+        $admins = User::where('type', 1)->get();
+        foreach ($admins as $admin) {
+            $admin_id = $admin->id;
+            // Send the message to each admin using the $admin_id
+            $massage = "  REGISTERD NEW DRIVER   : $driver->id  by company: $company_id->id ";
+            event(new PrivateNotification($admin_id, $massage));
+            UserNotification::create([
+                'user_id' => $admin_id,
+                'notification' => $massage,
+            ]);
+        }
 
         return response()->json([
             'message' => 'driver Created ',
@@ -408,6 +426,7 @@ class DriverController extends Controller
             $bus_trip22 = Bus_Trip::where('status', 'finished_going')
                 ->where('bus_id', $bus->bus_id)
                 ->first();
+                
             if($bus_trip22)
             {
                 return response()->json(['error' => 'An error occurred while starting the trip because you are in trip already'], 500);
@@ -416,6 +435,7 @@ class DriverController extends Controller
             $bus_trip = Bus_Trip::where('status', 'pending')
             ->where('bus_id', $bus->bus_id)
             ->first();
+            
             $name_breaks = $bus_trip->Pivoit->where('status', 'pending')->pluck('break_trip.break.name');
         
             if ($name_breaks->first() === "start") {
@@ -425,24 +445,42 @@ class DriverController extends Controller
                 
                 event(new BreakTripEvent($bus_trip, $pivoit_id));
 
-                $notification = "your bus_trip $bus_trip->id  is started  ";
-                event(new CompanyNotification($bus_trip->company, $notification));
 
+                $massage =  "trip has started $bus_trip->id ";
+             
+                event(new PrivateNotification($bus_trip->bus->company->user->id, $massage));
+                UserNotification::create([
+                    'user_id' => $bus_trip->bus->company->user->id,
+                    'notification' => $massage,
+                ]);
+                
                 $reservations = Reservation::where('status', 'padding')
                     ->where('pivoit_id', $pivoit_id->id)
                     ->where('type', 1)
                     ->get()
                     ->map(function ($reservation) {
                         return [
+                            'user_id' => $reservation->user->id,
                             'id' => $reservation->id,
                             'user_name' => $reservation->user->name,
                             'price' => $reservation->price,
-                            'bus__trip_id ' => $reservation->bus__trip_id ,
+                            'bus__trip_id' => $reservation->bus__trip_id ,
                             'type' => $reservation->type,
                             'status' => $reservation->status,
                             'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
                         ];
                     });
+                    
+                    foreach ($reservations as $reservation) {
+                        $user_id = $reservation['user_id'];
+                        $bus_tripw=$reservation['bus__trip_id'];
+                        $massage = "Trip  started  $bus_tripw ";
+                        event(new PrivateNotification($user_id, $massage));
+                        UserNotification::create([
+                            'user_id' => $user_id,
+                            'notification' => $massage,
+                        ]);
+                    }
 
                 DB::commit();
                 return response()->json($reservations);
@@ -452,8 +490,8 @@ class DriverController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'An error occurred while starting the trip'], 500);
-        }
+            return response()->json(['error' =>$e->getMessage()], 500);
+                }
     }
 
 
@@ -522,6 +560,13 @@ class DriverController extends Controller
                     foreach ($reservations as $reservation) {
                         $reservation->status = 'out';
                         $reservation->save();
+                        $user_id = $reservation->user_id;
+                        $massage = "you are out of this trip $reservation->bus__trip_id ";
+                        event(new PrivateNotification($user_id, $massage));
+                        UserNotification::create([
+                            'user_id' => $user_id,
+                            'notification' => $massage,
+                        ]);
                         foreach ($reservation->seat_reservation as $seat_reservation) {
                             
                             $seat_reservation->status = 'out'. $type_reservation;
@@ -551,6 +596,13 @@ class DriverController extends Controller
                     foreach ($reservations as $reservation) {
                         $reservation->status = 'out';
                         $reservation->save();
+                        $user_id = $reservation->user_id;
+                        $massage = "you are out of this trip $reservation->bus__trip_id ";
+                        event(new PrivateNotification($user_id, $massage));
+                        UserNotification::create([
+                            'user_id' => $user_id,
+                            'notification' => $massage,
+                        ]);
                         foreach ($reservation->seat_reservation as $seat_reservation) {
                             $seat_reservation->status = 'out'. $type_reservation;
                             $seat_reservation->save();
@@ -578,6 +630,13 @@ class DriverController extends Controller
                     foreach ($reservations as $reservation) {
                         $reservation->status = 'out';
                         $reservation->save();
+                        $user_id = $reservation->user_id;
+                        $massage = "you are out of this trip $reservation->bus__trip_id ";
+                        event(new PrivateNotification($user_id, $massage));
+                        UserNotification::create([
+                            'user_id' => $user_id,
+                            'notification' => $massage,
+                        ]);
                         foreach ($reservation->seat_reservation as $seat_reservation) {
                            
                             $seat_reservation->status = 'out'. $type_reservation;
@@ -627,6 +686,13 @@ class DriverController extends Controller
                     foreach ($reservations as $reservation) {
                         $reservation->status = 'out';
                         $reservation->save();
+                        $user_id = $reservation->user_id;
+                        $massage = "you are out of this trip $reservation->bus__trip_id ";
+                        event(new PrivateNotification($user_id, $massage));
+                        UserNotification::create([
+                            'user_id' => $user_id,
+                            'notification' => $massage,
+                        ]);
                         foreach ($reservation->seat_reservation as $seat_reservation) {
                             $seat_reservation->status = 'out'. $type_reservation;
                             $seat_reservation->save();
@@ -652,6 +718,13 @@ class DriverController extends Controller
                     foreach ($reservations as $reservation) {
                         $reservation->status = 'out';
                         $reservation->save();
+                        $user_id = $reservation->user_id;
+                        $massage = "you are out of this trip $reservation->bus__trip_id ";
+                        event(new PrivateNotification($user_id, $massage));
+                        UserNotification::create([
+                            'user_id' => $user_id,
+                            'notification' => $massage,
+                        ]);
                         foreach ($reservation->seat_reservation as $seat_reservation) {
                             $seat_reservation->status = 'out'. $type_reservation;
                             $seat_reservation->save();
@@ -704,12 +777,19 @@ class DriverController extends Controller
                 ->first();
 
             if ($pivoit->status == 'pending') {
+
                 if ($pivoit->break_trip->break->name == "end" && $previous_pivoit->status == "done1") {
                     $bus_trip->event = $pivoit->break_trip->break->name;
                     $bus_trip->status = "finished_going";
                     $bus_trip->save();
                     event(new BreakTripEvent($bus_trip, $pivoit));
-
+                    $company_id1 = $bus_trip->bus->company->user->id;
+                    $massage = " your trip finished going  $bus_trip->id ";
+                    event(new PrivateNotification($company_id1, $massage));
+                    UserNotification::create([
+                        'user_id' => $company_id1,
+                        'notification' => $massage,
+                    ]);
                     $allFinished = $bus_trip->trip->bus_trip
                     ->whereIn('status', 'finished_going')
                     ->count() === $bus_trip->trip->bus_trip->count();
@@ -735,6 +815,15 @@ class DriverController extends Controller
                                 'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
                             ];
                         });
+                    foreach($reservations as $reservation )
+                    {
+                        $massage = " your bus arrived  : $reservation->bus__trip_id  ";
+                        event(new PrivateNotification($reservation->user_id, $massage));
+                        UserNotification::create([
+                            'user_id' => $reservation->user_id,
+                            'notification' => $massage,
+                        ]);
+                    }
                     return response()->json($reservations);
                 } elseif ($previous_pivoit->status == "done1" && $next_pivoit->status == "pending") {
                     $bus_trip->event = $pivoit->break_trip->break->name;
@@ -755,6 +844,15 @@ class DriverController extends Controller
                                 'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
                             ];
                         });
+                        foreach($reservations as $reservation )
+                        {
+                            $massage = " your bus arrived  : $reservation->bus__trip_id  ";
+                            event(new PrivateNotification($reservation->user_id, $massage));
+                            UserNotification::create([
+                                'user_id' => $reservation->user_id,
+                                'notification' => $massage,
+                            ]);
+                        }
                     return response()->json($reservations);
                 }
             } elseif ($pivoit->status == 'done1') {
@@ -766,7 +864,14 @@ class DriverController extends Controller
                     $bus_trip->save();
                     $pivoit->status = 'done2';
                     $pivoit->save();
+                    $company_id1 = $bus_trip->bus->company->user->id;
 
+                    $massage = " your trip finished  $bus_trip->id ";
+                    event(new PrivateNotification($company_id1, $massage));
+                    UserNotification::create([
+                        'user_id' => $company_id1,
+                        'notification' => $massage,
+                    ]);
                     $allFinished = $bus_trip->trip->bus_trip
                     ->whereIn('status', 'finished')
                     ->count() === $bus_trip->trip->bus_trip->count();
@@ -774,13 +879,16 @@ class DriverController extends Controller
                     if ($allFinished) {
                     $bus_trip->trip->status = "finished";
                     $bus_trip->trip->save();
+                    $v=$bus_trip->trip->id;
+                    $massage = " all bus trip of this trip finished  $v   ";
+                    event(new PrivateNotification($company_id1, $massage));
+                    UserNotification::create([
+                        'user_id' => $company_id1,
+                        'notification' => $massage,
+                    ]);
                     
                     }
-                    
-                    $notification = "your bus_trip $bus_trip->id  is finished  ";
 
-                    
-                    event(new CompanyNotification($company, $notification));
                     $B_T =Bus_Trip::where('bus_id' , $bus_trip->bus_id)
                                     ->where('status' , 'pending')->first();
                     
@@ -815,6 +923,15 @@ class DriverController extends Controller
                                 'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
                             ];
                         });
+                    foreach($reservations as $reservation )
+                    {
+                            $massage = " your bus arrived  : $reservation->bus__trip_id  ";
+                            event(new PrivateNotification($reservation->user_id, $massage));
+                            UserNotification::create([
+                                'user_id' => $reservation->user_id,
+                                'notification' => $massage,
+                            ]);
+                    }
                     return response()->json($reservations);
                 }
             } elseif ($pivoit->status == 'done2') {
@@ -863,6 +980,12 @@ class DriverController extends Controller
             $reservation->status = 'completed';
             $reservation->save();
 
+            $massage = "  YOUR BOOKED COMPLETED  : $reservation->id  ";
+            event(new PrivateNotification($reservation->user_id, $massage));
+            UserNotification::create([
+                'user_id' => $reservation->user_id,
+                'notification' => $massage,
+            ]);
 
 
             return response()->json(['message' => 'Reservation status updated to completed']);

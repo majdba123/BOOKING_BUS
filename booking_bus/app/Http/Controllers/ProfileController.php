@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Profile;
 use App\Models\Reservation;
+use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -157,6 +159,14 @@ class ProfileController extends Controller
                 'image' => $imageUrl,
                 'phone' => $request->phone
             ]);
+
+            $massage = "you added your profile:  $profile  user_id : $user->id ";
+            event(new PrivateNotification( $user->id , $massage));
+            UserNotification::create([
+                'user_id' =>  $user->id,
+                'notification' => $massage,
+            ]);
+    
 
             // Save Image in Storage folder
             $request->image->storeAs('public/profile_image', $imageName);

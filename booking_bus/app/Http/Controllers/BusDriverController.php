@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Bus_Driver;
 use Illuminate\Http\Request;
 use App\Models\Company;
@@ -9,6 +10,7 @@ use App\Models\Bus;
 use App\Models\Bus_Trip;
 use App\Models\user;
 use App\Models\Driver;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +86,14 @@ class BusDriverController extends Controller
         $busDriver->driver_id = $driver_id;
         $busDriver->save();
 
+        $massage = "YOU HAVE NEW BUS :  $bus_id";
+
+        event(new PrivateNotification($driver->user->id, $massage));
+        UserNotification::create([
+            'user_id' =>$driver->user->id,
+            'notification' => $massage,
+        ]);
+
         // Update the status of the bus and driver to available
         $bus->status = 'available';
         $bus->save();
@@ -138,6 +148,16 @@ class BusDriverController extends Controller
         $driver = Driver::find($driver_id);
         $driver->status = 'pending';
         $driver->save();
+
+        
+        $massage = "YOU cancelled of this bus   : $bus ->id ";
+
+        event(new PrivateNotification($driver->user->id, $massage));
+        UserNotification::create([
+            'user_id' =>$driver->user->id,
+            'notification' => $massage,
+        ]);
+
         return response()->json([
             'message' => 'Assignment canceled successfully',
         ]);

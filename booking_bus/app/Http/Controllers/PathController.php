@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
+use App\Models\Breaks;
 use App\Models\Geolocation;
 use App\Models\Path;
+use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -79,7 +83,45 @@ class PathController extends Controller
             $path->Distance = $request->input('Distance');
     
             $path->save();
+
+
+            $break = new Breaks();
+            $break->name = $request->input('start');
+            $break->path_id = $path->id;
+            $break->geolocation_id = $fromLocation->id;
     
+            $break->save();
+
+
+            $break = new Breaks();
+            $break->name = $request->input('end');
+            $break->path_id = $path->id;
+            $break->geolocation_id = $toLocation->id;
+    
+            $break->save();
+
+            
+           $d= Auth::user()->Company->id;
+
+                       
+           $massage = "your  path created successfully:  $path->id  ";
+           event(new PrivateNotification(  $d , $massage));
+           UserNotification::create([
+               'user_id' =>  Auth::user()->Company->user->id,
+               'notification' => $massage,
+           ]);
+            $admins = User::where('type', 1)->get();
+
+            foreach ($admins as $admin) {
+                $admin_id = $admin->id;
+                // Send the message to each admin using the $admin_id
+                $massage = "  company created path trip : $path->id  by company:  $d ";
+                event(new PrivateNotification($admin_id, $massage));
+                UserNotification::create([
+                    'user_id' => $admin_id,
+                    'notification' => $massage,
+                ]);
+            }
             DB::commit();
     
             return response()->json([

@@ -430,6 +430,7 @@ class ReservationController extends Controller
             $number_booker_seat =seat_reservation::whereHas('reservation', function ($query) use ($bus_trip_id) {
                 $query->where('bus__trip_id', $bus_trip_id);
             })->count();
+            
             $number_seat_bus = $bus_trip->bus->seat->count();
             
             if ($number_booker_seat >=  2  * $number_seat_bus) {
@@ -515,6 +516,12 @@ class ReservationController extends Controller
 
             if ($reward) {
                 $reward_points = ($price * ($reward->reward_percentage / 100));
+                $massage = "Your GET REWAD: #{$reward_points}";
+                event(new PrivateNotification($user->id, $massage));
+                UserNotification::create([
+                    'user_id' =>$user->id,
+                    'notification' => $massage,
+                ]);
             } else {
                 $reward_points = 0;
             }
@@ -537,14 +544,23 @@ class ReservationController extends Controller
             $bookink->type = $request->input('type');
             $bookink->price = $price;
             $bookink->save();
+            $x=Auth::user()->id;
 
-            $massage = " your booked is done : $bookink ";
+            $massage = "Your booking is confirmed: #{$bookink->id}";
             event(new PrivateNotification($user_id, $massage));
             UserNotification::create([
-                'user_id' => Auth::user()->id,
+                'user_id' => $x,
                 'notification' => $massage,
             ]);
             
+            $massage = "New reservation received: #{$bookink->id} by user #{$x}";
+            event(new PrivateNotification($bus_trip->bus->company->user->id , $massage));
+            UserNotification::create([
+                'user_id' => $bus_trip->bus->company->user->id,
+                'notification' => $massage,
+            ]);
+            
+
             }catch (\Exception $e) {
                 DB::rollBack();
                 return response()->json(['error' =>$e->getMessage()], 500);
@@ -560,7 +576,8 @@ class ReservationController extends Controller
                     $seat_reservation->seat_id = $seat_id;
                     $seat_reservation->status = $request->input('type');
                     $seat_reservation->save();     
-                        //   event(new SeatEvent($bus_trip, $seat_reservation));
+                    event(new SeatEvent($bus_trip, $seat_reservation));
+                    
             }       
             
 

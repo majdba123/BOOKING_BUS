@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\PrivateNotification;
 use App\Models\Order_Private_trip;
 use App\Models\Private_trip;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +61,14 @@ class OrderPrivateTripController extends Controller
         // Add points to the company user
         $companyUser->point += $pointsToDeduct;
         $companyUser->save();
+
+        
+        $massage = " User accept your for its  private trip  your order private $orderPrivate->id ";
+        event(new PrivateNotification($companyUser->id, $massage));
+        UserNotification::create([
+            'user_id' => $companyUser->id,
+            'notification' => $massage,
+        ]);
         // Check if there's a discount
 
 
@@ -113,7 +122,10 @@ class OrderPrivateTripController extends Controller
             $company_name = Auth::user()->Company;
             $massage = " company $company_name->name accept your private trip ";
             event(new PrivateNotification($privateTrip->user->id, $massage));
-    
+            UserNotification::create([
+                'user_id' => $privateTrip->user->id,
+                'notification' => $massage,
+            ]);
             $order->save();
     
             DB::commit();
