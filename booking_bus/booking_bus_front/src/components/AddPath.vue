@@ -558,11 +558,11 @@ table tbody tr:last-child td {
     align-items: center;
     height: 150px;
     font-size: 1.2rem;
-    color: #677483;
+    color: var(--clr-dark);
     text-align: center;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background: var(--clr-white);
 }
 
 /* Select styling */
@@ -670,10 +670,11 @@ select:focus {
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
-    margin-top: 20px;
-    background-color: #fff;
-    border-radius: 10px;
+    background-color: var(--clr-white);
+    border-radius: var(--border-radius-3);
     width: 100%;
+    max-width: 800px;
+    margin-top: 15px;
 }
 
 .nav-btnd {
@@ -684,10 +685,11 @@ select:focus {
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
+    width: 100%;
 }
 
 @keyframes gradientAnimation {
@@ -754,7 +756,7 @@ select:focus {
 h2 {
     margin-bottom: 20px;
     font-size: 1.5rem;
-    color: #333;
+    color: var(--clr-dark);
 }
 
 .form-groupd {
@@ -767,6 +769,7 @@ label {
     margin-bottom: 5px;
     text-align: left;
     font-weight: bold;
+    color: var(--clr-dark);
 }
 
 input {
@@ -790,15 +793,16 @@ input:focus {
 .submit-btnd {
     padding: 10px 20px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
     border-radius: var(--border-radius-1);
     transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-btnd:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
+    transform: translateY(-3px);
 }
 
 .map-container {
@@ -827,7 +831,6 @@ input:focus {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
 }
 
 .dialog-box {
@@ -835,9 +838,10 @@ input:focus {
     color: var(--clr-dark);
     padding: 15px;
     border-radius: 10px;
-    max-width: 500px;
+    max-width: 400px;
     width: 50%;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    text-align: center;
 }
 
 .dialog-header,

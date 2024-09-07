@@ -381,8 +381,8 @@ small {
     font-weight: bold;
     color: #72c3ff;
     background: linear-gradient(90deg, #72c3ff, #ff4d4d);
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
     margin-bottom: 10px;
 }
@@ -416,64 +416,45 @@ small {
     color: #c0c0c0;
 }
 /* Responsive Design */
-@media screen and (max-width: 1200px) {
-    input {
-        width: 100%;
-    }
-}
-
 @media screen and (max-width: 768px) {
     .container {
-        width: 100%;
-        grid-template-columns: repeat(1, 1fr);
-    }
-
-    input {
-        width: auto !important;
-        max-width: 100%;
-        min-width: 200px;
-    }
-
-    .date {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .top-bar {
+        flex-direction: column;
         align-items: stretch;
+        gap: 0.5rem;
+        margin-top: 0.9rem;
     }
 
-    .date button {
-        margin-top: 10px;
-        width: 100%;
+    .profile-menu {
+        margin-top: 0.9rem;
+
+        justify-content: center;
+    }
+
+    .profile-photo img {
+        width: 40px;
+        height: 40px;
     }
 }
 
 @media screen and (max-width: 500px) {
-    input {
-        width: 100%;
-        font-size: 0.75rem;
+    h1 {
+        font-size: 1.5rem;
     }
 
-    .date {
-        padding: 5px;
+    .theme-toggler {
+        margin-right: 1rem;
     }
 
-    .date button {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.8rem;
-    }
-}
-@media screen and (max-width: 500px) {
-    input {
-        width: 100%;
-        font-size: 0.75rem;
-    }
-
-    .date {
-        padding: 5px;
-    }
-
-    .date button {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.8rem;
+    .time-box {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
     }
 }
 </style>

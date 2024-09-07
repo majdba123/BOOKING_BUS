@@ -1041,20 +1041,30 @@ h2 {
     width: 100%;
     overflow-x: auto;
 }
-.spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
-}
-
 .spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30vh;
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 .no-data-message {
     display: flex;
@@ -1066,10 +1076,10 @@ h2 {
     text-align: center;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background-color: var(--clr-white);
 }
 .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
     border-radius: 1rem;
     padding: 1rem;
@@ -1117,7 +1127,7 @@ select {
     padding: 10px;
     border: 2px solid #007bff;
     border-radius: 5px;
-    background-color: #f6f6f9;
+    background-color: var(--clr-white);
     color: #363949;
     font-size: 16px;
     width: 100%;
@@ -1152,7 +1162,6 @@ select:focus {
 .edit-btn {
     color: #4caf50;
     background-color: var(--clr-white);
-
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
@@ -1165,7 +1174,6 @@ select:focus {
 .delete-btn {
     color: #f44336;
     background-color: var(--clr-white);
-
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
@@ -1190,7 +1198,6 @@ select:focus {
 }
 .status-btn {
     background-color: var(--clr-white);
-
     margin-bottom: 10px;
 }
 
@@ -1226,14 +1233,15 @@ select:focus {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
+    border-radius: 9px;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
+    width: 100%;
 }
 
 @keyframes gradientAnimation {
@@ -1267,7 +1275,7 @@ select:focus {
     flex-direction: column;
     justify-content: center;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--clr-white);
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
     width: 100%;
@@ -1284,11 +1292,11 @@ select:focus {
 .select-container select {
     width: 100%;
     padding: 10px;
-    border: 2px solid #ddd;
+    border: 1px solid var(--clr-primary);
     border-radius: 5px;
     font-size: 16px;
     color: #007bff;
-    background-color: #fff;
+    background-color: var(--clr-white);
     box-sizing: border-box;
     appearance: none;
     text-align: center;
@@ -1302,7 +1310,7 @@ select:focus {
 }
 
 .select-container select:hover {
-    background-color: #f0f0f0;
+    background-color: var(--clr-white);
     border-color: #007bff;
 }
 
@@ -1328,11 +1336,11 @@ label {
 input {
     width: 100%;
     padding: 10px;
-    border: 2px solid #ddd;
+    border: 1px solid var(--clr-primary);
     border-radius: 5px;
     font-size: 16px;
     color: #007bff;
-    background-color: #fff;
+    background-color: var(--clr-white);
     box-sizing: border-box;
     transition: border-color 0.3s ease;
     text-align: center;
@@ -1346,25 +1354,23 @@ input:focus {
 .submit-btnnd {
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
 .submit-btnd {
     padding: 10px 20px;
     margin: 5px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s;
-    margin: 10px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-btnd:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-variant);
+    transform: translateY(-3px);
 }
-
 .map-container {
     flex: 1;
     margin-left: 20px;
@@ -1471,6 +1477,7 @@ input:focus {
 .modal-body div div,
 .modal-footer {
     margin-bottom: 10px;
+    color: var(--clr-dark);
 }
 
 .modal-header {
@@ -1601,7 +1608,7 @@ input:focus {
     border: 1px solid #ddd;
     padding: 0 12px;
     font-size: 16px;
-    background-color: #fff;
+    background-color: var(--clr-white);
     box-sizing: border-box;
     transition: border-color 0.3s ease;
 }

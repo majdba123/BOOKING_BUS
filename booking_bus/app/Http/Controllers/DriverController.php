@@ -194,16 +194,17 @@ class DriverController extends Controller
     {
         $driver = Auth::user()->Driver;
 
-        $bus = Bus_Driver::where('driver_id', $driver->id)->first();
+        $bus = Bus_Driver::where('status', 'pending')
+            ->where('driver_id', $driver->id)->first();
 
         $info = $bus->bus;
         $data = [
-            // 'id_bus' => $info->id,
-            // 'company_id' => $info->company_id,
+            'id_bus' => $info->id,
+            'company_id' => $info->company_id,
             'company_name' => $info->company->name_company,
             'number_bus' => $info->number_bus,
             'number_passenger' => $info->number_passenger,
-            // 'status' => $info->status,
+            'status' => $info->status,
         ];
         return response()->json($data);
     }
@@ -411,7 +412,7 @@ class DriverController extends Controller
     }
 
 
-    public function start_trip()
+   public function start_trip()
     {
         DB::beginTransaction();
         try {
@@ -426,6 +427,10 @@ class DriverController extends Controller
             $bus_trip22 = Bus_Trip::where('status', 'finished_going')
                 ->where('bus_id', $bus->bus_id)
                 ->first();
+            if($bus_trip22)
+            {
+                return response()->json(['error' => 'An error occurred while starting the trip because you are in trip already'], 500);
+            }
 
             if ($bus_trip22) {
                 return response()->json(['error' => 'An error occurred while starting the trip because you are in trip already'], 500);
@@ -454,6 +459,8 @@ class DriverController extends Controller
                     'notification' => $massage,
                 ]);
 
+                $reservations = Reservation::where('status', 'padding')
+                    ->where('pivoit_id', $pivoit_id->id)
                 $reservations = Reservation::where('status', 'padding')
                     ->where('pivoit_id', $pivoit_id->id)
                     ->where('type', 1)
@@ -581,30 +588,7 @@ class DriverController extends Controller
 
                             $seat_reservation->status = 'out' . $type_reservation;
                             $seat_reservation->save();
-                            if ($seat_reservation->seat->status == 3) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 2;
-                                } elseif ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 1;
-                                }
-                            } elseif ($seat_reservation->seat->status == 2) {
-                                if ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            } elseif ($seat_reservation->seat->status == 1) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            }
-                            $seat_reservation->seat->save(); // Save the seat object
+                            // Save the seat object
                         }
                     }
                     return response()->json([
@@ -639,30 +623,6 @@ class DriverController extends Controller
                         foreach ($reservation->seat_reservation as $seat_reservation) {
                             $seat_reservation->status = 'out' . $type_reservation;
                             $seat_reservation->save();
-                            if ($seat_reservation->seat->status == 3) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 2;
-                                } elseif ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 1;
-                                }
-                            } elseif ($seat_reservation->seat->status == 2) {
-                                if ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            } elseif ($seat_reservation->seat->status == 1) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            }
-                            $seat_reservation->seat->save(); // Save the seat object
                         }
                     }
                     return response()->json([
@@ -698,30 +658,6 @@ class DriverController extends Controller
 
                             $seat_reservation->status = 'out' . $type_reservation;
                             $seat_reservation->save();
-                            if ($seat_reservation->seat->status == 3) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 2;
-                                } elseif ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 1;
-                                }
-                            } elseif ($seat_reservation->seat->status == 2) {
-                                if ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            } elseif ($seat_reservation->seat->status == 1) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            }
-                            $seat_reservation->seat->save(); // Save the seat object
                         }
                     }
                     return response()->json([
@@ -776,30 +712,6 @@ class DriverController extends Controller
                         foreach ($reservation->seat_reservation as $seat_reservation) {
                             $seat_reservation->status = 'out' . $type_reservation;
                             $seat_reservation->save();
-                            if ($seat_reservation->seat->status == 3) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 2;
-                                } elseif ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 1;
-                                }
-                            } elseif ($seat_reservation->seat->status == 2) {
-                                if ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            } elseif ($seat_reservation->seat->status == 1) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            }
-                            $seat_reservation->seat->save(); // Save the seat object
                         }
                     }
                     return response()->json($next_pivoit);
@@ -832,40 +744,12 @@ class DriverController extends Controller
                         foreach ($reservation->seat_reservation as $seat_reservation) {
                             $seat_reservation->status = 'out' . $type_reservation;
                             $seat_reservation->save();
-                            if ($seat_reservation->seat->status == 3) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 2;
-                                } elseif ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 1;
-                                }
-                            } elseif ($seat_reservation->seat->status == 2) {
-                                if ($reservation->type == 2) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            } elseif ($seat_reservation->seat->status == 1) {
-                                if ($reservation->type == 1) {
-                                    $seat_reservation->seat->status = 0;
-                                } else {
-                                    return response()->json([
-                                        'massage' => 'there is wrong'
-                                    ]);
-                                }
-                            }
-                            $seat_reservation->seat->save(); // Save the seat object
                         }
                     }
                     return response()->json([
                         'massage' => 'break_done'
                     ]);
                 }
-            } elseif ($pivoit->status == 'done2') {
-                return response()->json([
-                    'massage' => 'break already finished going and trip '
-                ]);
             } else {
                 return response()->json([
                     'massage' => 'something get wrong'
@@ -930,6 +814,7 @@ class DriverController extends Controller
                         $bus_trip->trip->status = "finished_going";
                         $bus_trip->trip->save();
                     }
+
 
                     $reservations = Reservation::where('status', 'padding')
                         ->where('pivoit_id', $pivoit_id)
@@ -1102,7 +987,6 @@ class DriverController extends Controller
 
         if ($reservation->bus__trip_id == $bus_trip->id) {
             $reservation->status = 'completed';
-            $reservation->seat_reservation()->update(['status' => 'completed']);
             $reservation->save();
 
             $massage = "  YOUR BOOKED COMPLETED  : $reservation->id  ";
@@ -1186,15 +1070,15 @@ class DriverController extends Controller
                 return response()->json(['error' => 'Driver not found'], 404);
             }
             $bus = Bus_Driver::where('status', 'finished')
-                ->where('driver_id', $driver->id)
-                ->first();
+                            ->where('driver_id', $driver->id)
+                            ->first();
             if (!$bus) {
                 DB::rollBack();
                 return response()->json(['error' => 'No pending bus found for the driver'], 404);
             }
             $trips = Bus_Trip::where('status', 'finished_going')
-                ->where('bus_id', $bus->bus_id)
-                ->get();
+                            ->where('bus_id', $bus->bus_id)
+                            ->get();
             if ($trips->isEmpty()) {
                 DB::rollBack();
                 return response()->json(['error' => 'No pending trip found for the bus'], 404);
@@ -1263,4 +1147,5 @@ class DriverController extends Controller
 
         return response()->json(['reservations' => $formattedReservations]);
     }
+
 }

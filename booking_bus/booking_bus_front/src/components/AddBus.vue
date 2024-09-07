@@ -47,7 +47,7 @@
                     <div class="spinner"></div>
                 </div>
                 <div v-else>
-                    <div v-if="!filteredBuses.length" class="no-data-message">
+                    <div v-if="!paginatedBuses.length" class="no-data-message">
                         No Data Available
                     </div>
                     <div v-else>
@@ -62,7 +62,7 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(bus, index) in filteredBuses"
+                                    v-for="(bus, index) in paginatedBuses"
                                     :key="index"
                                 >
                                     <td>{{ bus.number_bus }}</td>
@@ -100,6 +100,26 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="pagination">
+                            <button
+                                :disabled="currentPage === 1"
+                                @click="changePage(currentPage - 1)"
+                            >
+                                <span class="material-icons"
+                                    >skip_previous</span
+                                >
+                            </button>
+                            <span
+                                >Page {{ currentPage }} of
+                                {{ totalPages }}</span
+                            >
+                            <button
+                                :disabled="currentPage === totalPages"
+                                @click="changePage(currentPage + 1)"
+                            >
+                                <span class="material-icons">skip_next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -127,7 +147,7 @@
                     </div>
                     <div v-else>
                         <div
-                            v-if="!busStatusData.length"
+                            v-if="!paginatedBusStatusData.length"
                             class="no-data-message"
                         >
                             No Data Available
@@ -143,7 +163,9 @@
                                 </thead>
                                 <tbody>
                                     <tr
-                                        v-for="(bus, index) in busStatusData"
+                                        v-for="(
+                                            bus, index
+                                        ) in paginatedBusStatusData"
                                         :key="index"
                                     >
                                         <td>{{ bus.number_bus }}</td>
@@ -152,6 +174,20 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="pagination">
+                            <button @click="prevPage('busStatus')">
+                                <span class="material-icons"
+                                    >skip_previous</span
+                                >
+                            </button>
+                            <span
+                                >Page {{ currentPageBusStatus }} of
+                                {{ totalPagesBusStatus }}</span
+                            >
+                            <button @click="nextPage('busStatus')">
+                                <span class="material-icons">skip_next</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -252,7 +288,6 @@
         </div>
     </div>
 </template>
-
 <script>
 import axios from "axios";
 import store from "@/store";
@@ -283,6 +318,10 @@ export default {
             editingIndex: null,
             toast: useToast(),
             refreshInterval: null,
+            currentPage: 1,
+            itemsPerPage: 8,
+            currentPageBusStatus: 1,
+            searchQueryBusStatus: "",
         };
     },
     mounted() {
@@ -396,7 +435,6 @@ export default {
                 )
                 .then((response) => {
                     this.busStatusData = response.data;
-                    console.log(response.data);
                     this.loading1 = false;
                 })
                 .catch((error) => {
@@ -470,7 +508,7 @@ export default {
                     this.showSeatsModal = true;
                 })
                 .catch((error) => {
-                    window.alert.toast("Error fetching bus seats");
+                    window.alert("Error fetching bus seats");
                     console.error("Fetch seats error:", error);
                 });
         }, 300),
@@ -490,18 +528,72 @@ export default {
                 this.refreshInterval = null;
             }
         },
-    },
-    beforeUnmount() {
-        this.stopAutoRefresh();
+        changePage(page) {
+            if (page < 1 || page > this.totalPages) return;
+            this.currentPage = page;
+        },
+        prevPage(modalType) {
+            if (modalType === "busStatus") {
+                if (this.currentPageBusStatus > 1) {
+                    this.currentPageBusStatus--;
+                }
+            } else if (modalType === "bus") {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                }
+            }
+        },
+        nextPage(modalType) {
+            if (modalType === "busStatus") {
+                if (this.currentPageBusStatus < this.totalPagesBusStatus) {
+                    this.currentPageBusStatus++;
+                }
+            } else if (modalType === "bus") {
+                if (this.currentPage < this.totalPages) {
+                    this.currentPage++;
+                }
+            }
+        },
     },
     computed: {
-        filteredBuses() {
-            return store.state.Bus.filter((bus) => {
+        filteredBusStatusData() {
+            if (!this.searchQueryBusStatus) {
+                return this.busStatusData;
+            }
+            return this.busStatusData.filter((bus) => {
+                const searchQuery = this.searchQueryBusStatus.toLowerCase();
                 return bus.number_bus
                     .toString()
                     .toLowerCase()
-                    .includes(store.state.searchQuery.toLowerCase());
+                    .includes(searchQuery);
             });
+        },
+        paginatedBusStatusData() {
+            const start = (this.currentPageBusStatus - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredBusStatusData.slice(start, end);
+        },
+        totalPagesBusStatus() {
+            return Math.ceil(
+                this.filteredBusStatusData.length / this.itemsPerPage
+            );
+        },
+        filteredBuses() {
+            return store.state.Bus.filter((bus) => {
+                const searchQuery = store.state.searchQuery.toLowerCase();
+                return bus.number_bus
+                    .toString()
+                    .toLowerCase()
+                    .includes(searchQuery);
+            });
+        },
+        paginatedBuses() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredBuses.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.filteredBuses.length / this.itemsPerPage);
         },
     },
 };
@@ -626,14 +718,34 @@ small {
     max-width: none;
     font-size: 0.85rem;
 }
-
-.spinner-container {
+.pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    margin-top: 20px;
 }
 
+.pagination button {
+    padding: 6px 10px;
+    margin: 0 5px;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    margin: 0 10px;
+    font-size: 0.7rem;
+    color: var(--clr-dark);
+}
 .spinner {
     border: 4px solid var(--clr-light);
     border-left-color: var(--clr-primary);
@@ -643,6 +755,22 @@ small {
     animation: spin 1s linear infinite;
 }
 
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30vh;
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 .no-data-message {
     display: flex;
     justify-content: center;
@@ -852,6 +980,7 @@ label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: var(--clr-dark);
 }
 
 input {
@@ -899,14 +1028,20 @@ input:focus {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
     background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     max-width: 500px;
     width: 80%;
-    box-shadow: 0 2rem 3rem var(--clr-light);
+    height: 86%;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    margin: 10px;
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none;
 }
 
 .modal-header,
@@ -994,27 +1129,24 @@ input:focus {
 
 .modals {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     position: fixed;
-    top: 0;
+    z-index: 1000;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
 }
 
 .modals-content {
     background: var(--clr-white);
     color: var(--clr-dark);
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 10px;
     max-width: 400px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 50%;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     text-align: center;
 }
 

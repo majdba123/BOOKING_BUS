@@ -241,24 +241,36 @@ export default {
     }
 }
 .spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30vh;
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 .nav-btnd:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transition: 0.3s ease;
 }
-.spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
-}
+
 .no-data-message {
     display: flex;
     justify-content: center;

@@ -255,11 +255,30 @@ main .insights {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.6rem;
 }
+.spinner {
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh;
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 .no-data-message {
     display: flex;
@@ -270,14 +289,7 @@ main .insights {
     color: #677483;
     text-align: center;
 }
-.spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-}
+
 main .insights > div {
     background-color: #fff;
     padding: 1.8rem;

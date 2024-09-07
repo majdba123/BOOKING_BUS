@@ -96,6 +96,11 @@ class User extends Authenticatable
         return $this->hasMany(inquires::class);
     }
 
+    public function notification()
+    {
+        return $this->hasMany(UserNotification::class);
+    }
+
     public function favourite()
     {
         return $this->hasMany(Favourite::class);

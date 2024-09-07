@@ -40,7 +40,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(trip, index) in Trips" :key="index">
+                                <tr
+                                    v-for="(trip, index) in paginatedTrips"
+                                    :key="index"
+                                >
                                     <td>{{ index }}</td>
                                     <td>{{ trip.status }}</td>
                                     <td>{{ trip.path?.from }}</td>
@@ -59,6 +62,26 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="pagination">
+                            <button
+                                @click="currentPageTrips--"
+                                :disabled="currentPageTrips === 1"
+                            >
+                                <span class="material-icons"
+                                    >skip_previous</span
+                                >
+                            </button>
+                            <span
+                                >Page {{ currentPageTrips }} of
+                                {{ totalPagesTrips }}</span
+                            >
+                            <button
+                                @click="currentPageTrips++"
+                                :disabled="currentPageTrips === totalPagesTrips"
+                            >
+                                <span class="material-icons">skip_next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -86,7 +109,7 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(driver, index) in Drivers"
+                                    v-for="(driver, index) in paginatedDrivers"
                                     :key="index"
                                 >
                                     <td>{{ index }}</td>
@@ -106,6 +129,28 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="pagination">
+                            <button
+                                @click="currentPageDrivers--"
+                                :disabled="currentPageDrivers === 1"
+                            >
+                                <span class="material-icons"
+                                    >skip_previous</span
+                                >
+                            </button>
+                            <span
+                                >Page {{ currentPageDrivers }} of
+                                {{ totalPagesDrivers }}</span
+                            >
+                            <button
+                                @click="currentPageDrivers++"
+                                :disabled="
+                                    currentPageDrivers === totalPagesDrivers
+                                "
+                            >
+                                <span class="material-icons">skip_next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -145,7 +190,7 @@
                                 <tr
                                     v-for="(
                                         Reservation, index
-                                    ) in AllReservation"
+                                    ) in paginatedReservations"
                                     :key="index"
                                 >
                                     <td>{{ index }}</td>
@@ -161,6 +206,26 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="pagination">
+                            <button
+                                @click="currentPage--"
+                                :disabled="currentPage === 1"
+                            >
+                                <span class="material-icons"
+                                    >skip_previous</span
+                                >
+                            </button>
+                            <span
+                                >Page {{ currentPage }} of
+                                {{ totalPages }}</span
+                            >
+                            <button
+                                @click="currentPage++"
+                                :disabled="currentPage === totalPages"
+                            >
+                                <span class="material-icons">skip_next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -438,6 +503,12 @@ export default {
             tripRatingsDetails: [],
             driverRatingsDetails: [],
             ReservationStatusData: [],
+            currentPage: 1,
+            itemsPerPage: 10,
+            currentPageDrivers: 1,
+            itemsPerPageDrivers: 10,
+            currentPageTrips: 1,
+            itemsPerPageTrips: 10,
         };
     },
     methods: {
@@ -617,6 +688,33 @@ export default {
             this.showDriverRatingsModal = false;
         },
     },
+    computed: {
+        paginatedReservations() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.AllReservation.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.AllReservation.length / this.itemsPerPage);
+        },
+        paginatedTrips() {
+            const start = (this.currentPageTrips - 1) * this.itemsPerPageTrips;
+            const end = start + this.itemsPerPageTrips;
+            return this.Trips.slice(start, end);
+        },
+        totalPagesTrips() {
+            return Math.ceil(this.Trips.length / this.itemsPerPageTrips);
+        },
+        paginatedDrivers() {
+            const start =
+                (this.currentPageDrivers - 1) * this.itemsPerPageDrivers;
+            const end = start + this.itemsPerPageDrivers;
+            return this.Drivers.slice(start, end);
+        },
+        totalPagesDrivers() {
+            return Math.ceil(this.Drivers.length / this.itemsPerPageDrivers);
+        },
+    },
 };
 </script>
 
@@ -688,11 +786,30 @@ h2 {
 .recent_orders table:hover {
     box-shadow: none;
 }
+.spinner {
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 30vh;
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 .no-data-message {
     display: flex;
@@ -707,14 +824,6 @@ h2 {
     background-color: var(--clr-white);
 }
 
-.spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-}
 table thead tr th {
     padding: 10px;
     font-size: 0.9rem;
@@ -993,14 +1102,56 @@ input:focus {
     background-color: #d9534f;
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.pagination button {
+    padding: 6px 10px;
+    margin: 0 5px;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    margin: 0 10px;
+    font-size: 0.7rem;
+    color: var(--clr-dark);
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
+    .recent_orders table,
+    .table-container {
+        width: 100%;
+        display: block;
+    }
+
+    .recent_orders table th,
+    .recent_orders table td {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
     .containerd {
         padding: 10px;
     }
 
     .navd {
         flex-direction: column;
+        margin: 0;
     }
 
     .nav-btnd {
@@ -1038,6 +1189,20 @@ input:focus {
         width: 100%;
         height: 50px;
         font-size: 1rem;
+    }
+    .delete-btn,
+    .edit-btn,
+    .status-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .pagination button {
+        padding: 5px 8px;
+        font-size: 0.7rem;
+        margin: 0 3px;
     }
 }
 </style>
