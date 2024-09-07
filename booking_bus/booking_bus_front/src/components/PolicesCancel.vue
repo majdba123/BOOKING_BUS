@@ -783,14 +783,25 @@ export default {
                 return;
             }
 
+            console.log("Selected trip ID:", this.formData.trip_id);
             const payload = {
-                trip_id: this.formData.trip_id,
+                trip_id: Number(this.formData.trip_id),
                 description: this.formData.description,
                 reasons: this.formData.reasons.map((field) => field.value),
                 rate: this.compensationData.rate,
                 satisfaction_rate_description:
                     this.compensationData.satisfaction_rate_description,
             };
+            console.log("Payload being sent:", payload);
+            // Check if trip ID is valid
+            if (
+                !this.options.some(
+                    (option) => option.value === this.formData.trip_id
+                )
+            ) {
+                this.toast.error("Selected trip is invalid.");
+                return;
+            }
 
             axios
                 .post(

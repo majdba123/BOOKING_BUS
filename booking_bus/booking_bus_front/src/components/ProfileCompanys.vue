@@ -91,18 +91,20 @@ export default {
     data() {
         return {
             company: {
+                id: null,
                 name: "",
                 email: "",
                 city: "",
                 area: "",
                 phone: "",
                 logo: null,
-                logoURL: null,
+                logoURL: null, // For displaying the logo
             },
             isDataFilled: false,
         };
     },
     mounted() {
+        this.isDataFilled = false; // Ensure button is disabled before data fetch
         this.fetchCompanyInfo();
         this.fetchCompanyAddress();
     },
@@ -114,11 +116,12 @@ export default {
                     headers: { Authorization: `Bearer ${access_token}` },
                 })
                 .then((response) => {
+                    this.company.id = response.data.id;
                     this.company.name = response.data.name;
                     this.company.email = response.data.email;
                     this.company.phone = response.data.phoneNumber;
-                    this.company.logoURL = response.data.profile_image;
-                    this.checkDataFilled();
+                    this.company.logoURL = response.data.profile_image; // Use for displaying the logo
+                    this.checkDataFilled(); // Check if all data is filled
                 })
                 .catch((error) => {
                     console.error(
@@ -128,13 +131,13 @@ export default {
                 });
         },
         checkDataFilled() {
-            this.isDataFilled = [
-                this.company.name,
-                this.company.email,
-                this.company.city,
-                this.company.area,
-                this.company.phone,
-            ].every((value) => value !== "" && value !== null);
+            this.isDataFilled =
+                this.company.name !== "" &&
+                this.company.email !== "" &&
+                this.company.city !== "" &&
+                this.company.area !== "" &&
+                this.company.phone !== "" &&
+                this.company.logoURL !== null; // Ensure logoURL is checked
         },
         fetchCompanyAddress() {
             const access_token = window.localStorage.getItem("access_token");
@@ -147,7 +150,9 @@ export default {
                         const address = response.data[0];
                         this.company.city = address.city;
                         this.company.area = address.area;
-                        this.checkDataFilled();
+                        this.checkDataFilled(); // Recheck data completeness
+                    } else {
+                        console.error("No address found.");
                     }
                 })
                 .catch((error) => {
@@ -158,25 +163,15 @@ export default {
                 });
         },
         storeCompanyInfo() {
-            if (!this.isDataFilled) {
-                alert("Please fill in all the required fields.");
-                return;
-            }
-
             const formData = this.createFormData();
             const access_token = window.localStorage.getItem("access_token");
             const toast = useToast();
 
-            // Update address separately
             axios
                 .post(
                     `http://127.0.0.1:8000/api/company/store_address?city=${this.company.city}&area=${this.company.area}`,
                     {},
-                    {
-                        headers: {
-                            Authorization: `Bearer ${access_token}`,
-                        },
-                    }
+                    { headers: { Authorization: `Bearer ${access_token}` } }
                 )
                 .then(() => {
                     axios
@@ -195,7 +190,7 @@ export default {
                         })
                         .catch((error) => {
                             console.error(
-                                "There was an error storing the company info:",
+                                "Error storing company info:",
                                 error.response ? error.response.data : error
                             );
                             toast.error(
@@ -208,7 +203,7 @@ export default {
                 })
                 .catch((error) => {
                     console.error(
-                        "There was an error updating the address:",
+                        "Error updating address:",
                         error.response ? error.response.data : error
                     );
                     toast.error(
@@ -220,24 +215,20 @@ export default {
                 });
         },
         modifyCompanyInfo() {
-            if (!this.isDataFilled) {
-                alert("Please fill in all the required fields.");
+            if (!this.company.city || !this.company.area) {
+                console.error("Address data is missing.");
                 return;
             }
 
             const formData = this.createFormData();
             const access_token = window.localStorage.getItem("access_token");
             const toast = useToast();
-
+            console.log(this.company.id);
             axios
                 .put(
-                    `http://127.0.0.1:8000/api/company/update_address/1?city=${this.company.city}&area=${this.company.area}`,
+                    `http://127.0.0.1:8000/api/company/update_address/${this.company.id}?city=${this.company.city}&area=${this.company.area}`,
                     {},
-                    {
-                        headers: {
-                            Authorization: `Bearer ${access_token}`,
-                        },
-                    }
+                    { headers: { Authorization: `Bearer ${access_token}` } }
                 )
                 .then(() => {
                     axios
@@ -251,15 +242,14 @@ export default {
                                 },
                             }
                         )
-                        .then((response) => {
+                        .then(() => {
                             toast.success(
                                 "Company info modified successfully!"
                             );
-                            console.log(response);
                         })
                         .catch((error) => {
                             console.error(
-                                "There was an error modifying the company info:",
+                                "Error modifying company info:",
                                 error.response ? error.response.data : error
                             );
                             toast.error(
@@ -272,7 +262,7 @@ export default {
                 })
                 .catch((error) => {
                     console.error(
-                        "There was an error updating the address:",
+                        "Error updating address:",
                         error.response ? error.response.data : error
                     );
                     toast.error(
@@ -283,15 +273,14 @@ export default {
                     );
                 });
         },
+
         handleLogoUpload(event) {
             this.company.logo = event.target.files[0];
-
-            const file = event.target.files[0];
-            if (file) {
-                this.company.logoURL = URL.createObjectURL(file);
-            }
-
-            this.checkDataFilled();
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.company.logoURL = e.target.result;
+            };
+            reader.readAsDataURL(this.company.logo);
         },
         createFormData() {
             const formData = new FormData();
@@ -302,7 +291,6 @@ export default {
                 formData.append("image", this.company.logo);
             }
 
-            console.log([...formData]);
             return formData;
         },
     },
