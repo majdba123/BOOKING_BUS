@@ -80,7 +80,10 @@ class TripController extends Controller
                 }
                 if (strtotime($busId['to_time_return']) <= strtotime($busId['from_time_return'])) {
                     $validator->errors()->add('bus_ids.*.to_time_return', 'To time return must be after from time return');
+                }if (strtotime($busId['date_start']) > strtotime($busId['date_end'])) {
+                    $validator->errors()->add('bus_ids.*.to_time_return', 'date_start time return must be befor from time date_end');
                 }
+
             }
         });
 
@@ -94,11 +97,13 @@ class TripController extends Controller
             $availableBuses = [];
             // Check if buses are available
             foreach ($busIds as $busId) {
+             //   var_dump($busId);
                 $bus = Bus::find($busId['bus_id']);
 
                 if ($bus && $bus->status == 'available') {
                     $availableBuses[] = $busId;
-                } elseif($bus && $bus->status == 'complete') {
+                    //var_dump($availableBuses);
+                }elseif($bus && $bus->status == 'completed') {
                     $existingTrip1 = Bus_Trip::where('bus_id', $bus->id)
                     ->where('date_start', $busId['date_start'])
                     ->whereNotIn('status', ['finished'])
@@ -111,22 +116,24 @@ class TripController extends Controller
 
                     if ($existingTrip1) {
                         return response()->json([
-                            'message' => "Bus is already scheduled for a trip on {$busId['date']} at the same time.",
+                            'message' => "Bus is already scheduled for a trip on  at the same time.",
                         ], 422);
                     }elseif($existingTrip2)
                     {
                         return response()->json([
-                            'message' => "Bus is already scheduled for a trip on {$busId['date']} at the same time.",
+                            'message' => "Bus is already scheduled for a trip on  at the same time.",
                         ], 422);
                     }
                     $availableBuses[] = $busId;
+
                 }
             }
-            // if (count($availableBuses) == 0) {
-            //     return response()->json([
-            //         'message' => 'no buses available',
-            //     ]);
-            // }
+
+            if (count($availableBuses) == 0) {
+                return response()->json([
+                    'message' => 'no buses available',
+                ]);
+            }
 
             $trip = new Trip();
             $trip->path_id = $request->input('path_id');
@@ -172,8 +179,8 @@ class TripController extends Controller
             }
 
 
-            $busIds = $request->input('bus_ids');
-            foreach ($busIds as $busId) {
+
+            foreach ($availableBuses as $busId) {
                 $bus = Bus::find($busId['bus_id']);
                 if ($bus
                     // && $bus->status == 'available'
@@ -251,13 +258,26 @@ class TripController extends Controller
             'bus_ids' => 'required_with:breaks_ids|array',
             'bus_ids.*.bus_id' => 'sometimes|string',
             'bus_ids.*.type' => 'string',
-            'bus_ids.*.from_time_going' => 'nullable|date_format:H:i',
-            'bus_ids.*.to_time_going' => 'nullable|date_format:H:i',
-            'bus_ids.*.from_time_return' => 'nullable|date_format:H:i',
-            'bus_ids.*.to_time_return' => 'nullable|date_format:H:i',
-            'bus_ids.*.date' => 'nullable|date',
+            'bus_ids.*.from_time_going' => 'sometimes|date_format:H:i',
+            'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i',
+            'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i',
+            'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i',
+            'bus_ids.*.date_start' => 'sometimes|date',
+            'bus_ids.*.date_end' => 'sometimes|date',
         ]);
+        $validator->after(function ($validator) use ($request) {
+            foreach ($request->input('bus_ids') as $busId) {
+                if (strtotime($busId['to_time_going']) <= strtotime($busId['from_time_going'])) {
+                    $validator->errors()->add('bus_ids.*.to_time_going', 'To time going must be after from time going');
+                }
+                if (strtotime($busId['to_time_return']) <= strtotime($busId['from_time_return'])) {
+                    $validator->errors()->add('bus_ids.*.to_time_return', 'To time return must be after from time return');
+                }if (strtotime($busId['date_start']) > strtotime($busId['date_end'])) {
+                    $validator->errors()->add('bus_ids.*.to_time_return', 'date_start time return must be befor from time date_end');
+                }
 
+            }
+        });
 
         if ($validator->fails()) {
             $errors = $validator->errors()->first();
@@ -320,10 +340,6 @@ class TripController extends Controller
                     $trip->bus_trip()->delete();
                     $trip->breaks_trip()->delete();
 
-                    $breakTripStart = new Breaks_trip();
-                    $breakTripStart->trip_id = $trip->id;
-                    $breakTripStart->breaks_id = 1; // start break
-                    $breakTripStart->save();
 
                     $breakIds = Breaks::where('path_id', $request->input('path_id'))->get();
                     foreach ($breakIds as $breakId) {
@@ -336,10 +352,6 @@ class TripController extends Controller
                         $breakTrip->breaks_id = $breakId->id;
                         $breakTrip->save();
                     }
-                    $breakTripEnd = new Breaks_trip();
-                    $breakTripEnd->trip_id = $trip->id;
-                    $breakTripEnd->breaks_id = 2; // end break
-                    $breakTripEnd->save();
 
                     $busIds = $request->input('bus_ids');
 
@@ -354,7 +366,8 @@ class TripController extends Controller
                             $busTrip->to_time_going = $busId['to_time_going']; // optional
                             $busTrip->from_time_return = $busId['from_time_return'];
                             $busTrip->to_time_return = $busId['to_time_return'];
-                            $busTrip->date = $busId['date'];
+                            $busTrip->date_end = $busId['date_end'];
+                            $busTrip->date_start = $busId['date_start'];
                             $busTrip->save();
                             $bus->status = 'completed';
                             $bus->bus_driver->pluck('driver')->each->update(['status' => 'completed']);
