@@ -181,16 +181,7 @@ class FullMapViewScreen extends StatelessWidget {
                         JourneyButtons(
                           screenHeight: screenHeight,
                           screenWidth: screenWidth,
-                          onEmergencyStopPressed: () {},
-                          onEndJourneyPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => JourneyCompletedScreen(),
-                              ),
-                            );
-                          },
-                          isJourneyComplete: true,
+                          // isJourneyComplete: false,
                         ),
                       ] else if (!driverProvider.isStartTrip) ...[
                         Container(

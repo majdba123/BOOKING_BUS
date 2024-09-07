@@ -235,7 +235,8 @@ class DriverProvider extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
-
+    print('in access breack functon provider!!!');
+    print(PivoitId);
     try {
       await DriverService().accessBreak(context, accessToken, PivoitId);
 
@@ -253,10 +254,13 @@ class DriverProvider extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
+    print('in finsish breack functon provider!!!');
+    print("the privoit id id : $pivoitId");
 
     try {
       await DriverService().finsishBreack(context, accessToken, pivoitId);
-      print(_isCheckedReservation);
+      _currentStopIndex++;
+      // print(_isCheckedReservation);
       print('after finsinsh breack !!');
     } catch (error) {
       _errorMessage = error.toString();

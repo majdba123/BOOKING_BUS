@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/CompleteJourneyPage/JourneyCompletedScreen.dart';
 import 'package:provider/provider.dart';
 
 class JourneyButtons extends StatelessWidget {
   final double screenHeight;
   final double screenWidth;
-  final bool isJourneyComplete;
-  final VoidCallback onEmergencyStopPressed;
+  // final bool isJourneyComplete;
 
   JourneyButtons({
     required this.screenHeight,
     required this.screenWidth,
-    required this.isJourneyComplete,
-    required this.onEmergencyStopPressed,
-    required Null Function() onEndJourneyPressed,
+    // required this.isJourneyComplete,
   });
 
   @override
   Widget build(BuildContext context) {
+    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
+    var auth = Provider.of<AuthProvider>(context, listen: false);
     return Padding(
       padding: EdgeInsets.only(bottom: screenHeight * 0.02),
       child: Row(
@@ -26,7 +25,15 @@ class JourneyButtons extends StatelessWidget {
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: onEmergencyStopPressed,
+              onPressed: () {
+                driverProvider.accessBreak(
+                    context,
+                    auth.accessToken,
+                    driverProvider
+                        .TripDriverDetail!
+                        .breaks_data[driverProvider.currentStopIndex]
+                        .pivoit_id);
+              },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(
                   vertical: screenHeight * 0.02,
@@ -48,17 +55,27 @@ class JourneyButtons extends StatelessWidget {
           SizedBox(width: screenWidth * 0.04),
           Expanded(
             child: ElevatedButton(
-              onPressed: isJourneyComplete
-                  ? () {
-                      _showEndJourneyDialog(context);
-                    }
-                  : null,
+              onPressed: () {
+                driverProvider.finishBreack(
+                    context,
+                    auth.accessToken,
+                    driverProvider
+                        .TripDriverDetail!
+                        .breaks_data[driverProvider.currentStopIndex]
+                        .pivoit_id);
+              },
+              // onPressed: isJourneyComplete
+              //     ? () {
+              //         _showEndJourneyDialog(context);
+              //       }
+              //     : null,
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(
                   vertical: screenHeight * 0.02,
                 ),
-                backgroundColor:
-                    isJourneyComplete ? Colors.green : Colors.grey.shade300,
+                backgroundColor: Colors.green,
+                // isJourneyComplete ?
+                // : Colors.grey.shade300,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(screenHeight * 0.01),
                 ),
@@ -67,8 +84,9 @@ class JourneyButtons extends StatelessWidget {
                 'Finish Break',
                 style: TextStyle(
                   fontSize: screenHeight * 0.02,
-                  color:
-                      isJourneyComplete ? Colors.white : Colors.grey.shade700,
+                  color: Colors.grey.shade700,
+                  // isJourneyComplete ? Colors.white
+                  //  :
                 ),
               ),
             ),

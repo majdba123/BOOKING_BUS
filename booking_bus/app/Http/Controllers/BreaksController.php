@@ -40,6 +40,7 @@ class BreaksController extends Controller
     public function allbreaks()
     {
         $company = Auth::user()->Company->id;
+        $company = Auth::user()->Company->id;
         $paths = Path::where('company_id', $company)->get();
         if ($paths->isEmpty()) {
             return response()->json(['message' => 'No paths found for this company.'], 404);
@@ -82,7 +83,8 @@ class BreaksController extends Controller
 
         $company_id = $Path->company_id;
         $user = Auth::user();
-        if ($user->Company->id != $company_id) {
+
+        if ($user->Company->id !== $company_id) {
             return response()->json(['error' => 'You do not have permission to create a break for this path.'], 403);
         }
 
