@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-
-import 'package:mobile_app/Provider/Admin/charge_blanace_requsert_provider.dart';
-
-import 'package:mobile_app/Provider/Company/Driver_Provider.dart';
-import 'package:mobile_app/Provider/Company/Private_Trip_provider.dart';
-
+// import 'package:mobile_app/Provider/Admin/charge_blanace_requsert_provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/Provider/user/Address_provider.dart';
@@ -19,7 +14,9 @@ import 'package:mobile_app/Provider/user/Wallet_provider.dart';
 import 'package:mobile_app/Provider/user/inquiry_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/journeys_screen.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/Breck_Strop_screens/StopDetailsScreen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/MainPage/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/Mapprovider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/MyBooking/MY_Reservation.dart';
 import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
@@ -51,15 +48,16 @@ void main() {
           ChangeNotifierProvider(create: (_) => PrivateTripuserProvider()),
           ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),
           ChangeNotifierProvider(create: (_) => WalletUserProvider()),
-          ChangeNotifierProvider(create: (_) => ChargeRequestProvider()),
+          // ChangeNotifierProvider(create: (_) => ChargeRequestProvider()),
           ChangeNotifierProvider(create: (_) => AddressProvider()),
           ChangeNotifierProvider(create: (_) => PasswordProvider()),
           ChangeNotifierProvider(create: (_) => updateProfileProvider()),
           ChangeNotifierProvider(create: (_) => UserInfoProvider()),
-          ChangeNotifierProvider(create: (_) => PrivateTripProvider()),
+          // ChangeNotifierProvider(create: (_) => PrivateTripProvider()),
           ChangeNotifierProvider(create: (_) => RatingUserProvider()),
           ChangeNotifierProvider(create: (_) => CompanyInfoProvider()),
           ChangeNotifierProvider(create: (_) => InquiryProvider()),
+          ChangeNotifierProvider(create: (_) => MapProvider()),
           ChangeNotifierProvider(create: (_) => DriverProvider()),
         ],
         child: MyApp(),
@@ -76,20 +74,23 @@ class MyApp extends StatelessWidget {
     //     KeyboardVisibilityService(context);
 
     return MaterialApp(
-        routes: {
-          // '/BusDash': (context) => Bus_management_Page(),
-          '/mainPageUser': (context) => DashboardUser(),
-          '/driverPageUser': (context) => DashboardDriver(),
-          '/JourneysScreen': (context) => JourneysScreen(),
-          '/BookingUser': (context) => BookingsScreen(),
+      routes: {
+        // '/BusDash': (context) => Bus_management_Page(),
+        '/mainPageUser': (context) => DashboardUser(),
+        '/driverPageUser': (context) => DashboardDriver(),
+        '/JourneysScreen': (context) => JourneysScreen(),
+        '/BookingUser': (context) => BookingsScreen(),
 
-          // '/driverProfilePage': (context) => DriverProfilePage(),
-        },
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'Inter'),
-        home: WelcomePage()
+        '/ProfilePage': (context) => ProfilePage(),
+        '/StopDetailes': (context) => StopDetailsScreen(),
+      },
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'Inter'),
+      home: WelcomePage(),
 
-        //  ,
-        );
+      // WelcomePage()
+
+      //  ,
+    );
   }
 }

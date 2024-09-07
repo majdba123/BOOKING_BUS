@@ -164,8 +164,8 @@ class BusDriverController extends Controller
 
         $firstTrip = Bus_Trip::where('bus_id', $busDriver->bus_id)
             ->where('status', 'pending')
-            ->orderBy('date', 'asc')
-            ->orderBy('from_time', 'asc')
+            ->orderBy('date', 'DESC')
+            ->orderBy('from_time', 'DESC')
             ->first();
         if ($firstTrip) {
 

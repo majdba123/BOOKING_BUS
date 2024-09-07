@@ -133,7 +133,7 @@ class _MapViewState extends State<MapUI> {
       _isLoading = true;
     });
     final apiKey =
-        'AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo'; // Replace with your Google Maps API key
+        'AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44'; // Replace with your Google Maps API key
 
     try {
       if (_startAddress.isEmpty || _destinationAddress.isEmpty) {
@@ -319,43 +319,10 @@ class _MapViewState extends State<MapUI> {
                                   },
                                 ),
                               ),
-                              // ClipOval(
-                              //   child: Material(
-                              //     color: Colors.blue.shade100,
-                              //     child: InkWell(
-                              //       splashColor: Colors.blue,
-                              //       child: SizedBox(
-                              //         child: Icon(Icons.arrow_downward_rounded),
-                              //         width: 50,
-                              //         height: 50,
-                              //       ),
-                              //       onTap: () {
-                              //         Navigator.of(context).pop();
-                              //       },
-                              //     ),
-                              //   ),
-                              // ),
-
-                              // Text(
-                              //   'Places',
-                              //   style: TextStyle(fontSize: 20.0),
-                              // ),
-                              // SizedBox(height: 10),
                               _textField(
                                   label: 'Start',
                                   hint: 'Choose starting point',
                                   prefixIcon: Icon(Icons.looks_one),
-                                  // suffixIcon: IconButton(
-                                  //   icon: Icon(Icons.my_location),
-                                  //   onPressed: () {
-                                  //     // startAddressController.text = _currentAddress;
-                                  //     _startAddress = _currentAddress;
-                                  //     // print(startAddressController.text);
-                                  //     // print(_startAddress);
-                                  //     print(_currentPosition.latitude);
-                                  //     print(_currentPosition.longitude);
-                                  //   },
-                                  // ),
                                   controller: startAddressController,
                                   focusNode: startAddressFocusNode,
                                   width: width,
@@ -673,17 +640,6 @@ class _MapViewState extends State<MapUI> {
                                           message = null;
                                         });
                                       }
-                                      // const SizedBox(
-                                      //   height: 16,
-                                      // );
-                                      // }
-                                      // ScaffoldMessenger.of(context)
-                                      //     .showSnackBar(
-                                      //   SnackBar(
-                                      //       content: Text(message ??
-                                      //           'Private trip created successfully')),
-                                      // );
-                                      // Navigator.pop(context);
                                     } catch (error) {
                                       print(error);
                                       WidgetsBinding.instance
@@ -774,7 +730,7 @@ class _MapViewState extends State<MapUI> {
   ) async {
     polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey: "AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo",
+      googleApiKey: "AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44",
       request: PolylineRequest(
         origin: PointLatLng(startLatitude, startLongitude),
         destination: PointLatLng(destinationLatitude, destinationLongitude),
@@ -822,24 +778,6 @@ class _MapViewState extends State<MapUI> {
       height: height,
       width: width,
       child: Scaffold(
-        // resizeToAvoidBottomInset: true,
-        // bottomNavigationBar: BottomNavigationBar(
-        //   items: [
-        //     BottomNavigationBarItem(
-        //       icon: Icon(
-        //           _isPlacesVisible ? Icons.list_outlined : Icons.arrow_upward),
-        //       label: '',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(
-        //           _isPlacesVisible ? Icons.list_outlined : Icons.arrow_upward),
-        //       label: '',
-        //     ),
-        //   ],
-        //   onTap: (index) {
-        //     _showBottomSheet(context);
-        //   },
-        // ),
         key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
@@ -866,28 +804,6 @@ class _MapViewState extends State<MapUI> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    // ClipOval(
-                    //   child: Material(
-                    //     color: Colors.blue.shade100,
-                    //     child: InkWell(
-                    //       splashColor: Colors.blue,
-                    //       child: SizedBox(
-                    //         child: Icon(_isPlacesVisible
-                    //             ? Icons.list_outlined
-                    //             : Icons.arrow_upward),
-                    //         width: 50,
-                    //         height: 50,
-                    //       ),
-                    //       onTap: () {
-                    //         _showBottomSheet(context);
-                    //         setState(() {
-                    //           // _isPlacesVisible = !_isPlacesVisible;
-                    //         });
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(height: 20),
                     ClipOval(
                       child: Material(
                         color: Colors.blue.shade100, // button color
@@ -929,15 +845,7 @@ class _MapViewState extends State<MapUI> {
                 ),
               ),
             ),
-            // Show the place input fields & button for showing the route
 
-            // SafeArea(
-            //   child: Align(
-            //     alignment: Alignment.topCenter,
-            //     child:
-            //   ),
-            // ),
-            // Show current location button
             SafeArea(
               child: Align(
                 alignment: Alignment.bottomRight,
@@ -955,21 +863,6 @@ class _MapViewState extends State<MapUI> {
                         ),
                         onTap: () {
                           _showBottomSheet(context);
-
-                          // mapController.animateCamera(
-                          //   CameraUpdate.newCameraPosition(
-                          //     CameraPosition(
-                          //       target: LatLng(
-                          //         _currentPosition.latitude,
-                          //         _currentPosition.longitude,
-                          //       ),
-                          //       zoom: 18.0,
-                          //     ),
-                          //   ),
-                          // );
-
-                          // print(_currentPosition.latitude);
-                          // print(_currentPosition.longitude);
                         },
                       ),
                     ),

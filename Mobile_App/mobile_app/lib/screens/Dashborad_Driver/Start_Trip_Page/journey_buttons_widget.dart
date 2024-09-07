@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/CompleteJourneyPage/JourneyCompletedScreen.dart';
+import 'package:provider/provider.dart';
 
 class JourneyButtons extends StatelessWidget {
   final double screenHeight;
@@ -11,7 +13,8 @@ class JourneyButtons extends StatelessWidget {
     required this.screenHeight,
     required this.screenWidth,
     required this.isJourneyComplete,
-    required this.onEmergencyStopPressed, required Null Function() onEndJourneyPressed,
+    required this.onEmergencyStopPressed,
+    required Null Function() onEndJourneyPressed,
   });
 
   @override
@@ -34,7 +37,7 @@ class JourneyButtons extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Emergency Stop',
+                'Acess Brack',
                 style: TextStyle(
                   fontSize: screenHeight * 0.02,
                   color: Colors.white,
@@ -59,7 +62,7 @@ class JourneyButtons extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'End Journey',
+                'Finish Break',
                 style: TextStyle(
                   fontSize: screenHeight * 0.02,
                   color:
@@ -161,12 +164,16 @@ class JourneyButtons extends StatelessWidget {
                         onPressed: () {
                           Navigator.pop(context);
                           // Navigate to JourneyCompletedScreen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => JourneyCompletedScreen(),
-                            ),
-                          );
+                          // var driverProvider = Provider.of<DriverProvider>(
+                          //     context,
+                          //     listen: false);
+                          // // driverProvider.setStartTrip(false);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => JourneyCompletedScreen(),
+                          //   ),
+                          // );
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(

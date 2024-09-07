@@ -673,10 +673,6 @@ table tbody tr {
     transition: background-color 0.3s ease;
 }
 
-table tbody tr:hover {
-    background-color: var(--clr-light);
-}
-
 table tbody td {
     height: 3rem;
     border-bottom: 1px solid var(--clr-dark);
@@ -710,7 +706,24 @@ select:focus {
     padding: 2px 6px;
     border: none;
     margin: 8px;
-    border-radius: 3px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15px;
+    width: 15px;
+}
+
+.edit-btn.material-icons,
+.delete-btn.material-icons,
+.status-btn.material-icons {
+    padding: 2px 6px;
+    border: none;
+    margin: 8px;
+    border-radius: 9px;
     cursor: pointer;
     transition: background-color 0.3s;
     font-size: 9px;
@@ -722,28 +735,27 @@ select:focus {
 }
 
 .edit-btn {
-    color: var(--clr-success);
-    background-color: var(--clr-info-light);
+    color: #4caf50;
+    background-color: var(--clr-white);
+    border-radius: 9px;
+    padding: 3px;
+    margin: 5px;
+}
+.edit-btn:hover {
+    color: var(--clr-white);
+    background-color: var(--clr-success);
+}
+.delete-btn {
+    color: #f44336;
+    background-color: var(--clr-white);
     border-radius: 9px;
     padding: 3px;
     margin: 5px;
 }
 
-.edit-btn:hover {
-    color: var(--clr-white);
-    background-color: var(--clr-success);
-}
-
-.delete-btn {
-    color: var(--clr-danger);
-    background-color: var(--clr-info-light);
-    border-radius: 9px;
-    padding: 3px;
-}
-
 .delete-btn:hover {
-    color: var(--clr-white);
-    background-color: var(--clr-danger);
+    color: #fff;
+    background-color: #f44336;
 }
 
 .status-btn {
@@ -757,7 +769,6 @@ select:focus {
 .status-btn:hover {
     background-color: var(--clr-primary-variant);
 }
-
 .status-btns {
     border-radius: 9px;
     background-color: var(--clr-primary);
@@ -995,7 +1006,8 @@ input:focus {
 }
 
 .modals-content {
-    background: #fff;
+    background: var(--clr-white);
+    color: var(--clr-dark);
     padding: 15px;
     border-radius: 8px;
     max-width: 400px;

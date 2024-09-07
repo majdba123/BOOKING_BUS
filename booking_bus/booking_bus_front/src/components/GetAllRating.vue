@@ -646,10 +646,6 @@ table tbody tr {
     transition: background-color 0.3s ease;
 }
 
-table tbody tr:hover {
-    background-color: var(--clr-light);
-}
-
 table tbody td {
     height: 3rem;
     border-bottom: 1px solid var(--clr-dark);
@@ -745,7 +741,6 @@ select:focus {
     box-shadow: var(--box-shadow);
     text-align: center;
     margin-top: 2rem;
-    margin-left: 10rem;
 }
 
 .modal-header {
@@ -770,16 +765,15 @@ select:focus {
 }
 
 .status-btn.view-ratings-btn {
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    padding: 5px 10px;
-    border: none;
-    border-radius: var(--border-radius-1);
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    border-radius: 9px;
+    background-color: #007bff;
+    transition: background-color 0.3s ease, transform 0.2s;
+    color: white;
+    margin: 10px;
+    padding: 10px;
 }
 
 .status-btn.view-ratings-btn:hover {
-    background-color: var(--clr-primary-variant);
+    background-color: #0056b3;
 }
 </style>
