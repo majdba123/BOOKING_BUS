@@ -20,7 +20,6 @@ class AddressController extends Controller
         $addresses = Address::where('user_id', $user)->get();
         return response()->json($addresses);
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -34,27 +33,23 @@ class AddressController extends Controller
      */
     public function store(Request $request)
     {
-        $user =Auth::user()->id;
         $validator = Validator::make($request->all(), [
-            'city' => 'required|string|max:255', // validate city is a string with max length 255
-            'area' => 'required|string|max:255', // validate area is a string with max length 255
+            'city' => 'required|string|max:255',
+            'area' => 'required|string|max:255',
         ]);
-
         if ($validator->fails()) {
             $errors = $validator->errors()->first();
             return response()->json(['error' => $errors], 422);
         }
-        $address = New  Address();
-        $address->user_id = $user;
+        $address = new Address();
+        $address->user_id = Auth::user()->id;
         $address->city = $request->input('city');
         $address->area = $request->input('area');
         $address->save();
-
-
         return response()->json([
-            'message' => "address saved"
+            'message' => "Address saved",
+            'address' => $address,
         ]);
-
     }
 
     /**
@@ -78,53 +73,43 @@ class AddressController extends Controller
      */
     public function update(Request $request, $id)
     {
-            $user = Auth::user()->id;
-            $address = Address::find($id);
-
-            if (!$address) {
-                return response()->json(['error' => 'Address not found'], 404);
-            }
-
-            // Check if the user updating the address is the same user who owns the address
-            if ($address->user_id !== $user) {
-                return response()->json(['error' => 'You are not authorized to update this address'], 403);
-            }
-            DB::beginTransaction();
-            // Only validate and update fields that are present in the request
-            try{
+        $user = Auth::user()->id;
+        $address = Address::with('user')->find($id);
+        if (!$address) {
+            return response()->json(['error' => 'Address not found'], 404);
+        }
+        // Check if the user updating the address is the same user who owns the address
+        if ($address->user_id !== $user) {
+            return response()->json(['error' => 'You are not authorized to update this address'], 403);
+        }
+        DB::beginTransaction();
+        try {
             if ($request->has('city')) {
                 $validator = Validator::make(['city' => $request->input('city')], [
                     'city' => 'string|max:255',
                 ]);
-
                 if ($validator->fails()) {
                     $errors = $validator->errors()->first();
                     DB::rollBack();
                     return response()->json(['error' => $errors], 422);
                 }
-
                 $address->city = $request->input('city');
             }
-
             if ($request->has('area')) {
                 $validator = Validator::make(['area' => $request->input('area')], [
                     'area' => 'string|max:255',
                 ]);
-
                 if ($validator->fails()) {
                     $errors = $validator->errors()->first();
                     DB::rollBack();
                     return response()->json(['error' => $errors], 422);
                 }
-
                 $address->area = $request->input('area');
-
             }
-
             $address->save();
             DB::commit();
             return response()->json($address);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'An error occurred while updating the address'], 500);
         }
@@ -138,3 +123,6 @@ class AddressController extends Controller
         //
     }
 }
+/**
+ * , I've used eager loading in the update method to load the user relationship with the Address model
+ */

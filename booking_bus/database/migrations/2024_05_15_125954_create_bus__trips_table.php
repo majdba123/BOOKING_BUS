@@ -20,8 +20,9 @@ return new class extends Migration
             $table->string('to_time_going');
             $table->string('from_time_return');
             $table->string('to_time_return');
-            $table->string('date');
-            
+            $table->string('date_start');
+            $table->string('date_end');
+
             $table->string('status')->default('pending');
             $table->enum('type', ['all', 'going'])->default('all');
             $table->string('event')->default('stopped');

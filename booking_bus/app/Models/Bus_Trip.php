@@ -20,6 +20,8 @@ class Bus_Trip extends Model
         'from_time_return',
         'to_time_return',
         'type',
+        'date_start',
+        'date_end',
         'event',
     ];
     public function Reservation()
