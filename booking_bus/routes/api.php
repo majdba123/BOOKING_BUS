@@ -30,6 +30,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminDashBoardController;
 use App\Http\Controllers\CancellationRuleController;
 use App\Http\Controllers\RewardController;
+use App\Http\Controllers\UserNotificationController;
 use App\Events\tripgeolocationEvent;
 
 
@@ -58,6 +59,13 @@ Route::post('register/company', [CompanyController::class, 'register']);
 
 
 Route::get('all_user', [AdminDashBoardController::class, 'all_user']);
+
+
+
+Route::get('/my_notification', [UserNotificationController::class, 'index']);
+Route::post('/read_notification/{id}', [UserNotificationController::class, 'read']);
+Route::get('/readable_massege', [UserNotificationController::class, 'readable_massege']);
+
 
 
 

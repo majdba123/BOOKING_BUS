@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
+use App\Models\Driver;
 use App\Models\Rate_Driver;
+use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -61,6 +64,14 @@ class RateDriverController extends Controller
         $ratingInstance->driver_id = $driver_id;
         // Save the rating instance
         $ratingInstance->save();
+
+        $massage = "You have been rated $rating by $user->name";
+        $driver = Driver::find($driver_id);
+        event(new PrivateNotification($driver->user->id, $massage));
+        UserNotification::create([
+            'user_id' => $driver->user->id,
+            'notification' => $massage,
+        ]);
         // Return a success response
         return response()->json(['message' => 'Rating submited successfully']);
     }

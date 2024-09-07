@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Events\PrivateNotification;
+use App\Models\UserNotification;
 
 class ChargeBalanceController extends Controller
 {
@@ -181,6 +182,10 @@ class ChargeBalanceController extends Controller
         $massage = "your status of charage balance update to  : $chargeBalance->status";
 
         event(new PrivateNotification($user_id, $massage));
+        UserNotification::create([
+            'user_id' =>$user_id,
+            'notification' => $massage,
+        ]);
         return response()->json(['message' => 'Charge balance status updated to completed and points added to user'], 200);
     }
 
@@ -195,9 +200,12 @@ class ChargeBalanceController extends Controller
         $chargeBalance->status = 'cancelled';
         $chargeBalance->save();
         $user_id = $user->id;
-
         $massage = "your status of charage balance update to  : $chargeBalance->status";
         event(new PrivateNotification($user_id, $massage));
+        UserNotification::create([
+            'user_id' =>$user_id,
+            'notification' => $massage,
+        ]);
         return response()->json(['message' => 'Charge balance status updated to cancelled'], 200);
     }
 }

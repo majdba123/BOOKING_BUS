@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Rate_Trips;
+use App\Models\Trip;
+use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -51,6 +55,7 @@ class RateTripsController extends Controller
         if (!in_array($rating, range(1, 5))) {
             return response()->json(['error' => 'Invalid rating value'], 400);
         }
+        $trip =Trip::findOrfail($trip_id);
         // Get the trip ID from the request
         // Create a new rating instance
         $ratingInstance = new Rate_Trips();
@@ -61,6 +66,22 @@ class RateTripsController extends Controller
         // Save the rating instance
         $ratingInstance->save();
         // Return a success response
+        $massage = "Rating submited successfully  :  $rating  user_id : $user->id ";
+        event(new PrivateNotification( $user->id , $massage));
+        UserNotification::create([
+            'user_id' =>  $user->id,
+            'notification' => $massage,
+        ]);
+
+        $massage = " user rate trip   :  $rating   user_id : $user->id ";
+        event(new PrivateNotification(  $trip->company->user->id , $massage));
+        UserNotification::create([
+            'user_id' =>  $user->id,
+            'notification' => $massage,
+        ]);
+
+
+
         return response()->json(['message' => 'Rating submited successfully']);
     }
 

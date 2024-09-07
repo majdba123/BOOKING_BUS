@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Company;
 use App\Models\user;
 use App\Models\Driver;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -53,7 +55,18 @@ class CompanyController extends Controller
             'name_company' => $user -> name,
         ]);
 
+        $admins = User::where('type', 1)->get();
 
+        foreach ($admins as $admin) {
+            $admin_id = $admin->id;
+            // Send the message to each admin using the $admin_id
+            $massage = "  created new company  : $company->id   ";
+            event(new PrivateNotification($admin_id, $massage));
+            UserNotification::create([
+                'user_id' => $admin_id,
+                'notification' => $massage,
+            ]);
+        }
         return response()->json([
             'message' => 'company Created ',
         ]);

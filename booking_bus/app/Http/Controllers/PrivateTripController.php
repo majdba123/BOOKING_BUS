@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Geolocation;
 use App\Models\Private_trip;
+use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -82,8 +85,40 @@ class PrivateTripController extends Controller
             $private->Distance = $request->input('Distance');
             $private->save();
     
+            
+            $massage = "Private trip created successfully:  $$private->id  user_id : $user->id ";
+            event(new PrivateNotification( $user->id , $massage));
+            UserNotification::create([
+                'user_id' =>  $user->id,
+                'notification' => $massage,
+            ]);
+            
+
+            $admins = User::where('type', 1)->get();
+
+            foreach ($admins as $admin) {
+                $admin_id = $admin->id;
+                // Send the message to each admin using the $admin_id
+                $massage = "  user created private private trip : $private->id  by user: $user->id ";
+                event(new PrivateNotification($admin_id, $massage));
+                UserNotification::create([
+                    'user_id' => $admin_id,
+                    'notification' => $massage,
+                ]);
+            }
+
+            $company_users = User::has('Company')->get();
+            foreach ($company_users as $company_user) {
+                $company_user_id = $company_user->id;
+                // Send the message to each company user using the $company_user_id
+                $massage = "  user created private private trip : $private->id  by user: $user->id ";
+                event(new PrivateNotification($company_user_id, $massage));
+                UserNotification::create([
+                    'user_id' => $company_user_id,
+                    'notification' => $massage,
+                ]);
+            }
             DB::commit();
-    
             return response()->json(['message' => 'Private trip created successfully'], 201);
         } catch (\Exception $e) {
             DB::rollBack();

@@ -13,8 +13,12 @@ use App\Models\Breaks;
 use App\Models\Pivoit;
 use App\Models\Bus;
 use App\Events\NewTrip;
+use App\Events\PrivateNotification;
 use App\Models\Policy\SatisfactionRate\SatisfactionRate;
 use App\Models\Policy\SatisfactionRate\UserSatisfactionRate;
+use App\Models\Reservation;
+use App\Models\User;
+use App\Models\UserNotification;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -61,8 +65,10 @@ class TripController extends Controller
             'bus_ids' => 'required|array',
             'bus_ids.*.bus_id' => 'required',
             'bus_ids.*.type' => 'string|required',
-            'bus_ids.*.start_time' => 'nullable|date_format:H:i',
-            'bus_ids.*.end_time' => 'nullable|date_format:H:i',
+            'bus_ids.*.from_time_going' => 'nullable|date_format:H:i',
+            'bus_ids.*.to_time_going' => 'nullable|date_format:H:i',
+            'bus_ids.*.from_time_return' => 'nullable|date_format:H:i',
+            'bus_ids.*.to_time_return' => 'nullable|date_format:H:i',
             'bus_ids.*.date' => 'nullable|date',
         ]);
 
@@ -80,15 +86,9 @@ class TripController extends Controller
 
                 if ($bus && $bus->status == 'available') {
                     $availableBuses[] = $busId;
-                } else {
+                } elseif($bus && $bus->status == 'complete') {
                     $existingTrip = Bus_Trip::where('bus_id', $bus->id)
-                        ->where('date', $busId['date'])
-                        ->where(function ($query) use ($busId) {
-                            $query->where(function ($q) use ($busId) {
-                                $q->where('from_time', '<=', $busId['end_time'])
-                                    ->where('to_time', '>=', $busId['start_time']);
-                            });
-                        })->exists();
+                        ->where('date', $busId['date'])->exists();
                     if ($existingTrip) {
                         return response()->json([
                             'message' => "Bus is already scheduled for a trip on {$busId['date']} at the same time.",
@@ -108,12 +108,26 @@ class TripController extends Controller
             $trip->company_id = $company;
             $trip->price = $request->input('price');
             $trip->save();
+            $user_id =Auth::user()->id;
 
-            $breakTripStart = new Breaks_trip();
+            $massage = " you created new trip  : $trip->id ";
+            event(new PrivateNotification($user_id, $massage));
+            UserNotification::create([
+                'user_id' => Auth::user()->id,
+                'notification' => $massage,
+            ]);
+            $admins = User::where('type', 1)->get();
 
-            $breakTripStart->trip_id = $trip->id;
-            $breakTripStart->breaks_id = 1; // start break
-            $breakTripStart->save();
+            foreach ($admins as $admin) {
+                $admin_id = $admin->id;
+                // Send the message to each admin using the $admin_id
+                $massage = "  created new trip  : $trip->id  by company: $company ";
+                event(new PrivateNotification($admin_id, $massage));
+                UserNotification::create([
+                    'user_id' => $admin_id,
+                    'notification' => $massage,
+                ]);
+            }
 
 
          //   $breakIds = $request->input('breaks_ids');
@@ -132,12 +146,6 @@ class TripController extends Controller
                 $breakTrip->save();
             }
 
-            $breakTripEnd = new Breaks_trip();
-            $breakTripEnd->trip_id = $trip->id;
-            $breakTripEnd->breaks_id = 2; // end break
-            $breakTripEnd->save();
-
-
 
             $busIds = $request->input('bus_ids');
             foreach ($busIds as $busId) {
@@ -150,8 +158,10 @@ class TripController extends Controller
                     $busTrip->trip_id = $trip->id;
                     $busTrip->bus_id = $busId['bus_id'];
                     $busTrip->type = $busId['type'];
-                    $busTrip->from_time = $busId['start_time']; // optional
-                    $busTrip->to_time = $busId['end_time']; // optional
+                    $busTrip->from_time_going = $busId['from_time_going']; // optional
+                    $busTrip->to_time_going = $busId['to_time_going']; // optional
+                    $busTrip->from_time_return = $busId['from_time_return'];
+                    $busTrip->to_time_return = $busId['to_time_return'];
                     $busTrip->date = $busId['date'];
                     $busTrip->save();
                     $bus->status = 'completed';
@@ -215,8 +225,10 @@ class TripController extends Controller
             'bus_ids' => 'required_with:breaks_ids|array',
             'bus_ids.*.bus_id' => 'sometimes|string',
             'bus_ids.*.type' => 'string',
-            'bus_ids.*.start_time' => 'nullable|date_format:H:i',
-            'bus_ids.*.end_time' => 'nullable|date_format:H:i',
+            'bus_ids.*.from_time_going' => 'nullable|date_format:H:i',
+            'bus_ids.*.to_time_going' => 'nullable|date_format:H:i',
+            'bus_ids.*.from_time_return' => 'nullable|date_format:H:i',
+            'bus_ids.*.to_time_return' => 'nullable|date_format:H:i',
             'bus_ids.*.date' => 'nullable|date',
         ]);
 
@@ -251,19 +263,36 @@ class TripController extends Controller
                 if ($bus_trips->count() > 0) {
                     foreach ($bus_trips as $bus_trip) {
                         $bus = $bus_trip->bus;
-                        if ($bus) {
-                            $bus->status = 'available';
-                            $bus->save();
-                            $drivers = Bus_Driver::where('bus_id', $bus->id)
-                                ->where('status', 'pending')
-                                ->get();
-                            if ($drivers->count() > 0) {
-                                foreach ($drivers as $driverr) {
-                                    $x = $driverr->driver;
-                                    $x->status = 'available';
-                                    $x->save();
+                        $re=Reservation::where('status' , 'padding')
+                        ->where('bus__trip_id' ,$bus_trip->id)->first();
+                        if($re)
+                        {
+                            return response()->json([
+                                'message' => 'bus has reservation ',
+                            ]);
+
+                        }
+                        if($bus_trip->event != 'stopped' )
+                        {
+                            if ($bus) {
+                                $bus->status = 'available';
+                                $bus->save();
+                                $drivers = Bus_Driver::where('bus_id', $bus->id)
+                                    ->where('status', 'pending')
+                                    ->get();
+                                if ($drivers->count() > 0) {
+                                    foreach ($drivers as $driverr) {
+                                        $x = $driverr->driver;
+                                        $x->status = 'available';
+                                        $x->save();
+                                    }
                                 }
                             }
+                        }else{
+                            return response()->json([
+                                'message' => 'bus active on trip ',
+                            ]);
+
                         }
                     }
                     $trip->bus_trip()->delete();
@@ -299,8 +328,10 @@ class TripController extends Controller
                             $busTrip->trip_id = $trip->id;
                             $busTrip->bus_id = $busId['bus_id'];
                             $busTrip->type = $busId['type'];
-                            $busTrip->from_time = $busId['start_time']; // optional
-                            $busTrip->to_time = $busId['end_time']; // optional
+                            $busTrip->from_time_going = $busId['from_time_going']; // optional
+                            $busTrip->to_time_going = $busId['to_time_going']; // optional
+                            $busTrip->from_time_return = $busId['from_time_return'];
+                            $busTrip->to_time_return = $busId['to_time_return'];
                             $busTrip->date = $busId['date'];
                             $busTrip->save();
                             $bus->status = 'completed';
@@ -353,19 +384,36 @@ class TripController extends Controller
         if ($bus_trips->count() > 0) {
             foreach ($bus_trips as $bus_trip) {
                 $bus = $bus_trip->bus;
-                if ($bus) {
-                    $bus->status = 'available';
-                    $bus->save();
-                    $drivers = Bus_Driver::where('bus_id', $bus->id)
-                        ->where('status', 'pending')
-                        ->get();
-                    if ($drivers->count() > 0) {
-                        foreach ($drivers as $driverr) {
-                            $x = $driverr->driver;
-                            $x->status = 'available';
-                            $x->save();
+                $re=Reservation::where('status' , 'padding')
+                ->where('bus__trip_id' ,$bus_trip->id)->first();
+                if($re)
+                {
+                    return response()->json([
+                        'message' => 'bus has reservation ',
+                    ]);
+
+                }
+                if($bus_trip->event != 'stopped' )
+                {
+                    if ($bus) {
+                        $bus->status = 'available';
+                        $bus->save();
+                        $drivers = Bus_Driver::where('bus_id', $bus->id)
+                            ->where('status', 'pending')
+                            ->get();
+                        if ($drivers->count() > 0) {
+                            foreach ($drivers as $driverr) {
+                                $x = $driverr->driver;
+                                $x->status = 'available';
+                                $x->save();
+                            }
                         }
                     }
+                }else{
+                    return response()->json([
+                        'message' => 'bus active on trip ',
+                    ]);
+
                 }
             }
         }

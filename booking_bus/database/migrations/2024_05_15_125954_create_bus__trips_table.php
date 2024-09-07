@@ -16,9 +16,12 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Bus::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('from_time');
+            $table->string('from_time_going');
+            $table->string('to_time_going');
+            $table->string('from_time_return');
+            $table->string('to_time_return');
             $table->string('date');
-            $table->string('to_time');
+            
             $table->string('status')->default('pending');
             $table->enum('type', ['all', 'going'])->default('all');
             $table->string('event')->default('stopped');

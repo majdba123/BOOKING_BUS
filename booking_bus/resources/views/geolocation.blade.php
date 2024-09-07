@@ -22,7 +22,7 @@
             }
         });
 
-        var channel = pusher.subscribe('trip-geolocation-private-channel-1');
+        var channel = pusher.subscribe('trip-geolocation-private-channel-14f38a90-c8d2-4fb6-92f5-b3c1c57bc1fb');
         channel.bind('tripgeolocationEvent', function(data) {
             alert(JSON.stringify(data));
         });
