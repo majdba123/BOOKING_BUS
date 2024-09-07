@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mobile_app/Provider/Auth_provider.dart';
-import 'package:mobile_app/Provider/Driver/Driver.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/CompleteJourneyPage/JourneyCompletedScreen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyAppBar.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyRouteInfo.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyInfoBox.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/full_map_view_screen.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/journey_buttons_widget.dart';
-import 'package:provider/provider.dart';
 
+//
 class StartJourneyScreen extends StatefulWidget {
   @override
   _StartJourneyScreenState createState() => _StartJourneyScreenState();
@@ -65,22 +62,7 @@ class _StartJourneyScreenState extends State<StartJourneyScreen> {
           JourneyButtons(
             screenHeight: screenHeight,
             screenWidth: screenWidth,
-            onEmergencyStopPressed: () {
-              // Emergency Stop logic
-            },
-            onEndJourneyPressed: () {
-              var driverProvider =
-                  Provider.of<DriverProvider>(context, listen: false);
-              var auth = Provider.of<AuthProvider>(context, listen: false);
-              driverProvider.startTrip(auth.accessToken);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => JourneyCompletedScreen(),
-                ),
-              );
-            },
-            isJourneyComplete: false,
+            // isJourneyComplete: false,
           ),
         ],
       ),

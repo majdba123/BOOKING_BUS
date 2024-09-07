@@ -296,17 +296,25 @@ class DriverController extends Controller
             // Load related data for each trip
             $trip->load(['trip.path', 'Pivoit.Reservation.user']);
 
-            $fromTime = new \DateTime($trip->from_time);
-            $toTime = new \DateTime($trip->to_time);
-            $interval = $fromTime->diff($toTime);
+            $goingfromTime = new \DateTime($trip->from_time_going);
+            $goingtoTime = new \DateTime($trip->to_time_going);
+            $ReturnfromTime = new \DateTime($trip->from_time_return);
+            $ReturntoTime = new \DateTime($trip->to_time_return);
+            $GoingformattedFromTime = $goingfromTime->format('H:i');
+            $GoingformattedToTime =  $goingtoTime->format('H:i');
+            $RetuenformattedFromTime = $ReturnfromTime->format('H:i');
+            $RetuenformattedToTime =  $ReturntoTime->format('H:i');
+            $interval = $goingfromTime->diff($goingtoTime);
             $tripDuration = $interval->format('%H:%I');
             $response[] = [
                 'id' => $trip->id,
                 'bus_id' => $trip->bus_id,
                 'from' => $trip->trip->path->from ?? null,
                 'to' => $trip->trip->path->to ?? null,
-                'from_time' => $trip->from_time,
-                'to_time' => $trip->to_time,
+                'goingfromTime' => $GoingformattedFromTime,
+                'goingtoTime' => $GoingformattedToTime,
+                'ReturnfromTime' => $RetuenformattedFromTime,
+                'ReturntoTime' => $RetuenformattedToTime,
                 'date' => $trip->date,
                 'Distance' => $trip->trip->path->Distance ?? null,
                 // 'from_lat' => $trip->trip->path->from_latitude ?? null,
@@ -378,9 +386,15 @@ class DriverController extends Controller
             ];
         }
 
-        $fromTime = new \DateTime($trip->from_time);
-        $toTime = new \DateTime($trip->to_time);
-        $interval = $fromTime->diff($toTime);
+        $goingfromTime = new \DateTime($trip->from_time_going);
+        $goingtoTime = new \DateTime($trip->to_time_going);
+        $ReturnfromTime = new \DateTime($trip->from_time_return);
+        $ReturntoTime = new \DateTime($trip->to_time_return);
+        $GoingformattedFromTime = $goingfromTime->format('H:i');
+        $GoingformattedToTime =  $goingtoTime->format('H:i');
+        $RetuenformattedFromTime = $ReturnfromTime->format('H:i');
+        $RetuenformattedToTime =  $ReturntoTime->format('H:i');
+        $interval = $goingfromTime->diff($goingtoTime);
         $tripDuration = $interval->format('%H:%I');
         $trip->load(['trip.path']);
         // $trip->load(['Bus_Trip.bus']);
@@ -412,7 +426,7 @@ class DriverController extends Controller
     }
 
 
-   public function start_trip()
+    public function start_trip()
     {
         DB::beginTransaction();
         try {
@@ -427,8 +441,7 @@ class DriverController extends Controller
             $bus_trip22 = Bus_Trip::where('status', 'finished_going')
                 ->where('bus_id', $bus->bus_id)
                 ->first();
-            if($bus_trip22)
-            {
+            if ($bus_trip22) {
                 return response()->json(['error' => 'An error occurred while starting the trip because you are in trip already'], 500);
             }
 
@@ -459,8 +472,7 @@ class DriverController extends Controller
                     'notification' => $massage,
                 ]);
 
-                $reservations = Reservation::where('status', 'padding')
-                    ->where('pivoit_id', $pivoit_id->id)
+
                 $reservations = Reservation::where('status', 'padding')
                     ->where('pivoit_id', $pivoit_id->id)
                     ->where('type', 1)
@@ -1070,15 +1082,15 @@ class DriverController extends Controller
                 return response()->json(['error' => 'Driver not found'], 404);
             }
             $bus = Bus_Driver::where('status', 'finished')
-                            ->where('driver_id', $driver->id)
-                            ->first();
+                ->where('driver_id', $driver->id)
+                ->first();
             if (!$bus) {
                 DB::rollBack();
                 return response()->json(['error' => 'No pending bus found for the driver'], 404);
             }
             $trips = Bus_Trip::where('status', 'finished_going')
-                            ->where('bus_id', $bus->bus_id)
-                            ->get();
+                ->where('bus_id', $bus->bus_id)
+                ->get();
             if ($trips->isEmpty()) {
                 DB::rollBack();
                 return response()->json(['error' => 'No pending trip found for the bus'], 404);
@@ -1147,5 +1159,4 @@ class DriverController extends Controller
 
         return response()->json(['reservations' => $formattedReservations]);
     }
-
 }
