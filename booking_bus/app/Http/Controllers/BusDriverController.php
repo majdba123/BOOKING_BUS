@@ -184,7 +184,7 @@ class BusDriverController extends Controller
 
         $firstTrip = Bus_Trip::where('bus_id', $busDriver->bus_id)
             ->where('status', 'pending')
-            ->orderBy('date', 'DESC')
+            ->orderBy('date_start', 'DESC')
             ->orderBy('from_time_going', 'DESC')
             ->first();
         if ($firstTrip) {
@@ -210,7 +210,8 @@ class BusDriverController extends Controller
                 'goingtoTime' => $GoingformattedToTime,
                 'ReturnfromTime' => $RetuenformattedFromTime,
                 'ReturntoTime' => $RetuenformattedToTime,
-                'date' => $firstTrip->date,
+                'date_start' => $firstTrip->date_start,
+                'date_end' => $firstTrip->date_end,
                 'Passengers' =>  $firstTrip->bus->getNumberOfReservationsAttribute(),
                 'Stops' =>  $firstTrip->Pivoit->count(),
                 'trip_duration' => $tripDuration,
