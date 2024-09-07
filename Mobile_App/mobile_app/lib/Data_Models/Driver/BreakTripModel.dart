@@ -4,7 +4,7 @@ class BreakData {
   final double latitude;
   final double longitude;
   final int passengers_count;
-  final int pivoit_id;
+  final String pivoit_id;
   BreakData({
     required this.break_id,
     required this.break_name,

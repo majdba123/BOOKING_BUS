@@ -141,7 +141,7 @@ class DriverService {
   }
 
   Future<List<String>> fetchPassengerAtPivoit(
-      String accessToken, int busTripId, int Pivoit_id) async {
+      String accessToken, int busTripId, String Pivoit_id) async {
     final response = await http.get(
       Uri.parse(name_domain_server +
           'driver/getPassenegerAtPivoit/$busTripId/pivot/$Pivoit_id'),

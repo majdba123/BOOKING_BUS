@@ -168,7 +168,7 @@ class DriverProvider extends ChangeNotifier {
   }
 
   Future<void> fetchPassengerAtPivoit(
-      String accessToken, int busTripId, int pivot_id) async {
+      String accessToken, int busTripId, String pivot_id) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();

@@ -21,8 +21,8 @@ class FullMapViewScreen extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     late GoogleMapController mapController;
-    const double _minZoom = 1.0;
-    const double _maxZoom = 5.0;
+    // const double _minZoom = 1.0;
+    // const double _maxZoom = 5.0;
     final initialPosition = LatLng(
       driverProvider.TripDriverDetail!.from_lat,
       driverProvider.TripDriverDetail!.from_long,
@@ -32,10 +32,12 @@ class FullMapViewScreen extends StatelessWidget {
       driverProvider.TripDriverDetail!.to_lat,
       driverProvider.TripDriverDetail!.to_long,
     );
-
+    print(initialPosition);
+    print(destinationPosition);
     // Fetch the route when the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       mapProvider.fetchRoute(initialPosition, destinationPosition);
+
       // if (driverProvider.isStartTrip) {
       //   mapProvider.startLocationTracking(
       //       context,
@@ -73,13 +75,13 @@ class FullMapViewScreen extends StatelessWidget {
                     ),
                   );
                 },
-                onCameraMove: (CameraPosition position) {
-                  if (position.zoom < _minZoom) {
-                    mapController.moveCamera(CameraUpdate.zoomTo(_minZoom));
-                  } else if (position.zoom > _maxZoom) {
-                    mapController.moveCamera(CameraUpdate.zoomTo(_maxZoom));
-                  }
-                },
+                // onCameraMove: (CameraPosition position) {
+                //   if (position.zoom < _minZoom) {
+                //     mapController.moveCamera(CameraUpdate.zoomTo(_minZoom));
+                //   } else if (position.zoom > _maxZoom) {
+                //     mapController.moveCamera(CameraUpdate.zoomTo(_maxZoom));
+                //   }
+                // },
                 markers: {
                   Marker(
                     markerId: MarkerId('start'),
