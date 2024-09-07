@@ -49,7 +49,9 @@ class JourneyButtons extends StatelessWidget {
           Expanded(
             child: ElevatedButton(
               onPressed: isJourneyComplete
-                  ? () => _showEndJourneyDialog(context)
+                  ? () {
+                      _showEndJourneyDialog(context);
+                    }
                   : null,
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(

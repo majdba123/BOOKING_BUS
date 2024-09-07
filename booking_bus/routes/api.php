@@ -155,7 +155,6 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     Route::get('/all_reservation', [DashboardController::class, 'all_reservation']);
     Route::get('/all_reservation_by_status', [DashboardController::class, 'all_reservation_by_status']);
     Route::post('/all_reservation_by_bus_trip/{bus_trip_id}', [DashboardController::class, 'all_reservation_by_bus_trip']);
-    Route::post('/all_reservation_by_pivoit_id/{pivoit_id}', [DashboardController::class, 'reser_by_break']);
 
 
     Route::get('/dashboard_company', [DashboardController::class, 'my_dash_boad']);
@@ -249,6 +248,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum',
 
 
     Route::post('/get_profit_/{company_id}', [AdminDashBoardController::class, 'getPriceData1']);
+
+    Route::get('/my_info', [ProfileController::class, 'index']);
+    Route::post('/store_profile_info', [ProfileController::class, 'store']);
+    Route::post('/update_profile_info', [ProfileController::class, 'update']);
+
+    Route::get('/all_my_address', [AddressController::class, 'index']);
+    Route::post('/store_address', [AddressController::class, 'store']);
+    Route::put('/update_address/{address_id}', [AddressController::class, 'update']);
 });
 
 

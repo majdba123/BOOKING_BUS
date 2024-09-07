@@ -60,7 +60,7 @@ class TripController extends Controller
         $validator = Validator::make($request->all(), [
             'path_id' => 'required|exists:paths,id',
             'price' => 'sometimes|required|string|max:255',
-           /* 'breaks_ids' => 'required|array',
+            /* 'breaks_ids' => 'required|array',
             'breaks_ids.*' => 'integer',*/
             'bus_ids' => 'required|array',
             'bus_ids.*.bus_id' => 'required',
@@ -84,9 +84,11 @@ class TripController extends Controller
             foreach ($busIds as $busId) {
                 $bus = Bus::find($busId['bus_id']);
 
-                if ($bus && $bus->status == 'available') {
-                    $availableBuses[] = $busId;
-                } elseif($bus && $bus->status == 'complete') {
+                // if ($bus && $bus->status == 'available') {
+                //     $availableBuses[] = $busId;
+                // }
+
+                if ($bus && $bus->status == 'complete') {
                     $existingTrip = Bus_Trip::where('bus_id', $bus->id)
                         ->where('date', $busId['date'])->exists();
                     if ($existingTrip) {
@@ -97,18 +99,18 @@ class TripController extends Controller
                     $availableBuses[] = $busId;
                 }
             }
-            if (count($availableBuses) == 0) {
-                return response()->json([
-                    'message' => 'no buses available',
-                ]);
-            }
+            // if (count($availableBuses) == 0) {
+            //     return response()->json([
+            //         'message' => 'no buses available',
+            //     ]);
+            // }
 
             $trip = new Trip();
             $trip->path_id = $request->input('path_id');
             $trip->company_id = $company;
             $trip->price = $request->input('price');
             $trip->save();
-            $user_id =Auth::user()->id;
+            $user_id = Auth::user()->id;
 
             $massage = " you created new trip  : $trip->id ";
             event(new PrivateNotification($user_id, $massage));
@@ -130,8 +132,8 @@ class TripController extends Controller
             }
 
 
-         //   $breakIds = $request->input('breaks_ids');
-            $breakIds = Breaks::where('path_id',$request->input('path_id'))->get();
+            //   $breakIds = $request->input('breaks_ids');
+            $breakIds = Breaks::where('path_id', $request->input('path_id'))->get();
             foreach ($breakIds as $breakId) {
                 $FIND = Breaks::find($breakId->id);
                 if (!$FIND) {
@@ -232,14 +234,14 @@ class TripController extends Controller
             'bus_ids.*.date' => 'nullable|date',
         ]);
 
-    
+
         if ($validator->fails()) {
             $errors = $validator->errors()->first();
             return response()->json(['error' => $errors], 422);
         }
-    
+
         $trip = Trip::find($id);
-    
+
         if (!$trip) {
             return response()->json(['error' => 'Trip not found'], 404);
         }
@@ -247,33 +249,29 @@ class TripController extends Controller
         if ($trip->path->company->id !== Auth::user()->Company->id) {
 
             return response()->json(['error' => 'You are not authorized to update this break.'], 403);
-    
         }
-    
+
         DB::beginTransaction();
-    
+
         try {
             if ($request->has('price')) {
                 $trip->price = $request->input('price');
                 $trip->save();
             }
-    
+
             if ($request->has('path_id') && $request->has('bus_ids')) {
                 $bus_trips = Bus_Trip::where('trip_id', $trip->id)->get();
                 if ($bus_trips->count() > 0) {
                     foreach ($bus_trips as $bus_trip) {
                         $bus = $bus_trip->bus;
-                        $re=Reservation::where('status' , 'padding')
-                        ->where('bus__trip_id' ,$bus_trip->id)->first();
-                        if($re)
-                        {
+                        $re = Reservation::where('status', 'padding')
+                            ->where('bus__trip_id', $bus_trip->id)->first();
+                        if ($re) {
                             return response()->json([
                                 'message' => 'bus has reservation ',
                             ]);
-
                         }
-                        if($bus_trip->event != 'stopped' )
-                        {
+                        if ($bus_trip->event != 'stopped') {
                             if ($bus) {
                                 $bus->status = 'available';
                                 $bus->save();
@@ -288,21 +286,20 @@ class TripController extends Controller
                                     }
                                 }
                             }
-                        }else{
+                        } else {
                             return response()->json([
                                 'message' => 'bus active on trip ',
                             ]);
-
                         }
                     }
                     $trip->bus_trip()->delete();
                     $trip->breaks_trip()->delete();
-    
+
                     $breakTripStart = new Breaks_trip();
                     $breakTripStart->trip_id = $trip->id;
                     $breakTripStart->breaks_id = 1; // start break
                     $breakTripStart->save();
-    
+
                     $breakIds = Breaks::where('path_id', $request->input('path_id'))->get();
                     foreach ($breakIds as $breakId) {
                         $FIND = Breaks::find($breakId->id);
@@ -318,9 +315,9 @@ class TripController extends Controller
                     $breakTripEnd->trip_id = $trip->id;
                     $breakTripEnd->breaks_id = 2; // end break
                     $breakTripEnd->save();
-    
+
                     $busIds = $request->input('bus_ids');
-    
+
                     foreach ($busIds as $busId) {
                         $bus = Bus::find($busId['bus_id']);
                         if ($bus && $bus->status == 'available') {
@@ -337,7 +334,7 @@ class TripController extends Controller
                             $bus->status = 'completed';
                             $bus->bus_driver->pluck('driver')->each->update(['status' => 'completed']);
                             $bus->save();
-    
+
                             $breakTrips = Breaks_trip::where('trip_id', $trip->id)->get();
                             foreach ($breakTrips as $breakTrip) {
                                 $pivoit = new Pivoit();
@@ -351,9 +348,9 @@ class TripController extends Controller
                     }
                 }
             }
-    
+
             DB::commit();
-    
+
             return response()->json([
                 'message' => 'Trip updated successfully',
             ]);
@@ -384,17 +381,14 @@ class TripController extends Controller
         if ($bus_trips->count() > 0) {
             foreach ($bus_trips as $bus_trip) {
                 $bus = $bus_trip->bus;
-                $re=Reservation::where('status' , 'padding')
-                ->where('bus__trip_id' ,$bus_trip->id)->first();
-                if($re)
-                {
+                $re = Reservation::where('status', 'padding')
+                    ->where('bus__trip_id', $bus_trip->id)->first();
+                if ($re) {
                     return response()->json([
                         'message' => 'bus has reservation ',
                     ]);
-
                 }
-                if($bus_trip->event != 'stopped' )
-                {
+                if ($bus_trip->event != 'stopped') {
                     if ($bus) {
                         $bus->status = 'available';
                         $bus->save();
@@ -409,11 +403,10 @@ class TripController extends Controller
                             }
                         }
                     }
-                }else{
+                } else {
                     return response()->json([
                         'message' => 'bus active on trip ',
                     ]);
-
                 }
             }
         }

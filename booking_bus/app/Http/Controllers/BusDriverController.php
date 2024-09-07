@@ -90,7 +90,7 @@ class BusDriverController extends Controller
 
         event(new PrivateNotification($driver->user->id, $massage));
         UserNotification::create([
-            'user_id' =>$driver->user->id,
+            'user_id' => $driver->user->id,
             'notification' => $massage,
         ]);
 
@@ -149,12 +149,12 @@ class BusDriverController extends Controller
         $driver->status = 'pending';
         $driver->save();
 
-        
+
         $massage = "YOU cancelled of this bus   : $bus ->id ";
 
         event(new PrivateNotification($driver->user->id, $massage));
         UserNotification::create([
-            'user_id' =>$driver->user->id,
+            'user_id' => $driver->user->id,
             'notification' => $massage,
         ]);
 
@@ -185,16 +185,20 @@ class BusDriverController extends Controller
         $firstTrip = Bus_Trip::where('bus_id', $busDriver->bus_id)
             ->where('status', 'pending')
             ->orderBy('date', 'DESC')
-            ->orderBy('from_time', 'DESC')
+            ->orderBy('from_time_going', 'DESC')
             ->first();
         if ($firstTrip) {
 
             $firstTrip->load(['trip.path']);
-            $fromTime = new \DateTime($firstTrip->from_time);
-            $toTime = new \DateTime($firstTrip->to_time);
-            $formattedFromTime = $fromTime->format('H:i');
-            $formattedToTime =  $toTime->format('H:i');
-            $interval = $fromTime->diff($toTime);
+            $goingfromTime = new \DateTime($firstTrip->from_time_going);
+            $goingtoTime = new \DateTime($firstTrip->to_time_going);
+            $ReturnfromTime = new \DateTime($firstTrip->from_time_return);
+            $ReturntoTime = new \DateTime($firstTrip->to_time_return);
+            $GoingformattedFromTime = $goingfromTime->format('H:i');
+            $GoingformattedToTime =  $goingtoTime->format('H:i');
+            $RetuenformattedFromTime = $ReturnfromTime->format('H:i');
+            $RetuenformattedToTime =  $ReturntoTime->format('H:i');
+            $interval = $goingfromTime->diff($goingtoTime);
             $tripDuration = $interval->format('%H:%I');
             return response()->json([
                 'id' => $firstTrip->id,
@@ -202,9 +206,11 @@ class BusDriverController extends Controller
                 'from' => $firstTrip->trip->path->from ?? null,
                 'to' => $firstTrip->trip->path->to ?? null,
                 'Distance' => $firstTrip->trip->path->Distance ?? null,
-                'from_time' => $formattedFromTime,
+                'goingfromTime' => $GoingformattedFromTime,
+                'goingtoTime' => $GoingformattedToTime,
+                'ReturnfromTime' => $RetuenformattedFromTime,
+                'ReturntoTime' => $RetuenformattedToTime,
                 'date' => $firstTrip->date,
-                'to_time' => $formattedToTime,
                 'Passengers' =>  $firstTrip->bus->getNumberOfReservationsAttribute(),
                 'Stops' =>  $firstTrip->Pivoit->count(),
                 'trip_duration' => $tripDuration,

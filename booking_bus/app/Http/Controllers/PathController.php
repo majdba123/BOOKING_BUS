@@ -41,7 +41,7 @@ class PathController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-    
+
         try {
             $validator = Validator::make($request->all(), [
                 'from' => 'required|string',
@@ -52,28 +52,28 @@ class PathController extends Controller
                 'long_to' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                 'Distance' => 'required',
             ]);
-    
+
             if ($validator->fails()) {
                 DB::rollBack();
                 $errors = $validator->errors()->first();
                 return response()->json(['error' => $errors], 422);
             }
-    
+
             $lat_from = $request->input('lat_from');
             $long_from = $request->input('long_from');
             $lat_to = $request->input('lat_to');
             $long_to = $request->input('long_to');
-    
+
             $fromLocation = geolocation::create([
                 'latitude' => $lat_from,
                 'longitude' => $long_from
             ]);
-    
+
             $toLocation = geolocation::create([
                 'latitude' => $lat_to,
                 'longitude' => $long_to
             ]);
-    
+
             $path = new Path();
             $path->from = $request->input('from');
             $path->to = $request->input('to');
@@ -81,35 +81,35 @@ class PathController extends Controller
             $path->from_location = $fromLocation->id;
             $path->to_location = $toLocation->id;
             $path->Distance = $request->input('Distance');
-    
+
             $path->save();
 
 
             $break = new Breaks();
-            $break->name = $request->input('start');
+            $break->name = 'start';
             $break->path_id = $path->id;
             $break->geolocation_id = $fromLocation->id;
-    
+
             $break->save();
 
 
             $break = new Breaks();
-            $break->name = $request->input('end');
+            $break->name = 'end';
             $break->path_id = $path->id;
             $break->geolocation_id = $toLocation->id;
-    
+
             $break->save();
 
-            
-           $d= Auth::user()->Company->id;
 
-                       
-           $massage = "your  path created successfully:  $path->id  ";
-           event(new PrivateNotification(  $d , $massage));
-           UserNotification::create([
-               'user_id' =>  Auth::user()->Company->user->id,
-               'notification' => $massage,
-           ]);
+            $d = Auth::user()->Company->id;
+
+
+            $massage = "your  path created successfully:  $path->id  ";
+            event(new PrivateNotification($d, $massage));
+            UserNotification::create([
+                'user_id' =>  Auth::user()->Company->user->id,
+                'notification' => $massage,
+            ]);
             $admins = User::where('type', 1)->get();
 
             foreach ($admins as $admin) {
@@ -123,7 +123,7 @@ class PathController extends Controller
                 ]);
             }
             DB::commit();
-    
+
             return response()->json([
                 'message' => 'path Created ',
             ]);

@@ -81,8 +81,9 @@ class BreaksController extends Controller
         }
 
         $company_id = $Path->company_id;
-        $user = auth()->user();
-        if ($user->Compnay->id !== $company_id) {
+        $user = Auth::user();
+
+        if ($user->Company->id !== $company_id) {
             return response()->json(['error' => 'You do not have permission to create a break for this path.'], 403);
         }
 

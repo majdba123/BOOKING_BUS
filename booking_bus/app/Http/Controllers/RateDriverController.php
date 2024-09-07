@@ -103,8 +103,8 @@ class RateDriverController extends Controller
         $speedRating = $ratings->avg('rating_speed');
 
         // Calculate the percentage based on a maximum rating of 5
-        $percentage = ($averageRating / 5);
-        $SpeedRating = ($speedRating / 5);
+        $percentage = $averageRating / 5;
+        $SpeedRating = $speedRating / 5.0;
 
         return response()->json([
             'Driving_Rateing' => $percentage,
