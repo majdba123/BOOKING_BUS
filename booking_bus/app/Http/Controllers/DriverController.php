@@ -458,9 +458,6 @@ class DriverController extends Controller
                     'user_id' => $bus_trip->bus->company->user->id,
                     'notification' => $massage,
                 ]);
-
-                $reservations = Reservation::where('status', 'padding')
-                    ->where('pivoit_id', $pivoit_id->id)
                 $reservations = Reservation::where('status', 'padding')
                     ->where('pivoit_id', $pivoit_id->id)
                     ->where('type', 1)

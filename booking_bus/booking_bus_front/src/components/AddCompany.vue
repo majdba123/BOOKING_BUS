@@ -812,9 +812,6 @@ export default {
         },
 
         AllCompany() {
-            this.companies= new pusher 
-            console.log(messages);
-
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",

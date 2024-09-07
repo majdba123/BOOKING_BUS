@@ -265,6 +265,7 @@ export default {
                     long_to: store.state.endLng,
                     Distance: store.state.distance,
                 },
+
                 headers: { Authorization: `Bearer ${token}` },
             })
                 .then((response) => {
@@ -283,6 +284,22 @@ export default {
                     }
                 })
                 .catch((error) => {
+                    console.log(
+                        "from:",
+                        this.StartPath,
+                        " to:",
+                        this.EndPath,
+                        " lat_from:",
+                        store.state.startLat,
+                        " long_from:",
+                        store.state.startLng,
+                        " lat_to:",
+                        store.state.endLat,
+                        "  long_to: ",
+                        store.state.endLng,
+                        " Distance: ",
+                        store.state.distance
+                    );
                     this.toast.error("Error Creating Path", {
                         transition: "Vue-Toastification__shake",
                         hideProgressBar: true,

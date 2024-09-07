@@ -13,6 +13,7 @@ export default createStore({
         Trips: {},
         Government: {},
         searchQuery: "",
+        message: [],
         Profile: "",
         start: null,
         end: null,
@@ -28,8 +29,13 @@ export default createStore({
         lng: null,
         Users: {},
     },
-    getters: {},
+    getters: {
+        getNotifications: (state) => state.message,
+    },
     mutations: {
+        ADD_NOTIFICATION(state, message) {
+            state.message.push(message);
+        },
         updateSearchQuery(state, newQuery) {
             state.searchQuery = newQuery;
         },
@@ -77,6 +83,9 @@ export default createStore({
         },
     },
     actions: {
+        addNotification({ commit }, message) {
+            commit("ADD_NOTIFICATION", message);
+        },
         updateBreakLocation({ commit }, { lat, lng }) {
             commit("setBreakLat", lat);
             commit("setBreakLong", lng);

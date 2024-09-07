@@ -296,6 +296,7 @@ export default {
                                 router.push("/");
                             }
                         }
+                        console.log(response);
                     })
                     .catch((error) => {
                         this.toast.error("Invalid email or password");
