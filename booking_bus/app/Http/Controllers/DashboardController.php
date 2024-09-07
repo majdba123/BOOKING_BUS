@@ -245,7 +245,7 @@ class DashboardController extends Controller
         return response()->json($dash);
     }
 
-    public function get_profit_bus_trip($id_bus_trip)
+ /*   public function get_profit_bus_trip($id_bus_trip)
     {
         $company = Auth::user()->Company->id;
         $bus_trip=Bus_Trip::find($id_bus_trip);
@@ -264,6 +264,33 @@ class DashboardController extends Controller
         }
 
         return response()->json(['total_price' => $total_price]);
+    }
+*/
+
+    public function get_profit_bus_trip($id_bus_trip)
+    {
+
+        $company = Auth::user()->Company->id;
+
+        $bus_trip = Bus_Trip::with('Reservation')->find($id_bus_trip);
+
+
+        // Check if the bus trip belongs to the company that made the request
+
+        if ($bus_trip->bus->company_id != $company) {
+
+            return response()->json(['error' => 'Unauthorized'], 401);
+
+        }
+
+
+        // Calculate the total price of completed and out reservations
+
+        $total_price = $bus_trip->Reservation()
+            ->whereIn('status', ['completed', 'out'])
+            ->sum('price');
+        return response()->json(['total_price' => $total_price]);
+
     }
 
     public function get_profit_trip($id_trip)
@@ -304,7 +331,7 @@ class DashboardController extends Controller
     {
         $period = $request->input('period'); // daily, monthly, yearly
         $company = Auth::user()->Company; // get the authenticated company
-    
+
         $reservations = Reservation::whereHas('bus_trip.trip.company', function ($query) use ($company) {
             $query->where('id', $company->id);
         })
@@ -316,16 +343,16 @@ class DashboardController extends Controller
         })
         ->when($period === 'yearly', function ($query) {
             $query->whereYear('created_at', now()->year);
-        })    
+        })
         ->select('price') // select only the price column
-        ->get(); 
-    
-        $prices = $reservations->pluck('price')->toArray(); 
+        ->get();
+
+        $prices = $reservations->pluck('price')->toArray();
      //   var_dump($prices);
         if (empty($prices)) {
             return response()->json(['message' => 'No prices found for the given period'], 200);
         }
-    
+
         $averageProfit = $this->calculateAverageProfit($prices);
         return response()->json(['period' => $request->input('period'), 'average_profit' => $averageProfit]);
     }
