@@ -86,7 +86,7 @@ class PathController extends Controller
 
 
             $break = new Breaks();
-            $break->name = 'start';
+            $break->name = "start";
             $break->path_id = $path->id;
             $break->geolocation_id = $fromLocation->id;
 
@@ -94,22 +94,22 @@ class PathController extends Controller
 
 
             $break = new Breaks();
-            $break->name = 'end';
+            $break->name = "end";
             $break->path_id = $path->id;
             $break->geolocation_id = $toLocation->id;
 
             $break->save();
 
 
-            $d = Auth::user()->Company->id;
+           $d= Auth::user()->Company->id;
 
 
-            $massage = "your  path created successfully:  $path->id  ";
-            event(new PrivateNotification($d, $massage));
-            UserNotification::create([
-                'user_id' =>  Auth::user()->Company->user->id,
-                'notification' => $massage,
-            ]);
+           $massage = "your  path created successfully:  $path->id  ";
+           event(new PrivateNotification(  $d , $massage));
+           UserNotification::create([
+               'user_id' =>  Auth::user()->Company->user->id,
+               'notification' => $massage,
+           ]);
             $admins = User::where('type', 1)->get();
 
             foreach ($admins as $admin) {
