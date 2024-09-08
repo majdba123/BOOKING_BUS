@@ -3,7 +3,6 @@ import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:provider/provider.dart';
 
 class JourneyRouteInfo extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -20,7 +19,7 @@ class JourneyRouteInfo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${trip?.from} to ${trip?.to}',
+                  '${driverProvider.selectedTypeTripIndex == 0 ? trip?.from : trip?.to} to ${driverProvider.selectedTypeTripIndex == 0 ? trip?.to : trip?.from}',
                   style: TextStyle(
                     fontSize: screenHeight * 0.02,
                     fontWeight: FontWeight.w600,

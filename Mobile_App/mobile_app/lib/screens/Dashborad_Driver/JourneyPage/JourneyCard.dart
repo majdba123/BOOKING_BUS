@@ -55,7 +55,7 @@ class JourneyCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '${trip.from} to ${trip.to}',
+                    '${provider.selectedTypeTripIndex == 0 ? trip.from : trip.to} to ${provider.selectedTypeTripIndex == 0 ? trip.to : trip.from}',
                     style: TextStyle(
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
@@ -101,7 +101,7 @@ class JourneyCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '${trip.from_time}',
+                    '${provider.selectedTypeTripIndex == 0 ? trip.from_time : trip.ReturnfromTime}',
                     style: TextStyle(
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
@@ -109,7 +109,7 @@ class JourneyCard extends StatelessWidget {
                   ),
                   Spacer(),
                   Text(
-                    '${trip.to_time}',
+                    '${provider.selectedTypeTripIndex == 0 ? trip.to_time : trip.ReturntoTime}',
                     style: TextStyle(
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
@@ -122,7 +122,17 @@ class JourneyCard extends StatelessWidget {
                 children: [
                   Icon(Icons.location_on, size: iconSize, color: Colors.grey),
                   Text(
-                    ' ${trip.from} ',
+                    ' ${provider.selectedTypeTripIndex == 0 ? trip.from : trip.to} ',
+                    style: TextStyle(
+                      fontSize: fontSize * 0.85,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Spacer(),
+                  Icon(Icons.calendar_month,
+                      size: iconSize, color: Colors.grey),
+                  Text(
+                    ' ${provider.selectedTypeTripIndex == 0 ? trip.date_start : trip.date_end}',
                     style: TextStyle(
                       fontSize: fontSize * 0.85,
                       color: Colors.grey,
@@ -131,7 +141,7 @@ class JourneyCard extends StatelessWidget {
                   Spacer(),
                   Icon(Icons.location_on, size: iconSize, color: Colors.grey),
                   Text(
-                    ' ${trip.to}',
+                    ' ${provider.selectedTypeTripIndex == 0 ? trip.to : trip.from}',
                     style: TextStyle(
                       fontSize: fontSize * 0.85,
                       color: Colors.grey,

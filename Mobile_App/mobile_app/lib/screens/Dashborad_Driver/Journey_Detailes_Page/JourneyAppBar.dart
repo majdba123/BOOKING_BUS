@@ -20,7 +20,7 @@ class JourneyAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
       ),
       title: Text(
-        '${trip?.from} to ${trip?.to}',
+        '${driverProvider.selectedTypeTripIndex == 0 ? trip?.from : trip?.to} to ${driverProvider.selectedTypeTripIndex == 0 ? trip?.to : trip?.from}',
         style: TextStyle(
           color: Colors.white,
           fontSize: screenHeight * 0.025,
