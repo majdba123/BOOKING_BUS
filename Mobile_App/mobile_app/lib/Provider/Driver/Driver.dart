@@ -37,6 +37,14 @@ class DriverProvider extends ChangeNotifier {
   bool get isStartTrip => _isStartTrip;
   bool get isCheckedReservation => _isCheckedReservation;
   String? get errorMessage => _errorMessage;
+  int _selectedTypeTripIndex = 0;
+
+  int get selectedTypeTripIndex => _selectedTypeTripIndex;
+
+  void setTypeTripIndex(int index) {
+    _selectedTypeTripIndex = index;
+    notifyListeners();
+  }
 
   void setypePage(type) {
     _typePage = type;

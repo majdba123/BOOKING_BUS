@@ -8,7 +8,8 @@ class TripForDriverModel {
   final String to_time;
   final String ReturnfromTime;
   final String ReturntoTime;
-  final String date;
+  final String date_start;
+  final String date_end;
   final int Passengers;
   final int Stops;
   final String trip_duration;
@@ -24,7 +25,8 @@ class TripForDriverModel {
     required this.to_time,
     required this.ReturnfromTime,
     required this.ReturntoTime,
-    required this.date,
+    required this.date_start,
+    required this.date_end,
     required this.Passengers,
     required this.Stops,
     required this.trip_duration,
@@ -42,7 +44,8 @@ class TripForDriverModel {
       to_time: json['goingtoTime'],
       ReturnfromTime: json['ReturnfromTime'],
       ReturntoTime: json['ReturntoTime'],
-      date: json['date'],
+      date_start: json['date_start'],
+      date_end: json['date_end'],
       Passengers: json['Passengers'],
       Stops: json['Stops'],
       trip_duration: json['trip_duration'],
