@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
-import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
-import 'package:mobile_app/screens/Dashborad_User/Profile/Profile_User.dart';
-import 'package:mobile_app/screens/Dashborad_User/MyBooking/MY_Reservation.dart';
 import 'package:provider/provider.dart';
 
 class FilterBarUserUi extends StatelessWidget {

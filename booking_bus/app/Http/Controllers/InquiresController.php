@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\inquires;
+use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -71,7 +74,31 @@ class InquiresController extends Controller
             $inquires->quastion = $request->quastion;
             $inquires->user_id = $user->id;
             $inquires->save();
-    
+
+            $massage = " your  inquires store done : $inquires->id ";
+            event(new PrivateNotification($user->id, $massage));
+            UserNotification::create([
+                'user_id' => $user->id,
+                'notification' => $massage,
+            ]);
+
+
+
+            $admins = User::where('type', 1)->get();
+
+            foreach ($admins as $admin) {
+                $admin_id = $admin->id;
+                // Send the message to each admin using the $admin_id
+                $massage = "  user has a inquire $user->id ";
+                event(new PrivateNotification($admin_id, $massage));
+                UserNotification::create([
+                    'user_id' => $admin_id,
+                    'notification' => $massage,
+                ]);
+            }
+
+
+
             DB::commit();
     
             return response()->json([

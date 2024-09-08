@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Seat.dart';
-import 'package:mobile_app/Provider/Company/Seat_Provider.dart';
+import 'package:mobile_app/Api_Services/Company/Seat_Provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Seat.dart';
-import 'package:mobile_app/Provider/Company/Seat_Provider.dart';
+import 'package:mobile_app/Api_Services/Company/Seat_Provider.dart';
 import 'package:provider/provider.dart';
 
 class BusSeatLayoutPage extends StatelessWidget {

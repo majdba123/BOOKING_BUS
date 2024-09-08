@@ -30,6 +30,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminDashBoardController;
 use App\Http\Controllers\CancellationRuleController;
 use App\Http\Controllers\RewardController;
+use App\Http\Controllers\UserNotificationController;
 use App\Events\tripgeolocationEvent;
 
 
@@ -58,6 +59,13 @@ Route::post('register/company', [CompanyController::class, 'register']);
 
 
 Route::get('all_user', [AdminDashBoardController::class, 'all_user']);
+
+
+
+Route::get('/my_notification', [UserNotificationController::class, 'index']);
+Route::post('/read_notification/{id}', [UserNotificationController::class, 'read']);
+Route::get('/readable_massege', [UserNotificationController::class, 'readable_massege']);
+
 
 
 
@@ -147,7 +155,6 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     Route::get('/all_reservation', [DashboardController::class, 'all_reservation']);
     Route::get('/all_reservation_by_status', [DashboardController::class, 'all_reservation_by_status']);
     Route::post('/all_reservation_by_bus_trip/{bus_trip_id}', [DashboardController::class, 'all_reservation_by_bus_trip']);
-    Route::post('/all_reservation_by_pivoit_id/{pivoit_id}', [DashboardController::class, 'reser_by_break']);
 
 
     Route::get('/dashboard_company', [DashboardController::class, 'my_dash_boad']);
@@ -171,7 +178,6 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     });
 
     Route::post('/get_profit_1', [DashboardController::class, 'getPriceData']);
-
 });
 
 
@@ -242,6 +248,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['checkAdmi', 'auth:sanctum',
 
 
     Route::post('/get_profit_/{company_id}', [AdminDashBoardController::class, 'getPriceData1']);
+
+    Route::get('/my_info', [ProfileController::class, 'index']);
+    Route::post('/store_profile_info', [ProfileController::class, 'store']);
+    Route::post('/update_profile_info', [ProfileController::class, 'update']);
+
+    Route::get('/all_my_address', [AddressController::class, 'index']);
+    Route::post('/store_address', [AddressController::class, 'store']);
+    Route::put('/update_address/{address_id}', [AddressController::class, 'update']);
 });
 
 
@@ -254,8 +268,8 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum', 'throttle:30,
     Route::get('/trip_by_path', [TripController::class, 'trip_user_by_path']);
 
     Route::post('/get_bus_trip/{id}', [BusTripController::class, 'getBusTripsByTripId']);
-   // Route::post('/seatOfBus/{id}', [SeatController::class, 'seatOfBus']);
-   Route::post('/seatOfBus/{BUS_TRIP_ID}', [SeatController::class, 'seatOfBus']);
+    // Route::post('/seatOfBus/{id}', [SeatController::class, 'seatOfBus']);
+    Route::post('/seatOfBus/{BUS_TRIP_ID}', [SeatController::class, 'seatOfBus']);
     Route::get('/get_bus_trip_fillter', [BusTripController::class, 'getBusTripsByFillter']);
 
     Route::post('/store_reservation/{id}', [ReservationController::class, 'store']);
@@ -360,4 +374,5 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum', 'throttle:3
 
     Route::get('/first-trip', [BusDriverController::class, 'getFirstTrip']);
     Route::get('/point', [BusDriverController::class, 'getPointofDriver']);
+    Route::get('/getPassenegerAtPivoit/{bus_trip_id}/pivot/{pivot_id}/', [DriverController::class, 'getPassenegerAtPivoit']);
 });

@@ -71,7 +71,7 @@ class AdminDashBoardController extends Controller
         return response()->json($users);
     }
 
-    public function user_reservation($id)
+    /*public function user_reservation($id)
     {
         $reservations = Reservation::where('user_id', $id)->get();
         $data = [];
@@ -94,7 +94,40 @@ class AdminDashBoardController extends Controller
             $data[] = $info;
         }
         return response()->json($data);
+    }*/
+
+
+    /**
+     * The current implementation uses lazy loading. In the foreach loop, you're accessing the relationships of the Reservation model, such as user, pivoit, break_trip, break, and seat_reservation. Each time you access these relationships, Laravel executes a separate query to retrieve the related data. This can lead to the N+1 query problem, where multiple queries are executed to retrieve the related data
+     */
+    public function user_reservation($id)
+    {
+        $reservations = Reservation::where('user_id', $id)
+            ->with('user', 'pivoit.break_trip.break', 'seat_reservation.seat')
+            ->get();
+        $data = [];
+        foreach ($reservations as $reservation) {
+            $info = [
+                "user_name" => $reservation->user->name,
+                "reservation_id" => $reservation->id,
+                "break_name" => $reservation->pivoit->break_trip->break->name,
+                'pivoit_id' => $reservation->pivoit->id,
+                "reservation_status" => $reservation->status,
+                "reservation_type" => $reservation->type,
+                "seat" => $reservation->seat_reservation->map(function ($seatReservation) {
+                    return [
+                        'seat_id' => $seatReservation->seat->id,
+                        'status' => $seatReservation->status,
+                        // add more fields as needed
+                    ];
+                })->all(),
+            ];
+            $data[] = $info;
+        }
+        return response()->json($data);
     }
+
+
 
     public function user_reservation_by_status($id, Request $request)
     {
@@ -141,7 +174,19 @@ class AdminDashBoardController extends Controller
 
         return response()->json($data);
     }
-    public function all_trip_history_of_user($id)
+    /**n this updated implementation, we're using the with method to eager load the relationships. This will load the related data in a single query, reducing the number of queries executed.
+
+    Benefits of Eager Loading
+
+    Eager loading offers several benefits, including:
+
+        Improved performance: By loading related data in a single query, eager loading can reduce the number of queries executed, improving performance.
+        Reduced query count: Eager loading can reduce the number of queries executed, which can help mitigate the N+1 query problem. */
+
+
+
+
+  /* LAZY  public function all_trip_history_of_user($id)
     {
         $reservations = Reservation::where('user_id', $id)
             ->get();
@@ -165,6 +210,30 @@ class AdminDashBoardController extends Controller
                 ];
             })->all();
 
+        return response()->json($customBusTrips);
+    }*/
+    //EAGER
+    public function all_trip_history_of_user($id)
+    {
+        $reservations = Reservation::where('user_id', $id)
+            ->with('bus_trip.trip.path')
+            ->get();
+
+        $customBusTrips = $reservations->map(function ($reservation) {
+            $busTrip = $reservation->bus_trip;
+            return [
+                'id' => $busTrip->id,
+                'from' => $busTrip->trip->path->from,
+                'to' => $busTrip->trip->path->to,
+                'price_trip' => $busTrip->trip->price,
+                'from_time' => $busTrip->from_time,
+                'to_time' => $busTrip->to_time,
+                'date' => $busTrip->date,
+                'status' => $busTrip->status,
+                'type' => $busTrip->type,
+                'event' => $busTrip->event,
+            ];
+        })->all();
         return response()->json($customBusTrips);
     }
 
@@ -269,6 +338,7 @@ class AdminDashBoardController extends Controller
 
         return response()->json($response);
     }
+
     public function private_order_of_user_fillter(Request $request, $user_id)
     {
         $validator = Validator::make($request->all(), [
@@ -1102,8 +1172,12 @@ class AdminDashBoardController extends Controller
 
         return response()->json($dash);
     }
-
-
+    /**Lazy Loading vs Eager Loading in the statiesticle_dash Method
+        In the statiesticle_dash method, you're using a mix of lazy loading and eager loading.
+        Lazy Loading
+        Lazy loading is used when you're accessing the relationships of a model, like User::count(), Company::count(), Driver::count(), etc. These queries are executed only when you access the relationships, which can lead to multiple queries being executed.
+        Eager Loading
+        Eager loading is used when you're using the selectRaw method with groupBy and get to retrieve the data, like: */
 
     public function getPriceData1(Request $request ,$company_id)
     {
@@ -1120,7 +1194,7 @@ class AdminDashBoardController extends Controller
             // Return an error response if the validation fails
             return response()->json(['error' => 'Invalid request'], 422);
         }
-    
+
         $reservations = Reservation::whereHas('bus_trip.trip.company', function ($query) use ($company_id) {
             $query->where('id', $company_id);
         })
@@ -1132,16 +1206,16 @@ class AdminDashBoardController extends Controller
         })
         ->when($period === 'yearly', function ($query) {
             $query->whereYear('created_at', now()->year);
-        })    
+        })
         ->select('price') // select only the price column
-        ->get(); 
-    
-        $prices = $reservations->pluck('price')->toArray(); 
+        ->get();
+
+        $prices = $reservations->pluck('price')->toArray();
      //   var_dump($prices);
         if (empty($prices)) {
             return response()->json(['message' => 'No prices found for the given period'], 200);
         }
-    
+
         $averageProfit = $this->calculateAverageProfit1($prices);
         return response()->json(['period' => $request->input('period'), 'average_profit' => $averageProfit]);
     }
@@ -1158,3 +1232,17 @@ class AdminDashBoardController extends Controller
         return $sum / $count;
     }
 }
+   /**It depends on the situation.
+
+Use Eager Loading when:
+
+    You need to access the related data frequently.
+    You want to reduce the number of queries executed.
+    You want to improve performance.
+
+Use Lazy Loading when:
+
+    You only need to access the related data occasionally.
+    You want to avoid loading unnecessary data.
+    You want to reduce memory usage.
+ */

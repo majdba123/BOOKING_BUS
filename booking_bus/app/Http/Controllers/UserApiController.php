@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Company;
 use App\Events\NotificatinEvent;
+use App\Events\PrivateNotification;
 use App\Models\Driver;
+use App\Models\UserNotification;
 
 class UserApiController extends Controller
 {
@@ -39,7 +41,18 @@ class UserApiController extends Controller
         ]);
 
 
-        event(new NotificatinEvent("new user registed : $user->name"));
+        $admins = User::where('type', 1)->get();
+
+        foreach ($admins as $admin) {
+            $admin_id = $admin->id;
+            // Send the message to each admin using the $admin_id
+            $massage = "  created new user  : $user->id  ";
+            event(new PrivateNotification($admin_id, $massage));
+            UserNotification::create([
+                'user_id' => $admin_id,
+                'notification' => $massage,
+            ]);
+        }
 
         return response()->json([
             'message' => 'User Created ',

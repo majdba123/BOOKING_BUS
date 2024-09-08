@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Bus;
 use App\Models\Bus_Driver;
 use Illuminate\Http\Request;
 use App\Models\Seat;
-
+use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -64,6 +66,27 @@ class BusController extends Controller
             $bus->number_passenger = $request->input('number_passenger');
             $bus->company_id = $company;
             $bus->save();
+
+    
+            $massage = "  created new BUS  : $bus->id";
+            event(new PrivateNotification(Auth::user()->id, $massage));
+            UserNotification::create([
+                'user_id' => Auth::user()->id,
+                'notification' => $massage,
+            ]);
+
+
+            $admins = User::where('type', 1)->get();
+            foreach ($admins as $admin) {
+                $admin_id = $admin->id;
+                // Send the message to each admin using the $admin_id
+                $massage = "  created new BUS  : $bus->id  by company: $company ";
+                event(new PrivateNotification($admin_id, $massage));
+                UserNotification::create([
+                    'user_id' => $admin_id,
+                    'notification' => $massage,
+                ]);
+            }
     
             $number_passenger = $bus->number_passenger;
     

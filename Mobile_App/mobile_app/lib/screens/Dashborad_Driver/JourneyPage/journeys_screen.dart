@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/screens/Dashborad_Driver/JourneyPage/herader_section.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
 import 'package:mobile_app/screens/WidgetApp/filtter_Bar_main_ui.dart';
+import 'package:provider/provider.dart';
 import 'JourneyCard.dart';
-import 'toggle_button.dart';
-import 'JourneyHistoryScreen.dart'; // Import the new screen
+import 'JourneyHistoryScreen.dart';
 
 class JourneysScreen extends StatefulWidget {
   @override
@@ -12,31 +13,42 @@ class JourneysScreen extends StatefulWidget {
 }
 
 class _JourneysScreenState extends State<JourneysScreen> {
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+      var driverProvider = Provider.of<DriverProvider>(context, listen: false);
+      auth = Provider.of<AuthProvider>(context, listen: false);
+      driverProvider.fetchMyTrip(auth.accessToken);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(screenHeight * 0.1),
-        child: AppBar(
-          backgroundColor: AppColors.primaryColor,
-          leading: Padding(
-            padding: EdgeInsets.only(left: screenWidth * 0.04),
-            child: Icon(Icons.arrow_back, size: screenHeight * 0.035),
-          ),
-          title: Text(
-            'Journeys',
-            style: TextStyle(
-              fontSize: screenHeight * 0.03,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-          centerTitle: true,
-          elevation: 0,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
+        backgroundColor: AppColors.primaryColor,
+        title: Text(
+          'Your Trip',
+          style: TextStyle(
+            fontSize: screenHeight * 0.03,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
@@ -46,7 +58,16 @@ class _JourneysScreenState extends State<JourneysScreen> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigate to JourneyHistoryScreen
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    AuthProvider auth =
+                        Provider.of<AuthProvider>(context, listen: false);
+                    var driverProvider =
+                        Provider.of<DriverProvider>(context, listen: false);
+
+                    driverProvider.history(auth.accessToken);
+                    driverProvider.setypePage('history');
+                  });
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -75,79 +96,25 @@ class _JourneysScreenState extends State<JourneysScreen> {
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
+
+            // SectionHeader(
+            //   title: 'Today',
+            //   fontSize: screenHeight * 0.025,
+            // ),
             Expanded(
               child: ListView(
-                children: [
-                  // Today Section
-                  SectionHeader(
-                    title: 'Today',
-                    fontSize: screenHeight * 0.025,
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  JourneyCard(
-                    from: 'Coimbatore',
-                    to: 'Chennai',
-                    timeLeft: 'IN 4 HOURS',
-                    departureTime: '6:50AM',
-                    arrivalTime: '12:15PM',
-                    stops: '28 Stops',
-                    passengers: '48 Passengers',
-                    bgColor: Colors.white,
-                    tagColor: Colors.redAccent,
-                    fontSize: screenHeight * 0.02,
-                    iconSize: screenHeight * 0.025,
-                    dashColor: Colors.grey,
-                    showArrowIcon: true,
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  JourneyCard(
-                    from: 'Chennai',
-                    to: 'Coimbatore',
-                    timeLeft: 'IN 12 HOURS',
-                    departureTime: '6:50AM',
-                    arrivalTime: '12:15PM',
-                    stops: '28 Stops',
-                    passengers: '48 Passengers',
-                    bgColor: Colors.white,
-                    tagColor: Colors.blueAccent,
-                    fontSize: screenHeight * 0.02,
-                    iconSize: screenHeight * 0.025,
-                    dashColor: Colors.grey,
-                    showArrowIcon: true,
-                  ),
-                  SizedBox(height: screenHeight * 0.03),
-
-                  // Tomorrow Section
-                  SectionHeader(
-                    title: 'Tomorrow',
-                    fontSize: screenHeight * 0.025,
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  JourneyCard(
-                    from: 'Bangalore',
-                    to: 'Chennai',
-                    timeLeft: 'TOMORROW',
-                    departureTime: '6:50AM',
-                    arrivalTime: '12:15PM',
-                    stops: '28 Stops',
-                    passengers: '48 Passengers',
-                    bgColor: Colors.white,
-                    tagColor: Colors.greenAccent,
-                    fontSize: screenHeight * 0.02,
-                    iconSize: screenHeight * 0.025,
-                    dashColor: Colors.grey,
-                    showArrowIcon: true,
-                  ),
-                ],
+                children: [JourneyCard()],
               ),
             ),
+
+            SizedBox(height: screenHeight * 0.015),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: screenWidth * 0.1,
-          vertical: screenHeight * 0.02,
+          vertical: screenHeight * 0.01,
         ),
         child: FilterBarUserUi(
           height: screenHeight * 0.07,

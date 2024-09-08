@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mobile_app/Provider/Driver/Driver.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/BreakGeolocation.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/full_map_view_screen.dart';
+import 'package:provider/provider.dart';
 
 class JourneyMapWidget extends StatelessWidget {
-  final LatLng initialPosition;
-  final List<LatLng> routeCoordinates;
-  final Function() onOpenMapPressed;
-  final Function(GoogleMapController) mapController;
-  final bool showStopDetails;
-  final bool enableOpenMapButton; // Add this property
+  late GoogleMapController mapController;
 
-  JourneyMapWidget({
-    required this.initialPosition,
-    required this.routeCoordinates,
-    required this.onOpenMapPressed,
-    required this.mapController,
-    this.showStopDetails = true, // Default value is true
-    this.enableOpenMapButton = true, // Default value is true
-  });
+  late LatLng initialPosition;
+
+  late LatLng destinationPosition;
+
+  final bool showStopDetails = true;
+  final bool enableOpenMapButton = true;
 
   LatLngBounds _getLatLngBounds(List<LatLng> coordinates) {
     double southWestLat =
@@ -37,6 +34,10 @@ class JourneyMapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
+
+    initialPosition = LatLng(driverProvider.TripDriverDetail!.from_lat,
+        driverProvider.TripDriverDetail!.from_long);
 
     return Stack(
       children: [
@@ -52,16 +53,11 @@ class JourneyMapWidget extends StatelessWidget {
                 target: initialPosition,
                 zoom: 7.5,
               ),
-              markers: routeCoordinates
-                  .map((LatLng position) => Marker(
-                        markerId: MarkerId(position.toString()),
-                        position: position,
-                      ))
-                  .toSet(),
+              markers: LatLngHelper.getBreaksMarkers(context),
               polylines: {
                 Polyline(
                   polylineId: PolylineId('route'),
-                  points: routeCoordinates,
+                  points: LatLngHelper.getBreaksLatLng(context),
                   color: Color(0xFF0A3D5F),
                   width: 4,
                 ),
@@ -71,10 +67,10 @@ class JourneyMapWidget extends StatelessWidget {
               zoomGesturesEnabled: true,
               zoomControlsEnabled: false,
               onMapCreated: (GoogleMapController controller) {
-                mapController(controller);
+                mapController = controller;
                 controller.animateCamera(
                   CameraUpdate.newLatLngBounds(
-                    _getLatLngBounds(routeCoordinates),
+                    _getLatLngBounds(LatLngHelper.getBreaksLatLng(context)),
                     50,
                   ),
                 );
@@ -88,7 +84,14 @@ class JourneyMapWidget extends StatelessWidget {
             bottom: 0,
             right: 2,
             child: ElevatedButton(
-              onPressed: onOpenMapPressed,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FullMapViewScreen(),
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(
                   vertical: 12,
@@ -103,13 +106,23 @@ class JourneyMapWidget extends StatelessWidget {
                 children: [
                   Icon(Icons.map, color: Colors.white),
                   SizedBox(width: 8),
-                  Text(
-                    'Open in Map',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenHeight * 0.018,
+                  if (driverProvider.isStartTrip) ...[
+                    Text(
+                      'Track On Map',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenHeight * 0.018,
+                      ),
                     ),
-                  ),
+                  ] else if (!driverProvider.isStartTrip) ...[
+                    Text(
+                      'Open in Map',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenHeight * 0.018,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

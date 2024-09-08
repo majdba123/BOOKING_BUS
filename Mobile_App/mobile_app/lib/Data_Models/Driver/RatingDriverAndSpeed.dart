@@ -9,8 +9,8 @@ class RateDriverModel {
 
   factory RateDriverModel.fromJson(Map<String, dynamic> json) {
     return RateDriverModel(
-      Driving_Rateing: json['Driving_Rateing'],
-      Speed_Rateing: json['Speed_Rateing'],
+      Driving_Rateing: (json['Driving_Rateing'] as num).toDouble(),
+      Speed_Rateing: (json['Speed_Rateing'] as num).toDouble(),
     );
   }
 }

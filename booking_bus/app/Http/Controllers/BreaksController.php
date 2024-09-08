@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Breaks;
 use App\Models\Geolocation;
 use App\Models\Path;
+use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +39,7 @@ class BreaksController extends Controller
 
     public function allbreaks()
     {
+        $company = Auth::user()->Company->id;
         $company = Auth::user()->Company->id;
         $paths = Path::where('company_id', $company)->get();
         if ($paths->isEmpty()) {
@@ -76,6 +80,15 @@ class BreaksController extends Controller
         if (!$Path) {
             return response()->json(['error' => 'Path not found.'], 404);
         }
+
+        $company_id = $Path->company_id;
+        $user = Auth::user();
+
+        if ($user->Company->id !== $company_id) {
+            return response()->json(['error' => 'You do not have permission to create a break for this path.'], 403);
+        }
+
+
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'unique:breaks,name,'],
         ], [
@@ -92,12 +105,42 @@ class BreaksController extends Controller
             'latitude' => $lat,
             'longitude' => $long
         ]);
+    // Get the end break of the path by its name
+
+        $endBreak = Breaks::where('path_id', $path_id)->where('name', 'end')->first();
+        if (!$endBreak) {
+            return response()->json(['error' => 'End break not found.'], 404);
+        }
         $break = new Breaks();
         $break->name = $request->input('name');
         $break->path_id = $path_id;
         $break->geolocation_id = $Location->id;
-
+        // Update the order of breaks
         $break->save();
+
+        $endBreak->id = $break->id + 1;
+        $endBreak->save();
+
+        $massage = "  created new break  : $break->id";
+        event(new PrivateNotification($user->id, $massage));
+        UserNotification::create([
+            'user_id' => $user->id,
+            'notification' => $massage,
+        ]);
+
+
+
+        $admins = User::where('type', 1)->get();
+        foreach ($admins as $admin) {
+            $admin_id = $admin->id;
+            // Send the message to each admin using the $admin_id
+            $massage = "  created new break  : $break->id  by company: $company_id ";
+            event(new PrivateNotification($admin_id, $massage));
+            UserNotification::create([
+                'user_id' => $admin_id,
+                'notification' => $massage,
+            ]);
+        }
 
         return response()->json([
             'message' => 'break created ',

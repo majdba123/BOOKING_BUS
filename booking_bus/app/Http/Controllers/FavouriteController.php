@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PrivateNotification;
 use App\Models\Favourite;
 use App\Models\Company;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -91,15 +93,29 @@ class FavouriteController extends Controller
         $favourite->user_id = $user->id;
         $favourite->company_id = $company_id;
 
+        $massage = " your  add this company to favourite : $company_id ";
+        event(new PrivateNotification($user->id, $massage));
+        UserNotification::create([
+            'user_id' => $user->id,
+            'notification' => $massage,
+        ]);
+
+        $massage = " some user   add you  to favourite user_id : $user->id ";
+        $co=Company::findOrfail($company_id);
+        event(new PrivateNotification($user->id, $massage));
+        UserNotification::create([
+            'user_id' =>  $co->user->id,
+            'notification' => $massage,
+        ]);
+
+
         // Save the Favourite instance
         $favourite->save();
 
         // Return a success response
         return response()->json(['message' => 'Company added to favourites']);
     }
-    /**
-     * Display the specified resource.
-     */
+
     public function show(Favourite $favourite)
     {
         //

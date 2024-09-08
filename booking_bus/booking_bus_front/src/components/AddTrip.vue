@@ -94,25 +94,6 @@
                 </div>
 
                 <div class="form-groupd">
-                    <label for="search_break_areas">Search Break Path</label>
-                    <div class="select-container">
-                        <select
-                            v-model="search_break_areas"
-                            id="search_break_areas"
-                            class="multi-select"
-                            multiple
-                        >
-                            <option
-                                v-for="(breakItem, index) in breaks"
-                                :key="index"
-                                :value="breakItem.id"
-                            >
-                                {{ breakItem.name }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-groupd">
                     <label for="bus">Bus</label>
                     <div
                         v-for="(bus, index) in buses"
@@ -137,18 +118,48 @@
                                 <option value="going">Going</option>
                             </select>
                         </div>
-                        <span>Start Time</span>
+                        <span>Start Time Going</span>
                         <input
-                            v-model="bus.start_time"
+                            v-model="bus.start_time_going"
                             type="time"
                             class="input"
                         />
-                        <span>End Time</span>
+                        <span>End Time Going</span>
                         <input
-                            v-model="bus.end_time"
+                            v-model="bus.end_time_going"
                             type="time"
                             class="input"
                         />
+                        <span>Start Time Return</span>
+                        <input
+                            v-model="bus.start_time_return"
+                            type="time"
+                            class="input"
+                        />
+                        <span>End Time Return</span>
+                        <input
+                            v-model="bus.end_time_return"
+                            type="time"
+                            class="input"
+                        />
+                        <div class="form-groupd">
+                            <label for="date">Start Date</label>
+                            <input
+                                type="date"
+                                id="date"
+                                v-model="start_date"
+                                required
+                            />
+                        </div>
+                        <div class="form-groupd">
+                            <label for="date">End Date</label>
+                            <input
+                                type="date"
+                                id="date"
+                                v-model="end_date"
+                                required
+                            />
+                        </div>
                         <button
                             @click="removeBus(index)"
                             class="Button remove-bus-button"
@@ -160,10 +171,7 @@
                         Add Another Bus
                     </button>
                 </div>
-                <div class="form-groupd">
-                    <label for="date">Date</label>
-                    <input type="date" id="date" v-model="date" required />
-                </div>
+
                 <div class="submit-btnnd">
                     <button type="submit" @click="AddTrip" class="submit-btnd">
                         Submit
@@ -287,8 +295,11 @@
                     <ul>
                         <li v-for="bus in selectedTrip.bus_trip" :key="bus.id">
                             Bus ID: {{ bus.bus_id }}, Type: {{ bus.type }},
-                            Start Time: {{ bus.start_time }}, End Time:
-                            {{ bus.end_time }}
+                            Start Time Going: {{ bus.start_time_going }}, End
+                            Time Going: {{ bus.end_time_going }}, Start Time
+                            Return: {{ bus.start_time_return }}, End Time
+                            Return:
+                            {{ bus.end_time_return }}
                         </li>
                     </ul>
                 </div>
@@ -317,24 +328,6 @@
                 </div>
 
                 <div class="form-groupd">
-                    <label for="search_break_areas">Search Break Areas</label>
-                    <select
-                        v-model="search_break_areas"
-                        class="input multi-select"
-                        multiple
-                        required
-                    >
-                        <option
-                            v-for="(breakItem, index) in breaks"
-                            :key="index"
-                            :value="breakItem.id"
-                        >
-                            {{ breakItem.name }}
-                        </option>
-                    </select>
-                </div>
-
-                <div class="form-groupd">
                     <label for="bus">Bus</label>
                     <div
                         v-for="(bus, index) in buses"
@@ -355,18 +348,49 @@
                             <option value="all">All</option>
                             <option value="going">Going</option>
                         </select>
-                        <label>Start Time</label>
+                        <label>Start Time Going</label>
                         <input
-                            v-model="bus.start_time"
+                            v-model="bus.start_time_going"
                             type="time"
                             class="input"
                         />
-                        <label>End Time</label>
+                        <label>End Time Going</label>
                         <input
-                            v-model="bus.end_time"
+                            v-model="bus.end_time_going"
                             type="time"
                             class="input"
                         />
+                        <label>Start Time Return</label>
+
+                        <input
+                            v-model="bus.start_time_return"
+                            type="time"
+                            class="input"
+                        />
+                        <label>End Time Return</label>
+                        <input
+                            v-model="bus.end_time_return"
+                            type="time"
+                            class="input"
+                        />
+                        <div class="form-groupd">
+                            <label for="date">Start Date</label>
+                            <input
+                                type="date"
+                                id="date"
+                                v-model="start_date"
+                                required
+                            />
+                        </div>
+                        <div class="form-groupd">
+                            <label for="date">End Date</label>
+                            <input
+                                type="date"
+                                id="date"
+                                v-model="end_date"
+                                required
+                            />
+                        </div>
                         <button
                             @click="removeBus(index)"
                             class="Button remove-bus-button"
@@ -378,10 +402,6 @@
                         Add Another Bus
                     </button>
 
-                    <div class="form-groupd">
-                        <label for="date">Date</label>
-                        <input type="date" id="date" v-model="date" />
-                    </div>
                     <div class="submit-btnnd">
                         <button
                             type="submit"
@@ -468,9 +488,13 @@ export default {
                 {
                     bus_id: "",
                     type: "all",
-                    start_time: "",
-                    end_time: "",
-                    date: "",
+                    start_time_going: "",
+                    start_time_return: "",
+                    end_time_going: "",
+                    end_time_return: "",
+
+                    start_date: "",
+                    end_date: "",
                 },
             ],
             buse: [
@@ -480,10 +504,12 @@ export default {
                     area_id: "",
                     break_areas: [],
                     buses: [],
-                    date: "",
+                    start_date: "",
+                    end_date: "",
                 },
             ],
-            date: "",
+            start_date: "",
+            end_date: "",
             showEditModal: false,
             selectedTrip: null,
             editedTrip: {
@@ -492,7 +518,8 @@ export default {
                 area_id: "",
                 break_areas: [],
                 buses: [],
-                date: "",
+                start_date: "",
+                end_date: "",
             },
             editingIndex: null,
             toast: useToast(),
@@ -514,7 +541,8 @@ export default {
                 this.path,
                 this.price,
                 this.area,
-                this.date
+                this.start_date,
+                this.end_date
             );
         },
         fetchPaths() {
@@ -575,9 +603,12 @@ export default {
             this.buses.push({
                 bus_id: "",
                 type: "",
-                start_time: "",
-                end_time: "",
-                date: "",
+                start_time_going: "",
+                start_time_return: "",
+                end_time_going: "",
+                end_time_return: "",
+                start_date: "",
+                end_date: "",
             });
         },
         fetchBreakk(areaId) {
@@ -607,9 +638,12 @@ export default {
             const busIds = this.buses.map((bus) => ({
                 bus_id: bus.bus_id,
                 type: bus.type,
-                start_time: bus.start_time,
-                end_time: bus.end_time,
-                date: this.date,
+                from_time_going: bus.start_time_going,
+                to_time_going: bus.end_time_going,
+                from_time_return: bus.start_time_return,
+                to_time_return: bus.end_time_return,
+                date_start: this.start_date,
+                date_end: this.end_date,
             }));
 
             axios({
@@ -618,8 +652,6 @@ export default {
                 data: {
                     path_id: this.path,
                     price: this.price,
-                    area: this.area,
-                    breaks_ids: this.search_break_areas,
                     bus_ids: busIds,
                 },
                 headers: { Authorization: `Bearer ${token}` },
@@ -782,9 +814,12 @@ export default {
             const busIds = this.buses.map((bus) => ({
                 bus_id: bus.bus_id,
                 type: bus.type,
-                start_time: bus.start_time,
-                end_time: bus.end_time,
-                date: this.date,
+                from_time_going: bus.start_time_going,
+                to_time_going: bus.end_time_going,
+                from_time_return: bus.start_time_return,
+                to_time_return: bus.end_time_return,
+                date_start: this.start_date,
+                date_end: this.end_date,
             }));
 
             axios({
@@ -795,7 +830,6 @@ export default {
                     path_id: this.path,
                     price: this.price,
                     area: this.area,
-                    breaks_ids: this.search_break_areas,
                     bus_ids: busIds,
                 },
             })
@@ -853,9 +887,12 @@ export default {
             this.editedTrip.buses.push({
                 bus_id: "",
                 type: "all",
-                start_time: "",
-                end_time: "",
-                date: "",
+                start_time_going: "",
+                end_time_going: "",
+                start_time_return: "",
+                end_time_return: "",
+                start_date: "",
+                end_date: "",
             });
         },
         removeBusFromEdit(index) {
@@ -871,12 +908,16 @@ export default {
                     {
                         bus_id: "",
                         type: "all",
-                        start_time: "",
-                        end_time: "",
-                        date: "",
+                        start_time_going: "",
+                        end_time_going: "",
+                        start_time_return: "",
+                        end_time_return: "",
+                        start_date: "",
+                        end_date: "",
                     },
                 ],
-                date: "",
+                start_date: "",
+                end_date: "",
             };
         },
     },

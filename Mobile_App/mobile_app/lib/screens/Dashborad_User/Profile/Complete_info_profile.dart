@@ -37,38 +37,61 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
 
   Future<void> _submitProfile(BuildContext context) async {
     if (_formKey.currentState!.validate() && _image != null) {
-      var accessToken = authprovider.accessToken;
-      var uri;
-      if (authprovider.userType == "user") {
-        uri = Uri.parse(name_domain_server + 'user/store_profile_info');
-      } else if (authprovider.userType == "driver") {
-        uri = Uri.parse(name_domain_server + 'driver/store_profile_info');
-      }
+      try {
+        var accessToken = authprovider.accessToken;
 
-      var request = http.MultipartRequest('POST', uri)
-        ..headers['Authorization'] = 'Bearer $accessToken'
-        ..fields['phone'] = _phoneController.text
-        ..files.add(await http.MultipartFile.fromPath('image', _image!.path));
-
-      var response = await request.send();
-      print(response.statusCode);
-      print(response.reasonPhrase);
-      // print(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Handle success
+        Uri uri;
         if (authprovider.userType == "user") {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              '/mainPageUser', (Route<dynamic> route) => false);
+          uri = Uri.parse(name_domain_server + 'user/store_profile_info');
         } else if (authprovider.userType == "driver") {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              '/driverPageUser', (Route<dynamic> route) => false);
+          uri = Uri.parse(name_domain_server + 'driver/store_profile_info');
+        } else {
+          throw Exception("Invalid user type");
         }
-      } else {
-        // Handle error
+
+        var request = http.MultipartRequest('POST', uri)
+          ..headers['Authorization'] = 'Bearer $accessToken'
+          ..fields['phone'] = _phoneController.text
+          ..files.add(await http.MultipartFile.fromPath('image', _image!.path));
+
+        // Add other fields if required by the API, e.g.:
+        // ..fields['email'] = _emailController.text;
+        // ..fields['name'] = _nameController.text;
+
+        var response = await request.send();
+        var responseBody = await response.stream.bytesToString();
+
+        print('Status Code: ${response.statusCode}');
+        print('Response Body: $responseBody');
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          // Handle success
+          if (authprovider.userType == "user") {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                '/mainPageUser', (Route<dynamic> route) => false);
+          } else if (authprovider.userType == "driver") {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                '/driverPageUser', (Route<dynamic> route) => false);
+          }
+        } else {
+          // Handle error with more detailed information
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to update profile: $responseBody')),
+          );
+        }
+      } catch (e) {
+        // Handle unexpected errors
+        print('An error occurred: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile')),
+          SnackBar(
+              content: Text(
+                  'An unexpected error occurred. Please try again later.')),
         );
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please complete the form and select an image')),
+      );
     }
   }
 

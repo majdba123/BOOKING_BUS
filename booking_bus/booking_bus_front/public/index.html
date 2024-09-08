@@ -20,37 +20,11 @@
     </head>
     <body>
         <div id="app"></div>
-
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
         <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo"></script>
-        <script src=""></script>
-        <script>
-            // Enable pusher logging - don't include this in production
-            Pusher.logToConsole = true;
-
-            var pusher = new Pusher("7342c00647f26084d14f", {
-                cluster: "ap2",
-            });
-
-            var channel = pusher.subscribe("my-channel");
-            channel.bind("my-event", function (data) {
-                app.messages.push(JSON.stringify(data));
-            });
-
-            // Vue application
-            const app = new Vue({
-                el: "#app",
-                data: {
-                    messages: [],
-                },
-            });
-        </script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo&libraries=geometry"></script>
-        <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhQD0CiLwIDWv0AR7noQSjX1w0SU6pHGo&libraries=places&callback=initAutocomplete"
-            async
-            defer
-        ></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44"></script>
     </body>
 </html>
