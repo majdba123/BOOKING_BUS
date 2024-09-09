@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class AddressController extends Controller
@@ -14,10 +15,27 @@ class AddressController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+ /*   public function index()
     {
         $user = Auth::user()->id;
         $addresses = Address::where('user_id', $user)->get();
+        return response()->json($addresses);
+    }*/
+    public function index()
+    {
+        $user = Auth::user()->id;
+        $key = 'user_addresses_' . $user; // Create a unique cache key for each user
+        // Check if the data is already cached
+        if (Cache::has($key)) {
+            $addresses = Cache::get($key);
+        } else {
+            // If not, retrieve the data from the database and cache it
+            $addresses = Address::where('user_id', $user)->get();
+            Cache::put($key, $addresses, now()->addMinutes(30)); // Cache for 30 minutes
+        }
+        if ($addresses->isEmpty()) {
+            return response()->json(['message' => 'No addresses found'], 404);
+        }
         return response()->json($addresses);
     }
     /**
@@ -74,6 +92,7 @@ class AddressController extends Controller
     public function update(Request $request, $id)
     {
         $user = Auth::user()->id;
+        $key = 'user_addresses_' . $user;
         $address = Address::with('user')->find($id);
         if (!$address) {
             return response()->json(['error' => 'Address not found'], 404);
@@ -107,6 +126,17 @@ class AddressController extends Controller
                 $address->area = $request->input('area');
             }
             $address->save();
+            if (Cache::has($key)) {
+                $addresses = Cache::get($key);
+                $addresses = $addresses->map(function ($item) use ($address) {
+                    if ($item->id === $address->id) {
+                        return $address;
+                    }
+                    return $item;
+                });
+                Cache::put($key, $addresses, now()->addMinutes(30)); // Cache for 30 minutes
+                Cache::forget('user_data_' . auth()->id());
+            }
             DB::commit();
             return response()->json($address);
         } catch (\Exception $e) {

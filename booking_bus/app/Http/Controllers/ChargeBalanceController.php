@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Events\PrivateNotification;
 use App\Models\UserNotification;
+use Illuminate\Support\Facades\Cache;
 
 class ChargeBalanceController extends Controller
 {
@@ -22,19 +23,25 @@ class ChargeBalanceController extends Controller
      */
     public function index()
     {
-        $chargeBalances = Charge_Balance::where('status', 'padding')->get();
-
-        $data = [];
-        foreach ($chargeBalances as $chargeBalance) {
-            $data[] = [
-                'id' => $chargeBalance->id,
-                'user_id' => $chargeBalance->user_id,
-                'point' => $chargeBalance->point,
-                'image' => $chargeBalance->image,
-                'status' => $chargeBalance->status,
-            ];
+        $key = 'charge_balances'; // Create a unique cache key
+        // Check if the data is already cached
+        if (Cache::has($key)) {
+            $data = Cache::get($key);
+        } else {
+            // If not, retrieve the data from the database and cache it
+            $chargeBalances = Charge_Balance::where('status', 'padding')->get();
+            $data = [];
+            foreach ($chargeBalances as $chargeBalance) {
+                $data[] = [
+                    'id' => $chargeBalance->id,
+                    'user_id' => $chargeBalance->user_id,
+                    'point' => $chargeBalance->point,
+                    'image' => $chargeBalance->image,
+                    'status' => $chargeBalance->status,
+                ];
+            }
+            Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
         }
-
         return response()->json($data, 200);
     }
 
@@ -84,7 +91,7 @@ class ChargeBalanceController extends Controller
 
             // Save Image in Storage folder
             $request->image->storeAs('public/order_balance', $imageName);
-
+            Cache::forget('charge_balances');
             // Return Json Response
             return response()->json([
                 'message' => "Post successfully created."

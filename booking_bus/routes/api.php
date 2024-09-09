@@ -50,6 +50,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+Route::post('get_geolocation/{id}' ,[AreaController::class , 'get_geolocation']);
+
 Route::post('register', [UserApiController::class, 'register']);
 Route::post('login', [UserApiController::class, 'login']);
 Route::post('logout', [UserApiController::class, 'logout'])->middleware('auth:sanctum');

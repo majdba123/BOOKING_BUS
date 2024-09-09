@@ -51,6 +51,10 @@ class PathController extends Controller
                 'lat_to' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
                 'long_to' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                 'Distance' => 'required',
+                'lat_start' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                'long_start' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+                'lat_end' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                'long_end' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
             ]);
 
             if ($validator->fails()) {
@@ -61,8 +65,15 @@ class PathController extends Controller
 
             $lat_from = $request->input('lat_from');
             $long_from = $request->input('long_from');
+
             $lat_to = $request->input('lat_to');
             $long_to = $request->input('long_to');
+
+            $lat_start = $request->input('lat_start');
+            $long_start = $request->input('long_start');
+
+            $lat_end = $request->input('lat_end');
+            $long_end = $request->input('long_end');
 
             $fromLocation = geolocation::create([
                 'latitude' => $lat_from,
@@ -72,6 +83,16 @@ class PathController extends Controller
             $toLocation = geolocation::create([
                 'latitude' => $lat_to,
                 'longitude' => $long_to
+            ]);
+
+            $fromLocation_start = geolocation::create([
+                'latitude' => $lat_start,
+                'longitude' => $long_start
+            ]);
+
+            $toLocation_end = geolocation::create([
+                'latitude' => $lat_end,
+                'longitude' => $long_end
             ]);
 
             $path = new Path();
@@ -88,7 +109,7 @@ class PathController extends Controller
             $break = new Breaks();
             $break->name = "start";
             $break->path_id = $path->id;
-            $break->geolocation_id = $fromLocation->id;
+            $break->geolocation_id = $fromLocation_start->id;
 
             $break->save();
 
@@ -96,7 +117,7 @@ class PathController extends Controller
             $break = new Breaks();
             $break->name = "end";
             $break->path_id = $path->id;
-            $break->geolocation_id = $toLocation->id;
+            $break->geolocation_id = $toLocation_end->id;
 
             $break->save();
 

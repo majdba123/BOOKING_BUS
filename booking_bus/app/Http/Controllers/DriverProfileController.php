@@ -8,16 +8,24 @@ use App\Models\Profile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 class DriverProfileController extends Controller
 {
     public function index()
     {
-        $user = auth()->user()->load(['profile', 'address']);
+        $key = 'user_data_' . auth()->id(); // Create a unique cache key for the current user
+        // Check if the data is already cached
+        if (Cache::has($key)) {
+            $user = Cache::get($key);
+        } else {
+            // If not, retrieve the data from the database and cache it
+            $user = auth()->user()->load(['profile', 'address']);
 
+            Cache::put($key, $user, now()->addMinutes(30)); // Cache for 30 minutes
+        }
         return response()->json($user);
     }
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -101,7 +109,7 @@ class DriverProfileController extends Controller
                     'phone' => $request->phone
                 ]);
             }
-
+            Cache::forget('user_data_' . auth()->id());
             // Return Json Response
             return response()->json([
                 'message' => "Profile successfully updated."
@@ -132,7 +140,7 @@ class DriverProfileController extends Controller
 
         $user->password = Hash::make($request->new_password);
         $user->save();
-
+        Cache::forget('user_data_' . auth()->id());
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
 
