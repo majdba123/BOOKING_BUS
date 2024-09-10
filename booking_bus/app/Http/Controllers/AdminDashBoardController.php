@@ -17,17 +17,25 @@ use App\Models\Bus;
 use App\Models\Private_trip;
 use App\Models\Order_Private_trip;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class AdminDashBoardController extends Controller
 {
     public function all_user()
     {
-        //hamza
-        $users = User::where('type', '!=', 1) // Exclude users with type 0
-            ->doesntHave('driver')
-            ->doesntHave('company')
-            ->with(['profile', 'address'])
-            ->get();
+        $key = 'all_users'; // Create a unique cache key
+        // Check if the data is already cached
+        if (Cache::has($key)) {
+            $users = Cache::get($key);
+        } else {
+            // If not, retrieve the data from the database and cache it
+            $users = User::where('type', '!=', 1) // Exclude users with type 0
+                ->doesntHave('driver')
+                ->doesntHave('company')
+                ->with(['profile', 'address'])
+                ->get();
+            Cache::put($key, $users, now()->addMinutes(30)); // Cache for 30 minutes
+        }
         return response()->json($users);
     }
 
@@ -226,9 +234,12 @@ class AdminDashBoardController extends Controller
                 'from' => $busTrip->trip->path->from,
                 'to' => $busTrip->trip->path->to,
                 'price_trip' => $busTrip->trip->price,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
-                'date' => $busTrip->date,
+                'from_time_going' => $busTrip->from_time_going,
+                'to_time_going' => $busTrip->to_time_going,
+                'from_time_return' => $busTrip->from_time_return,
+                'to_time_return' => $busTrip->to_time_return,
+                'date_end' => $busTrip->date_end,
+                'date_start' => $busTrip->date_start,
                 'status' => $busTrip->status,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
@@ -268,9 +279,12 @@ class AdminDashBoardController extends Controller
                     'from' => $busTrip->trip->path->from,
                     'to' => $busTrip->trip->path->to,
                     'price_trip' => $busTrip->trip->price,
-                    'from_time' => $busTrip->from_time,
-                    'to_time' => $busTrip->to_time,
-                    'date' => $busTrip->date,
+                    'from_time_going' => $busTrip->from_time_going,
+                    'to_time_going' => $busTrip->to_time_going,
+                    'from_time_return' => $busTrip->from_time_return,
+                    'to_time_return' => $busTrip->to_time_return,
+                    'date_end' => $busTrip->date_end,
+                    'date_start' => $busTrip->date_start,
                     'status' => $busTrip->status,
                     'type' => $busTrip->type,
                     'event' => $busTrip->event,
@@ -399,6 +413,8 @@ class AdminDashBoardController extends Controller
                 'user_name' => $Private_trip->user->name,
                 'user_email' => $Private_trip->user->email,
                 'from' => $Private_trip->from,
+                'from_location' => $Private_trip->from_location,
+                'to_location' => $Private_trip->to_location,
                 'to' => $Private_trip->to,
                 'date' => $Private_trip->date,
                 'start_time' => $Private_trip->start_time,
@@ -576,10 +592,17 @@ class AdminDashBoardController extends Controller
                 $busTripData = [
 
                     'bus_id' => $busTrip->bus_id,
-                    'from_time' => $busTrip->from_time,
-                    'to_time' => $busTrip->to_time,
+                    'price_trip' => $busTrip->trip->price,
+                    'from_time_going' => $busTrip->from_time_going,
+                    'to_time_going' => $busTrip->to_time_going,
+                    'from_time_return' => $busTrip->from_time_return,
+                    'to_time_return' => $busTrip->to_time_return,
+                    'date_end' => $busTrip->date_end,
+                    'date_start' => $busTrip->date_start,
+                    'status' => $busTrip->status,
                     'type' => $busTrip->type,
-                    'event' => $busTrip->type,
+                    'event' => $busTrip->event,
+
                 ];
 
                 $pivotData = $busTrip->Pivoit;
@@ -654,10 +677,14 @@ class AdminDashBoardController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'from' => $trip->path->from,
-                'to' => $trip->path->to,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
+                'price_trip' => $busTrip->trip->price,
+                'from_time_going' => $busTrip->from_time_going,
+                'to_time_going' => $busTrip->to_time_going,
+                'from_time_return' => $busTrip->from_time_return,
+                'to_time_return' => $busTrip->to_time_return,
+                'date_end' => $busTrip->date_end,
+                'date_start' => $busTrip->date_start,
+                'status' => $busTrip->status,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];
@@ -692,8 +719,8 @@ class AdminDashBoardController extends Controller
 
     public function get_all_BusTripsByFillter(Request $request)
     {
-        $fromTime = $request->input('from_time');
-        $toTime = $request->input('to_time');
+        $fromTime = $request->input('from_time_going');
+        $toTime = $request->input('to_time_going');
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
@@ -703,7 +730,7 @@ class AdminDashBoardController extends Controller
         $busTrips = Bus_Trip::query();
 
         if ($fromTime) {
-            $busTrips->where('from_time', $fromTime);
+            $busTrips->where('from_time_going', $fromTime);
         }
 
         if ($status) {
@@ -711,7 +738,7 @@ class AdminDashBoardController extends Controller
         }
 
         if ($toTime) {
-            $busTrips->where('to_time', $toTime);
+            $busTrips->where('to_time_going', $toTime);
         }
 
         if ($type) {
@@ -741,8 +768,14 @@ class AdminDashBoardController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
+                'price_trip' => $busTrip->trip->price,
+                'from_time_going' => $busTrip->from_time_going,
+                'to_time_going' => $busTrip->to_time_going,
+                'from_time_return' => $busTrip->from_time_return,
+                'to_time_return' => $busTrip->to_time_return,
+                'date_end' => $busTrip->date_end,
+                'date_start' => $busTrip->date_start,
+                'status' => $busTrip->status,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];

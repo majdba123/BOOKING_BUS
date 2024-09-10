@@ -22,9 +22,10 @@ class AreaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function get_geolocation($id)
     {
-        //
+        $X=Geolocation::findorfail($id);
+        return response()->json($X);
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Models\Bus_Driver;
 use App\Models\Bus_Trip;
 use App\Models\Company;
 use App\Models\Driver;
+use App\Models\Geolocation;
 use App\Models\Path;
 use App\Models\Pivoit;
 use App\Models\Trip;
@@ -40,13 +41,9 @@ class TripTest extends TestCase
         $token = $response->json()['access_token'];
 
         // Create a path
-        $path = Path::factory()->create([
-            "company_id" => $company->id
-        ]);
+
 
         // Create breaks
-        $break1 = Breaks::factory()->create(['path_id' =>$path->id ]);
-        $break2 = Breaks::factory()->create(['path_id' =>$path->id ]);
 
         // Create buses
         $bus1 = Bus::factory()->create([
@@ -58,37 +55,63 @@ class TripTest extends TestCase
             "company_id" => $company->id
         ]);
 
+        $data1 = [
+            'company_id' => $company->id,  // Assuming you have a factory for Company
+            'from' => 'barzeh222',
+            'to' =>'masaken22222',
+            'lat_from' => 0.0012,  // Assuming you have a factory for Geolocation
+            'long_from' => 0.0012,
+            'lat_to' => 0.0012,
+            'long_to' => 0.0012,    // Assuming you have a factory for Geolocation
+            'Distance' => 700,
+
+        ];
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+        ];
+        $response = $this->postJson('/api/company/path_store', $data1, $headers);
+
+        $response->assertStatus(200);
+    //    dd($response);
+        $break1 = Breaks::factory()->create(['path_id' =>'2' ]);
+        $break2 = Breaks::factory()->create(['path_id' =>'2' ]);
+
         // Create request data
         $data = [
-            'path_id' => $path->id,
+            'path_id' => 2,
             'price' => '10.00',
             'bus_ids' => [
                 [
                     'bus_id' => $bus1->id,
                     'type' => 'all',
-                    'start_time' => '10:00',
-                    'end_time' => '12:00',
-                    'date' => '2023-03-01',
+                    "from_time_going" => "08:00",
+                    "to_time_going" => "18:00",
+                    "from_time_return" => "08:00",
+                    "to_time_return" => "18:00",
+                    "date_start" => "2022-01-10",
+                    "date_end"=> "2022-01-19",
                 ],
                 [
                     'bus_id' => $bus2->id,
                     'type' => 'all',
-                    'start_time' => '13:00',
-                    'end_time' => '15:00',
-                    'date' => '2023-03-01',
+                    "from_time_going" => "08:00",
+                    "to_time_going" => "18:00",
+                    "from_time_return" => "08:00",
+                    "to_time_return" => "18:00",
+                    "date_start" => "2022-01-10",
+                    "date_end"=> "2022-01-19",
                 ],
             ],
         ];
-        $headers = [
-            'Authorization' => 'Bearer ' . $token,
-        ];
+
         // Make the request
         $response = $this->postJson('/api/company/store_trip', $data, $headers);
 
         $response->assertStatus(201);
 
+
         $this->assertDatabaseHas('trips', [
-            'path_id' => $path->id,
+            'path_id' => 2,
             'company_id' => $company->id,
             'price' => '10.00',
         ]);
@@ -99,15 +122,18 @@ class TripTest extends TestCase
                 'breaks_id' => $breakId,
             ]);
         }*/
+        //dd($response->json());
         $this->assertEquals(4, Breaks_trip::where('trip_id', $response->json()['id'])->count()); // Check that two break trips were created
+
         foreach ($data['bus_ids'] as $busData) {
             $this->assertDatabaseHas('bus__trips', [
                 'trip_id' =>$response->json()['id'],
-                'bus_id' => $busData['bus_id'],
-                'type' => $busData['type'],
-                'from_time' => $busData['start_time'],
-                'to_time' => $busData['end_time'],
-                'date' => $busData['date'],
+                'from_time_going' => $busData['from_time_going'],
+                'to_time_going' => $busData['to_time_going'],
+                'from_time_return' => $busData['from_time_return'],
+                'to_time_return' => $busData['to_time_return'],
+                'date_end' => $busData['date_end'],
+                'date_start' => $busData['date_start'],
             ]);
         }
         $this->assertEquals(2, Bus_Trip::where('trip_id', $response->json()['id'])->count()); // Check that two bus trips were created

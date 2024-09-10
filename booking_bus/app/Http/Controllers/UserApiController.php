@@ -12,6 +12,7 @@ use App\Events\NotificatinEvent;
 use App\Events\PrivateNotification;
 use App\Models\Driver;
 use App\Models\UserNotification;
+use Illuminate\Support\Facades\Cache;
 
 class UserApiController extends Controller
 {
@@ -40,6 +41,7 @@ class UserApiController extends Controller
             'password' => Hash::make($request->input('password')),
         ]);
 
+        $this->updateAllUsersCache();
 
         $admins = User::where('type', 1)->get();
 
@@ -57,6 +59,17 @@ class UserApiController extends Controller
         return response()->json([
             'message' => 'User Created ',
         ]);
+    }
+
+    private function updateAllUsersCache()
+    {
+        $key = 'all_users';
+        $users = User::where('type', '!=', 1) // Exclude users with type 0
+            ->doesntHave('driver')
+            ->doesntHave('company')
+            ->with(['profile', 'address'])
+            ->get();
+        Cache::put($key, $users, now()->addMinutes(30)); // Cache for 30 minutes
     }
 
 

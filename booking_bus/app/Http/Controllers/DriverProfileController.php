@@ -8,30 +8,24 @@ use App\Models\Profile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
-
 class DriverProfileController extends Controller
 {
     public function index()
     {
-        $user = auth()->user()->load(['profile', 'address']);
-        $profileImage = $user->profile ? $user->profile->image : null;
-        $phoneNumber = $user->profile ? $user->profile->phone : null;
+        $key = 'user_data_' . auth()->id(); // Create a unique cache key for the current user
+        // Check if the data is already cached
+        if (Cache::has($key)) {
+            $user = Cache::get($key);
+        } else {
+            // If not, retrieve the data from the database and cache it
+            $user = auth()->user()->load(['profile', 'address']);
 
-        // Construct the response
-        $response = [
-            'id' => $user->id,
-            'name' => $user->name,
-            // 'type' => $user->type,
-            'email' => $user->email,
-            'point' => $user->point,
-            'profile_image' => $profileImage,
-            'phoneNumber' => $phoneNumber,
-            // 'address' => $user->address
-        ];
-        return response()->json($response);
+            Cache::put($key, $user, now()->addMinutes(30)); // Cache for 30 minutes
+        }
+        return response()->json($user);
     }
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -45,7 +39,7 @@ class DriverProfileController extends Controller
         }
 
         try {
-            $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
+            $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
             $user = auth()->user();
             if ($user->profile) {
                 return response()->json([
@@ -90,11 +84,11 @@ class DriverProfileController extends Controller
         }
 
         try {
-            $user = auth()->user();
+            $user =auth()->user();
             $profile = $user->profile;
 
             if ($request->hasFile('image')) {
-                $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
+                $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
                 $imageUrl = asset('storage/profile_image/' . $imageName);
 
                 // Delete existing image
@@ -115,7 +109,7 @@ class DriverProfileController extends Controller
                     'phone' => $request->phone
                 ]);
             }
-
+            Cache::forget('user_data_' . auth()->id());
             // Return Json Response
             return response()->json([
                 'message' => "Profile successfully updated."
@@ -146,7 +140,9 @@ class DriverProfileController extends Controller
 
         $user->password = Hash::make($request->new_password);
         $user->save();
-
+        Cache::forget('user_data_' . auth()->id());
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
+
+
 }
