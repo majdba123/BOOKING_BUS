@@ -24,9 +24,9 @@ class BussofSpsccifTripProvider with ChangeNotifier {
   late int _Distance;
   late int _busTripid;
   late String _Duration;
-  late int _busId;
+  late String _busId;
   int get tripid => _tripid;
-  int get busId => _busId;
+  String get busId => _busId;
 
   int get BusTripid => _busTripid;
   String get companyName => _companyName;
@@ -36,6 +36,15 @@ class BussofSpsccifTripProvider with ChangeNotifier {
   int get Ditacnce => _Distance;
   String get Duration => _Duration;
   String get to => _to;
+  int _selectedTypeTripIndex = 0;
+
+  int get selectedTypeTripIndex => _selectedTypeTripIndex;
+
+  void setTypeTripIndex(int index) {
+    _selectedTypeTripIndex = index;
+    notifyListeners();
+  }
+
   void setTripid(tripid) {
     _tripid = tripid;
     notifyListeners();
@@ -90,30 +99,30 @@ class BussofSpsccifTripProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      // Replace with your API call logic
       print('try!!!!');
       _busResponses =
           await TripBusApi().fetch_buss_of_spsecifc_trip(accessToken, tripId);
       print(_busResponses);
       print('the bus response $_busResponses');
     } catch (e) {
-      // Handle error
+      print(e);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> getSeatOfBusTrip(int busId, String accessToken) async {
+  Future<void> getSeatOfBusTrip(int busTripId, String accessToken) async {
     _isLoading = true;
-    notifyListeners();
+    // notifyListeners();
     try {
       // Replace with your API call logic
       print('try!!!!');
-      _SeatsOfBus = await TripStatus().fetchSeatOfBus(accessToken, busId);
+      _SeatsOfBus = await TripStatus().fetchSeatOfBus(accessToken, busTripId);
       notifyListeners();
-      print(_SeatsOfBus);
-      print('the _SeatsOfBus response $_busResponses');
+      // print('-----------------------');
+      // print(_SeatsOfBus);
+      // print('the _SeatsOfBus response $_busResponses');
     } catch (e) {
       // Handle error
     } finally {

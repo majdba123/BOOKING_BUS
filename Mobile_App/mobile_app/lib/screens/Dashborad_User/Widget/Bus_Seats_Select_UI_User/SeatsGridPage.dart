@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:delayed_display/delayed_display.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/ConfirmButton.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/DeckSwitch.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/seatLegendRow.dart';
@@ -29,8 +30,15 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
     providerSpecificBusTrip =
         Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    var provideruser = Provider.of<TripuserProvider>(context, listen: false);
+
+    print(provideruser.selectIndexOfSpsecifcBustrip);
     providerSpecificBusTrip.getSeatOfBusTrip(
-        providerSpecificBusTrip.busId, authProvider.accessToken);
+        providerSpecificBusTrip
+            .busResponses[provideruser.selectIndexOfSpsecifcBustrip]
+            .bus_trip_id,
+        authProvider.accessToken);
   }
 
   @override
@@ -117,7 +125,7 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
     // Adding the selected seats to the provider
     for (String seatId in selectedSeats) {
       String seatType = busProvider.getSeatType(seatId);
-      int seatPrice = busProvider.price_trip;
+      double seatPrice = busProvider.price_trip;
 
       busProvider.addTicketDetail(
         TicketDetail(type: seatType, quantity: 1, price: seatPrice),
@@ -127,8 +135,12 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
     busProvider.selectSeat(selectedSeats);
     busProvider.calculatePrice(selectedSeats.length, busProvider.price_tiket);
 
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => PassengerDetailsPage()),
-    );
+    if (selectedSeats.isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => PassengerDetailsPage()),
+      );
+    } else {
+      showErrorDialog(context, 'You Must Chosse A Seat First  ');
+    }
   }
 }

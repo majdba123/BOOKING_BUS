@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
+import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:ticket_widget/ticket_widget.dart';
 
 class TripTicketPage extends StatefulWidget {
   @override
@@ -145,8 +147,8 @@ class _TripTicketPageState extends State<TripTicketPage> {
   @override
   Widget build(BuildContext context) {
     final reservation = Provider.of<TripuserProvider>(context).reservation;
-    final fromLocation = Provider.of<TripuserProvider>(context).from;
-    final toLocation = Provider.of<TripuserProvider>(context).to;
+    final userProvider = Provider.of<TripuserProvider>(context);
+    final busprovider = Provider.of<BussofSpsccifTripProvider>(context);
     final currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
     if (reservation == null) {
@@ -233,7 +235,7 @@ class _TripTicketPageState extends State<TripTicketPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Start Point',
+                                  'Bording Point',
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
                                 Text(reservation.breakName),
@@ -250,12 +252,11 @@ class _TripTicketPageState extends State<TripTicketPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Seats',
+                                  'Duration',
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
-                                ...reservation.seats.map<Widget>((seat) {
-                                  return Text('Seat ID: ${seat.seatId}');
-                                }).toList(),
+                                Text(
+                                    '${busprovider.busResponses[userProvider.selectIndexOfSpsecifcBustrip].tripDuration}'),
                                 SizedBox(height: 28),
                                 Text(
                                   'Date',
@@ -319,7 +320,9 @@ class _TripTicketPageState extends State<TripTicketPage> {
                               'From',
                               style: TextStyle(color: veppoLightGrey),
                             ),
-                            Text(fromLocation ?? 'N/A'),
+                            Text(
+                                '${busprovider.busResponses[userProvider.selectIndexOfSpsecifcBustrip].from}' ??
+                                    'N/A'),
                           ],
                         ),
                         Column(
@@ -329,7 +332,9 @@ class _TripTicketPageState extends State<TripTicketPage> {
                               'To',
                               style: TextStyle(color: veppoLightGrey),
                             ),
-                            Text(toLocation ?? 'N/A'),
+                            Text(
+                                '${busprovider.busResponses[userProvider.selectIndexOfSpsecifcBustrip].to}' ??
+                                    'N/A'),
                           ],
                         ),
                       ],
@@ -357,7 +362,7 @@ class _TripTicketPageState extends State<TripTicketPage> {
               ),
               SizedBox(height: 20),
               Container(
-                width: double.infinity,
+                // width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(
@@ -373,8 +378,12 @@ class _TripTicketPageState extends State<TripTicketPage> {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Text('Go to Dashboard'),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 12),
+                    child: Text(
+                      'Go to Dashboard',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ),

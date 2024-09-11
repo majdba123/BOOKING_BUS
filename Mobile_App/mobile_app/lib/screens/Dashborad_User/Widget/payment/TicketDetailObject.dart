@@ -1,7 +1,7 @@
 class TicketDetail {
   final String type;
   final int quantity;
-  final int price;
+  final double price;
 
   TicketDetail({
     required this.type,

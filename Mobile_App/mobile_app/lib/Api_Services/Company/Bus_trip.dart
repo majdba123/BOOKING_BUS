@@ -70,7 +70,11 @@ class TripStatus {
     print(response.statusCode);
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
-      return jsonList.map((json) => SeatModel.fromJson(json)).toList();
+      print('the json list is : $jsonList');
+      var a = jsonList.map((json) => SeatModel.fromJson(json)).toList();
+      print('the a is !!!');
+      print(a);
+      return a;
     } else {
       throw Exception('Failed to Bus Seat: ${response.statusCode}');
     }

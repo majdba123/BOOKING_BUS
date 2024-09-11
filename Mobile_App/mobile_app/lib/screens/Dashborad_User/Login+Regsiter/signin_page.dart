@@ -182,9 +182,6 @@ class _SignInPageState extends State<SignInPage> {
                               await authProvider.setAuthData(
                                   emailController.text,
                                   passwordController.text);
-                              // if (authProvider.accessToken.isNotEmpty) {
-
-                              // }
 
                               Navigator.of(context).pop();
 
@@ -199,16 +196,7 @@ class _SignInPageState extends State<SignInPage> {
                                   await tripProvider.getAllcompanies(
                                       authProvider.accessToken);
                                 }
-                                //else if (authProvider.userType == "driver") {
-                                // destinationPage = ProfileCheckPage();
-                                // }
-                                //  else {
-                                //   showCustomAlertDialog(
-                                //     context,
-                                //     "Unexpected user type: ${authProvider.userType}",
-                                //   );
-                                //   return;
-                                // }
+
                                 Navigator.push(context,
                                     animetedRoutePage(ProfileCheckPage()));
                               } else {
@@ -221,7 +209,6 @@ class _SignInPageState extends State<SignInPage> {
                             return InkWell(
                               onTap: onTap ??
                                   () {
-                                    // If onTap is null (button is in cooldown), show the SnackBar
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(

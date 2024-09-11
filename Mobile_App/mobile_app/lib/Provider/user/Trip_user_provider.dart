@@ -38,13 +38,14 @@ class TripuserProvider with ChangeNotifier {
   String? to;
   late int trip_type;
   late int select_place_debording_break_id;
-  late String select_place_bording_break_id;
+  late int select_place_bording_break_id;
   BreakPlace? _selectedBoardingPoint;
   BreakPlace? _selectedDeboardingPoint;
   int price_tiket = 0;
-  int price_trip = 0;
+  double price_trip = 0;
   int totoal_price = 0;
   late int _busTripid;
+  late int _selectIndexOfBustrip;
   BreakPlace? get selectedBoardingPoint => _selectedBoardingPoint;
   BreakPlace? get selectedDeboardingPoint => _selectedDeboardingPoint;
   Reservation? _reservation;
@@ -56,7 +57,7 @@ class TripuserProvider with ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
   int get busTripid => _busTripid;
-
+  int get selectIndexOfSpsecifcBustrip => _selectIndexOfBustrip;
   void addTicketDetail(TicketDetail detail) {
     _selectedTicketDetails.add(detail);
     notifyListeners();
@@ -99,7 +100,7 @@ class TripuserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void save_price_from_Trip(int price) {
+  void save_price_from_Trip(double price) {
     price_trip = price;
     notifyListeners();
   }
@@ -127,13 +128,13 @@ class TripuserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void selectBordingBreakPlcaeId(String idBreakPlace) {
+  void selectBordingBreakPlcaeId(int idBreakPlace) {
     select_place_bording_break_id = idBreakPlace;
     print('the break id select bording  : $select_place_bording_break_id');
     notifyListeners();
   }
 
-  void selectdeBordingBreakPlcaeId(String idBreakPlace) {
+  void selectdeBordingBreakPlcaeId(int idBreakPlace) {
     select_place_bording_break_id = idBreakPlace;
     print('the break id select deborading $select_place_bording_break_id');
     notifyListeners();
@@ -151,6 +152,11 @@ class TripuserProvider with ChangeNotifier {
 
   void selectTripType(int tripType) {
     trip_type = tripType;
+    notifyListeners();
+  }
+
+  void selectIndexOfBustrip(int selectIndexOfBustrip) {
+    _selectIndexOfBustrip = selectIndexOfBustrip;
     notifyListeners();
   }
 
@@ -231,7 +237,7 @@ class TripuserProvider with ChangeNotifier {
   }
 
   Future<void> make_reservation(String accessToken, int type, List<String> seat,
-      String breakId, int bus_trip_id) async {
+      int breakId, int bus_trip_id) async {
     final url =
         Uri.parse(name_domain_server + 'user/store_reservation/${bus_trip_id}');
     final headers = {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/widget/buildDetailColumn.dart';
@@ -11,6 +10,8 @@ class BusHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final providerSpecificBusTrip =
         Provider.of<BussofSpsccifTripProvider>(context, listen: false);
+    final BusTrip = providerSpecificBusTrip
+        .busResponses[providerSpecificBusTrip.selectedTypeTripIndex];
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -54,21 +55,29 @@ class BusHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildDetailColumn(Icons.place, providerSpecificBusTrip.from),
+              buildDetailColumn(
+                  Icons.place,
+                  providerSpecificBusTrip.selectedTypeTripIndex == 0
+                      ? BusTrip.from
+                      : BusTrip.to),
               buildDetailColumn(Icons.access_time,
-                  'S : ${providerSpecificBusTrip.fromTime} - E : ${providerSpecificBusTrip.toTime}'),
-              buildDetailColumn(Icons.place, providerSpecificBusTrip.to),
+                  'S : ${providerSpecificBusTrip.selectedTypeTripIndex == 0 ? BusTrip.goingfromTime : BusTrip.ReturnfromTime} - E : ${providerSpecificBusTrip.selectedTypeTripIndex == 0 ? BusTrip.goingtoTime : BusTrip.ReturntoTime}'),
+              buildDetailColumn(
+                  Icons.place,
+                  providerSpecificBusTrip.selectedTypeTripIndex == 0
+                      ? BusTrip.to
+                      : BusTrip.from),
             ],
           ),
           SizedBox(height: 12.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              buildIconWithText(Icons.access_time,
-                  ' T :  ${providerSpecificBusTrip.Duration} H'),
+              buildIconWithText(
+                  Icons.access_time, ' T :  ${BusTrip.tripDuration} H'),
               SizedBox(width: 12.0),
-              buildIconWithText(Icons.linear_scale_sharp,
-                  'D : ${providerSpecificBusTrip.Ditacnce}Km'),
+              buildIconWithText(
+                  Icons.linear_scale_sharp, 'D : ${BusTrip.Distance}Km'),
             ],
           ),
         ],

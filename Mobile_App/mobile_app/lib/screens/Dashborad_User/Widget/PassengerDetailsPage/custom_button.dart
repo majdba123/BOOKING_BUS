@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Breack_place.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/PaymentDetails.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/payment/PaymentMethods.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/pay_button.dart.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/payment/payment_page.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
@@ -95,7 +93,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                               ),
                               SizedBox(height: 20),
                               Text(
-                                'Boarding and Deboarding points:',
+                                'Boarding points:',
                                 style: TextStyle(
                                   fontSize: sectionTitleSize,
                                   fontWeight: FontWeight.bold,
@@ -127,16 +125,6 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                                         Text(
                                           selectedBoardingPoint != null
                                               ? '🚌 ${selectedBoardingPoint!.nameBreak} @ 5:50am'
-                                              : '🚌 Not Selected',
-                                          style: TextStyle(
-                                            color: AppColors.primaryColor,
-                                            fontSize: inputFontSize,
-                                          ),
-                                        ),
-                                        SizedBox(height: 8.0),
-                                        Text(
-                                          selectedDeboardingPoint != null
-                                              ? '🚌 ${selectedDeboardingPoint!.nameBreak} @ 11:15am'
                                               : '🚌 Not Selected',
                                           style: TextStyle(
                                             color: AppColors.primaryColor,

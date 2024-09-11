@@ -54,10 +54,6 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
           ..fields['phone'] = _phoneController.text
           ..files.add(await http.MultipartFile.fromPath('image', _image!.path));
 
-        // Add other fields if required by the API, e.g.:
-        // ..fields['email'] = _emailController.text;
-        // ..fields['name'] = _nameController.text;
-
         var response = await request.send();
         var responseBody = await response.stream.bytesToString();
 
@@ -65,7 +61,6 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
         print('Response Body: $responseBody');
 
         if (response.statusCode == 200 || response.statusCode == 201) {
-          // Handle success
           if (authprovider.userType == "user") {
             Navigator.of(context).pushNamedAndRemoveUntil(
                 '/mainPageUser', (Route<dynamic> route) => false);
@@ -74,13 +69,11 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
                 '/driverPageUser', (Route<dynamic> route) => false);
           }
         } else {
-          // Handle error with more detailed information
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to update profile: $responseBody')),
           );
         }
       } catch (e) {
-        // Handle unexpected errors
         print('An error occurred: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -38,7 +38,7 @@ class RouteCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        tripUserProvider.save_price_from_Trip(int.parse(price));
+        tripUserProvider.save_price_from_Trip(double.parse(price));
         busOfSpecficTrip.setTripid(tripId);
         busOfSpecficTrip.setcompanyName(companyName);
 
