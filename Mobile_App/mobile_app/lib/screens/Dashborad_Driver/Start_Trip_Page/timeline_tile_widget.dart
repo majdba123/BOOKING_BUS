@@ -29,6 +29,11 @@ class TimelineTileWidget extends StatelessWidget {
             bool isCurrent = index == provider.currentStopIndex;
             bool passed = index < provider.currentStopIndex;
             cumulativePassengers += stop.passengers_count;
+            // print('is First $isFirst');
+            // print('is isLast $isLast');
+            // print('is isCurrent $isCurrent');
+            // print('is passed $passed');
+            // print(' index $isFirst');
 
             return InkWell(
               onTap: () {

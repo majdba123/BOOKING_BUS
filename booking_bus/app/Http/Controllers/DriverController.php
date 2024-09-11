@@ -283,8 +283,9 @@ class DriverController extends Controller
             return response()->json(['error' => 'No pending bus found for the driver'], 404);
         }
         // print($bus);
-        $trips = Bus_Trip::where('status', 'pending')
-            ->where('bus_id', $bus->bus_id)
+        $trips = Bus_Trip::where('bus_id', $bus->bus_id)
+            // where('status', 'pending')
+            // ->
             ->get();
 
         if ($trips->isEmpty()) {
@@ -351,9 +352,7 @@ class DriverController extends Controller
             return response()->json(['error' => 'No pending bus found for the driver'], 404);
         }
         // print($bus);
-        $trip = Bus_Trip::where('status', 'pending')
-            ->where('id', $bus_trip_id)
-            // ->where('bus_id', $bus->bus_id)
+        $trip = Bus_Trip::where('id', $bus_trip_id)
             ->first();
 
         if (!$trip) {
@@ -842,7 +841,7 @@ class DriverController extends Controller
                                 'bus_trip_id' => $reservation->bus_trip_id,
                                 'type' => $reservation->type,
                                 // 'bus_trip_id' => $reservation->bus__trip_id,
-                                'status' => $reservation->status,
+                                // 'status' => $reservation->status,
                                 'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
                             ];
                         });

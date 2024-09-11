@@ -240,7 +240,7 @@ class DriverService {
     }
   }
 
-  Future<void> finsishBreack(
+  Future<int> finsishBreack(
       BuildContext context, String accessToken, int pivoitId) async {
     try {
       final response = await http.post(
@@ -262,8 +262,10 @@ class DriverService {
 
           if (message.isNotEmpty) {
             showSuccessDialog(context, message);
+            return 200;
           } else {
             showErrorDialog(context, message);
+            return 500;
           }
         } else {
           showErrorDialog(context, "Unexpected response format.");
@@ -274,5 +276,6 @@ class DriverService {
     } catch (error) {
       showErrorDialog(context, "Failed to load data: $error");
     }
+    return 500;
   }
 }

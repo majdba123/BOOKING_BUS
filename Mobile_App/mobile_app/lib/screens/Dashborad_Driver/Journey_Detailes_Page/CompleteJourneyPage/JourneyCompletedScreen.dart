@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/JourneyAppBar.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/MainPage/Dashbord.dart';
 
 class JourneyCompletedScreen extends StatelessWidget {
@@ -8,25 +9,7 @@ class JourneyCompletedScreen extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFF0A3D5F),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          'Coimbatore to Chennai',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: screenHeight * 0.025,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      appBar: JourneyAppBar(),
       body: Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
@@ -47,7 +30,7 @@ class JourneyCompletedScreen extends StatelessWidget {
               ),
               SizedBox(height: screenHeight * 0.04),
               Text(
-                'Journey Completed Successfully',
+                'Trip Completed Successfully',
                 style: TextStyle(
                   fontSize: screenHeight * 0.022,
                   fontWeight: FontWeight.w600,
@@ -57,7 +40,7 @@ class JourneyCompletedScreen extends StatelessWidget {
               ),
               SizedBox(height: screenHeight * 0.01),
               Text(
-                'This journey has been completed successfully and here we generated your stats',
+                'This Trip has been completed successfully and here we generated your stats',
                 style: TextStyle(
                   fontSize: screenHeight * 0.018,
                   color: Colors.teal,
