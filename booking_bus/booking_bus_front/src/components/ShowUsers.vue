@@ -755,24 +755,24 @@ h1 {
 h2 {
     font-size: 1.4rem;
 }
-.btn-primary {
-    background: linear-gradient(90deg, #7380ec 0%, #4b6cb7 100%) !important;
+.nav-btnd.btn-primary {
+    background: #7380ec;
 }
 
-.btn-success {
-    background: linear-gradient(90deg, #41f1b6 0%, #28a745 100%) !important;
+.nav-btnd.btn-success {
+    background: #4caf50;
 }
 
-.btn-warning {
-    background: linear-gradient(90deg, #ffc107 0%, #e0a800 100%) !important;
+.nav-btnd.btn-warning {
+    background: #ff9800;
 }
 
-.btn-info {
-    background: linear-gradient(90deg, #17a2b8 0%, #117a8b 100%) !important;
+.nav-btnd.btn-info {
+    background: #17a2b8;
 }
 
-.btn-danger {
-    background: linear-gradient(90deg, #ff7782 0%, #d9534f 100%) !important;
+.nav-btnd.btn-danger {
+    background: #f44336;
 }
 
 .table-container {

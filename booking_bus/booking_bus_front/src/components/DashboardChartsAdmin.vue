@@ -74,8 +74,7 @@ export default {
     name: "DashboardChartsAdmin",
     data() {
         return {
-            trips: [], // Store trip data here
-
+            trips: [],
             dashboardData: null,
             dailyProfits: [],
             weeklyProfits: [],
@@ -92,8 +91,7 @@ export default {
     },
     mounted() {
         this.fetchTripsData(); // Fetch trips data when component is mounted
-
-        this.fetchDashboardData();
+        this.loadDashboardData();
     },
     beforeUnmount() {
         this.destroyCharts();
@@ -121,6 +119,28 @@ export default {
                 .catch((error) => {
                     console.error("Error fetching trips data:", error);
                 });
+        },
+
+        loadDashboardData() {
+            const cachedData = localStorage.getItem("dashboardData");
+            const cacheTimestamp = localStorage.getItem(
+                "dashboardDataTimestamp"
+            );
+            const currentTime = new Date().getTime();
+
+            if (
+                cachedData &&
+                cacheTimestamp &&
+                currentTime - cacheTimestamp < 30 * 60 * 1000
+            ) {
+                // Use cached data
+                this.dashboardData = JSON.parse(cachedData);
+                this.processProfitsData();
+                this.createCharts();
+            } else {
+                // Fetch new data from API
+                this.fetchDashboardData();
+            }
         },
 
         fetchDashboardData() {
@@ -172,6 +192,15 @@ export default {
                         all_user: response.data.all_user || 0,
                         all_company: response.data.all_company || 0,
                     };
+                    // Cache the data
+                    localStorage.setItem(
+                        "dashboardData",
+                        JSON.stringify(this.dashboardData)
+                    );
+                    localStorage.setItem(
+                        "dashboardDataTimestamp",
+                        new Date().getTime()
+                    );
                     this.processProfitsData();
                     this.createCharts();
                 })
@@ -179,6 +208,7 @@ export default {
                     console.error("Error fetching dashboard data:", error);
                 });
         },
+
         processProfitsData() {
             this.dailyProfits = [
                 this.dashboardData.total_profit_pending,
@@ -196,6 +226,7 @@ export default {
                 this.dashboardData.total_profit_out,
             ];
         },
+
         createCharts() {
             if (this.dashboardData) {
                 this.createTripStatusChart();
@@ -208,6 +239,7 @@ export default {
                 this.createMonthlyProfitsChart();
             }
         },
+
         destroyCharts() {
             if (this.tripStatusChart) this.tripStatusChart.destroy();
             if (this.busStatusChart) this.busStatusChart.destroy();
@@ -218,6 +250,7 @@ export default {
             if (this.weeklyProfitsChart) this.weeklyProfitsChart.destroy();
             if (this.monthlyProfitsChart) this.monthlyProfitsChart.destroy();
         },
+
         createTripStatusChart() {
             let data = [
                 this.dashboardData.pending_trip,
@@ -256,6 +289,7 @@ export default {
                 },
             });
         },
+
         createBusStatusChart() {
             let data = [
                 this.dashboardData.pending_bus_trip,
@@ -294,6 +328,7 @@ export default {
                 },
             });
         },
+
         createDriverStatusChart() {
             let data = [
                 this.dashboardData.pending_drivers,
@@ -332,6 +367,7 @@ export default {
                 },
             });
         },
+
         createReservationChart() {
             let data = [
                 this.dashboardData.pending_reservations,
@@ -347,16 +383,15 @@ export default {
                 .getElementById("reservationChart")
                 .getContext("2d");
             this.reservationChart = new Chart(ctx, {
-                type: "bar",
+                type: "pie",
                 data: {
                     labels: [
                         "Pending Reservations",
                         "Completed Reservations",
-                        "Out Reservation",
+                        "Out Reservations",
                     ],
                     datasets: [
                         {
-                            label: "Reservations",
                             data: data,
                             backgroundColor: ["#007bff", "#28a745", "#ffc107"],
                             borderWidth: 1,
@@ -368,14 +403,10 @@ export default {
                 },
                 options: {
                     responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                        },
-                    },
                 },
             });
         },
+
         createPrivateTripsChart() {
             let data = [
                 this.dashboardData.inProgress_PrivateTrips,
@@ -391,12 +422,15 @@ export default {
                 .getElementById("privateTripsChart")
                 .getContext("2d");
             this.privateTripsChart = new Chart(ctx, {
-                type: "bar",
+                type: "pie",
                 data: {
-                    labels: ["In Progress", "Completed", "Canceled"],
+                    labels: [
+                        "In Progress Private Trips",
+                        "Completed Private Trips",
+                        "Canceled Private Trips",
+                    ],
                     datasets: [
                         {
-                            label: "Private Trips",
                             data: data,
                             backgroundColor: ["#007bff", "#28a745", "#ffc107"],
                             borderWidth: 1,
@@ -408,14 +442,10 @@ export default {
                 },
                 options: {
                     responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                        },
-                    },
                 },
             });
         },
+
         createDailyProfitsChart() {
             const ctx = document
                 .getElementById("dailyProfitsChart")
@@ -429,23 +459,17 @@ export default {
                             label: "Daily Profits",
                             data: this.dailyProfits,
                             backgroundColor: ["#007bff", "#28a745", "#ffc107"],
-                            borderWidth: 1,
                             borderColor: "#333",
-                            hoverBorderWidth: 3,
-                            hoverOffset: 15,
+                            borderWidth: 1,
                         },
                     ],
                 },
                 options: {
                     responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                        },
-                    },
                 },
             });
         },
+
         createWeeklyProfitsChart() {
             const ctx = document
                 .getElementById("weeklyProfitsChart")
@@ -459,23 +483,17 @@ export default {
                             label: "Weekly Profits",
                             data: this.weeklyProfits,
                             backgroundColor: ["#007bff", "#28a745", "#ffc107"],
-                            borderWidth: 1,
                             borderColor: "#333",
-                            hoverBorderWidth: 3,
-                            hoverOffset: 15,
+                            borderWidth: 1,
                         },
                     ],
                 },
                 options: {
                     responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                        },
-                    },
                 },
             });
         },
+
         createMonthlyProfitsChart() {
             const ctx = document
                 .getElementById("monthlyProfitsChart")
@@ -489,20 +507,13 @@ export default {
                             label: "Monthly Profits",
                             data: this.monthlyProfits,
                             backgroundColor: ["#007bff", "#28a745", "#ffc107"],
-                            borderWidth: 1,
                             borderColor: "#333",
-                            hoverBorderWidth: 3,
-                            hoverOffset: 15,
+                            borderWidth: 1,
                         },
                     ],
                 },
                 options: {
                     responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                        },
-                    },
                 },
             });
         },

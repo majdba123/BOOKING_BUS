@@ -30,7 +30,14 @@
                         />
                         <button @click="search">Search</button>
                     </div>
-                    <GoogleMap class="map-container" />
+                    <div
+                        class="theme-toggler"
+                        ref="themeToggler"
+                        @click="toggleTheme"
+                    >
+                        <span class="material-icons active">light_mode</span>
+                        <span class="material-icons">dark_mode</span>
+                    </div>
                 </div>
                 <AddCompany ref="addCompany" />
             </main>
@@ -42,14 +49,6 @@
                 <button id="menu_bar" @click="openMenu">
                     <span class="material-icons">menu</span>
                 </button>
-                <div
-                    class="theme-toggler"
-                    ref="themeToggler"
-                    @click="toggleTheme"
-                >
-                    <span class="material-icons active">light_mode</span>
-                    <span class="material-icons">dark_mode</span>
-                </div>
             </div>
             <!--end top-->
         </div>
@@ -229,7 +228,7 @@ body {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 19rem;
+    grid-template-columns: 14rem auto 0rem;
     margin-left: 0;
     height: 100vh;
     overflow-y: auto;
@@ -327,6 +326,7 @@ aside .logo {
     display: flex;
     gap: 1rem;
     align-items: center;
+    justify-content: space-between;
 }
 
 .date {
@@ -406,7 +406,7 @@ aside .logo {
     background-color: var(--clr-primary-variant);
 }
 
-.right .theme-toggler {
+.top-bar .theme-toggler {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -416,13 +416,13 @@ aside .logo {
     cursor: pointer;
 }
 
-.right .theme-toggler span {
+.top-bar .theme-toggler span {
     font-size: 1.4rem;
     color: var(--clr-warning);
     cursor: pointer;
 }
 
-.right .theme-toggler span.active {
+.top-bar .theme-toggler span.active {
     color: var(--clr-primary);
 }
 

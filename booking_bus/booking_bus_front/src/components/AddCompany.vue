@@ -130,28 +130,30 @@
                     </div>
                 </div>
             </div>
-            <button
-                type="button"
-                @click="
-                    current_page == first_page
-                        ? (current_page = last_page)
-                        : (current_page -= 1);
-                    AllCompany();
-                "
-            >
-                &#10508;
-            </button>
-            <button
-                type="button"
-                @click="
-                    current_page == last_page
-                        ? (current_page = first_page)
-                        : (current_page += 1);
-                    AllCompany();
-                "
-            >
-                &#10511;
-            </button>
+            <div class="button-container">
+                <button
+                    type="button"
+                    @click="
+                        current_page == first_page
+                            ? (current_page = last_page)
+                            : (current_page -= 1);
+                        AllCompany();
+                    "
+                >
+                    &#10508;
+                </button>
+                <button
+                    type="button"
+                    @click="
+                        current_page == last_page
+                            ? (current_page = first_page)
+                            : (current_page += 1);
+                        AllCompany();
+                    "
+                >
+                    &#10511;
+                </button>
+            </div>
         </div>
 
         <div v-if="showDriverStatusModal" class="modal">
@@ -1305,6 +1307,38 @@ select:focus {
     background-color: #f44336;
 }
 /* Navigation styling */
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+button {
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 0 5px;
+}
+
+button:hover {
+    background-color: var(--clr-primary-variant);
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
 
 .nav-btnd.btn-primary {
     background: #7380ec;
@@ -1381,7 +1415,6 @@ input:focus {
     border-radius: 15px;
     width: 100%;
     transition: background-color 0.3s ease;
-    margin-left: 5rem;
 }
 .form-content {
     background-color: rgba(var(--clr-white), 0.9);
@@ -1593,7 +1626,6 @@ label {
 }
 .recent_orders {
     width: 100%;
-    overflow-x: auto;
     margin-top: 20px;
     margin-left: 1.2rem;
 }

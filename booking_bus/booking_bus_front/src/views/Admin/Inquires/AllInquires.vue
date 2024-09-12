@@ -19,6 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
+                <h1>All Inquires</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -321,10 +322,10 @@ a {
 }
 
 h1 {
-    margin-top: 13px;
     font-weight: 700;
     font-size: 2rem;
     color: var(--clr-dark);
+    margin-top: 20px;
 }
 
 h2 {
@@ -422,7 +423,6 @@ aside .logo {
     display: flex;
     gap: 1rem;
     align-items: center;
-    margin-top: 5rem;
 }
 
 .date {

@@ -1,72 +1,66 @@
 <template>
-    <div class="containerd">
-        <div class="content">
-            <div class="recent_orders">
-                <h1>Inquiries</h1>
-                <div class="navd">
-                    <button @click="fetchData('pending')" class="nav-btnddd">
-                        Pending
-                    </button>
-                    <button @click="fetchData('completed')" class="nav-btnddd">
-                        Completed
-                    </button>
+    <div class="content">
+        <div class="recent_orders">
+            <div class="navd">
+                <button @click="fetchData('pending')" class="nav-btnddd">
+                    Pending
+                </button>
+                <button @click="fetchData('completed')" class="nav-btnddd">
+                    Completed
+                </button>
+            </div>
+            <div class="table-container">
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
                 </div>
-                <div class="table-container">
-                    <div v-if="loading" class="spinner-container">
-                        <div class="spinner"></div>
+                <div v-else>
+                    <div v-if="!items.length > 0" class="no-data-message">
+                        No Data Available
                     </div>
                     <div v-else>
-                        <div v-if="!items.length > 0" class="no-data-message">
-                            No Data Available
-                        </div>
-                        <div v-else>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>User ID</th>
-                                        <th>Email</th>
-                                        <th>Question</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr
-                                        v-for="(item, index) in items"
-                                        :key="index"
-                                    >
-                                        <td>{{ index }}</td>
-                                        <td>{{ item.email_user }}</td>
-                                        <td>{{ item.question }}</td>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Email</th>
+                                    <th>Question</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in items" :key="index">
+                                    <td>{{ index }}</td>
+                                    <td>{{ item.email_user }}</td>
+                                    <td>{{ item.question }}</td>
 
-                                        <td>{{ item.status }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                    <td>{{ item.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-if="showItemModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Inquiry Details</div>
-                <div class="modal-body">
-                    <p>
-                        <strong>User Name:</strong>
-                        {{ selectedItem.user_id }}
-                    </p>
-                    <p><strong>Email:</strong> {{ selectedItem.email }}</p>
-                    <p>
-                        <strong>Question:</strong>
-                        {{ selectedItem.question }}
-                    </p>
-                    <p><strong>Status:</strong> {{ selectedItem.status }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button @click="closeItemModal" class="close-modal">
-                        Close
-                    </button>
-                </div>
+    </div>
+    <div v-if="showItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Inquiry Details</div>
+            <div class="modal-body">
+                <p>
+                    <strong>User Name:</strong>
+                    {{ selectedItem.user_id }}
+                </p>
+                <p><strong>Email:</strong> {{ selectedItem.email }}</p>
+                <p>
+                    <strong>Question:</strong>
+                    {{ selectedItem.question }}
+                </p>
+                <p><strong>Status:</strong> {{ selectedItem.status }}</p>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeItemModal" class="close-modal">
+                    Close
+                </button>
             </div>
         </div>
     </div>

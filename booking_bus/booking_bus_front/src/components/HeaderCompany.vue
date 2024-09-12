@@ -2,30 +2,43 @@
     <main>
         <div class="top-bar">
             <h1>{{ x }}</h1>
-            <div class="datetime-container">
-                <div class="time">
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[0] }}
-                        <span>hour</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[1] }}
-                        <span>minutes</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[2] }}
-                        <span>seconds</span>
-                    </div>
-                </div>
-            </div>
+            <div class="datetime-container"></div>
             <div class="profile-menu">
-                <div
-                    class="theme-toggler"
-                    ref="themeToggler"
-                    @click="toggleTheme"
-                >
-                    <span class="material-icons active">light_mode</span>
-                    <span class="material-icons">dark_mode</span>
+                <div class="theme-notification-container">
+                    <div
+                        class="theme-toggler"
+                        ref="themeToggler"
+                        @click="toggleTheme"
+                    >
+                        <span class="material-icons active">light_mode</span>
+                        <span class="material-icons">dark_mode</span>
+                    </div>
+                    <div
+                        class="notification-icon"
+                        @click="toggleNotificationsMenu"
+                    >
+                        <span class="material-icons">notifications</span>
+                        <!-- Notification count badge -->
+                        <span
+                            v-if="notifications.length"
+                            class="notification-badge"
+                        >
+                            {{ notifications.length }}
+                        </span>
+                        <div
+                            v-if="showNotificationsMenu"
+                            class="notifications-dropdown"
+                        >
+                            <ul>
+                                <li
+                                    v-for="notification in notifications"
+                                    :key="notification.id"
+                                >
+                                    {{ notification.message }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 <div class="profile">
                     <div class="info">
@@ -61,6 +74,8 @@ export default {
             showProfileMenu: false,
             profileImage: "",
             isDarkMode: false,
+            showNotificationsMenu: false,
+            notifications: [],
             currentDateTime: {
                 date: "",
                 time: "",
@@ -122,10 +137,37 @@ export default {
                 .querySelector("span:nth-child(2)")
                 .classList.toggle("active", this.isDarkMode);
         },
+        toggleNotificationsMenu() {
+            this.showNotificationsMenu = !this.showNotificationsMenu;
+            if (this.showNotificationsMenu) {
+                setTimeout(() => {
+                    const dropdownMenu = this.$el.querySelector(
+                        ".notifications-dropdown"
+                    );
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.add("show");
+                    }
+                }, 10);
+            } else {
+                const dropdownMenu = this.$el.querySelector(
+                    ".notifications-dropdown"
+                );
+                if (dropdownMenu) {
+                    dropdownMenu.classList.remove("show");
+                }
+            }
+        },
+        fetchNotifications() {
+            this.notifications = [
+                { id: 1, message: "New user registered" },
+                { id: 2, message: "System update available" },
+            ];
+        },
     },
     mounted() {
         this.updateDateTime();
         this.fetchProfileInfo();
+        this.fetchNotifications(); // Fetch notifications on mount
         if (document.body.classList.contains("dark-theme-variables")) {
             this.isDarkMode = true;
             const themeToggler = this.$refs.themeToggler;
@@ -136,6 +178,7 @@ export default {
     },
 };
 </script>
+
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -269,6 +312,11 @@ small {
     align-items: center;
 }
 
+.theme-notification-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 .theme-toggler {
     display: flex;
     align-items: center;
@@ -277,7 +325,16 @@ small {
     padding: 0.5rem;
     border-radius: 1rem;
     cursor: pointer;
-    margin-right: 4rem;
+}
+
+.theme-toggler {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--clr-light);
+    padding: 0.5rem;
+    border-radius: 1rem;
+    cursor: pointer;
 }
 
 .theme-toggler span {
@@ -290,6 +347,80 @@ small {
     color: var(--clr-primary);
 }
 
+.notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 1.2rem;
+    position: relative;
+    color: var(--clr-dark);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-weight: bold;
+    z-index: 100;
+}
+.notification-icon .material-icons {
+    font-size: 1.4rem;
+    color: var(--clr-dark);
+    transition: color 0.3s ease;
+}
+
+.notification-icon .material-icons:hover {
+    color: var(--clr-primary);
+}
+.notifications-dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: var(--clr-white);
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 10px 0;
+    z-index: 1000;
+    width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.notifications-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notifications-dropdown ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.notifications-dropdown li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.notifications-dropdown li:hover {
+    background-color: var(--clr-light);
+}
 .profile {
     display: flex;
     align-items: center;

@@ -19,53 +19,26 @@
         </aside>
         <div class="main-content">
             <main>
-                <div class="right">
-                    <!--start top-->
-                    <div class="top">
-                        <button id="menu_bar" @click="openMenu">
-                            <span class="material-icons">menu</span>
-                        </button>
-                        <div
-                            class="theme-toggler"
-                            ref="themeToggler"
-                            @click="toggleTheme"
-                        >
-                            <span class="material-icons active"
-                                >light_mode</span
-                            >
-                            <span class="material-icons">dark_mode</span>
-                        </div>
-                        <div class="profile">
-                            <div class="info">
-                                <p><b>Babar</b></p>
-                                <p>Admin</p>
-                            </div>
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end top-->
-
-                    <!--start driver_chart-->
-
-                    <!--start driver_status-->
-
-                    <!--end driver_status-->
-                </div>
-                <h1>All Users</h1>
+                <h1>User</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input
                             type="text"
-                            placeholder="Search By Name OR Email ..."
+                            placeholder="Search By Name OR Email"
                             aria-label="Search"
                             v-model="searchQuery"
                         />
                         <button @click="search">Search</button>
                     </div>
+                    <div
+                        class="theme-toggler"
+                        ref="themeToggler"
+                        @click="toggleTheme"
+                    >
+                        <span class="material-icons active">light_mode</span>
+                        <span class="material-icons">dark_mode</span>
+                    </div>
                 </div>
-
                 <ShowUsers ref="ShowUsers" />
             </main>
         </div>
@@ -245,16 +218,16 @@ body {
     height: 100%;
     font-size: 0.88rem;
     user-select: none;
-    background: var(--clr-color-background); /* هنا يتم ضبط الخلفية */
+    background: var(--clr-color-background);
     overflow-y: auto;
 }
 
 .container {
-    background: var(--clr-color-background); /* تأكد من ضبط الخلفية هنا أيضًا */
+    background: var(--clr-color-background);
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto;
+    grid-template-columns: 14rem auto 0rem;
     margin-left: 0;
     height: 100vh;
     overflow-y: auto;
@@ -412,30 +385,30 @@ aside .logo {
 .right .top button {
     display: none;
 }
-
-.right .theme-toggler {
-    background-color: var(--clr-white);
+.top-bar {
     display: flex;
+    gap: 1rem;
+    align-items: center;
     justify-content: space-between;
-    height: 1.6rem;
-    width: 4.2rem;
-    cursor: pointer;
-    border-radius: 10px;
 }
-
-.right .theme-toggler span {
-    font-size: 1.2rem;
-    width: 50%;
-    height: 100%;
+.top-bar .theme-toggler {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    background: var(--clr-light);
+    padding: 0.5rem;
+    border-radius: 1rem;
+    cursor: pointer;
 }
 
-.right .theme-toggler span.active {
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    border-radius: 10px;
+.top-bar .theme-toggler span {
+    font-size: 1.4rem;
+    color: var(--clr-warning);
+    cursor: pointer;
+}
+
+.top-bar .theme-toggler span.active {
+    color: var(--clr-primary);
 }
 
 .right .profile {
