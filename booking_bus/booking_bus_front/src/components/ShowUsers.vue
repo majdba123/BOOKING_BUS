@@ -20,7 +20,6 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Point</th>
-                                    <th>Created At</th>
                                     <th>Profile</th>
                                     <th>All Reservation</th>
                                     <th>All Trip History</th>
@@ -37,7 +36,6 @@
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.point }}</td>
-                                    <td>{{ user.created_at }}</td>
                                     <td>
                                         <button
                                             class="nav-btnd btn-primary"
@@ -806,6 +804,8 @@ table tbody tr:last-child td {
 table thead tr th {
     padding: 10px !important;
     font-size: 0.9rem !important;
+    background: var(--clr-color-background);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr {
@@ -831,9 +831,9 @@ table tbody tr:last-child td {
 }
 
 .recent_orders table {
-    background-color: #fff;
+    background: var(--clr-color-background);
     width: 100%;
-    border-radius: 10px;
+    border-radius: var(--border-radius-2);
     padding: 1rem;
     text-align: center;
     box-shadow: var(--box-shadow);
@@ -841,7 +841,6 @@ table tbody tr:last-child td {
     font-size: 0.85rem;
     border-collapse: collapse;
 }
-
 .recent_orders thead {
     background-color: var(--clr-primary);
     color: #fff;
@@ -852,12 +851,11 @@ table tbody tr:last-child td {
     padding: 10px;
     border-bottom: 1px solid #ddd;
 }
-/* أنيميشن الـ Spinner */
 .spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh;
 }
 
 .spinner {
@@ -877,24 +875,43 @@ table tbody tr:last-child td {
         transform: rotate(360deg);
     }
 }
-
-.recent_orders tbody tr:hover {
-    background-color: #f1f1f1;
+table tbody tr:hover {
+    background-color: var(--clr-light);
 }
 
 .recent_orders td {
     text-align: center;
 }
-
 .nav-btnd {
-    padding: 8px 16px;
+    padding: 10px 20px;
+    margin: 10px;
     border: none;
-    border-radius: var(--border-radius-2);
-    background: #4caf50;
-    color: #fff;
+    border-radius: 9px;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
-    font-size: 0.85rem;
-    transition: background-color 0.3s;
+    font-size: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-size: 200% 200%;
+    animation: gradientAnimation 5s ease infinite;
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.nav-btnd:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
 }
 
 .nav-btnd.btn-primary {
@@ -979,7 +996,7 @@ table tbody tr:last-child td {
     text-align: center;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background-color: var(--clr-color-background);
 }
 /* Select styling */
 select {
@@ -1189,7 +1206,7 @@ input:focus {
     background: rgba(0, 0, 0, 0.5);
 }
 .modal-content {
-    background: #fff;
+    background-color: var(--clr-color-background);
     padding: 20px;
     border-radius: var(--border-radius-2);
     max-width: 90%;
@@ -1207,13 +1224,13 @@ input:focus {
 }
 
 .modal-header {
+    color: var(--clr-dark);
     font-size: 1.5rem;
     font-weight: bold;
     text-align: center;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--clr-primary);
 }
-
 .modal-body div div {
     display: flex;
     justify-content: center;

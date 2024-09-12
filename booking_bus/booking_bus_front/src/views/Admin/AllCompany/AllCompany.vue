@@ -50,48 +50,14 @@
                     <span class="material-icons active">light_mode</span>
                     <span class="material-icons">dark_mode</span>
                 </div>
-                <div class="profile">
-                    <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
-                    </div>
-                    <div class="profile-photo">
-                        <img src="@/assets/busss.png" alt="Profile" />
-                    </div>
-                </div>
             </div>
             <!--end top-->
-
-            <!--start driver_chart-->
-            <div class="driver_chart">
-                <h2>Company Workload Status</h2>
-                <DriverChart :chartData="chartData" />
-            </div>
-
-            <!--start driver_status-->
-            <div class="driver_status">
-                <h2>Company Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--end driver_status-->
         </div>
         <!-- Right section end -->
     </div>
 </template>
 
 <script>
-import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 import SidebarAdmin from "@/components/SidebarAdmin.vue";
 import AddCompany from "@/components/AddCompany.vue";
@@ -99,7 +65,7 @@ import router from "@/router";
 
 export default {
     name: "AllCompany",
-    components: { DriverChart, SidebarAdmin, AddCompany },
+    components: { SidebarAdmin, AddCompany },
     data() {
         return {
             x: store.state.x,
@@ -124,7 +90,7 @@ export default {
                     },
                 ],
             },
-            isDarkMode: false, // لإدارة حالة الوضع الداكن
+            isDarkMode: false,
         };
     },
     watch: {
@@ -135,12 +101,10 @@ export default {
     },
     methods: {
         checkToken() {
-            // الحصول على التوكن من localStorage
             const token = window.localStorage.getItem("access_token");
             const userType = window.localStorage.getItem("type_user");
 
             if (token && userType) {
-                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
                 if (userType === "company") {
                     router.push("/HomeView");
                 } else if (userType === "user") {
@@ -161,7 +125,7 @@ export default {
             }
         },
         toggleTheme() {
-            this.isDarkMode = !this.isDarkMode; // تغيير حالة الوضع الداكن
+            this.isDarkMode = !this.isDarkMode;
             document.body.classList.toggle(
                 "dark-theme-variables",
                 this.isDarkMode
@@ -169,7 +133,7 @@ export default {
             localStorage.setItem(
                 "darkMode",
                 this.isDarkMode ? "enabled" : "disabled"
-            ); // حفظ الحالة في localStorage
+            );
 
             const themeToggler = this.$refs.themeToggler;
             themeToggler
@@ -179,9 +143,7 @@ export default {
                 .querySelector("span:nth-child(2)")
                 .classList.toggle("active", this.isDarkMode);
         },
-        search() {
-            // هنا يمكنك تنفيذ وظيفة البحث
-        },
+        search() {},
     },
     mounted() {
         this.checkToken();
@@ -258,12 +220,12 @@ body {
     height: 100%;
     font-size: 0.88rem;
     user-select: none;
-    background: var(--clr-color-background); /* هنا يتم ضبط الخلفية */
+    background: var(--clr-color-background);
     overflow-y: auto;
 }
 
 .container {
-    background: var(--clr-color-background); /* تأكد من ضبط الخلفية هنا أيضًا */
+    background: var(--clr-color-background);
     display: grid;
     width: 100%;
     gap: 1.8rem;
@@ -357,15 +319,14 @@ aside .logo {
     gap: 1rem;
 }
 
+#menu_bar {
+    display: none;
+}
+
 .top-bar {
     display: flex;
     gap: 1rem;
     align-items: center;
-}
-
-.map-container {
-    margin: 10px;
-    flex: 1;
 }
 
 .date {
@@ -376,8 +337,8 @@ aside .logo {
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 15px;
-    margin-left: 10px;
     margin-bottom: 15px;
+    margin-left: 10px;
 }
 
 .date input {
@@ -387,15 +348,28 @@ aside .logo {
 .date button {
     padding: 0.5rem 1rem;
     border: none;
-    background-color: var(--clr-primary);
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
-    border-radius: 1rem;
+    border-radius: 9px;
     cursor: pointer;
 }
 
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 .date button:hover {
-    background-color: var(--clr-primary-variant);
-    transition: 0.4s ease-in;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
 }
 
 /* Main section styles */
@@ -403,64 +377,65 @@ aside .logo {
           start right side
   ***************************** */
 .right {
-    margin-top: 1.4rem;
     padding: 1rem;
-    background-color: var(--clr-color-background);
-    grid-column: span 1;
+    border-radius: 2rem 0 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .right .top {
     display: flex;
     justify-content: space-between;
-    gap: 2rem;
-    margin-left: 15px;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .right .top button {
-    display: none;
+    background: var(--clr-primary);
+    border: none;
+    border-radius: 0.5rem;
+    color: var(--clr-white);
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.right .top button:hover {
+    background-color: var(--clr-primary-variant);
 }
 
 .right .theme-toggler {
-    background-color: var(--clr-white);
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    height: 1.6rem;
-    width: 4.2rem;
+    background: var(--clr-light);
+    padding: 0.5rem;
+    border-radius: 1rem;
     cursor: pointer;
-    border-radius: 10px;
 }
 
 .right .theme-toggler span {
-    font-size: 1.2rem;
-    width: 50%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--clr-warning);
+    cursor: pointer;
 }
 
 .right .theme-toggler span.active {
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    border-radius: 10px;
+    color: var(--clr-primary);
 }
 
 .right .profile {
+    position: relative;
     display: flex;
-    gap: 1rem;
     align-items: center;
+    cursor: pointer;
 }
 
 .right .profile .info p {
-    margin: 0;
+    margin-right: 1rem;
     color: var(--clr-dark);
-}
-
-.right .profile .profile-photo img {
-    width: 2.8rem;
-    height: 2.8rem;
-    border-radius: 50%;
-    overflow: hidden;
 }
 
 .right .driver_status {

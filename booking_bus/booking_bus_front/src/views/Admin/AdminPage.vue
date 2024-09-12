@@ -162,7 +162,6 @@ export default {
 </script>
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
-
 :root {
     --clr-primary: #7380ec;
     --clr-danger: #ff7782;
@@ -185,7 +184,7 @@ export default {
     --card-padding: 1.8rem;
     --padding-1: 1.2rem;
 
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    box-shadow: 0 2rem 3rem var(--clr-light);
 }
 
 .dark-theme-variables {
@@ -213,7 +212,7 @@ body {
     height: 100%;
     font-size: 0.88rem;
     user-select: none;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
     overflow-y: auto;
 }
 
@@ -228,7 +227,7 @@ body {
 }
 
 a {
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 .main-content {
@@ -251,11 +250,7 @@ a {
     width: 100%;
 }
 
-.MainCompany {
-    flex: none;
-    width: 100%;
-}
-
+.MainCompany,
 .DashboardCharts {
     flex: none;
     width: 100%;
@@ -263,7 +258,7 @@ a {
 
 aside {
     height: 100vh;
-    background-color: #fff;
+    background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -285,7 +280,7 @@ aside .logo {
     display: none;
     background: transparent;
     cursor: pointer;
-    color: #363949;
+    color: var(--clr-dark);
     position: absolute;
     top: 10px;
     left: 10px;
@@ -295,14 +290,14 @@ aside .logo {
 
 .menu-button .material-icons {
     font-size: 24px;
-    color: #363949;
+    color: var(--clr-dark);
 }
 
 /* Right section styles */
 .right {
     margin-top: 1.4rem;
     padding: 1rem;
-    background-color: #f6f6f9;
+    background-color: var(--clr-color-background);
     grid-column: span 1;
     overflow-y: auto;
 }
@@ -318,7 +313,7 @@ aside .logo {
 }
 
 .right .theme-toggler {
-    background-color: #fff;
+    background-color: var(--clr-white);
     display: flex;
     justify-content: space-between;
     height: 1.6rem;
@@ -337,8 +332,8 @@ aside .logo {
 }
 
 .right .theme-toggler span.active {
-    background-color: #7380ec;
-    color: #fff;
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
     border-radius: 10px;
 }
 
@@ -366,15 +361,15 @@ aside .logo {
 }
 
 .right .recent_updates h2 {
-    color: #363949;
+    color: var(--clr-dark);
     margin-bottom: 14px;
 }
 
 .right .recent_updates .updates {
-    background-color: #fff;
+    background-color: var(--clr-white);
     padding: 1.8rem;
-    border-radius: 2rem;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--box-shadow);
     transition: all 0.3s ease;
 }
 
@@ -389,12 +384,10 @@ aside .logo {
     margin-bottom: 1rem;
 }
 
-/**********
-    media query
-    ********** */
+/* Media Queries */
 @media screen and (max-width: 1200px) {
     .menu-button {
-        display: inline-block; /* إظهار الزر في الوضع المتجاوب */
+        display: inline-block;
     }
     .container {
         width: 94%;
@@ -445,7 +438,7 @@ aside .logo {
         position: fixed;
         width: 18rem;
         z-index: 3;
-        background-color: #fff;
+        background-color: var(--clr-white);
         display: none;
         left: -100px;
         animation: menuAni 1s forwards;
@@ -485,11 +478,11 @@ aside .logo {
         justify-content: center;
         align-items: center;
         padding: 0 0.8rem;
-        background-color: #fff;
+        background-color: var(--clr-white);
         width: 100%;
         height: 4.6rem;
         z-index: 2;
-        box-shadow: 0 1rem 1rem 0 2rem 3rem rgba(132, 139, 200, 0.18);
+        box-shadow: var(--box-shadow);
         margin: 0;
     }
 
@@ -522,7 +515,7 @@ aside .logo {
         display: inline-block;
         background: transparent;
         cursor: pointer;
-        color: #363949;
+        color: var(--clr-dark);
         position: absolute;
         left: 1rem;
     }
@@ -546,8 +539,8 @@ aside .logo {
     }
 
     .theme-toggler span.active {
-        background-color: #7380ec;
-        color: #fff;
+        background-color: var(--clr-primary);
+        color: var(--clr-white);
         border-radius: 10px;
     }
 }

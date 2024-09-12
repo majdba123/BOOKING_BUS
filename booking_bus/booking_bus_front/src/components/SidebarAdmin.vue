@@ -92,6 +92,9 @@ export default {
     },
 
     methods: {
+        toggleDarkMode() {
+            this.isDarkMode = !this.isDarkMode;
+        },
         logout() {
             const token = window.localStorage.getItem("access_token");
             axios({

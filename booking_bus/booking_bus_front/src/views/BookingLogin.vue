@@ -65,10 +65,8 @@ export default {
     },
     methods: {
         checkToken() {
-            // الحصول على التوكن من localStorage
             const userType = window.localStorage.getItem("type_user");
 
-            // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
             if (userType === "admin") {
                 router.push("/");
             } else if (userType === "user") {

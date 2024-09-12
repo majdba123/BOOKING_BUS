@@ -511,6 +511,40 @@ export default {
 </script>
 
 <style scoped>
+:root {
+    --clr-primary: #7380ec;
+    --clr-danger: #ff7782;
+    --clr-success: #41f1b6;
+    --clr-white: #fff;
+    --clr-info-dark: #7d8da1;
+    --clr-info-light: #e4e9f7;
+    --clr-dark: #363949;
+    --clr-warning: #ffbb55;
+    --clr-light: rgba(132, 139, 200, 0.18);
+    --clr-primary-variant: #111e88;
+    --clr-dark-variant: #677483;
+    --clr-color-background: #f6f6f9;
+
+    --card-border-radius: 2rem;
+    --border-radius-1: 0.4rem;
+    --border-radius-2: 0.8rem;
+    --border-radius-3: 1.2rem;
+
+    --card-padding: 1.8rem;
+    --padding-1: 1.2rem;
+
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.dark-theme-variables {
+    --clr-color-background: #181a1e;
+    --clr-white: #202528;
+    --clr-light: rgba(0, 0, 0, 0.4);
+    --clr-dark: #edeffd;
+    --clr-dark-variant: #677483;
+    --box-shadow: 0 2rem 3rem var(--clr-light);
+}
+
 .dashboard {
     display: flex;
     flex-direction: column;
@@ -542,10 +576,10 @@ h2 {
     flex: 1;
     max-width: 300px;
     min-width: 150px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 10px var(--clr-light);
     border-radius: 10px;
     padding: 15px;
-    background-color: #fff;
+    background-color: var(--clr-white);
     margin-bottom: 15px;
 }
 
@@ -557,20 +591,20 @@ h2 {
 
 .recent-orders h1 {
     margin: 18px;
-    color: #363949;
+    color: var(--clr-dark);
     display: flex;
     justify-content: center;
 }
 
 .recent-orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 90%;
     border-radius: 1rem;
     padding: 1rem;
     text-align: center;
-    box-shadow: 0 1.5rem 2.5rem rgba(132, 139, 200, 0.18);
+    box-shadow: 0 1.5rem 2.5rem var(--clr-light);
     transition: all 0.3s ease;
-    color: #363949;
+    color: var(--clr-dark);
     margin-bottom: 20px;
 }
 
@@ -580,14 +614,14 @@ h2 {
 
 .recent-orders table thead tr th {
     padding: 10px;
-    color: #007bff;
+    color: var(--clr-primary);
     font-weight: bold;
 }
 
 .recent-orders table tbody tr {
     height: 3rem;
     border-bottom: 1px solid #f1f1f1;
-    color: #677483;
+    color: var(--clr-dark-variant);
 }
 
 .recent-orders table tbody td {
@@ -600,12 +634,12 @@ h2 {
 }
 
 .recent-orders table tbody td.warning {
-    color: #ffbb55;
+    color: var(--clr-warning);
     font-weight: bold;
 }
 
 .recent-orders table tbody td.primary {
-    color: #007bff;
+    color: var(--clr-primary);
     cursor: pointer;
 }
 
