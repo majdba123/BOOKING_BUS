@@ -5,6 +5,7 @@ import 'package:mobile_app/screens/Dashborad_User/All_Trip_Page.dart';
 import 'package:mobile_app/screens/Dashborad_User/All_compines.dart';
 import 'package:mobile_app/screens/Dashborad_User/Horizental_list_Fav_company.dart';
 import 'package:mobile_app/screens/Dashborad_User/HorizontalList.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/NoticationPage.dart';
 import 'package:mobile_app/screens/Dashborad_User/Pusher_Client/Pusher_Client.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/card_for_add_favorites_comapny.dart';
 import 'package:mobile_app/screens/WidgetApp/BottomBaronScreen.dart';
@@ -16,6 +17,7 @@ import 'package:mobile_app/widgets/CustomeCirculerProgress.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:badges/badges.dart' as badges;
 
 class DashboardUser extends StatefulWidget {
   @override
@@ -178,10 +180,24 @@ class _DashboardUserState extends State<DashboardUser> {
                       ),
                       Row(
                         children: [
-                          IconButton(
-                            icon:
-                                Icon(Icons.notifications, color: Colors.white),
-                            onPressed: () {},
+                          badges.Badge(
+                            showBadge: true,
+                            position: badges.BadgePosition.topEnd(
+                              top: -1,
+                              end: 0,
+                            ),
+                            badgeContent: Text('3'),
+                            child: IconButton(
+                              icon: Icon(Icons.notifications,
+                                  color: Colors.white),
+                              onPressed: () {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          NotificationInboxPage()),
+                                );
+                              },
+                            ),
                           ),
                           IconButton(
                             icon: Icon(Icons.logout, color: Colors.white),

@@ -45,8 +45,11 @@ class FilterBarUserUi extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.airplane_ticket,
-                color: Colors.white, size: iconSize),
+            // color: Colors.white,
+            icon: Image.asset(
+              color: Colors.white,height: 40.0,
+              "assets/images/tik.png",
+            ),
             onPressed: () {
               print(auth.userType);
               if (auth.userType == "user") {

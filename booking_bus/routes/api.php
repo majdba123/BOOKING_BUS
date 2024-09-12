@@ -62,7 +62,7 @@ Route::get('all_user', [AdminDashBoardController::class, 'all_user']);
 
 
 
-Route::get('/my_notification', [UserNotificationController::class, 'index']);
+Route::get('/my_notification', [UserNotificationController::class, 'index'])->middleware('auth:sanctum');
 Route::post('/read_notification/{id}', [UserNotificationController::class, 'read']);
 Route::get('/readable_massege', [UserNotificationController::class, 'readable_massege']);
 

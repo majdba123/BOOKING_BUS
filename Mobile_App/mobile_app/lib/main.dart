@@ -3,6 +3,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 // import 'package:mobile_app/Provider/Admin/charge_blanace_requsert_provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
+import 'package:mobile_app/Provider/NotifcationProvider.dart';
 import 'package:mobile_app/Provider/user/Address_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/Provider/user/Company_Info.dart';
@@ -43,7 +44,7 @@ void main() {
           // ChangeNotifierProvider(create: (_) => BusStatusProvider()),
           // ChangeNotifierProvider(create: (_) => AssingBusProvider()),
           // ChangeNotifierProvider(create: (_) => TripBusProvider()),
-          // ChangeNotifierProvider(create: (_) => TripBusStatusProvider()),
+          ChangeNotifierProvider(create: (_) => NotificationProvider()),
           ChangeNotifierProvider(create: (_) => TripuserProvider()),
           ChangeNotifierProvider(create: (_) => PrivateTripuserProvider()),
           ChangeNotifierProvider(create: (_) => BussofSpsccifTripProvider()),

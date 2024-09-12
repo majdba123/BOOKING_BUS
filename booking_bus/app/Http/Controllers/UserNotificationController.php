@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,29 +10,28 @@ class UserNotificationController extends Controller
 {
     public function index()
     {
-        $user=Auth::user()->id;
-        $notifications = UserNotification::where('user_id',$user)
-            ->where('status' , 'pending')
-            ->latest();
-        return response()->json($notifications);
 
+        $user = Auth::user()->id;
+        $notifications = UserNotification::where('user_id', $user)
+            ->where('status', 'pending')
+            ->latest()->get();
+        return response()->json($notifications);
     }
 
 
     public function readable_massege()
     {
-        $user=Auth::user()->id;
-        $notifications = UserNotification::where('user_id',$user)
-            ->where('status' , 'read')
+        $user = Auth::user()->id;
+        $notifications = UserNotification::where('user_id', $user)
+            ->where('status', 'read')
             ->latest();
         return response()->json($notifications);
-
     }
 
 
     public function read($id)
     {
-        $user_iid=Auth::user()->id;
+        $user_iid = Auth::user()->id;
         $notification = UserNotification::find($id);
         if (!$notification) {
             return response()->json([

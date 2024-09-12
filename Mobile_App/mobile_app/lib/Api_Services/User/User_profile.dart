@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:mobile_app/Data_Models/Address_model.dart';
 import 'package:mobile_app/Data_Models/My_Reservation.dart';
+import 'package:mobile_app/Data_Models/Notifaction.dart';
 import 'package:mobile_app/Data_Models/charge_balance.dart';
 import 'package:mobile_app/constants.dart';
 
@@ -111,6 +112,23 @@ class UserProfile {
       return data.map((item) => MYReservation.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load reservations: ${response.body}');
+    }
+  }
+
+  Future<List<Notifaction>> MyNotifcation(String accessToken) async {
+    final response = await http.get(
+      Uri.parse(name_domain_server + 'my_notification'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      List data = json.decode(response.body);
+      print(data);
+      return data.map((item) => Notifaction.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load notifaction: ${response.body}');
     }
   }
 }
