@@ -23,25 +23,19 @@ class RouteCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    var tripUserProvider =
-        Provider.of<TripuserProvider>(context, listen: false);
     var busOfSpecficTrip =
         Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     double cardWidth = MediaQuery.of(context).size.width * 0.85;
-    double cardHeight =
-        100.0; // Adjusted height to accommodate the company name
+    double cardHeight = 100.0;
     double titleFontSize = 16.0;
     double subtitleFontSize = 12.0;
-    double companyFontSize = 11.0; // Font size for the company name
+    double companyFontSize = 11.0;
     double imageWidth = 80.0;
     double imageHeight = 80.0;
 
     return InkWell(
       onTap: () {
-        tripUserProvider.save_price_from_Trip(double.parse(price));
         busOfSpecficTrip.setTripid(tripId);
-        busOfSpecficTrip.setcompanyName(companyName);
-
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => BusCardofSpecicTrip(),
@@ -54,7 +48,7 @@ class RouteCard extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
         padding: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 240, 237, 237), // Adding transparency
+          color: Color.fromARGB(255, 240, 237, 237),
           borderRadius: BorderRadius.circular(12.0),
           boxShadow: [
             BoxShadow(

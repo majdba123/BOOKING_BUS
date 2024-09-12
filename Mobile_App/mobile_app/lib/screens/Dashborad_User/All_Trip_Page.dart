@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/widgets/CustomeCirculerProgress.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart'; // Import the Lottie package
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
@@ -20,7 +21,6 @@ class _AllTripageState extends State<AllTripage> with TickerProviderStateMixin {
     return Scaffold(
       body: Column(
         children: [
-          // Header with Search and Filter
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -100,15 +100,15 @@ class _AllTripageState extends State<AllTripage> with TickerProviderStateMixin {
           // Content
           Expanded(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0,),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ),
               child: Consumer<TripuserProvider>(
                 builder: (context, tripProvider, child) {
                   if (tripProvider.AllTripsItems.isEmpty) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child: CustomeProgressIndecator(context));
                   }
 
-                  // Apply search and filter logic
                   List filteredTrips = tripProvider.AllTripsItems.where((trip) {
                     if (selectedFilter == 'By Company') {
                       return trip.companyName
@@ -148,7 +148,7 @@ class _AllTripageState extends State<AllTripage> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Lottie.asset(
-                            'assets/images/no_result.json', // Use your Lottie file path here
+                            'assets/images/no_result.json',
                             width: 150,
                             height: 150,
                             fit: BoxFit.fill,

@@ -12,6 +12,7 @@ import 'package:mobile_app/screens/Dashborad_User/Widget/route_card.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/search_Trip_form.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/section_title.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
+import 'package:mobile_app/widgets/CustomeCirculerProgress.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
@@ -23,8 +24,8 @@ class DashboardUser extends StatefulWidget {
 
 class _DashboardUserState extends State<DashboardUser> {
   Map<String, String> _eventData = {};
-  bool _isSubscribed = false; // Track subscription status
-  // bool _dataLoaded = false; // Track if data has been loaded
+  bool _isSubscribed = false;
+
   var accessToken;
   @override
   void initState() {
@@ -61,22 +62,6 @@ class _DashboardUserState extends State<DashboardUser> {
     }
   }
 
-  // void _loadData() {
-  //   if (!_dataLoaded) {
-  //     // Only load data if it hasn't been loaded yet
-  //     final tripProvider =
-  //         Provider.of<TripuserProvider>(context, listen: false);
-  //     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-  //     tripProvider.getallTrips(authProvider.accessToken);
-  //     tripProvider.getAllcompanies(authProvider.accessToken);
-
-  //     setState(() {
-  //       _dataLoaded = true; // Mark data as loaded
-  //     });
-  //   }
-  // }
-
   void _logout(BuildContext context) {
     _unsubscribeFromPusher(); // Unsubscribe on logout
     Provider.of<AuthProvider>(context, listen: false).logout();
@@ -95,8 +80,7 @@ class _DashboardUserState extends State<DashboardUser> {
           backImage(context),
           SingleChildScrollView(
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top +
-                  90.0, // Adjust the padding to prevent overlap
+              top: MediaQuery.of(context).padding.top + 90.0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +103,7 @@ class _DashboardUserState extends State<DashboardUser> {
                   child: Consumer<TripuserProvider>(
                     builder: (context, tripProvider, child) {
                       if (tripProvider.AllTripsItems.isEmpty) {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(child: CustomeProgressIndecator(context));
                       }
 
                       return Column(
@@ -224,29 +208,4 @@ class _DashboardUserState extends State<DashboardUser> {
       ),
     );
   }
-
-  // Widget _buildBottomNavBar() {
-  //   return Positioned(
-  //     left: MediaQuery.of(context).size.width * 0.15,
-  //     right: MediaQuery.of(context).size.width * 0.15,
-  //     bottom: MediaQuery.of(context).size.height * 0.03,
-  //     child: Container(
-  //       decoration: BoxDecoration(
-  //         color: AppColors.primaryColor,
-  //         borderRadius: BorderRadius.circular(35.0),
-  //         boxShadow: [
-  //           BoxShadow(
-  //             color: Colors.black.withOpacity(0.1),
-  //             blurRadius: 10,
-  //             offset: Offset(0, 5),
-  //           ),
-  //         ],
-  //       ),
-  //       child: FilterBarUserUi(
-  //         height: 70.0,
-  //         iconSize: 28.0,
-  //       ),
-  //     ),
-  //   );
-  // }
 }

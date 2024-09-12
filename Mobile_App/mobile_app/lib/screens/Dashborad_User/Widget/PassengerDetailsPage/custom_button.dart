@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Breack_place.dart';
+import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/PaymentDetails.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/pay_button.dart.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/break_point.dart';
 import 'onboarding_overlay.dart';
 
@@ -35,7 +35,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final busProvider = Provider.of<TripuserProvider>(context);
+    final busProvider = Provider.of<BussofSpsccifTripProvider>(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
@@ -194,7 +194,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Total\n£${busProvider.totalAmount}',
+                            'Total\n£${busProvider.totoal_price}',
                             style: TextStyle(
                               fontSize: isLargeScreen ? 20 : 18,
                               fontWeight: FontWeight.bold,

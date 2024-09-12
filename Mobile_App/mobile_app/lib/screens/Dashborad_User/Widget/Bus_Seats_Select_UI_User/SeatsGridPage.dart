@@ -4,11 +4,11 @@ import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/ConfirmButton.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/DeckSwitch.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/seatLegendRow.dart';
+import 'package:mobile_app/widgets/CustomeCirculerProgress.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Data_Models/SeatModel.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
-import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/BusHeader.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/BusLayout.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/TicketDetailObject.dart';
@@ -22,23 +22,22 @@ class SeatsGridPage extends StatefulWidget {
 class _SeatsGridPageState extends State<SeatsGridPage> {
   List<String> selectedSeats = [];
   bool showUpperDeck = false;
-  late final BussofSpsccifTripProvider providerSpecificBusTrip;
+  late BussofSpsccifTripProvider providerSpecificBusTrip;
 
   @override
   void initState() {
     super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
     providerSpecificBusTrip =
         Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    var provideruser = Provider.of<TripuserProvider>(context, listen: false);
-
-    print(provideruser.selectIndexOfSpsecifcBustrip);
     providerSpecificBusTrip.getSeatOfBusTrip(
         providerSpecificBusTrip
-            .busResponses[provideruser.selectIndexOfSpsecifcBustrip]
+            .busResponses[providerSpecificBusTrip.selectIndexOfSpsecifcBustrip]
             .bus_trip_id,
         authProvider.accessToken);
+    // });
   }
 
   @override
@@ -56,7 +55,7 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
           // Check if the data is still loading
           if (busProvider.isLoading) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CustomeProgressIndecator(context),
             );
           }
           List<SeatModel> lowerDeckSeats = busProvider.seats.take(40).toList();
@@ -120,20 +119,20 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
   }
 
   void _confirmSelection() {
-    var busProvider = Provider.of<TripuserProvider>(context, listen: false);
-
-    // Adding the selected seats to the provider
+    int price_tiket = providerSpecificBusTrip
+        .busResponses[providerSpecificBusTrip.selectIndexOfSpsecifcBustrip]
+        .price;
     for (String seatId in selectedSeats) {
-      String seatType = busProvider.getSeatType(seatId);
-      double seatPrice = busProvider.price_trip;
+      String seatType = "normal";
+      int seatPrice = price_tiket;
 
-      busProvider.addTicketDetail(
+      providerSpecificBusTrip.addTicketDetail(
         TicketDetail(type: seatType, quantity: 1, price: seatPrice),
       );
     }
 
-    busProvider.selectSeat(selectedSeats);
-    busProvider.calculatePrice(selectedSeats.length, busProvider.price_tiket);
+    providerSpecificBusTrip.selectSeat(selectedSeats);
+    providerSpecificBusTrip.calculatePrice(selectedSeats.length, price_tiket);
 
     if (selectedSeats.isNotEmpty) {
       Navigator.of(context).push(

@@ -27,7 +27,7 @@ class _PointsPageState extends State<PointsPage> {
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Consumer<TripuserProvider>(
+        child: Consumer<BussofSpsccifTripProvider>(
           builder: (context, busProvider, child) {
             List<BreakPlace>? breaks;
             late List<BreakPlace> boardingPoints;
@@ -39,6 +39,7 @@ class _PointsPageState extends State<PointsPage> {
               boardingPoints =
                   breaks.sublist(0, breaks.length - 1).reversed.toList();
             }
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -86,15 +87,14 @@ class _PointsPageState extends State<PointsPage> {
                           style: TextStyle(fontSize: 16),
                         ),
                         value: point,
-                        groupValue: busProvider.selectedBoardingPoint,
+                        groupValue: BusTrip.selectedBoardingPoint,
                         activeColor: AppColors.primaryColor,
                         onChanged: (value) {
                           if (value != null) {
                             widget.onBoardingPointSelected(
                                 value); // Update the callback
-                            busProvider.selectBoardingPoint(value);
-                            busProvider
-                                .selectBordingBreakPlcaeId(value.breakId);
+                            BusTrip.selectBoardingPoint(value);
+                            BusTrip.selectBordingBreakPlcaeId(value.breakId);
                           }
                         },
                       );

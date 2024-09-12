@@ -43,7 +43,7 @@ class BusHeader extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            providerSpecificBusTrip.companyName,
+            BusTrip.nameCompany,
             style: TextStyle(
               color: Colors.white,
               fontSize: 22,

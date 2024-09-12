@@ -5,6 +5,7 @@ import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Seats_Select_UI_User/SeatsGridPage.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Trip_of_Specifc_Trip/Break_Stop_Time_line.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Trip_of_Specifc_Trip/Cloumn_Time_location.dart';
+import 'package:mobile_app/widgets/CustomeCirculerProgress.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -28,9 +29,6 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
 
   @override
   Widget build(BuildContext context) {
-    var providerTripUser =
-        Provider.of<TripuserProvider>(context, listen: false);
-    double screenHeight = MediaQuery.of(context).size.height;
     var BusTrip =
         Provider.of<BussofSpsccifTripProvider>(context, listen: false);
 
@@ -55,7 +53,9 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
           child: Consumer<BussofSpsccifTripProvider>(
             builder: (context, provider, child) {
               if (provider.isLoading || provider.busResponses.isEmpty) {
-                return const Text('Loading...');
+                return Center(
+                  child: CustomeProgressIndecator(context),
+                );
               }
 
               final busTrip = provider.busResponses.first;
@@ -142,12 +142,13 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
               },
             ),
           ),
-          // SizedBox(height: screenHeight * 0.015),
           Expanded(
             child: Consumer<BussofSpsccifTripProvider>(
               builder: (context, provider, child) {
-                if (provider.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                if (provider.isLoading || provider.busResponses.isEmpty) {
+                  return Center(
+                    child: CustomeProgressIndecator(context),
+                  );
                 }
 
                 final busTrips = provider.busResponses;
@@ -166,23 +167,8 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                       elevation: 3,
                       child: InkWell(
                         onTap: () {
-                          // providerTripUser.selectBusTrip(busTrip);
-                          // providerTripUser.setBusTripid(busTrip.bus_trip_id);
                           print('the index is $index');
-                          providerTripUser.selectIndexOfBustrip(index);
-                          providerTripUser.selectTripType(
-                              (provider.selectedTypeTripIndex == 0)
-                                  ? 1
-                                  : (provider.selectedTypeTripIndex == 1)
-                                      ? 2
-                                      : -1);
-                          // provider.setFrom(busTrip.from);
-                          // provider.setTo(busTrip.to);
-
-                          // provider.setDuration(busTrip.tripDuration);
-                          // provider.setDistance(busTrip.Distance);
-                          // provider.setBusid(busTrip.busId);
-                          // provider.setBusTripid(busTrip.bus_trip_id);
+                          provider.selectIndexOfBustrip(index);
 
                           Navigator.of(context).push(
                             MaterialPageRoute(

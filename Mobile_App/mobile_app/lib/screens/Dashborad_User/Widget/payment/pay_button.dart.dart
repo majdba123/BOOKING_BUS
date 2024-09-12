@@ -13,21 +13,17 @@ Future<void> makeReservation(BuildContext context) async {
   final provider = Provider.of<TripuserProvider>(context, listen: false);
   var BusTrip = Provider.of<BussofSpsccifTripProvider>(context, listen: false);
   print(accessToken);
-  print(provider.trip_type);
-  print(provider.selectedSeat);
-  print(provider..selectedBoardingPoint!.breakId);
-  print(
-      BusTrip.busResponses[provider.selectIndexOfSpsecifcBustrip].bus_trip_id);
+  print(BusTrip.selectedTypeTripIndex == 0 ? 1 : 2);
+  print(BusTrip.selectedSeat);
+  print(BusTrip..selectedBoardingPoint!.breakId);
+  print(BusTrip.busResponses[BusTrip.selectIndexOfSpsecifcBustrip].bus_trip_id);
   try {
     await provider.make_reservation(
         accessToken,
-        provider.trip_type,
-        provider.selectedSeat,
-        provider.selectedBoardingPoint!.breakId,
-        BusTrip
-            .busResponses[provider.selectIndexOfSpsecifcBustrip].bus_trip_id);
-
-    // print(provider.trip_type);
+        BusTrip.selectedTypeTripIndex == 0 ? 1 : 2,
+        BusTrip.selectedSeat,
+        BusTrip.selectedBoardingPoint!.breakId,
+        BusTrip.busResponses[BusTrip.selectIndexOfSpsecifcBustrip].bus_trip_id);
 
     Navigator.push(
       context,
