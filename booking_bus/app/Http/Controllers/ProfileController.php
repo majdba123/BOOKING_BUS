@@ -108,15 +108,30 @@ class ProfileController extends Controller
                         'status' => $seatReservation->seat->status
                     ];
                 }
+                $typeTrip =  $reservation->type == 1 ? "going" : "outgoing";
+                $start_time = new \DateTime($reservation->type == 1 ? $reservation->bus_trip->from_time_going : $reservation->bus_trip->from_time_return);
+                $end_time =  new \DateTime($reservation->type == 1 ? $reservation->bus_trip->to_time_going : $reservation->bus_trip->to_time_return);
+                $Date =  $reservation->type == 1 ? $reservation->bus_trip->date_start : $reservation->bus_trip->date_end;
+                $startformattedTime = $start_time->format('H:i');
+                $endformattedTime =  $end_time->format('H:i');
+                $interval = $start_time->diff($end_time);
+                $tripDuration = $interval->format('%H:%I');
+
                 $data[] = [
                     'id' => $reservation->id,
-                    'price' => $reservation->price,
-                    'type' => $reservation->type,
-                    'status' => $reservation->status,
-                    'break' => $reservation->pivoit->break_trip->break->name,
+                    'price' =>  $reservation->price,
+                    'type' => $typeTrip,
+                    // 'status' => $reservation->status,
+                    'company_name' => $busTrip->trip->path->Company->user->name,
+                    'Pickup_Point' => $reservation->pivoit->break_trip->break->name,
                     'from' => $busTrip->trip->path->from,
                     'to' => $busTrip->trip->path->to,
-                    'seats' => $seats // array of seat names or properties
+                    'Distance' => $busTrip->trip->path->Distance,
+                    'start_time' => $startformattedTime,
+                    'end_time' => $endformattedTime,
+                    'trip_Duration' => $tripDuration,
+                    'Date'=>$Date,
+                    'seats' => count($seats) // array of seat names or properties
                 ];
             } else {
                 return response()->json([
@@ -161,12 +176,12 @@ class ProfileController extends Controller
             ]);
 
             $massage = "you added your profile:  $profile  user_id : $user->id ";
-            event(new PrivateNotification( $user->id , $massage));
+            event(new PrivateNotification($user->id, $massage));
             UserNotification::create([
                 'user_id' =>  $user->id,
                 'notification' => $massage,
             ]);
-    
+
 
             // Save Image in Storage folder
             $request->image->storeAs('public/profile_image', $imageName);

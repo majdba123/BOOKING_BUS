@@ -32,6 +32,12 @@ class TripuserProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
+  int? _specificIndexReservation;
+  int? get specificIndexReservation => _specificIndexReservation;
+  void saveSpecficRservationIndex(int index) {
+    _specificIndexReservation = index;
+    notifyListeners();
+  }
 
   void addTicketDetail(TicketDetail detail) {
     _selectedTicketDetails.add(detail);

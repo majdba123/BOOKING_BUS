@@ -15,8 +15,9 @@ class NotificationInboxPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final notificationProvider = context.read<NotificationProvider>();
     final auth = context.read<AuthProvider>();
-
-    notificationProvider.fetchNotifications(auth.accessToken);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notificationProvider.fetchNotifications(auth.accessToken);
+    });
 
     return Scaffold(
       appBar: AppBar(
