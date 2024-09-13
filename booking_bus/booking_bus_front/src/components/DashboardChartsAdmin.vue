@@ -585,8 +585,8 @@ h2 {
 
 .chart-container {
     flex: 1;
-    max-width: 300px;
-    min-width: 150px;
+    max-width: 350px;
+    min-width: 175px;
     box-shadow: 0px 4px 10px var(--clr-light);
     border-radius: 10px;
     padding: 15px;

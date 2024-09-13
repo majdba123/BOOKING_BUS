@@ -43,7 +43,15 @@
             </main>
         </div>
         <!-- Right section start -->
-
+        <div class="right">
+            <!--start top-->
+            <div class="top">
+                <button id="menu_bar" @click="openMenu">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
+            <!--end top-->
+        </div>
         <!-- Right section end -->
     </div>
 </template>
@@ -565,6 +573,7 @@ select:focus {
 /**********
   media query
   ********** */
+
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
@@ -715,6 +724,22 @@ select:focus {
         background-color: var(--clr-primary);
         color: var(--clr-white);
         border-radius: 10px;
+    }
+
+    #menu_bar {
+        display: block;
+        background: var(--clr-primary);
+        border: none;
+        border-radius: 0.5rem;
+        color: var(--clr-white);
+        padding: 0.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #menu_bar:hover {
+        background-color: var(--clr-primary-variant);
     }
 }
 </style>

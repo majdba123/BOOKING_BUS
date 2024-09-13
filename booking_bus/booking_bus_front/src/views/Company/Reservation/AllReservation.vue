@@ -699,7 +699,7 @@ aside .logo {
 
 .time-box {
     background: #111111;
-    border-radius: 0.5rem;
+    border-radius: 10px 100px / 120px;
     border-bottom: 1px solid yellow;
     border-top: 1px solid yellow;
     animation: borderColorShift 3s infinite;

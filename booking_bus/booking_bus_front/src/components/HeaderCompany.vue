@@ -2,7 +2,22 @@
     <main>
         <div class="top-bar">
             <h1>{{ x }}</h1>
-            <div class="datetime-container"></div>
+            <div class="datetime-container">
+                <div class="time">
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[0] }}
+                        <span>hour</span>
+                    </div>
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[1] }}
+                        <span>minutes</span>
+                    </div>
+                    <div class="time-box">
+                        {{ currentDateTime.time.split(":")[2] }}
+                        <span>seconds</span>
+                    </div>
+                </div>
+            </div>
             <div class="profile-menu">
                 <div class="theme-notification-container">
                     <div
@@ -525,10 +540,9 @@ small {
 }
 
 .time-box {
-    background: #111111;
-    border-radius: 0.5rem;
+    border-radius: 50% 20% / 10% 40%;
     padding: 1rem 1.5rem;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
     font-size: 1.5rem;
     position: relative;
     color: #ffffff;

@@ -607,6 +607,40 @@ select:focus {
 }
 
 /* Mobile Responsive */
+
+@media screen and (max-width: 1200px) {
+    .container {
+        width: 94%;
+        grid-template-columns: 7rem auto 18rem;
+    }
+    aside .sidebar h3 {
+        display: none;
+    }
+    aside .sidebar a span.msg_count {
+        padding: 1px 4px;
+        font-size: 10px;
+        border-radius: 0.2rem;
+    }
+    aside .sidebar a:hover span {
+        margin: 0;
+    }
+    aside .top .close span {
+        display: none;
+    }
+    aside .sidebar a:last-child {
+        position: relative;
+        margin-top: 1.8rem;
+    }
+
+    main .insights {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 1.6rem;
+        padding: 40px;
+    }
+}
+
+/* Mobile Responsive */
 @media screen and (max-width: 768px) {
     .container {
         width: 100%;
@@ -724,6 +758,22 @@ select:focus {
         background-color: var(--clr-primary);
         color: var(--clr-white);
         border-radius: 10px;
+    }
+
+    #menu_bar {
+        display: block;
+        background: var(--clr-primary);
+        border: none;
+        border-radius: 0.5rem;
+        color: var(--clr-white);
+        padding: 0.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #menu_bar:hover {
+        background-color: var(--clr-primary-variant);
     }
 }
 </style>
