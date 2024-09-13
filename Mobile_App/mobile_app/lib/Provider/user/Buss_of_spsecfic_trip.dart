@@ -53,6 +53,20 @@ class BussofSpsccifTripProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearData() {
+    selectedSeat.clear();
+    _selectedTicketDetails.clear();
+
+    select_place_bording_break_id = 0;
+
+    _selectedBoardingPoint = null;
+    _selectedTypeTripIndex = 0;
+
+    _busResponses.clear();
+
+    notifyListeners();
+  }
+
   void selectIndexOfBustrip(int selectIndexOfBustrip) {
     _selectIndexOfBustrip = selectIndexOfBustrip;
     notifyListeners();

@@ -65,12 +65,21 @@ class _TripTicketPageState extends State<TripTicketPage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: null,
-        backgroundColor: AppColors.primaryColor,
-        elevation: 0,
-        title: Text('Booking details',
-            style: TextStyle(fontSize: 18, color: Colors.white)),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => DashboardUser()),
+            );
+          },
+        ),
         centerTitle: true,
+        backgroundColor: AppColors.primaryColor,
+        title: Text(
+          'Booking details',
+          style: TextStyle(color: Colors.white, fontSize: 22.0),
+        ),
         actions: [
           IconButton(
             color: Colors.white,
@@ -80,206 +89,212 @@ class _TripTicketPageState extends State<TripTicketPage> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.fromLTRB(0, 0, 0, 32),
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: EdgeInsets.all(26),
-                margin: EdgeInsets.fromLTRB(26, 26, 26, 12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 4,
-                    )
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          children: [
+            backImage(context),
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 32),
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(26),
+                    margin: EdgeInsets.fromLTRB(26, 26, 26, 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                        )
+                      ],
+                    ),
+                    child: Column(
                       children: [
-                        Center(
-                          child: Image.asset(
-                            'assets/images/logo_bus.jpg', // Change to your bus logo
-                          ),
-                        ),
-                        SizedBox(height: 14),
-                        Text(
-                          'Bus Trip ID: ${reservation.busTripId}',
-                          style: TextStyle(
-                            fontSize: 32,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Image.asset(
+                                'assets/images/logo_bus.jpg', // Change to your bus logo
+                              ),
+                            ),
+                            SizedBox(height: 14),
+                            Text(
+                              'Bus Trip ID: ${reservation.busTripId}',
+                              style: TextStyle(
+                                fontSize: 32,
+                              ),
+                            ),
+                            SizedBox(height: 28),
+                            Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Bording Point',
+                                      style: TextStyle(color: veppoLightGrey),
+                                    ),
+                                    Text(reservation.breakName),
+                                    SizedBox(height: 28),
+                                    Text(
+                                      'Price',
+                                      style: TextStyle(color: veppoLightGrey),
+                                    ),
+                                    Text('\$${reservation.price}'),
+                                  ],
+                                ),
+                                Spacer(),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Duration',
+                                      style: TextStyle(color: veppoLightGrey),
+                                    ),
+                                    Text(
+                                        '${busprovider.busResponses[busprovider.selectIndexOfSpsecifcBustrip].tripDuration}'),
+                                    SizedBox(height: 28),
+                                    Text(
+                                      'Date',
+                                      style: TextStyle(color: veppoLightGrey),
+                                    ),
+                                    Text(currentDate),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
                         ),
                         SizedBox(height: 28),
+                        Divider(),
+                        SizedBox(height: 28),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Bording Point',
+                                  'Passenger',
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
-                                Text(reservation.breakName),
-                                SizedBox(height: 28),
                                 Text(
-                                  'Price',
-                                  style: TextStyle(color: veppoLightGrey),
+                                  reservation.userName,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
                                 ),
-                                Text('\$${reservation.price}'),
                               ],
                             ),
-                            Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  'Total',
+                                  style: TextStyle(color: veppoLightGrey),
+                                ),
+                                Text(
+                                  '\$${reservation.price}',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 28),
+                        Divider(),
+                        SizedBox(height: 28),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Duration',
+                                  'From',
                                   style: TextStyle(color: veppoLightGrey),
                                 ),
                                 Text(
-                                    '${busprovider.busResponses[busprovider.selectIndexOfSpsecifcBustrip].tripDuration}'),
-                                SizedBox(height: 28),
-                                Text(
-                                  'Date',
-                                  style: TextStyle(color: veppoLightGrey),
-                                ),
-                                Text(currentDate),
+                                    '${busprovider.busResponses[busprovider.selectIndexOfSpsecifcBustrip].from}' ??
+                                        'N/A'),
                               ],
-                            )
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'To',
+                                  style: TextStyle(color: veppoLightGrey),
+                                ),
+                                Text(
+                                    '${busprovider.busResponses[busprovider.selectIndexOfSpsecifcBustrip].to}' ??
+                                        'N/A'),
+                              ],
+                            ),
                           ],
                         ),
+                        SizedBox(height: 28),
+                        Divider(),
+                        SizedBox(height: 28),
+                        qrData.isNotEmpty
+                            ? BarcodeWidget(
+                                barcode: Barcode.qrCode(),
+                                data: qrData,
+                                width: 200,
+                                height: 200,
+                              )
+                            : CircularProgressIndicator(),
                       ],
-                    ),
-                    SizedBox(height: 28),
-                    Divider(),
-                    SizedBox(height: 28),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Passenger',
-                              style: TextStyle(color: veppoLightGrey),
-                            ),
-                            Text(
-                              reservation.userName,
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              'Total',
-                              style: TextStyle(color: veppoLightGrey),
-                            ),
-                            Text(
-                              '\$${reservation.price}',
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 28),
-                    Divider(),
-                    SizedBox(height: 28),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'From',
-                              style: TextStyle(color: veppoLightGrey),
-                            ),
-                            Text(
-                                '${busprovider.busResponses[busprovider.selectIndexOfSpsecifcBustrip].from}' ??
-                                    'N/A'),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'To',
-                              style: TextStyle(color: veppoLightGrey),
-                            ),
-                            Text(
-                                '${busprovider.busResponses[busprovider.selectIndexOfSpsecifcBustrip].to}' ??
-                                    'N/A'),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 28),
-                    Divider(),
-                    SizedBox(height: 28),
-                    qrData.isNotEmpty
-                        ? BarcodeWidget(
-                            barcode: Barcode.qrCode(),
-                            data: qrData,
-                            width: 200,
-                            height: 200,
-                          )
-                        : CircularProgressIndicator(),
-                  ],
-                ),
-              ),
-              Text(
-                'Reservation ID: ${reservation.reservationId}',
-                style: TextStyle(
-                  color: veppoLightGrey,
-                  fontSize: 10,
-                ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                // width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => DashboardUser()),
-                      (route) => false,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 12),
-                    child: Text(
-                      'Go to Dashboard',
-                      style: TextStyle(color: Colors.white),
+                  Text(
+                    'Reservation ID: ${reservation.reservationId}',
+                    style: TextStyle(
+                      color: veppoLightGrey,
+                      fontSize: 10,
                     ),
                   ),
-                ),
+                  SizedBox(height: 20),
+                  Container(
+                    // width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DashboardUser()),
+                          (route) => false,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 12),
+                        child: Text(
+                          'Go to Dashboard',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

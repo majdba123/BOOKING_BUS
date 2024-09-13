@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/PaymentDetails.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/PaymentMethods.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/payment/pay_button.dart.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
-
 
 class PaymentPage extends StatelessWidget {
   @override

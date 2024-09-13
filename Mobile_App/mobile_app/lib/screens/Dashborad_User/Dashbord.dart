@@ -183,11 +183,15 @@ class _DashboardUserState extends State<DashboardUser> {
                           badges.Badge(
                             showBadge: true,
                             position: badges.BadgePosition.topEnd(
-                              top: -1,
+                              top: -3,
                               end: 0,
                             ),
-                            badgeContent: Text('3'),
+                            badgeContent: Text(
+                              '3',
+                              // style: TextStyle(height: 5.0),
+                            ),
                             child: IconButton(
+                              iconSize: 32,
                               icon: Icon(Icons.notifications,
                                   color: Colors.white),
                               onPressed: () {

@@ -116,35 +116,43 @@ class TripuserProvider with ChangeNotifier {
 
   Future<void> make_reservation(String accessToken, int type, List<String> seat,
       int breakId, int bus_trip_id) async {
-    final url =
-        Uri.parse(name_domain_server + 'user/store_reservation/${bus_trip_id}');
-    final headers = {
-      'Authorization': 'Bearer $accessToken',
-      'Content-Type': 'application/json',
-    };
-    final body = jsonEncode({
-      "type": type,
-      "seat": seat,
-      "break_id": breakId,
-    });
-    print(body);
-    final response = await http.post(url, headers: headers, body: body);
-    print(response.body);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      Map<String, dynamic> parsedJson = json.decode(response.body);
-      String message = parsedJson['message'];
+    _isLoading = true;
+    notifyListeners();
 
-      if (message == 'Reservation created successfully') {
-        _reservation = Reservation.fromJson(parsedJson);
-        notifyListeners();
+    try {
+      final url = Uri.parse(
+          name_domain_server + 'user/store_reservation/${bus_trip_id}');
+      final headers = {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      };
+      final body = jsonEncode({
+        "type": type,
+        "seat": seat,
+        "break_id": breakId,
+      });
+      print(body);
+      final response = await http.post(url, headers: headers, body: body);
+      print(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> parsedJson = json.decode(response.body);
+        String message = parsedJson['message'];
+
+        if (message == 'Reservation created successfully') {
+          _reservation = Reservation.fromJson(parsedJson);
+          notifyListeners();
+        } else {
+          throw Exception(message);
+        }
       } else {
-        throw Exception(message);
+        Map<String, dynamic> parsedJson = json.decode(response.body);
+        String error = parsedJson['error'];
+        throw Exception(error);
       }
-    } else {
-      Map<String, dynamic> parsedJson = json.decode(response.body);
-      String error = parsedJson['error'];
-      throw Exception(error);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
