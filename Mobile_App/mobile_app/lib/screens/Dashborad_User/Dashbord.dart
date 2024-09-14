@@ -46,9 +46,19 @@ class _DashboardUserState extends State<DashboardUser> {
 
   void _subscribeToPusher() {
     if (!_isSubscribed) {
-      PusherService().subscribeToChannel("my-channel", (event) {
+      // PusherService().subscribeToChannel("my-channel", (event) {
+      //   setState(() {
+      //     _eventData["form-submitted"] = event.data;
+
+      //     print('the event data from trip is!!!');
+      //     print(event.data);
+      //   });
+      // });
+      PusherService().subscribeToChannel("trip-geolocation-private-channel-1",
+          (event) {
         setState(() {
-          _eventData["form-submitted"] = event.data;
+          _eventData["tripgeolocationEvent"] = event.data;
+
           print('the event data from trip is!!!');
           print(event.data);
         });

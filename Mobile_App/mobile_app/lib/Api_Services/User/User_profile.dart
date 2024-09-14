@@ -138,7 +138,7 @@ class UserProfile {
     }
   }
 
-  Future<bool> CancelRservation(String accessToken, String id) async {
+  Future<void> CancelRservation(String accessToken, String id) async {
     print(id);
     print('in CancelRservation function');
 
@@ -149,13 +149,13 @@ class UserProfile {
       },
     );
     print(response.body);
-    if (response.statusCode == 200) {
-      var message = json.decode(response.body);
-      if (message == "Reservation canceled successfully") return true;
-    } else {
-      throw Exception('Failed to load locations: ${response.body}');
-    }
-    return false;
+    // if (response.statusCode == 200) {
+    //   var message = json.decode(response.body);
+    //   if (message == "Reservation canceled successfully") return true;
+    // } else {
+    //   throw Exception('Failed to load locations: ${response.body}');
+    // }
+    // return false;
   }
 
   Future<List<CancelRule>> canceltionRule(

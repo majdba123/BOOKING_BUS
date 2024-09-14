@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobile_app/Api_Services/User/User_profile.dart';
 import 'package:mobile_app/Data_Models/AlltripsModelUser.dart';
+import 'package:mobile_app/Data_Models/Cancel_Rule.dart';
+import 'package:mobile_app/Data_Models/Cancel_Rule.dart';
 import 'package:mobile_app/Data_Models/LocationOfReservationModel.dart';
 import 'package:mobile_app/Data_Models/My_Reservation.dart';
 import 'package:mobile_app/Data_Models/Reservation_Success_model.dart';
@@ -23,6 +25,8 @@ class TripuserProvider with ChangeNotifier {
   List<MYReservation> _Myreservations = [];
   List<LocationOFRservation> _LocationOfRservation = [];
   List<MYReservation> get Myreservations => _Myreservations;
+  List<CancelRule> _cancelRules = [];
+  List<CancelRule> get cancelRules => _cancelRules;
   List<LocationOFRservation> get LocationOfRservation => _LocationOfRservation;
   List<TicketDetail> _selectedTicketDetails = [];
 
@@ -32,10 +36,12 @@ class TripuserProvider with ChangeNotifier {
   String get status => _status;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  bool _isLoadingRule = false;
+  bool get isLoadingRule => _isLoadingRule;
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
-  int? _specificIndexReservation;
-  int? get specificIndexReservation => _specificIndexReservation;
+  late int _specificIndexReservation;
+  int get specificIndexReservation => _specificIndexReservation;
   void saveSpecficRservationIndex(int index) {
     _specificIndexReservation = index;
     notifyListeners();
@@ -201,12 +207,25 @@ class TripuserProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _LocationOfRservation =
-          await UserProfile().CancelRservation(accessToken, id);
+      await UserProfile().CancelRservation(accessToken, id);
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchCanceltionRule(String accessToken, String name) async {
+    _isLoadingRule = true;
+    notifyListeners();
+
+    try {
+      _cancelRules = await UserProfile().canceltionRule(accessToken, name);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoadingRule = false;
       notifyListeners();
     }
   }
