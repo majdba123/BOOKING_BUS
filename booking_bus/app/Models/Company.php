@@ -22,6 +22,7 @@ class Company extends Model
         });
     }
     protected $fillable = [
+        'id',
         'user_id',
         'name_company',
     ];

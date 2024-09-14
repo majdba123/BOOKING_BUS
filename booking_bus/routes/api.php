@@ -326,6 +326,8 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum', 'throttle:30,
 
     Route::get('/get_all_company', [UserApiController::class, 'get_all_company']);
     Route::get('/get_all_driver', [UserApiController::class, 'get_all_driver']);
+    Route::get('/getLocationOfRservation/{id}', [ProfileController::class, 'getLocationOfSpecifcReservation']);
+    Route::get('/GetCanceltionRuleforCompany/{companyName}', [CancellationRuleController::class, 'GetCanceltionRuleforCompany']);
 });
 
 

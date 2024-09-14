@@ -54,7 +54,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ),
                     FilterButton(
                       text: 'Completed',
-                      isSelected: reservationProvider.status == 'finished',
+                      isSelected: reservationProvider.status == 'completed',
                       onPressed: () async {
                         await reservationProvider.fetchReservations(
                             'finished', accessToken);
@@ -62,10 +62,10 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ),
                     FilterButton(
                       text: 'Cancelled',
-                      isSelected: reservationProvider.status == 'out',
+                      isSelected: reservationProvider.status == 'canceled',
                       onPressed: () async {
                         await reservationProvider.fetchReservations(
-                            'out', accessToken);
+                            'canceled', accessToken);
                       },
                     ),
                   ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobile_app/Api_Services/User/User_profile.dart';
 import 'package:mobile_app/Data_Models/AlltripsModelUser.dart';
+import 'package:mobile_app/Data_Models/LocationOfReservationModel.dart';
 import 'package:mobile_app/Data_Models/My_Reservation.dart';
 import 'package:mobile_app/Data_Models/Reservation_Success_model.dart';
 import 'dart:convert';
@@ -20,8 +21,9 @@ class TripuserProvider with ChangeNotifier {
 
   List<Company> get compaines => _compaines;
   List<MYReservation> _Myreservations = [];
-
+  List<LocationOFRservation> _LocationOfRservation = [];
   List<MYReservation> get Myreservations => _Myreservations;
+  List<LocationOFRservation> get LocationOfRservation => _LocationOfRservation;
   List<TicketDetail> _selectedTicketDetails = [];
 
   Reservation? _reservation;
@@ -171,6 +173,36 @@ class TripuserProvider with ChangeNotifier {
     try {
       _Myreservations =
           await UserProfile().fetchReservations(status, accessToken);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchLocationOfReservation(String accessToken, String id) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _LocationOfRservation =
+          await UserProfile().fetchLocationOfRservation(accessToken, id);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> CancelReservation(String accessToken, String id) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _LocationOfRservation =
+          await UserProfile().CancelRservation(accessToken, id);
     } catch (e) {
       _errorMessage = e.toString();
     } finally {

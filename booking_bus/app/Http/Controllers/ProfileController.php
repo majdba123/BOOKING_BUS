@@ -85,7 +85,7 @@ class ProfileController extends Controller
     public function my_reserva_by_status(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:padding,finished,out',
+            'status' => 'required|in:padding,canceled,completed,out',
         ]);
 
         if ($validator->fails()) {
@@ -130,7 +130,7 @@ class ProfileController extends Controller
                     'start_time' => $startformattedTime,
                     'end_time' => $endformattedTime,
                     'trip_Duration' => $tripDuration,
-                    'Date'=>$Date,
+                    'Date' => $Date,
                     'seats' => count($seats) // array of seat names or properties
                 ];
             } else {
@@ -307,5 +307,24 @@ class ProfileController extends Controller
     public function destroy(Profile $profile)
     {
         //
+    }
+
+
+
+    //hamza
+    public function getLocationOfSpecifcReservation($id)
+    {
+
+        $user = Auth::user();
+        $reservation = Reservation::where('user_id', $user->id)
+            ->where('id', $id)
+            ->first();
+
+        $locations = $reservation->bus_trip->trip->path->breaks->map(function ($brack) {
+            return collect($brack->toArray())
+                ->only(['name', 'latitude', 'longitude'])
+                ->all();
+        });
+        return response()->json($locations);
     }
 }

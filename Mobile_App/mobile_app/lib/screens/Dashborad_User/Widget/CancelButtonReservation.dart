@@ -13,10 +13,10 @@ class CancelButton extends StatelessWidget {
         color: Colors.white,
       ),
       label: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(15.0),
         child: Text(
           'Cancel Ticket',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontSize: 16.0),
         ),
       ),
       style: ElevatedButton.styleFrom(

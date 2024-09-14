@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/My_Reservation.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Bus_Trip_of_Specifc_Trip/Road_Path_line.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/TicketDetailsScreen.dart';
@@ -235,27 +236,19 @@ class TicketTrip extends StatelessWidget {
           // if (provider.typePage == "alltrip") {
           return InkWell(
             onTap: () {
-              // print(t);
-              // WidgetsBinding.instance.addPostFrameCallback((_) async {
-              //   provider.setIndexTrip(index);
-              //   var accessToken =
-              //       Provider.of<AuthProvider>(context, listen: false)
-              //           .accessToken;
-              //   await provider.fetchTripsDetails(accessToken, trip.id);
-              provider.saveSpecficRservationIndex(index);
+              provider.fetchLocationOfReservation(
+                  context.read<AuthProvider>().accessToken,
+                  provider.Myreservations[index].id);
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => TicketDetailsScreen(),
                 ),
               );
+              provider.saveSpecficRservationIndex(index);
             },
             child: tripCard,
           );
-          // }
-          //  else {
-          //   return tripCard;
-          // }
         }).toList(),
       );
     });
