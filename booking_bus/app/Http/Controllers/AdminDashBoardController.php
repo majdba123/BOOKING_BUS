@@ -1097,6 +1097,15 @@ class AdminDashBoardController extends Controller
 
     public function statiesticle_dash()
     {
+        $company = Auth::user()->Company;
+        $key = 'dashboard_company_' . $company->id;
+
+        if (Cache::has($key)) {
+    
+            $dash = Cache::get($key);
+    
+        } else {
+        
         $user = User::count();
         $company = Company::count();
         $driver = Driver::count();
@@ -1202,7 +1211,8 @@ class AdminDashBoardController extends Controller
 
 
         ];
-
+        Cache::put($key, $dash, now()->addMinutes(45));
+    }
         return response()->json($dash);
     }
     /**Lazy Loading vs Eager Loading in the statiesticle_dash Method

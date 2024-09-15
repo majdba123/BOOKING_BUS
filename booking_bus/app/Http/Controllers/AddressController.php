@@ -64,6 +64,9 @@ class AddressController extends Controller
         $address->city = $request->input('city');
         $address->area = $request->input('area');
         $address->save();
+        $key = 'user_addresses_' . Auth::user()->id;
+        Cache::put($key, $address, now()->addMinutes(30)); // Cache for 30 minutes
+
         return response()->json([
             'message' => "Address saved",
             'address' => $address,
