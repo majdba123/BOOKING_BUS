@@ -79,25 +79,10 @@
                 </div>
             </div>
 
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!--end driver_status-->
             <div class="driver_chart">
                 <h2>Driver Workload Status</h2>
-                <DriverChart :chartData="chartData" />
+                <pathchart :chartData="chartData" />
             </div>
         </div>
         <!-- Right section end -->
@@ -107,13 +92,13 @@
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import ProfileCompanys from "@/components/ProfileCompanys.vue";
-import DriverChart from "@/components/DriverChart.vue";
+import pathchart from "@/components/pathchart.vue";
 import store from "@/store";
 import router from "@/router";
 
 export default {
     name: "AllDriver",
-    components: { SidebarCompany, ProfileCompanys, DriverChart },
+    components: { SidebarCompany, ProfileCompanys, pathchart },
     data() {
         return {
             x: store.state.x,

@@ -89,25 +89,10 @@
                 </div>
             </div>
 
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!--end driver_status-->
             <div class="driver_chart">
-                <h2>Driver Workload Status</h2>
-                <DriverChart :chartData="chartData" />
+                <h2>Bus Workload Status</h2>
+                <buschart :chartData="chartData" />
             </div>
         </div>
         <!-- Right section end -->
@@ -117,13 +102,13 @@
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddBus from "@/components/AddBus.vue";
-import DriverChart from "@/components/DriverChart.vue";
+import buschart from "@/components/buschart.vue";
 import store from "@/store";
 import router from "@/router";
 
 export default {
     name: "AllDriver",
-    components: { SidebarCompany, AddBus, DriverChart },
+    components: { SidebarCompany, AddBus, buschart },
     data() {
         return {
             x: store.state.x,
@@ -648,7 +633,7 @@ aside .logo {
     background: linear-gradient(90deg, #72c3ff, #ff4d4d);
     -webkit-background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .time {

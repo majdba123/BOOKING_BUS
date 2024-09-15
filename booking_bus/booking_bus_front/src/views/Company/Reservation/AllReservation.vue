@@ -89,25 +89,10 @@
                 </div>
             </div>
 
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!--end driver_status-->
             <div class="driver_chart">
                 <h2>Driver Workload Status</h2>
-                <DriverChart :chartData="chartData" />
+                <Revchart :chartData="chartData" />
             </div>
         </div>
         <!-- Right section end -->
@@ -116,7 +101,7 @@
 
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import DriverChart from "@/components/DriverChart.vue";
+import Revchart from "@/components/Revchart.vue";
 import store from "@/store";
 import router from "@/router";
 import GetAllReservation from "@/components/GetAllReservation.vue";
@@ -125,7 +110,7 @@ export default {
     name: "AllDriver",
     components: {
         SidebarCompany,
-        DriverChart,
+        Revchart,
         GetAllReservation,
     },
     data() {
@@ -689,7 +674,7 @@ aside .logo {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 .time {
     display: flex;
