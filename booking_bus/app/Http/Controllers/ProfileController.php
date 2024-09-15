@@ -121,7 +121,7 @@ class ProfileController extends Controller
                     'id' => $reservation->id,
                     'price' =>  $reservation->price,
                     'type' => $typeTrip,
-                    // 'status' => $reservation->status,
+                    'bustrip_id' => $busTrip->id,
                     'company_name' => $busTrip->trip->path->Company->user->name,
                     'Pickup_Point' => $reservation->pivoit->break_trip->break->name,
                     'from' => $busTrip->trip->path->from,

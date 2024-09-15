@@ -1,5 +1,6 @@
 class MYReservation {
   final String id;
+  final int busTripId;
   final String price;
   final String type;
   final String company_name;
@@ -15,6 +16,7 @@ class MYReservation {
 
   MYReservation({
     required this.id,
+    required this.busTripId,
     required this.price,
     required this.type,
     required this.company_name,
@@ -36,6 +38,7 @@ class MYReservation {
 
     return MYReservation(
       id: json['id'],
+      busTripId: json['bustrip_id'],
       price: json['price'],
       type: json['type'],
       company_name: json['company_name'],
