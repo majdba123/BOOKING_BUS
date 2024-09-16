@@ -83,13 +83,36 @@ export default {
         };
     },
     mounted() {
-        this.fetchTripsData();
-        this.fetchDashboardData();
+        this.checkCachedData();
     },
     beforeUnmount() {
         this.destroyCharts();
     },
     methods: {
+        checkCachedData() {
+            const cachedDashboardData = JSON.parse(
+                localStorage.getItem("dashboardData")
+            );
+            const lastUpdated = localStorage.getItem("lastUpdated");
+            const now = new Date().getTime();
+
+            // If cached data exists and is less than 30 minutes old, use it
+            if (
+                cachedDashboardData &&
+                lastUpdated &&
+                now - lastUpdated < 1800000
+            ) {
+                // 30 minutes
+                this.dashboardData = cachedDashboardData;
+                this.processProfitsData();
+                this.createCharts();
+            } else {
+                // Fetch new data if no cache or cache expired
+                this.fetchTripsData();
+                this.fetchDashboardData();
+            }
+        },
+
         fetchTripsData() {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -124,6 +147,7 @@ export default {
                 })
                 .then((response) => {
                     this.dashboardData = response.data;
+                    this.cacheDashboardData(); // Cache the data after fetching
                     this.processProfitsData();
                     this.createCharts();
                 })
@@ -131,11 +155,22 @@ export default {
                     console.error("Error fetching dashboard data:", error);
                 });
         },
+
+        cacheDashboardData() {
+            // Save the dashboard data and the time of the update
+            localStorage.setItem(
+                "dashboardData",
+                JSON.stringify(this.dashboardData)
+            );
+            localStorage.setItem("lastUpdated", new Date().getTime());
+        },
+
         processProfitsData() {
             this.dailyProfits = [100, 200, 150, 300, 250, 400, 350];
             this.weeklyProfits = [1500, 2000, 1800, 2200, 1700];
             this.monthlyProfits = [6000, 8000, 7000, 9000, 8500];
         },
+
         createCharts() {
             if (this.dashboardData) {
                 this.createChart(
@@ -231,6 +266,7 @@ export default {
                 );
             }
         },
+
         destroyCharts() {
             if (this.tripStatusChart) this.tripStatusChart.destroy();
             if (this.busStatusChart) this.busStatusChart.destroy();
@@ -241,6 +277,7 @@ export default {
             if (this.weeklyProfitsChart) this.weeklyProfitsChart.destroy();
             if (this.monthlyProfitsChart) this.monthlyProfitsChart.destroy();
         },
+
         createChart(chartId, labels, data, type, borderColor = null) {
             const ctx = document.getElementById(chartId).getContext("2d");
             new Chart(ctx, {
@@ -280,6 +317,7 @@ export default {
     },
 };
 </script>
+
 <style scoped>
 :root {
     --clr-primary: #7380ec;

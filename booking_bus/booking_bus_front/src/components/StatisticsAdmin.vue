@@ -1,14 +1,12 @@
 <template>
     <div class="insights">
-        <!-- Start Buses -->
+        <!-- Start selling -->
         <div class="sales">
-            <span class="material-icons" aria-label="Drivers"
-                >directions_bus</span
-            >
+            <span class="material-icons" aria-label="Sales">trending_up</span>
             <div class="middle">
                 <div class="left">
-                    <h3>Buses</h3>
-                    <h1>\${{ allBuses }}</h1>
+                    <h3>Company</h3>
+                    <h1>\${{ all_company }}</h1>
                 </div>
                 <div class="progress">
                     <svg>
@@ -27,20 +25,20 @@
                         ></circle>
                     </svg>
 
-                    <div class="number">{{ allBuses }}%</div>
+                    <div class="number">{{ all_company }}%</div>
                 </div>
             </div>
             <small>Last 24 Hours</small>
         </div>
-        <!-- End Buses -->
+        <!-- End selling -->
 
-        <!-- Start Favourites -->
+        <!-- Start expenses -->
         <div class="expenses">
-            <span class="material-icons" aria-label="Favourites">favorite</span>
+            <span class="material-icons" aria-label="Expenses">local_mall</span>
             <div class="middle">
                 <div class="left">
-                    <h3>Favourites</h3>
-                    <h1>\${{ count_favourite }}</h1>
+                    <h3>User</h3>
+                    <h1>\${{ all_user }}</h1>
                 </div>
                 <div class="progress">
                     <svg>
@@ -58,16 +56,18 @@
                             :stroke-dashoffset="expensesOffset"
                         ></circle>
                     </svg>
-                    <div class="number">{{ count_favourite }}%</div>
+                    <div class="number">{{ all_user }}%</div>
                 </div>
             </div>
             <small>Last 24 Hours</small>
         </div>
-        <!-- End Favourites -->
+        <!-- End expenses -->
 
-        <!-- Start Drivers -->
+        <!-- Start income -->
         <div class="income">
-            <span class="material-icons" aria-label="Drivers">group</span>
+            <span class="material-icons" aria-label="Income"
+                >stacked_line_chart</span
+            >
             <div class="middle">
                 <div class="left">
                     <h3>Drivers</h3>
@@ -94,10 +94,11 @@
             </div>
             <small>Last 24 Hours</small>
         </div>
-        <!-- End Drivers -->
+        <!-- End income -->
     </div>
     <!-- End insights -->
 </template>
+
 <script>
 import axios from "axios";
 
@@ -105,87 +106,58 @@ export default {
     name: "StatisticsCompany",
     data() {
         return {
-            allBuses: 0,
-            count_favourite: 0,
+            all_company: 0,
+            all_user: 0,
             all_drivers: 0,
             salesOffset: 0,
             expensesOffset: 0,
             incomeOffset: 0,
             circumference: 2 * Math.PI * 30,
-            cacheDuration: 30 * 60 * 1000,
         };
     },
     methods: {
         fetchData() {
             const accessToken = window.localStorage.getItem("access_token");
 
-            const cachedData = localStorage.getItem("dashboardData");
-            const cachedTime = localStorage.getItem("dashboardDataTime");
-            const now = new Date().getTime();
+            axios
+                .get("http://127.0.0.1:8000/api/admin/dashboard_Admin", {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                })
+                .then((response) => {
+                    const data = response.data;
+                    this.all_company = data.all_company || 0;
+                    this.all_user = data.all_user || 0;
+                    this.all_drivers = data.all_drivers || 0;
 
-            if (
-                cachedData &&
-                cachedTime &&
-                now - cachedTime < this.cacheDuration
-            ) {
-                const data = JSON.parse(cachedData);
-                this.allBuses = data.allBuses || 0;
-                this.count_favourite = data.count_favourite || 0;
-                this.all_drivers = data.all_drivers || 0;
-                this.updateProgress();
-            } else {
-                axios
-                    .get(
-                        "http://127.0.0.1:8000/api/company/dashboard_company",
-                        {
-                            headers: {
-                                Authorization: `Bearer ${accessToken}`,
-                            },
-                        }
-                    )
-                    .then((response) => {
-                        const data = response.data;
-                        this.allBuses = data.allBuses || 0;
-                        this.count_favourite = data.count_favourite || 0;
-                        this.all_drivers = data.all_drivers || 0;
+                    const maxValue = 100;
+                    this.salesPercentage = Math.min(
+                        100,
+                        (this.all_company / maxValue) * 100
+                    );
+                    this.expensesPercentage = Math.min(
+                        100,
+                        (this.all_user / maxValue) * 100
+                    );
+                    this.incomePercentage = Math.min(
+                        100,
+                        (this.all_drivers / maxValue) * 100
+                    );
 
-                        localStorage.setItem(
-                            "dashboardData",
-                            JSON.stringify(data)
-                        );
-                        localStorage.setItem("dashboardDataTime", now);
-
-                        this.updateProgress();
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching data:", error);
-                    });
-            }
-        },
-        updateProgress() {
-            const maxValue = 100;
-            this.salesPercentage = Math.min(
-                100,
-                (this.allBuses / maxValue) * 100
-            );
-            this.expensesPercentage = Math.min(
-                100,
-                (this.count_favourite / maxValue) * 100
-            );
-            this.incomePercentage = Math.min(
-                100,
-                (this.all_drivers / maxValue) * 100
-            );
-
-            this.salesOffset =
-                this.circumference -
-                (this.circumference * this.salesPercentage) / 100;
-            this.expensesOffset =
-                this.circumference -
-                (this.circumference * this.expensesPercentage) / 100;
-            this.incomeOffset =
-                this.circumference -
-                (this.circumference * this.incomePercentage) / 100;
+                    this.salesOffset =
+                        this.circumference -
+                        (this.circumference * this.salesPercentage) / 100;
+                    this.expensesOffset =
+                        this.circumference -
+                        (this.circumference * this.expensesPercentage) / 100;
+                    this.incomeOffset =
+                        this.circumference -
+                        (this.circumference * this.incomePercentage) / 100;
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                });
         },
     },
     mounted() {
