@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('point')->default(200);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

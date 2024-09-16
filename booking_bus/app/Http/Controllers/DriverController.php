@@ -240,8 +240,8 @@ class DriverController extends Controller
             // Load related data for each trip
             $trip->load(['trip.path', 'Pivoit.Reservation.user']);
 
-            $fromTime = new \DateTime($trip->from_time);
-            $toTime = new \DateTime($trip->to_time);
+            $fromTime = new \DateTime($trip->from_time_going);
+            $toTime = new \DateTime($trip->to_time_return);
             $interval = $fromTime->diff($toTime);
             $tripDuration = $interval->format('%H:%I');
             $response[] = [
@@ -302,9 +302,9 @@ class DriverController extends Controller
         foreach ($trips as $trip) {
             // Load related data for each trip
             $trip->load(['trip.path', 'Pivoit.Reservation.user']);
+            $fromTime = new \DateTime($trip->from_time_going);
+            $toTime = new \DateTime($trip->to_time_return);
 
-            $fromTime = new \DateTime($trip->from_time);
-            $toTime = new \DateTime($trip->to_time);
             $interval = $fromTime->diff($toTime);
             $tripDuration = $interval->format('%H:%I');
             $response[] = [
@@ -387,8 +387,9 @@ class DriverController extends Controller
             ];
         }
 
-        $fromTime = new \DateTime($trip->from_time);
-        $toTime = new \DateTime($trip->to_time);
+        $fromTime = new \DateTime($trip->from_time_going);
+        $toTime = new \DateTime($trip->to_time_return);
+        
         $interval = $fromTime->diff($toTime);
         $tripDuration = $interval->format('%H:%I');
         $trip->load(['trip.path']);
@@ -466,7 +467,7 @@ class DriverController extends Controller
                     'notification' => $massage,
                 ]);
 
-                $reservations = Reservation::where('status', 'padding')
+                $reservations = Reservation::where('status', 'pending')
                     ->where('pivoit_id', $pivoit_id->id)
                     ->where('type', 1)
                     ->get()
@@ -580,7 +581,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -616,7 +617,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -650,7 +651,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -706,7 +707,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -738,7 +739,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -843,7 +844,7 @@ class DriverController extends Controller
                     $bus_trip->trip->save();
                     }
 
-                    $reservations = Reservation::where('status', 'padding')
+                    $reservations = Reservation::where('status', 'pending')
                         ->where('pivoit_id', $pivoit_id)
                         ->where('type', 2)
                         ->get()
@@ -875,7 +876,7 @@ class DriverController extends Controller
                 } elseif ($previous_pivoit->status == "done1" && $next_pivoit->status == "pending") {
                     $bus_trip->event = $pivoit->break_trip->break->name;
                     $bus_trip->save();
-                    $reservations = Reservation::where('status', 'padding')
+                    $reservations = Reservation::where('status', 'pending')
                         ->where('pivoit_id', $pivoit_id)
                         ->where('type', 1)
                         ->get()
@@ -954,7 +955,7 @@ class DriverController extends Controller
                 } elseif ($next_pivoit->status == "done2" && $previous_pivoit->status == "done1") {
                     $bus_trip->event = $pivoit->break_trip->break->name;
                     $bus_trip->save();
-                    $reservations = Reservation::where('status', 'padding')
+                    $reservations = Reservation::where('status', 'pending')
                         ->where('pivoit_id', $pivoit_id)
                         ->where('type', 2)
                         ->get()

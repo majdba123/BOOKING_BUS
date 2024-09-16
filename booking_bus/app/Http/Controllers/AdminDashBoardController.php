@@ -140,7 +140,7 @@ class AdminDashBoardController extends Controller
     public function user_reservation_by_status($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'status' => 'nullable|string|in:completed,padding,out,finished',
+            'status' => 'nullable|string|in:completed,pending,out,finished',
             'type' => 'nullable|integer|in:1,2',
         ]);
 
@@ -250,6 +250,15 @@ class AdminDashBoardController extends Controller
 
     public function all_trip_history_of_user_fillter($id, Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'from_date' => 'nullable|date',
+            'to_date' => 'nullable|date',
+            'status' => 'nullable|string',
+            'type' => 'nullable|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 422);
+        }
         $reservations = Reservation::where('user_id', $id)
             ->get();
 
@@ -259,7 +268,11 @@ class AdminDashBoardController extends Controller
 
         // Filter by date range
         if ($request->query('from_date') && $request->query('to_date')) {
-            $customBusTrips->whereBetween('date', [$request->query('from_date'), $request->query('to_date')]);
+            $customBusTrips->where(function ($query) use ($request) {
+                $query->where('date_start', '<=', $request->input('to_date'));
+
+                $query->where('date_end', '>=', $request->input('from_date'));            
+            });
         }
 
         // Filter by status
@@ -719,6 +732,17 @@ class AdminDashBoardController extends Controller
 
     public function get_all_BusTripsByFillter(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'from_time_going' => 'nullable|date_format:H:i',
+            'to_time_going' => 'nullable|date_format:H:i',
+            'type' => 'nullable|string',
+            'from' => 'nullable|string',
+            'to' => 'nullable|string',
+            'status' => 'nullable|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 422);
+        }
         $fromTime = $request->input('from_time_going');
         $toTime = $request->input('to_time_going');
         $type = $request->input('type');
@@ -1063,16 +1087,16 @@ class AdminDashBoardController extends Controller
         $favourite_count = Favourite::where('company_id', $company->id)->count();
 
         $dash = [
-            'pending_reservations' => $reservationCounts->get('padding', 0),
+            'pending_reservations' => $reservationCounts->get('pending', 0),
             'completed_reservations' => $reservationCounts->get('completed', 0),
             'out_reservation' => $reservationCounts->get('out', 0),
-            'pending_trip' => $trip_count->get('padding', 0),
+            'pending_trip' => $trip_count->get('pending', 0),
             'finished_trip' => $trip_count->get('finished', 0),
             'finished_going_trip' => $trip_count->get('finished_going', 0),
-            'pending_bus_trip' => $bus_trip->get('padding', 0),
+            'pending_bus_trip' => $bus_trip->get('pending', 0),
             'finished_bus_trip' => $bus_trip->get('finished', 0),
             'finished_going_bus_trip' => $bus_trip->get('finished_going', 0),
-            'total_profit_pending' => $reservationSums->get('padding', 0),
+            'total_profit_pending' => $reservationSums->get('pending', 0),
             'total_profit_completed' => $reservationSums->get('completed', 0),
             'total_profit_out' => $reservationSums->get('out', 0),
             'all_drivers' => $allDrivers,
@@ -1083,7 +1107,7 @@ class AdminDashBoardController extends Controller
             'completed_Buses' => $busCounts->get('completed', 0),
             'availableBuses' => $busCounts->get('available', 0),
             'pending_Buses' => $busCounts->get('pending', 0),
-            'inProgress_PrivateTrips' => $privateTripCounts->get('padding', 0),
+            'inProgress_PrivateTrips' => $privateTripCounts->get('pending', 0),
             'completed_PrivateTrips' => $privateTripCounts->get('accepted', 0),
             'canceled_PrivateTrips' => $privateTripCounts->get('cancelled', 0),
             'total_price_completed_PrivateTrips' => $acceptedTotalPrice,
@@ -1181,16 +1205,16 @@ class AdminDashBoardController extends Controller
         $all_company = Company::count();
 
         $dash = [
-            'pending_reservations' => $reservationCounts->get('padding', 0),
+            'pending_reservations' => $reservationCounts->get('pending', 0),
             'completed_reservations' => $reservationCounts->get('completed', 0),
             'out_reservation' => $reservationCounts->get('out', 0),
-            'pending_trip' => $trip_count->get('padding', 0),
+            'pending_trip' => $trip_count->get('pending', 0),
             'finished_trip' => $trip_count->get('finished', 0),
             'finished_going_trip' => $trip_count->get('finished_going', 0),
             'pending_bus_trip' => $bus_trip->get('pending', 0),
             'finished_bus_trip' => $bus_trip->get('finished', 0),
             'finished_going_bus_trip' => $bus_trip->get('finished_going', 0),
-            'total_profit_pending' => $reservationSums->get('padding', 0),
+            'total_profit_pending' => $reservationSums->get('pending', 0),
             'total_profit_completed' => $reservationSums->get('completed', 0),
             'total_profit_out' => $reservationSums->get('out', 0),
             'all_drivers' => $allDrivers,
@@ -1201,7 +1225,7 @@ class AdminDashBoardController extends Controller
             'completed_Buses' => $busCounts->get('completed', 0),
             'availableBuses' => $busCounts->get('available', 0),
             'pending_Buses' => $busCounts->get('pending', 0),
-            'inProgress_PrivateTrips' => $privateTripCounts->get('padding', 0),
+            'inProgress_PrivateTrips' => $privateTripCounts->get('pending', 0),
             'completed_PrivateTrips' => $privateTripCounts->get('accepted', 0),
             'canceled_PrivateTrips' => $privateTripCounts->get('cancelled', 0),
             'total_price_completed_PrivateTrips' => $acceptedTotalPrice,

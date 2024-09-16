@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('notification');
             $table->string('status')->default('pending');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

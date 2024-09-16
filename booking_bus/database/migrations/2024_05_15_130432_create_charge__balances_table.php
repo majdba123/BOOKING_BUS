@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('image');
             $table->string('point');
-            $table->string('status')->default('padding');
+            $table->string('status')->default('pending');
+            $table->softDeletes();
 
             $table->timestamps();
         });

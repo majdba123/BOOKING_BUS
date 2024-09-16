@@ -21,8 +21,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $user = auth()->user()->load('profile', 'address');
-
+        $user = Auth::with(['profile', 'address'])->user();
         $profileImage = $user->profile ? $user->profile->image : null;
         $phoneNumber = $user->profile ? $user->profile->phone : null;
 
@@ -85,7 +84,7 @@ class ProfileController extends Controller
     public function my_reserva_by_status(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:padding,finished,out',
+            'status' => 'required|in:pending,finished,out',
         ]);
 
         if ($validator->fails()) {

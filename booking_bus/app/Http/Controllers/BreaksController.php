@@ -207,7 +207,6 @@ class BreaksController extends Controller
      */
     public function destroy($break_id)
     {
-
         $break = Breaks::find($break_id);
 
         if (!$break) {

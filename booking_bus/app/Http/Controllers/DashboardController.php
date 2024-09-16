@@ -223,16 +223,16 @@ class DashboardController extends Controller
             $favourite_count =Favourite::where('company_id' , $company->id)->count();
 
             $dash = [
-                'pending_reservations' => $reservationCounts->get('padding', 0),
+                'pending_reservations' => $reservationCounts->get('pending', 0),
                 'completed_reservations' => $reservationCounts->get('completed', 0),
                 'out_reservation' => $reservationCounts->get('out', 0),
-                'pending_trip' => $trip_count->get('padding', 0),
+                'pending_trip' => $trip_count->get('pending', 0),
                 'finished_trip' => $trip_count->get('finished', 0),
                 'finished_going_trip' => $trip_count->get('finished_going', 0),
                 'pending_bus_trip' => $bus_trip->get('pending', 0),
                 'finished_bus_trip' => $bus_trip->get('finished', 0),
                 'finished_going_bus_trip' => $bus_trip->get('finished_going', 0),
-                'total_profit_pending' => $reservationSums->get('padding', 0),
+                'total_profit_pending' => $reservationSums->get('pending', 0),
                 'total_profit_completed' => $reservationSums->get('completed', 0),
                 'total_profit_out' => $reservationSums->get('out', 0),
                 'all_drivers' => $allDrivers,
@@ -243,7 +243,7 @@ class DashboardController extends Controller
                 'completed_Buses' => $busCounts->get('completed', 0),
                 'availableBuses' => $busCounts->get('available', 0),
                 'pending_Buses' => $busCounts->get('pending', 0),
-                'inProgress_PrivateTrips' => $privateTripCounts->get('padding', 0),
+                'inProgress_PrivateTrips' => $privateTripCounts->get('pending', 0),
                 'completed_PrivateTrips' => $privateTripCounts->get('accepted', 0),
                 'canceled_PrivateTrips' => $privateTripCounts->get('cancelled', 0),
                 'total_price_completed_PrivateTrips' => $acceptedTotalPrice,

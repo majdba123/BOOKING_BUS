@@ -121,7 +121,6 @@ class PathController extends Controller
 
             $break->save();
 
-
            $d= Auth::user()->Company->id;
 
 

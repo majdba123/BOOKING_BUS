@@ -177,22 +177,34 @@ class BusDriverController extends Controller
 
     public function getFirstTrip()
     {
+        $validator = Validator::make([], [
 
+            'driver_id' => 'required|exists:drivers,id',
+
+        ]);
+
+
+        if ($validator->fails()) {
+
+            return response()->json(['error' => $validator->messages()], 422);
+
+        }
         $user = Auth::user();
 
         $busDriver = Bus_Driver::where('driver_id', $user->Driver->id)->firstOrFail();
 
         $firstTrip = Bus_Trip::where('bus_id', $busDriver->bus_id)
             ->where('status', 'pending')
-            ->orderBy('date', 'asc')
-            ->orderBy('from_time', 'asc')
+            ->orderBy('date_start', 'asc')
+            ->orderBy('from_time_going', 'asc')
             ->first();
-        if ($firstTrip) {
 
+        if ($firstTrip) {
             $firstTrip->load(['trip.path']);
-            $fromTime = new \DateTime($firstTrip->from_time);
-            $toTime = new \DateTime($firstTrip->to_time);
+            $fromTime = new \DateTime($firstTrip->from_time_going);
+            $toTime = new \DateTime($firstTrip->to_time_return);
             $interval = $fromTime->diff($toTime);
+
             $tripDuration = $interval->format('%H:%I');
             return response()->json([
                 'id' => $firstTrip->id,
@@ -200,9 +212,8 @@ class BusDriverController extends Controller
                 'from' => $firstTrip->trip->path->from ?? null,
                 'to' => $firstTrip->trip->path->to ?? null,
                 'Distance' => $firstTrip->trip->path->Distance ?? null,
-                'from_time' => $firstTrip->from_time,
-                // 'date' => $firstTrip->date,
-                'to_time' => $firstTrip->to_time,
+                'from_time' => $firstTrip->from_time_going,
+                'to_time' => $firstTrip->to_time_going,
                 'Passengers' =>  $firstTrip->bus->getNumberOfReservationsAttribute(),
                 'Stops' =>  $firstTrip->Pivoit->count(),
                 'trip_duration' => $tripDuration,

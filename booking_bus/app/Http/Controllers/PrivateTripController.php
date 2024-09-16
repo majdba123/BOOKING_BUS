@@ -20,7 +20,7 @@ class PrivateTripController extends Controller
      */
     public function index()
     {
-        $privateTrips = Private_trip::where('status', 'padding')->get();
+        $privateTrips = Private_trip::where('status', 'pending')->get();
 
         return response()->json($privateTrips);
     }
@@ -208,7 +208,7 @@ class PrivateTripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:completed,padding',
+            'status' => 'required|in:completed,pending',
         ]);
 
         if ($validator->fails()) {

@@ -94,6 +94,10 @@ class AddressController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'city' => 'string|max:255',
+            'area' => 'string|max:255',
+        ]);
         $user = Auth::user()->id;
         $key = 'user_addresses_' . $user;
         $address = Address::with('user')->find($id);

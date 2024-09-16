@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(Driver::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('rating');
             $table->integer('rating_speed');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('rating');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

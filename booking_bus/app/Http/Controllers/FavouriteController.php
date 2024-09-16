@@ -34,8 +34,8 @@ class FavouriteController extends Controller
         }
 
         $companies = $companies->map(function ($company) {
-            $company->profile = $company->user->profile;
-            $company->address = $company->user->address;
+            $company->user->profile = $company->user->profile;
+            $company->user->address = $company->user->address;
             unset($company->user);
             return $company;
         });
@@ -77,8 +77,8 @@ class FavouriteController extends Controller
         $company_id = $request->input('company_id');
 
         // Get the authenticated user
-        $user = auth()->user();
-        $recentFavourite = $user->favourite()->where('company_id', $company_id)->latest()->first();
+        $user = Auth::user();
+        $recentFavourite = $user->favourite->where('company_id', $company_id)->latest()->first();
 
         if ($recentFavourite && $recentFavourite->created_at->gt(now()->subMinutes(10))) {
 
@@ -189,7 +189,7 @@ class FavouriteController extends Controller
         $user = auth()->user();
 
         // Find the favourite instance to remove
-        $favourite = $user->favourite()->where('company_id', $company_id)->first();
+        $favourite = $user->favourite->where('company_id', $company_id)->first();
 
         if (!$favourite) {
             return response()->json(['error' => 'Favourite not found'], 404);
