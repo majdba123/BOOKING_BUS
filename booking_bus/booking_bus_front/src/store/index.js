@@ -13,6 +13,7 @@ export default createStore({
         Trips: {},
         Government: {},
         searchQuery: "",
+
         message: [],
         Profile: "",
         start: null,
@@ -28,11 +29,17 @@ export default createStore({
         lat: null,
         lng: null,
         Users: {},
+        lattrack: null,
+        langtrack: null,
     },
     getters: {
         getNotifications: (state) => state.message,
     },
     mutations: {
+        ADD_TRAKING(state, lattrack, langtrack) {
+            state.lattrack = lattrack;
+            state.langtrack = langtrack;
+        },
         ADD_NOTIFICATION(state, message) {
             state.message.push(message);
         },

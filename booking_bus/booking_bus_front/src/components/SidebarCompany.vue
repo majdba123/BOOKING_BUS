@@ -98,6 +98,16 @@
             >
             <h3>Polices</h3>
         </router-link>
+        <router-link
+            to="TrackingBus"
+            @click="selectOption('Tracking')"
+            :class="{ active: selectedOption === 'Tracking' }"
+        >
+            <span class="material-icons" aria-label="Analytics"
+                >description</span
+            >
+            <h3>Tracking</h3>
+        </router-link>
 
         <router-link
             to="AllReservation"

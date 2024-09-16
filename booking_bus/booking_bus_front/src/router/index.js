@@ -23,13 +23,18 @@ import AllPolices from "../views/Company/Polices/AllPolices.vue";
 import AllChargebalnce from "../views/Admin/Chargebalnce/AllChargebalnce.vue";
 import AllInquires from "../views/Admin/Inquires/AllInquires.vue";
 import AllUser from "../views/Admin/Users/AllUser.vue";
-AllChargebalnce;
+import TrackingBus from "../views/Company/Tracking/TrackingBus.vue";
 
 const routes = [
     {
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/TrackingBus",
+        name: "TrackingBus",
+        component: TrackingBus,
     },
     {
         path: "/AllUser",
