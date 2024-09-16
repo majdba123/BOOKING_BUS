@@ -27,7 +27,7 @@ class FirstTrip extends StatelessWidget {
           child: Text('No trip available'),
         );
       }
-      String dateString = "${tripdriver.date} ${tripdriver.from_time}";
+      String dateString = "${tripdriver.date_start} ${tripdriver.from_time}";
 
       DateTime from = DateTime.parse(dateString);
 

@@ -6,10 +6,6 @@ import 'package:mobile_app/colors.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
 import 'package:mobile_app/widgets/Alert_Box.dart';
 import 'package:provider/provider.dart';
-import '../../../widgets/widget.dart';
-import '../../../constants.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -38,7 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                  "assets/images/background_mappp.png", // Path to your PNG background image
+                  "assets/images/background_mappp.png",
                 ),
                 fit: BoxFit.cover,
               ),
@@ -59,7 +55,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         width: screenWidth * 0.4,
                         height: screenHeight * 0.2,
                         child: SvgPicture.asset(
-                          "assets/images/logo_bus.svg", // Path to your logo image
+                          "assets/images/logo_bus.svg",
                           fit: BoxFit.contain,
                           color: AppColors.primaryColor,
                         ),
@@ -70,8 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       Text(
                         "Register to BUSX",
                         style: TextStyle(
-                          fontSize:
-                              screenHeight * 0.04, // Adjusted for better fit
+                          fontSize: screenHeight * 0.04,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryColor,
                           letterSpacing: 1.2,

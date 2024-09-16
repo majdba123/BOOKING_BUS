@@ -15,6 +15,9 @@ class TimelineTileWidget extends StatelessWidget {
         if (stops == null || stops.isEmpty) {
           return Center(child: Text('No stop details available'));
         }
+        if (provider.selectedTypeTripIndex == 1) {
+          stops = stops.reversed.toList();
+        }
         int cumulativePassengers = 0;
 
         return Column(
@@ -22,10 +25,15 @@ class TimelineTileWidget extends StatelessWidget {
             int index = entry.key;
             var stop = entry.value;
             bool isFirst = index == 0;
-            bool isLast = index == stops.length - 1;
+            bool isLast = index == stops!.length - 1;
             bool isCurrent = index == provider.currentStopIndex;
             bool passed = index < provider.currentStopIndex;
             cumulativePassengers += stop.passengers_count;
+            // print('is First $isFirst');
+            // print('is isLast $isLast');
+            // print('is isCurrent $isCurrent');
+            // print('is passed $passed');
+            // print(' index $isFirst');
 
             return InkWell(
               onTap: () {

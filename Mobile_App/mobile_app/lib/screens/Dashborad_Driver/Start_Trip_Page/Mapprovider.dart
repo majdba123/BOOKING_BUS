@@ -8,19 +8,25 @@ import 'package:mobile_app/constants.dart';
 
 class MapProvider with ChangeNotifier {
   List<LatLng> routeCoordinates = [];
+  List<LatLng> trackCoordinates = [];
   bool showTimeline = true;
   Set<Marker> markers = {};
   Set<Polyline> polylines = {};
   LatLng _currentLocation = LatLng(0.0, 0.0);
   LatLng? _previousLocation;
   late GoogleMapController _mapController;
+  GoogleMapController get mapController => _mapController;
+
   StreamSubscription<Position>? _positionStream;
 
   Timer? _timer;
   Timer? _locationTimer; // Timer for periodic location updates
 
-  Future<void> startLocationTracking(BuildContext context, int busTrip,
-      String accessToken, GoogleMapController mapController) async {
+  Future<void> startLocationTracking(
+    BuildContext context,
+    int busTrip,
+    String accessToken,
+  ) async {
     bool gpsEnabled = await Geolocator.isLocationServiceEnabled();
     if (!gpsEnabled) {
       _showPermissionDeniedDialog(context);
@@ -28,53 +34,65 @@ class MapProvider with ChangeNotifier {
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        _showPermissionDeniedDialog(context);
-        return;
-      }
-    }
 
-    // Set the map controller
-    _mapController = mapController;
+    await Geolocator.requestPermission();
 
-    // Initialize and start the location update timer
-    _locationTimer = Timer.periodic(Duration(seconds: 10), (timer) async {
-      print('get current location');
-      await _getCurrentLocation(busTrip, accessToken, mapController);
-    });
+    // if (permission == LocationPermission.denied ||
+    //     permission == LocationPermission.deniedForever) {
+    //   permission =
+    //   if (permission == LocationPermission.denied) {
+    //     _showPermissionDeniedDialog(context);
+    //     return;
+    //   }
+    // }
+
+    print('in startLocationTracking function ');
 
     // Start listening to location updates
     _positionStream = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
+        // timeLimit: Duration(minutes: 1),
         accuracy: LocationAccuracy.high,
-        distanceFilter: 10, // Update only if location changes by 10 meters
+        distanceFilter: 30, // change!! this for number metaer !!!!
       ),
     ).listen((Position position) {
       LatLng newLocation = LatLng(position.latitude, position.longitude);
       print(
-          'Location updated: ${newLocation.latitude}, ${newLocation.longitude}');
+          'Cuurent location: ${newLocation.latitude}, ${newLocation.longitude}');
 
-      if (_previousLocation == null ||
-          _hasSignificantChange(_previousLocation!, newLocation)) {
+      if (_previousLocation == null || _previousLocation != newLocation
+          // ||
+          // _hasSignificantChange(_previousLocation!, newLocation)
+
+          ) {
+        print(' in if body !! ');
+
         _currentLocation = newLocation;
-        routeCoordinates.add(newLocation);
+        // routeCoordinates.add(newLocation);
         _previousLocation = newLocation;
+
+        _mapController!.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(position.latitude, position.longitude),
+              zoom: 14.0,
+            ),
+          ),
+        );
         _updateMarker();
-        _updatePolyline();
+        // _updatePolyline();
+        print(busTrip);
         _sendLocationToServer(newLocation, busTrip, accessToken);
 
         // Update map camera position
-        _mapController.animateCamera(
-          CameraUpdate.newLatLng(_currentLocation),
-        );
+        // _mapController.animateCamera(
+        //   CameraUpdate.newLatLng(_currentLocation),
+        // );
 
         // Notify listeners for UI updates
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          notifyListeners();
-        });
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+        // });
       }
     });
   }
@@ -85,33 +103,6 @@ class MapProvider with ChangeNotifier {
         ?.cancel(); // Cancel the timer when stopping location tracking
   }
 
-  Future<void> _getCurrentLocation(int busTrip, String accessToken,
-      GoogleMapController mapController) async {
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-
-    LatLng newLocation = LatLng(position.latitude, position.longitude);
-    print(
-        'Fetching current location: ${newLocation.latitude}, ${newLocation.longitude}');
-
-    _currentLocation = newLocation;
-    routeCoordinates.add(newLocation);
-    _previousLocation = newLocation;
-    _updateMarker();
-    _updatePolyline();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      notifyListeners();
-    });
-
-    mapController.animateCamera(
-      CameraUpdate.newLatLng(_currentLocation),
-    );
-
-    _sendLocationToServer(newLocation, busTrip, accessToken);
-  }
-
   bool _hasSignificantChange(LatLng oldLocation, LatLng newLocation) {
     double distance = Geolocator.distanceBetween(
       oldLocation.latitude,
@@ -119,17 +110,26 @@ class MapProvider with ChangeNotifier {
       newLocation.latitude,
       newLocation.longitude,
     );
-    return true;
-    // return distance > 10; // Threshold for significant change
+    // return true;
+    return distance > 20; // Threshold for significant change
   }
 
   void _updateMarker() {
-    markers.clear();
+    // Remove only the previous marker for the current location (if it exists)
+    // markers.removeWhere((marker) => marker.markerId.value == 'currentLocation');
+
+    // Add new marker for the current location
     markers.add(Marker(
-      markerId: MarkerId('currentLocation'),
+      markerId:
+          MarkerId('currentLocation_${DateTime.now().millisecondsSinceEpoch}'),
       position: _currentLocation,
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
     ));
+
+    trackCoordinates.add(_currentLocation);
+
+    // print(markers);
+    notifyListeners();
   }
 
   void _updatePolyline() {

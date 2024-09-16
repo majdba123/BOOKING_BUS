@@ -44,19 +44,28 @@ class FilterBarUserUi extends StatelessWidget {
               }
             },
           ),
-          IconButton(
-            icon: Icon(Icons.airplane_ticket,
-                color: Colors.white, size: iconSize),
-            onPressed: () {
-              print(auth.userType);
-              if (auth.userType == "user") {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/BookingUser', (Route<dynamic> route) => false);
-              } else if (auth.userType == "driver") {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/JourneysScreen', (Route<dynamic> route) => false);
-              }
-            },
+          Container(
+            margin: EdgeInsets.only(bottom: 4),
+            child: IconButton(
+              // color: Colors.white,
+              icon: Image.asset(
+                width: 40.0,
+                height: 39,
+                fit: BoxFit.contain,
+                color: Colors.white,
+                "assets/images/tik.png",
+              ),
+              onPressed: () {
+                print(auth.userType);
+                if (auth.userType == "user") {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/BookingUser', (Route<dynamic> route) => false);
+                } else if (auth.userType == "driver") {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/JourneysScreen', (Route<dynamic> route) => false);
+                }
+              },
+            ),
           ),
           IconButton(
             icon: Icon(Icons.person, color: Colors.white, size: iconSize),

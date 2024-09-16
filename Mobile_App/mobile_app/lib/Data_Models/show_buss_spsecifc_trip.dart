@@ -4,13 +4,17 @@ import 'dart:ffi';
 import 'package:mobile_app/Data_Models/Breack_place.dart';
 
 class BusResponse {
-  String bus_trip_id;
+  int bus_trip_id;
   String busId;
   String from;
   String to;
   String nameCompany;
-  String fromTime;
-  String toTime;
+  String ReturnfromTime;
+  String ReturntoTime;
+  String goingfromTime;
+  String goingtoTime;
+  String date_start;
+  String date_end;
   String type;
   String event;
   int Distance;
@@ -24,9 +28,13 @@ class BusResponse {
     required this.busId,
     required this.from,
     required this.to,
-    required this.fromTime,
+    required this.ReturnfromTime,
+    required this.ReturntoTime,
+    required this.goingfromTime,
+    required this.goingtoTime,
     required this.nameCompany,
-    required this.toTime,
+    required this.date_start,
+    required this.date_end,
     required this.type,
     required this.event,
     required this.breaks,
@@ -51,8 +59,12 @@ class BusResponse {
         from: json['from'],
         to: json['to'],
         nameCompany: json['nameCompany'],
-        fromTime: json['from_time'],
-        toTime: json['to_time'],
+        goingfromTime: json['goingfromTime'],
+        goingtoTime: json['goingtoTime'],
+        ReturnfromTime: json['ReturnfromTime'],
+        ReturntoTime: json['ReturntoTime'],
+        date_end: json['date_end'],
+        date_start: json['date_start'],
         type: json['type'],
         event: json['event'],
         breaks: breaksList,

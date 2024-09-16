@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
+import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:provider/provider.dart';
 
 class PaymentDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final tripProvider = Provider.of<TripuserProvider>(context);
-    final ticketDetails = tripProvider.selectedTicketDetails;
+    final busTripProvider = Provider.of<BussofSpsccifTripProvider>(context);
+    final ticketDetails = busTripProvider.selectedTicketDetails;
 
     return Card(
       // margin: EdgeInsets.only(bottom: 50),
@@ -42,7 +42,7 @@ class PaymentDetails extends StatelessWidget {
                 Text('Total ',
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                Text('£${tripProvider.totalAmount}',
+                Text('£${busTripProvider.totoal_price}',
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ],

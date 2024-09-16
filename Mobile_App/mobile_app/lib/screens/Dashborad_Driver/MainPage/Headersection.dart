@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/signin_page.dart';
+import 'package:mobile_app/screens/Dashborad_User/Profile/NoticationPage.dart';
 import 'package:provider/provider.dart';
+import 'package:badges/badges.dart' as badges;
 
 class HeraderSection extends StatelessWidget {
   void _logout(BuildContext context) {
@@ -20,7 +22,7 @@ class HeraderSection extends StatelessWidget {
     return Container(
       width: screenWidth,
       padding: EdgeInsets.symmetric(
-        vertical: screenHeight * 0.05,
+        vertical: screenHeight * 0.03,
         horizontal: screenWidth * 0.05,
       ),
       decoration: BoxDecoration(
@@ -53,9 +55,22 @@ class HeraderSection extends StatelessWidget {
           ),
           Row(
             children: [
-              IconButton(
-                icon: Icon(Icons.notifications_sharp, color: Colors.white),
-                onPressed: () {},
+              badges.Badge(
+                showBadge: true,
+                position: badges.BadgePosition.topEnd(
+                  top: -1,
+                  end: 0,
+                ),
+                badgeContent: Text('3'),
+                child: IconButton(
+                  icon: Icon(Icons.notifications, color: Colors.white),
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                          builder: (context) => NotificationInboxPage()),
+                    );
+                  },
+                ),
               ),
               IconButton(
                 icon: Icon(Icons.logout, color: Colors.white),

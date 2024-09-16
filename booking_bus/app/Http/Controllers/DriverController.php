@@ -248,7 +248,8 @@ class DriverController extends Controller
                 'to' => $trip->trip->path->to ?? null,
                 'from_time' => $trip->from_time,
                 'to_time' => $trip->to_time,
-                'date' => $trip->date,
+                'date_start' => $trip->date_start,
+                'date_end' => $trip->date_end,
                 'Distance' => $trip->trip->path->Distance ?? null,
                 // 'from_lat' => $trip->trip->path->from_latitude ?? null,
                 // 'from_long' => $trip->trip->path->from_longitude ?? null,
@@ -282,8 +283,9 @@ class DriverController extends Controller
             return response()->json(['error' => 'No pending bus found for the driver'], 404);
         }
         // print($bus);
-        $trips = Bus_Trip::where('status', 'pending')
-            ->where('bus_id', $bus->bus_id)
+        $trips = Bus_Trip::where('bus_id', $bus->bus_id)
+            // where('status', 'pending')
+            // ->
             ->get();
 
         if ($trips->isEmpty()) {
@@ -315,7 +317,8 @@ class DriverController extends Controller
                 'goingtoTime' => $GoingformattedToTime,
                 'ReturnfromTime' => $RetuenformattedFromTime,
                 'ReturntoTime' => $RetuenformattedToTime,
-                'date' => $trip->date,
+                'date_start' => $trip->date_start,
+                'date_end' => $trip->date_end,
                 'Distance' => $trip->trip->path->Distance ?? null,
                 // 'from_lat' => $trip->trip->path->from_latitude ?? null,
                 // 'from_long' => $trip->trip->path->from_longitude ?? null,
@@ -349,9 +352,7 @@ class DriverController extends Controller
             return response()->json(['error' => 'No pending bus found for the driver'], 404);
         }
         // print($bus);
-        $trip = Bus_Trip::where('status', 'pending')
-            ->where('id', $bus_trip_id)
-            // ->where('bus_id', $bus->bus_id)
+        $trip = Bus_Trip::where('id', $bus_trip_id)
             ->first();
 
         if (!$trip) {
@@ -840,7 +841,7 @@ class DriverController extends Controller
                                 'bus_trip_id' => $reservation->bus_trip_id,
                                 'type' => $reservation->type,
                                 // 'bus_trip_id' => $reservation->bus__trip_id,
-                                'status' => $reservation->status,
+                                // 'status' => $reservation->status,
                                 'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
                             ];
                         });
@@ -865,7 +866,7 @@ class DriverController extends Controller
                                 'id' => $reservation->id,
                                 'user_name' => $reservation->user->name,
                                 'price' => $reservation->price,
-                                'bus_trip_id' => $reservation->bus_trip_id,
+                                // 'bus_trip_id' => $reservation->bus_trip_id,
                                 'type' => $reservation->type,
                                 // 'bus_trip_id' => $reservation->bus__trip_id,
                                 'status' => $reservation->status,
@@ -941,7 +942,7 @@ class DriverController extends Controller
                                 'price' => $reservation->price,
                                 'bus_trip_id' => $reservation->bus_trip_id,
                                 'type' => $reservation->type,
-                                // 'bus_trip_id' => $reservation->bus__trip_id,
+                                'bus_trip_id' => $reservation->bus__trip_id,
                                 'status' => $reservation->status,
                                 'seat' => $reservation->seat_reservation->pluck('seat.id')->all(),
                             ];

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/Breack_place.dart';
+import 'package:mobile_app/Provider/Auth_provider.dart';
+import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
+import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
+import 'package:mobile_app/constants.dart';
+import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/Pill_Card_spsecfication/Book_Card_Resvartion_spsecfication.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/PaymentDetails.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/payment/PaymentMethods.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/payment/pay_button.dart.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/payment/payment_page.dart';
+import 'package:mobile_app/widgets/CustomeCirculerProgress.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Colors.dart';
-import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/break_point.dart';
 import 'onboarding_overlay.dart';
 
@@ -37,7 +40,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final busProvider = Provider.of<TripuserProvider>(context);
+    final busProvider = Provider.of<BussofSpsccifTripProvider>(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
@@ -58,6 +61,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
 
             return Stack(
               children: [
+                backImage(context),
                 Column(
                   children: [
                     Expanded(
@@ -95,7 +99,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                               ),
                               SizedBox(height: 20),
                               Text(
-                                'Boarding and Deboarding points:',
+                                'Boarding points:',
                                 style: TextStyle(
                                   fontSize: sectionTitleSize,
                                   fontWeight: FontWeight.bold,
@@ -127,16 +131,6 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                                         Text(
                                           selectedBoardingPoint != null
                                               ? '🚌 ${selectedBoardingPoint!.nameBreak} @ 5:50am'
-                                              : '🚌 Not Selected',
-                                          style: TextStyle(
-                                            color: AppColors.primaryColor,
-                                            fontSize: inputFontSize,
-                                          ),
-                                        ),
-                                        SizedBox(height: 8.0),
-                                        Text(
-                                          selectedDeboardingPoint != null
-                                              ? '🚌 ${selectedDeboardingPoint!.nameBreak} @ 11:15am'
                                               : '🚌 Not Selected',
                                           style: TextStyle(
                                             color: AppColors.primaryColor,
@@ -206,7 +200,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Total\n£${busProvider.totalAmount}',
+                            'Total\n£${busProvider.totoal_price}',
                             style: TextStyle(
                               fontSize: isLargeScreen ? 20 : 18,
                               fontWeight: FontWeight.bold,
@@ -215,8 +209,88 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                             textAlign: TextAlign.center,
                           ),
                           ElevatedButton(
-                            onPressed: () {
-                              makeReservation(context);
+                            onPressed: () async {
+                              var accessToken = Provider.of<AuthProvider>(
+                                      context,
+                                      listen: false)
+                                  .accessToken;
+
+                              final provider = Provider.of<TripuserProvider>(
+                                  context,
+                                  listen: false);
+
+                              try {
+                                await provider.make_reservation(
+                                    accessToken,
+                                    busProvider.selectedTypeTripIndex == 0
+                                        ? 1
+                                        : 2,
+                                    busProvider.selectedSeat,
+                                    busProvider.selectedBoardingPoint!.breakId,
+                                    busProvider
+                                        .busResponses[busProvider
+                                            .selectIndexOfSpsecifcBustrip]
+                                        .bus_trip_id);
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TripTicketPage(),
+                                  ),
+                                );
+                              } catch (e) {
+                                if (e
+                                    .toString()
+                                    .contains('Seat already booking')) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Error'),
+                                        content: Text('Seat already booking'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text('OK'),
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pushReplacement(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DashboardUser()),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Error'),
+                                        content: Text(e.toString()),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text('OK'),
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pushReplacement(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DashboardUser()),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              }
+
+                              // makeReservation(context);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green[400],
@@ -226,15 +300,22 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
-                            child: Container(
-                              width: buttonWidth,
-                              height: buttonHeight,
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Continue to pay',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
+                            child: Consumer<TripuserProvider>(
+                                builder: (context, provider, child) {
+                              if (provider.isLoading) {
+                                return CustomeProgressIndecator(context);
+                              } else {
+                                return Container(
+                                  width: buttonWidth,
+                                  height: buttonHeight,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Continue to pay',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                );
+                              }
+                            }),
                           ),
                         ],
                       ),

@@ -94,9 +94,15 @@ class BusTripController extends Controller
         $busTripsData = [];
 
         foreach ($busTrips as $busTrip) {
-            $fromTime = new \DateTime($busTrip->from_time);
-            $toTime = new \DateTime($busTrip->to_time);
-            $interval = $fromTime->diff($toTime);
+            $goingfromTime = new \DateTime($busTrip->from_time_going);
+            $goingtoTime = new \DateTime($busTrip->to_time_going);
+            $ReturnfromTime = new \DateTime($busTrip->from_time_return);
+            $ReturntoTime = new \DateTime($busTrip->to_time_return);
+            $GoingformattedFromTime = $goingfromTime->format('H:i');
+            $GoingformattedToTime =  $goingtoTime->format('H:i');
+            $RetuenformattedFromTime = $ReturnfromTime->format('H:i');
+            $RetuenformattedToTime =  $ReturntoTime->format('H:i');
+            $interval = $goingfromTime->diff($goingtoTime);
             $tripDuration = $interval->format('%H:%I');
             $busTripData = [
                 'bus_trip_id' => $busTrip->id,
@@ -105,8 +111,12 @@ class BusTripController extends Controller
                 'from' => $trip->path->from,
                 'to' => $trip->path->to,
                 'price' => (int) $trip->price,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
+                'goingfromTime' => $GoingformattedFromTime,
+                'goingtoTime' => $GoingformattedToTime,
+                'ReturnfromTime' => $RetuenformattedFromTime,
+                'ReturntoTime' => $RetuenformattedToTime,
+                'date_start' => $busTrip->date_start,
+                'date_end' => $busTrip->date_end,
                 'Distance' => $trip->path->Distance,
                 'tripDuration' => $tripDuration,
                 'type' => $busTrip->type,

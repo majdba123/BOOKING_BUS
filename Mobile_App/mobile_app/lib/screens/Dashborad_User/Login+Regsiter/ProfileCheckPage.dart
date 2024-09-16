@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/MainPage/Dashbord.dart';
 import 'package:mobile_app/screens/Dashborad_User/Dashbord.dart';
@@ -36,25 +37,21 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
         Provider.of<UserInfoProvider>(context, listen: false).userInfo?.id;
     print(userId);
     if (userId == null) {
-      // If userId is null, handle the error (e.g., log out or show error)
       return;
     }
 
     bool isProfileComplete = await prefsHelper.isUserIdInList(userId);
 
     if (isProfileComplete) {
-      // Profile is already marked complete, navigate to dashboard
       _navigateToDashboard();
     } else {
-      // If profile status is not complete or not stored, fetch from server
       try {
-        await Provider.of<UserInfoProvider>(context, listen: false)
-            .fetchUserInfo(accessToken!, authprovider.userType);
-        var userInfo =
-            Provider.of<UserInfoProvider>(context, listen: false).userInfo;
+        var userProvider =
+            Provider.of<UserInfoProvider>(context, listen: false);
+        await userProvider.fetchUserInfo(accessToken!, authprovider.userType);
+        var userInfo = userProvider.userInfo;
         print('the use info is ! $userInfo');
         if (userInfo?.profile_image == null) {
-          // If profile is not complete, navigate to the CompleteProfilePage
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => CompleteProfilePage(),
@@ -62,12 +59,11 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
           );
         } else {
           print('try to svae the profile use!!');
-          await prefsHelper.saveUserIdList([userId]); // Update list
+          await prefsHelper.saveUserIdList([userId]);
           print('try to go to dash boder!!!');
           _navigateToDashboard();
         }
       } catch (error) {
-        // Handle error (e.g., show an error message or log out)
         print('Error fetching user info: $error');
       }
     }
@@ -75,9 +71,8 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
 
   void _navigateToDashboard() {
     if (mounted) {
-      // Check if widget is still in the widget tree
       setState(() {
-        _isChecking = false; // Update state to hide progress indicator
+        _isChecking = false;
       });
       if (authprovider.userType == "user") {
         Navigator.of(context).pushReplacement(
@@ -98,7 +93,15 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
         children: [
           backImage(context),
           _isChecking
-              ? Center(child: CircularProgressIndicator())
+              ? Center(
+                  child: SizedBox(
+                  height: 60.0,
+                  width: 60.0,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 5.0,
+                    color: AppColors.primaryColor,
+                  ),
+                ))
               : SizedBox.shrink(),
         ],
       ),

@@ -26,6 +26,10 @@ class DriverProvider extends ChangeNotifier {
   int get indexStop => _indexStop;
   int _currentStopIndex = 0;
   int get currentStopIndex => _currentStopIndex;
+  bool _endGoingTrip = false;
+  bool _endOutGoingTrip = false;
+  bool get endGoingTrip => _endGoingTrip;
+  bool get endOutGoingTrip => _endOutGoingTrip;
 
   TripForDriverModel? get TripDriver => _TripDriver;
   TripDeatilesModel? get TripDriverDetail => _TripDriverDetail;
@@ -37,6 +41,14 @@ class DriverProvider extends ChangeNotifier {
   bool get isStartTrip => _isStartTrip;
   bool get isCheckedReservation => _isCheckedReservation;
   String? get errorMessage => _errorMessage;
+  int _selectedTypeTripIndex = 0;
+
+  int get selectedTypeTripIndex => _selectedTypeTripIndex;
+
+  void setTypeTripIndex(int index) {
+    _selectedTypeTripIndex = index;
+    notifyListeners();
+  }
 
   void setypePage(type) {
     _typePage = type;
@@ -60,6 +72,8 @@ class DriverProvider extends ChangeNotifier {
 
   void setCurrentStopIndex(index) {
     _currentStopIndex = index;
+    print('hereee in set currnt stop index ');
+    print(_currentStopIndex);
     notifyListeners();
   }
 
@@ -258,8 +272,14 @@ class DriverProvider extends ChangeNotifier {
     print("the privoit id id : $pivoitId");
 
     try {
-      await DriverService().finsishBreack(context, accessToken, pivoitId);
-      _currentStopIndex++;
+      int status =
+          await DriverService().finsishBreack(context, accessToken, pivoitId);
+      if (status == 200 && _selectedTypeTripIndex == 0) {
+        _currentStopIndex++;
+      } else if (status == 200 && _selectedTypeTripIndex == 1) {
+        _currentStopIndex--;
+      }
+
       // print(_isCheckedReservation);
       print('after finsinsh breack !!');
     } catch (error) {

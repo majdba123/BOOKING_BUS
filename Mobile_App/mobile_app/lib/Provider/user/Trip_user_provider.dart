@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart'
-    as http; // Assuming you're using the http package for API calls
+import 'package:http/http.dart' as http;
 import 'package:mobile_app/Api_Services/User/User_profile.dart';
 import 'package:mobile_app/Data_Models/AlltripsModelUser.dart';
-import 'package:mobile_app/Data_Models/Breack_place.dart';
+import 'package:mobile_app/Data_Models/Cancel_Rule.dart';
+import 'package:mobile_app/Data_Models/Cancel_Rule.dart';
+import 'package:mobile_app/Data_Models/LocationOfReservationModel.dart';
 import 'package:mobile_app/Data_Models/My_Reservation.dart';
 import 'package:mobile_app/Data_Models/Reservation_Success_model.dart';
 import 'dart:convert';
-import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
 import 'package:mobile_app/Data_Models/company.dart';
-import 'package:mobile_app/Data_Models/show_buss_spsecifc_trip.dart';
 import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/payment/TicketDetailObject.dart'; // To decode JSON responses
 
@@ -24,144 +23,43 @@ class TripuserProvider with ChangeNotifier {
 
   List<Company> get compaines => _compaines;
   List<MYReservation> _Myreservations = [];
-
+  List<LocationOFRservation> _LocationOfRservation = [];
   List<MYReservation> get Myreservations => _Myreservations;
+  List<CancelRule> _cancelRules = [];
+  List<CancelRule> get cancelRules => _cancelRules;
+  List<LocationOFRservation> get LocationOfRservation => _LocationOfRservation;
   List<TicketDetail> _selectedTicketDetails = [];
 
-  // Getter for the selected ticket details
-  List<TicketDetail> get selectedTicketDetails => _selectedTicketDetails;
-  BusTrip? selectedBus;
-  BusResponse? selectedBusTrip;
-  late List<String> selectedSeat;
-  late BreakPlace breakPlaces;
-  String? from;
-  String? to;
-  late int trip_type;
-  late int select_place_debording_break_id;
-  late String select_place_bording_break_id;
-  BreakPlace? _selectedBoardingPoint;
-  BreakPlace? _selectedDeboardingPoint;
-  int price_tiket = 0;
-  int price_trip = 0;
-  int totoal_price = 0;
-  late int _busTripid;
-  BreakPlace? get selectedBoardingPoint => _selectedBoardingPoint;
-  BreakPlace? get selectedDeboardingPoint => _selectedDeboardingPoint;
   Reservation? _reservation;
   Reservation? get reservation => _reservation;
   String _status = 'active';
   String get status => _status;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  bool _isLoadingRule = false;
+  bool get isLoadingRule => _isLoadingRule;
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
-  int get busTripid => _busTripid;
+  late int _specificIndexReservation;
+  int get specificIndexReservation => _specificIndexReservation;
+  void saveSpecficRservationIndex(int index) {
+    _specificIndexReservation = index;
+    notifyListeners();
+  }
 
   void addTicketDetail(TicketDetail detail) {
     _selectedTicketDetails.add(detail);
     notifyListeners();
   }
 
-  void setBusTripid(Bustripid) {
-    _busTripid = Bustripid;
-    notifyListeners();
-  }
-
-  // Function to clear the ticket details (e.g., when starting a new reservation)
   void clearTicketDetails() {
     _selectedTicketDetails.clear();
     notifyListeners();
   }
 
-  String getSeatType(String seatId) {
-    // Implement your logic to determine the seat type based on seatId
-    // For example:
-    // if (seatId % 2 == 0) {
-    return "normal";
-    // } else {
-    // return "Vip";
-    // }
-  }
-
-  // Total amount calculation based on ticket details
   double get totalAmount {
     return _selectedTicketDetails.fold(
         0.0, (sum, item) => sum + (item.price * item.quantity));
-  }
-
-  void selectBoardingPoint(BreakPlace point) {
-    _selectedBoardingPoint = point;
-    notifyListeners();
-  }
-
-  void select_price_tikect(int price) {
-    price_tiket = price;
-    notifyListeners();
-  }
-
-  void save_price_from_Trip(int price) {
-    price_trip = price;
-    notifyListeners();
-  }
-
-  void selectDeboardingPoint(BreakPlace point) {
-    _selectedDeboardingPoint = point;
-    notifyListeners();
-  }
-
-  void select_from_name(String from_name) {
-    from = from_name;
-    notifyListeners();
-  }
-
-  void select_to_name(String to_name) {
-    to = to_name;
-    notifyListeners();
-  }
-
-  void calculatePrice(int length, int price) {
-    print('the lenght is $length');
-    print('the price is $price');
-    totoal_price = length * price;
-    print('the price is $totoal_price');
-    notifyListeners();
-  }
-
-  void selectBordingBreakPlcaeId(String idBreakPlace) {
-    select_place_bording_break_id = idBreakPlace;
-    print('the break id select bording  : $select_place_bording_break_id');
-    notifyListeners();
-  }
-
-  void selectdeBordingBreakPlcaeId(String idBreakPlace) {
-    select_place_bording_break_id = idBreakPlace;
-    print('the break id select deborading $select_place_bording_break_id');
-    notifyListeners();
-  }
-
-  void selectBus(BusTrip bus) {
-    selectedBus = bus;
-    notifyListeners();
-  }
-
-  void selectBusTrip(BusResponse bus) {
-    selectedBusTrip = bus;
-    notifyListeners();
-  }
-
-  void selectTripType(int tripType) {
-    trip_type = tripType;
-    notifyListeners();
-  }
-
-  void selectSeat(List<String> seat) {
-    selectedSeat = seat;
-    notifyListeners();
-  }
-
-  void setBreakPlaces(BreakPlace places) {
-    breakPlaces = places;
-    notifyListeners();
   }
 
   Future<void> getTripsByPath(
@@ -231,36 +129,44 @@ class TripuserProvider with ChangeNotifier {
   }
 
   Future<void> make_reservation(String accessToken, int type, List<String> seat,
-      String breakId, int bus_trip_id) async {
-    final url =
-        Uri.parse(name_domain_server + 'user/store_reservation/${bus_trip_id}');
-    final headers = {
-      'Authorization': 'Bearer $accessToken',
-      'Content-Type': 'application/json',
-    };
-    final body = jsonEncode({
-      "type": type,
-      "seat": seat,
-      "break_id": breakId,
-    });
-    print(body);
-    final response = await http.post(url, headers: headers, body: body);
-    print(response.body);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      Map<String, dynamic> parsedJson = json.decode(response.body);
-      String message = parsedJson['message'];
+      int breakId, int bus_trip_id) async {
+    _isLoading = true;
+    notifyListeners();
 
-      if (message == 'Reservation created successfully') {
-        _reservation = Reservation.fromJson(parsedJson);
-        notifyListeners();
+    try {
+      final url = Uri.parse(
+          name_domain_server + 'user/store_reservation/${bus_trip_id}');
+      final headers = {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      };
+      final body = jsonEncode({
+        "type": type,
+        "seat": seat,
+        "break_id": breakId,
+      });
+      print(body);
+      final response = await http.post(url, headers: headers, body: body);
+      print(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> parsedJson = json.decode(response.body);
+        String message = parsedJson['message'];
+
+        if (message == 'Reservation created successfully') {
+          _reservation = Reservation.fromJson(parsedJson);
+          notifyListeners();
+        } else {
+          throw Exception(message);
+        }
       } else {
-        throw Exception(message);
+        Map<String, dynamic> parsedJson = json.decode(response.body);
+        String error = parsedJson['error'];
+        throw Exception(error);
       }
-    } else {
-      Map<String, dynamic> parsedJson = json.decode(response.body);
-      String error = parsedJson['error'];
-      throw Exception(error);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -277,6 +183,49 @@ class TripuserProvider with ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchLocationOfReservation(String accessToken, String id) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _LocationOfRservation =
+          await UserProfile().fetchLocationOfRservation(accessToken, id);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> CancelReservation(String accessToken, String id) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await UserProfile().CancelRservation(accessToken, id);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchCanceltionRule(String accessToken, String name) async {
+    _isLoadingRule = true;
+    notifyListeners();
+
+    try {
+      _cancelRules = await UserProfile().canceltionRule(accessToken, name);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoadingRule = false;
       notifyListeners();
     }
   }

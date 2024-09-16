@@ -20,7 +20,7 @@ class FullMapViewScreen extends StatelessWidget {
 
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    late GoogleMapController mapController;
+    // late GoogleMapController mapController;
     // const double _minZoom = 1.0;
     // const double _maxZoom = 5.0;
     final initialPosition = LatLng(
@@ -35,17 +35,18 @@ class FullMapViewScreen extends StatelessWidget {
     print(initialPosition);
     print(destinationPosition);
     // Fetch the route when the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      mapProvider.fetchRoute(initialPosition, destinationPosition);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    mapProvider.fetchRoute(initialPosition, destinationPosition);
 
-      // if (driverProvider.isStartTrip) {
-      //   mapProvider.startLocationTracking(
-      //       context,
-      //       driverProvider.TripDriverDetail!.bus_trip_id,
-      //       accesstoken,
-      //       mapController);
-      // }
-    });
+    // if (driverProvider.isStartTrip) {
+    mapProvider.startLocationTracking(
+      context,
+      driverProvider.TripDriverDetail!.bus_trip_id,
+      accesstoken,
+    );
+
+    // }
+    // });
 
     return Scaffold(
       body: Stack(
@@ -58,7 +59,9 @@ class FullMapViewScreen extends StatelessWidget {
                   zoom: 14.0,
                 ),
                 onMapCreated: (GoogleMapController controller) {
-                  mapController = controller;
+                  mapProvider
+                      .setMapController(controller); // Set the map controller
+
                   controller.animateCamera(
                     CameraUpdate.newLatLngBounds(
                       LatLngBounds(
@@ -96,12 +99,20 @@ class FullMapViewScreen extends StatelessWidget {
                         BitmapDescriptor.hueRed),
                   ),
                   ...LatLngHelper.getBreaksMarkers(context),
+                  ...LatLngHelper.getTrackLocaitionMarker(context),
+                  // mapProvider.markers.first,
                 },
                 polylines: {
                   Polyline(
                     polylineId: PolylineId('route'),
                     points: mapProvider.routeCoordinates,
                     color: Colors.red,
+                    width: 5,
+                  ),
+                  Polyline(
+                    polylineId: PolylineId('route2'),
+                    points: mapProvider.trackCoordinates,
+                    color: Colors.blueAccent,
                     width: 5,
                   ),
                 },

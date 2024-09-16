@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart'
-    as http; // Assuming you're using the http package for API calls
 import 'package:mobile_app/Api_Services/Company/Bus_trip.dart';
 import 'package:mobile_app/Api_Services/Company/Trip.dart';
+import 'package:mobile_app/Data_Models/Breack_place.dart';
 import 'package:mobile_app/Data_Models/SeatModel.dart';
 import 'package:mobile_app/Data_Models/show_buss_spsecifc_trip.dart';
+import 'package:mobile_app/screens/Dashborad_User/Widget/payment/TicketDetailObject.dart';
 
 class BussofSpsccifTripProvider with ChangeNotifier {
   List<BusResponse> _busResponses = [];
@@ -16,73 +16,97 @@ class BussofSpsccifTripProvider with ChangeNotifier {
   List<SeatModel> get seats => _SeatsOfBus;
 
   late int _tripid;
-  late String _companyName;
-  late String _fromtime;
-  late String _totime;
-  late String _from;
-  late String _to;
-  late int _Distance;
+
   late int _busTripid;
-  late String _Duration;
-  late int _busId;
+  // late String _Duration;
+  // late String _busId;
   int get tripid => _tripid;
-  int get busId => _busId;
+  // String get busId => _busId;
 
   int get BusTripid => _busTripid;
-  String get companyName => _companyName;
-  String get fromTime => _fromtime;
-  String get toTime => _totime;
-  String get from => _from;
-  int get Ditacnce => _Distance;
-  String get Duration => _Duration;
-  String get to => _to;
+
+  // String get Duration => _Duration;
+
+  int _selectedTypeTripIndex = 0;
+  late int _selectIndexOfBustrip;
+  int get selectedTypeTripIndex => _selectedTypeTripIndex;
+  int get selectIndexOfSpsecifcBustrip => _selectIndexOfBustrip;
+  late List<String> selectedSeat;
+  List<TicketDetail> _selectedTicketDetails = [];
+  late int select_place_bording_break_id;
+
+  // Getter for the selected ticket details
+  List<TicketDetail> get selectedTicketDetails => _selectedTicketDetails;
+  int totoal_price = 0;
+  BreakPlace? _selectedBoardingPoint;
+
+  BreakPlace? get selectedBoardingPoint => _selectedBoardingPoint;
+
+  void selectBoardingPoint(BreakPlace point) {
+    _selectedBoardingPoint = point;
+    notifyListeners();
+  }
+
+  void selectBordingBreakPlcaeId(int idBreakPlace) {
+    select_place_bording_break_id = idBreakPlace;
+    print('the break id select bording  : $select_place_bording_break_id');
+    notifyListeners();
+  }
+
+  void clearData() {
+    selectedSeat.clear();
+    _selectedTicketDetails.clear();
+
+    select_place_bording_break_id = 0;
+
+    _selectedBoardingPoint = null;
+    _selectedTypeTripIndex = 0;
+
+    _busResponses.clear();
+
+    notifyListeners();
+  }
+
+  void selectIndexOfBustrip(int selectIndexOfBustrip) {
+    _selectIndexOfBustrip = selectIndexOfBustrip;
+    notifyListeners();
+  }
+
+  void addTicketDetail(TicketDetail detail) {
+    _selectedTicketDetails.add(detail);
+    notifyListeners();
+  }
+
+  void calculatePrice(int length, int price) {
+    print('the lenght is $length');
+    print('the price is $price');
+    totoal_price = length * price;
+    print('the price is $totoal_price');
+    notifyListeners();
+  }
+
+  void selectSeat(List<String> seat) {
+    selectedSeat = seat;
+    notifyListeners();
+  }
+
+  void setTypeTripIndex(int index) {
+    _selectedTypeTripIndex = index;
+    notifyListeners();
+  }
+
   void setTripid(tripid) {
     _tripid = tripid;
     notifyListeners();
   }
 
-  void setBusid(busid) {
-    _busId = busid;
-    notifyListeners();
-  }
+  // void setBusid(busid) {
+  //   _busId = busid;
+  //   notifyListeners();
+  // }
 
   void setBusTripid(Bustripid) {
     _busTripid = Bustripid;
-    notifyListeners();
-  }
-
-  void setcompanyName(companyName) {
-    _companyName = companyName;
-    notifyListeners();
-  }
-
-  void setFromTime(fromtime) {
-    _fromtime = fromtime;
-    notifyListeners();
-  }
-
-  void setToTime(totime) {
-    _totime = totime;
-    notifyListeners();
-  }
-
-  void setFrom(from) {
-    _from = from;
-    notifyListeners();
-  }
-
-  void setTo(to) {
-    _to = to;
-    notifyListeners();
-  }
-
-  void setDistance(Distance) {
-    _Distance = Distance;
-    notifyListeners();
-  }
-
-  void setDuration(Duration) {
-    _Duration = Duration;
     notifyListeners();
   }
 
@@ -90,30 +114,30 @@ class BussofSpsccifTripProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      // Replace with your API call logic
       print('try!!!!');
       _busResponses =
           await TripBusApi().fetch_buss_of_spsecifc_trip(accessToken, tripId);
       print(_busResponses);
       print('the bus response $_busResponses');
     } catch (e) {
-      // Handle error
+      print(e);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> getSeatOfBusTrip(int busId, String accessToken) async {
+  Future<void> getSeatOfBusTrip(int busTripId, String accessToken) async {
     _isLoading = true;
-    notifyListeners();
+    // notifyListeners();
     try {
       // Replace with your API call logic
       print('try!!!!');
-      _SeatsOfBus = await TripStatus().fetchSeatOfBus(accessToken, busId);
+      _SeatsOfBus = await TripStatus().fetchSeatOfBus(accessToken, busTripId);
       notifyListeners();
-      print(_SeatsOfBus);
-      print('the _SeatsOfBus response $_busResponses');
+      // print('-----------------------');
+      // print(_SeatsOfBus);
+      // print('the _SeatsOfBus response $_busResponses');
     } catch (e) {
       // Handle error
     } finally {

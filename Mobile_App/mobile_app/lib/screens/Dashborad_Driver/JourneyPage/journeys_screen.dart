@@ -6,6 +6,7 @@ import 'package:mobile_app/screens/WidgetApp/filtter_Bar_main_ui.dart';
 import 'package:provider/provider.dart';
 import 'JourneyCard.dart';
 import 'JourneyHistoryScreen.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class JourneysScreen extends StatefulWidget {
   @override
@@ -28,7 +29,7 @@ class _JourneysScreenState extends State<JourneysScreen> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-
+    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -61,8 +62,6 @@ class _JourneysScreenState extends State<JourneysScreen> {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     AuthProvider auth =
                         Provider.of<AuthProvider>(context, listen: false);
-                    var driverProvider =
-                        Provider.of<DriverProvider>(context, listen: false);
 
                     driverProvider.history(auth.accessToken);
                     driverProvider.setypePage('history');
@@ -96,18 +95,41 @@ class _JourneysScreenState extends State<JourneysScreen> {
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
-
+            ToggleSwitch(
+              minWidth: 180.0,
+              initialLabelIndex: driverProvider.selectedTypeTripIndex,
+              cornerRadius: 20.0,
+              activeFgColor: Colors.white,
+              inactiveBgColor: Colors.grey,
+              inactiveFgColor: Colors.white,
+              totalSwitches: 2,
+              labels: ['Going', 'Outgoing'],
+              icons: [Icons.arrow_forward_outlined, Icons.arrow_back],
+              activeBgColors: [
+                [AppColors.primaryColor],
+                [AppColors.primaryColor]
+              ],
+              onToggle: (index) {
+                print(index);
+                print('select tooggle ');
+                driverProvider.setTypeTripIndex(index!);
+              },
+            ),
             // SectionHeader(
             //   title: 'Today',
             //   fontSize: screenHeight * 0.025,
             // ),
-            Expanded(
-              child: ListView(
-                children: [JourneyCard()],
-              ),
-            ),
 
             SizedBox(height: screenHeight * 0.015),
+            Expanded(
+                child: ListView(
+              children: [
+                if (driverProvider.selectedTypeTripIndex == 0)
+                  JourneyCard(), // Show Going Trip content
+                if (driverProvider.selectedTypeTripIndex == 1)
+                  JourneyCard(), // Show Outgoing Trip content
+              ],
+            )),
           ],
         ),
       ),
