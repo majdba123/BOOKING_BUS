@@ -27,11 +27,11 @@ final Color veppoBlue = Color(0xFF1363FF);
 const kBodyText2 =
     TextStyle(fontSize: 28, fontWeight: FontWeight.w500, color: Colors.white);
 
-const name_domain_server = "http://192.168.1.4:8000/api/";   //home  
+const name_domain_server = "http://192.168.1.3:8000/api/"; //home
 // const name_domain_server = "http://192.168.43.125:8000/api/";  //  4g
-// const name_domain_server = "http://192.168.0.62:8000/api/"; 
-Route
- animetedRoutePage(Widget child) {
+// const name_domain_server = "http://192.168.0.2:8000/api/";
+
+Route animetedRoutePage(Widget child) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -66,14 +66,15 @@ Widget backImage(BuildContext context) {
   );
 }
 
-void showSuccessDialog(BuildContext context, String message) {
+void showSuccessDialog(
+    BuildContext context, String message, Function? onPress) {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.success,
     animType: AnimType.rightSlide,
     title: 'Success',
     desc: message,
-    btnOkOnPress: () {},
+    btnOkOnPress: () => onPress,
   ).show();
 }
 

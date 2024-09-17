@@ -25,12 +25,24 @@ class SectionTitle extends StatelessWidget {
           ),
         ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryColor,
+            shape: StadiumBorder(),
+          ),
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => navigateTo),
             );
           },
-          child: Text('All'),
+          child: Text(
+            'All',
+            style: TextStyle(
+              fontFamily: 'Satoshi',
+              fontSize: 14.0,
+              // fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
       ],
     );

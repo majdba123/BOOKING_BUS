@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Data_Models/Breack_place.dart';
-import 'package:mobile_app/Data_Models/Trip_by_Path.dart';
+import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -21,31 +21,29 @@ class PointsPage extends StatefulWidget {
 class _PointsPageState extends State<PointsPage> {
   @override
   Widget build(BuildContext context) {
+    var BusTrip =
+        Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     return Scaffold(
-      backgroundColor: Colors.white, // Use white background as in the UI image
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Consumer<TripuserProvider>(
+        child: Consumer<BussofSpsccifTripProvider>(
           builder: (context, busProvider, child) {
             List<BreakPlace>? breaks;
-            if (busProvider.selectedBus != null) {
-              breaks = busProvider.selectedBus!.breaks;
-            } else if (busProvider.selectedBusTrip != null) {
-              breaks = busProvider.selectedBusTrip!.breaks;
+            late List<BreakPlace> boardingPoints;
+            breaks = BusTrip
+                .busResponses[busProvider.selectIndexOfSpsecifcBustrip].breaks;
+            if (busProvider.selectIndexOfSpsecifcBustrip == 0) {
+              boardingPoints = breaks.sublist(0, breaks.length - 1);
+            } else if (busProvider.selectIndexOfSpsecifcBustrip == 1) {
+              boardingPoints =
+                  breaks.sublist(0, breaks.length - 1).reversed.toList();
             }
-
-            // Remove the last item from the boarding and deboarding points
-            List<BreakPlace> boardingPoints =
-                breaks != null && breaks.length > 1
-                    ? breaks.sublist(0, breaks.length - 1)
-                    : [];
-            List<BreakPlace> deboardingPoints =
-                breaks != null && breaks.length > 1 ? breaks.sublist(1) : [];
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 30), // Margin from top
+                SizedBox(height: 30),
                 Row(
                   children: [
                     IconButton(
@@ -74,7 +72,7 @@ class _PointsPageState extends State<PointsPage> {
                 SizedBox(height: 20),
                 if (boardingPoints.isNotEmpty) ...[
                   Text(
-                    'Boarding points:',
+                    'Chosse A Boarding Point : ',
                     style: TextStyle(
                       fontSize: 19,
                       fontWeight: FontWeight.bold,
@@ -89,15 +87,14 @@ class _PointsPageState extends State<PointsPage> {
                           style: TextStyle(fontSize: 16),
                         ),
                         value: point,
-                        groupValue: busProvider.selectedBoardingPoint,
+                        groupValue: BusTrip.selectedBoardingPoint,
                         activeColor: AppColors.primaryColor,
                         onChanged: (value) {
                           if (value != null) {
                             widget.onBoardingPointSelected(
                                 value); // Update the callback
-                            busProvider.selectBoardingPoint(value);
-                            busProvider
-                                .selectBordingBreakPlcaeId(value.breakId);
+                            BusTrip.selectBoardingPoint(value);
+                            BusTrip.selectBordingBreakPlcaeId(value.breakId);
                           }
                         },
                       );
@@ -105,48 +102,6 @@ class _PointsPageState extends State<PointsPage> {
                   ),
                 ],
                 SizedBox(height: 20),
-                if (deboardingPoints.isNotEmpty) ...[
-                  Text(
-                    'Deboarding points:',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                  Column(
-                    children: deboardingPoints.map((point) {
-                      return RadioListTile<BreakPlace>(
-                        title: Text(
-                          '${point.nameBreak} @ 15:30', // Assume `eventTime` contains the time string
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        value: point,
-                        groupValue: busProvider.selectedDeboardingPoint,
-                        activeColor: AppColors.primaryColor,
-                        onChanged: (value) {
-                          if (value != null) {
-                            widget.onDeboardingPointSelected(
-                                value); // Update the callback
-                            busProvider.selectDeboardingPoint(value);
-                            busProvider
-                                .selectdeBordingBreakPlcaeId(value.breakId);
-                          }
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ] else ...[
-                  Center(
-                    child: Text(
-                      'No breaks available',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                ],
                 Spacer(),
                 Container(
                   width: double.infinity,

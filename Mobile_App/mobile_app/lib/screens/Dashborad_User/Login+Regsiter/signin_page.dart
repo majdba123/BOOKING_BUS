@@ -8,6 +8,7 @@ import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/ProfileCheckPage.dart';
 import 'package:mobile_app/screens/Dashborad_User/Login+Regsiter/register_page.dart';
 import 'package:mobile_app/widgets/Alert_Box.dart';
+import 'package:mobile_app/widgets/CustomeCirculerProgress.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
@@ -64,7 +65,7 @@ class _SignInPageState extends State<SignInPage> {
                       Text(
                         "Sign to BusX",
                         style: TextStyle(
-                          fontSize: screenHeight * 0.04, //  for fit
+                          fontSize: screenHeight * 0.04,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryColor,
                           letterSpacing: 1.2,
@@ -171,8 +172,8 @@ class _SignInPageState extends State<SignInPage> {
                             } else {
                               showDialog(
                                 context: context,
-                                builder: (context) => const Center(
-                                  child: CircularProgressIndicator(),
+                                builder: (context) => Center(
+                                  child: CustomeProgressIndecator(context),
                                 ),
                               );
 
@@ -182,14 +183,10 @@ class _SignInPageState extends State<SignInPage> {
                               await authProvider.setAuthData(
                                   emailController.text,
                                   passwordController.text);
-                              // if (authProvider.accessToken.isNotEmpty) {
-
-                              // }
 
                               Navigator.of(context).pop();
 
                               if (authProvider.accessToken.isNotEmpty) {
-                                // Widget destinationPage;
                                 if (authProvider.userType == "user") {
                                   final tripProvider =
                                       Provider.of<TripuserProvider>(context,
@@ -199,16 +196,7 @@ class _SignInPageState extends State<SignInPage> {
                                   await tripProvider.getAllcompanies(
                                       authProvider.accessToken);
                                 }
-                                //else if (authProvider.userType == "driver") {
-                                // destinationPage = ProfileCheckPage();
-                                // }
-                                //  else {
-                                //   showCustomAlertDialog(
-                                //     context,
-                                //     "Unexpected user type: ${authProvider.userType}",
-                                //   );
-                                //   return;
-                                // }
+
                                 Navigator.push(context,
                                     animetedRoutePage(ProfileCheckPage()));
                               } else {
@@ -221,7 +209,6 @@ class _SignInPageState extends State<SignInPage> {
                             return InkWell(
                               onTap: onTap ??
                                   () {
-                                    // If onTap is null (button is in cooldown), show the SnackBar
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/Driver/Driver.dart';
+import 'package:mobile_app/screens/Dashborad_Driver/Journey_Detailes_Page/CompleteJourneyPage/JourneyCompletedScreen.dart';
 import 'package:provider/provider.dart';
 
 class JourneyButtons extends StatelessWidget {
@@ -26,6 +27,8 @@ class JourneyButtons extends StatelessWidget {
           Expanded(
             child: ElevatedButton(
               onPressed: () {
+                print(
+                    'the current stop index  ${driverProvider.currentStopIndex}');
                 driverProvider.accessBreak(
                     context,
                     auth.accessToken,
@@ -55,20 +58,35 @@ class JourneyButtons extends StatelessWidget {
           SizedBox(width: screenWidth * 0.04),
           Expanded(
             child: ElevatedButton(
-              onPressed: () {
-                driverProvider.finishBreack(
+              onPressed: () async {
+                print(
+                    'the current stop index  ${driverProvider.currentStopIndex}');
+                print(driverProvider.TripDriverDetail!
+                    .breaks_data[driverProvider.currentStopIndex].break_name);
+                print(driverProvider.TripDriverDetail!
+                    .breaks_data[driverProvider.currentStopIndex].pivoit_id);
+                await driverProvider.finishBreack(
                     context,
                     auth.accessToken,
                     driverProvider
                         .TripDriverDetail!
                         .breaks_data[driverProvider.currentStopIndex]
                         .pivoit_id);
+                print(
+                    'the stops array  ${driverProvider.TripDriverDetail!.breaks_data.length}');
+                print(
+                    'the current stop index  ${driverProvider.currentStopIndex}');
+
+                if ((driverProvider.TripDriverDetail?.breaks_data.length)! ==
+                    driverProvider.currentStopIndex) {
+                  if (driverProvider.selectedTypeTripIndex == 1) {
+                    driverProvider.setCurrentStopIndex(0);
+                  }
+                  driverProvider
+                      .setCurrentStopIndex(driverProvider.currentStopIndex - 1);
+                  _showEndJourneyDialog(context);
+                }
               },
-              // onPressed: isJourneyComplete
-              //     ? () {
-              //         _showEndJourneyDialog(context);
-              //       }
-              //     : null,
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(
                   vertical: screenHeight * 0.02,
@@ -99,6 +117,7 @@ class JourneyButtons extends StatelessWidget {
   void _showEndJourneyDialog(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
 
     showDialog(
       context: context,
@@ -113,7 +132,7 @@ class JourneyButtons extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'End Journey',
+                  ' ${driverProvider.selectedTypeTripIndex == 0 ? 'End Going Trip' : 'End OutGoing Journey'}',
                   style: TextStyle(
                     fontSize: screenHeight * 0.025,
                     fontWeight: FontWeight.bold,
@@ -122,7 +141,7 @@ class JourneyButtons extends StatelessWidget {
                 ),
                 SizedBox(height: screenHeight * 0.02),
                 Text(
-                  'Are you sure you want to end the journey?',
+                  'Are you sure you want to end the Trip?',
                   style: TextStyle(
                     fontSize: screenHeight * 0.02,
                     color: Colors.black54,
@@ -188,12 +207,12 @@ class JourneyButtons extends StatelessWidget {
                           //     context,
                           //     listen: false);
                           // // driverProvider.setStartTrip(false);
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => JourneyCompletedScreen(),
-                          //   ),
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => JourneyCompletedScreen(),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(

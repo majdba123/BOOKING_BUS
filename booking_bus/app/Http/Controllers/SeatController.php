@@ -230,12 +230,12 @@ class SeatController extends Controller
             if ($seat_reservation) {
                 $result[] = [
                     'seat_id' => $seat_id,
-                    'status' => $seat_reservation->status,
+                    'status' => (int)$seat_reservation->status,
                 ];
             } else {
                 $result[] = [
                     'seat_id' => $seat_id,
-                    'status' => Seat::find($seat_id)->status
+                    'status' => (int) Seat::find($seat_id)->status
                 ];
             }
         }

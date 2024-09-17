@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Policy\CancellationRule\CancellationRule;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -22,7 +24,7 @@ class CancellationRuleController extends Controller
         }
 
         $rules = CancellationRule::where('company_id', $user->company->id)->get();
-        return response()->json( $rules, 200);
+        return response()->json($rules, 200);
     }
 
     /**
@@ -79,7 +81,7 @@ class CancellationRuleController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        return response()->json( $rule, 200);
+        return response()->json($rule, 200);
     }
 
     /**
@@ -147,5 +149,26 @@ class CancellationRuleController extends Controller
         $rule->delete();
 
         return response()->json(['message' => 'Cancellation rule deleted successfully'], 200);
+    }
+
+    public function GetCanceltionRuleforCompany($companyName)
+    {
+        $user = Auth::user();
+
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $company_id = Company::where('name_company', $companyName)->get();
+
+        $rules = CancellationRule::where('company_id', $company_id[0]->id)->get();
+
+
+        $rule = $rules->sortBy('hours_before'.'DEC')->map(function ($rule) {
+            return collect($rule->toArray())
+                ->only(['hours_before', 'discount_percentage', 'description'])
+                ->all();
+        })->values();
+        return response()->json($rule, 200);
     }
 }

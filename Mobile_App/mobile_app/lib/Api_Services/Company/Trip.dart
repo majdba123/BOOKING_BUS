@@ -85,7 +85,7 @@ class TripBusApi {
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonList = json.decode(response.body);
-
+      print(jsonList);
       return jsonList.map((json) => BusResponse.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load bus trip details');

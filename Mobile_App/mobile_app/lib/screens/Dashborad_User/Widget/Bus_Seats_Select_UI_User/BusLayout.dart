@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/Data_Models/SeatModel.dart';
+import 'package:mobile_app/Provider/user/Buss_of_spsecfic_trip.dart';
+import 'package:provider/provider.dart';
 
 class BusLayout extends StatelessWidget {
   final List<SeatModel> seats;
@@ -16,6 +18,8 @@ class BusLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider =
+        Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     int totalSeats = 40;
     int columns = 5;
     int rows = totalSeats ~/ (columns - 1); // Adjust rows for the aisle
@@ -113,7 +117,14 @@ class BusLayout extends StatelessWidget {
                             ? (isSelected
                                 ? AppColors.primaryColor
                                 : Colors.grey)
-                            : Colors.red)
+                            : ((seat!.status == 1 &&
+                                        provider.selectedTypeTripIndex == 0) ||
+                                    (seat!.status == 2 &&
+                                        provider.selectedTypeTripIndex == 1))
+                                ? Colors.red
+                                : (isSelected
+                                    ? AppColors.primaryColor
+                                    : Colors.grey))
                         : Colors.grey[300],
                     border: isActualSeat
                         ? Border.all(
@@ -127,7 +138,9 @@ class BusLayout extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      isActualSeat ? '${seat!.id}' : '', // Display seat ID
+                      // isActualSeat ? '${seat!.id}' : '', // Display seat ID
+                      isActualSeat ? '${index + 1}' : '', // Display seat ID
+
                       style: TextStyle(
                         color: isActualSeat ? Colors.white : Colors.grey[600],
                         fontSize: 14,

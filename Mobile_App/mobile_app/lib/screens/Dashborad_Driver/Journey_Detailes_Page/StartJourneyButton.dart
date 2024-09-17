@@ -9,7 +9,7 @@ class StartJourneyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-
+    var driverProvider = Provider.of<DriverProvider>(context, listen: false);
     return Container(
       margin: EdgeInsets.only(bottom: 15.0),
       width: double.infinity,
@@ -25,7 +25,7 @@ class StartJourneyButton extends StatelessWidget {
           ),
         ),
         child: Text(
-          'Start Journey',
+          ' ${driverProvider.selectedTypeTripIndex == 0 ? "Start Going Trip" : "Start OutGoing Trip"}',
           style: TextStyle(
             fontSize: screenHeight * 0.025,
             color: Colors.white,
@@ -44,8 +44,12 @@ class StartJourneyButton extends StatelessWidget {
             Navigator.pop(context); // Close the dialog
             var driverProvider =
                 Provider.of<DriverProvider>(context, listen: false);
-            var auth = Provider.of<AuthProvider>(context, listen: false);
-            driverProvider.startTrip(auth.accessToken);
+            if (driverProvider.selectedTypeTripIndex == 0) {
+              var auth = Provider.of<AuthProvider>(context, listen: false);
+
+              driverProvider.startTrip(auth.accessToken);
+            }
+
             // driverProvider.setStartTrip(true);
             Navigator.push(
               context,

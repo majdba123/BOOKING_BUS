@@ -225,11 +225,11 @@ class DriverService {
 
         if (responseData is Map && responseData.containsKey('message')) {
           String message = responseData['message'];
-          showSuccessDialog(context, message);
+          showSuccessDialog(context, message, null);
         } else {
           if (responseData is List) {
             String message = "access Break Successfully ";
-            showSuccessDialog(context, message);
+            showSuccessDialog(context, message, null);
           }
         }
       } else {
@@ -240,7 +240,7 @@ class DriverService {
     }
   }
 
-  Future<void> finsishBreack(
+  Future<int> finsishBreack(
       BuildContext context, String accessToken, int pivoitId) async {
     try {
       final response = await http.post(
@@ -261,9 +261,11 @@ class DriverService {
           String message = responseData['massage'];
 
           if (message.isNotEmpty) {
-            showSuccessDialog(context, message);
+            showSuccessDialog(context, message, null);
+            return 200;
           } else {
             showErrorDialog(context, message);
+            return 500;
           }
         } else {
           showErrorDialog(context, "Unexpected response format.");
@@ -274,5 +276,6 @@ class DriverService {
     } catch (error) {
       showErrorDialog(context, "Failed to load data: $error");
     }
+    return 500;
   }
 }

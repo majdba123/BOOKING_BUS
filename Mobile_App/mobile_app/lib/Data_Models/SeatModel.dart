@@ -1,4 +1,4 @@
-class SeatModel {
+class   SeatModel {
   final int status;
   final String id;
   SeatModel({
@@ -9,7 +9,7 @@ class SeatModel {
   factory SeatModel.fromJson(Map<String, dynamic> json) {
     return SeatModel(
       status: json['status'],
-      id: json['id'],
+      id: json['seat_id'],
     );
   }
 }

@@ -94,9 +94,15 @@ class BusTripController extends Controller
         $busTripsData = [];
 
         foreach ($busTrips as $busTrip) {
-            $fromTime = new \DateTime($busTrip->from_time);
-            $toTime = new \DateTime($busTrip->to_time);
-            $interval = $fromTime->diff($toTime);
+            $goingfromTime = new \DateTime($busTrip->from_time_going);
+            $goingtoTime = new \DateTime($busTrip->to_time_going);
+            $ReturnfromTime = new \DateTime($busTrip->from_time_return);
+            $ReturntoTime = new \DateTime($busTrip->to_time_return);
+            $GoingformattedFromTime = $goingfromTime->format('H:i');
+            $GoingformattedToTime =  $goingtoTime->format('H:i');
+            $RetuenformattedFromTime = $ReturnfromTime->format('H:i');
+            $RetuenformattedToTime =  $ReturntoTime->format('H:i');
+            $interval = $goingfromTime->diff($goingtoTime);
             $tripDuration = $interval->format('%H:%I');
             $busTripData = [
                 'bus_trip_id' => $busTrip->id,
@@ -105,18 +111,17 @@ class BusTripController extends Controller
                 'from' => $trip->path->from,
                 'to' => $trip->path->to,
                 'price' => (int) $trip->price,
-                'from_time_going' => $busTrip->from_time_going,
-                'to_time_going' => $busTrip->to_time_going,
-                'from_time_return' => $busTrip->from_time_return,
-                'to_time_return' => $busTrip->to_time_return,
-                'date_end' => $busTrip->date_end,
+                'goingfromTime' => $GoingformattedFromTime,
+                'goingtoTime' => $GoingformattedToTime,
+                'ReturnfromTime' => $RetuenformattedFromTime,
+                'ReturntoTime' => $RetuenformattedToTime,
                 'date_start' => $busTrip->date_start,
+                'date_end' => $busTrip->date_end,
                 'Distance' => $trip->path->Distance,
                 'tripDuration' => $tripDuration,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
                 'seats' => $busTrip->bus->seat->count()
-
             ];
 
             $breaksData = [];
@@ -154,11 +159,8 @@ class BusTripController extends Controller
 
     public function getBusTripsByFillter(Request $request)
     {
-        $fromTime = $request->input('from_time_going');
-        $toTime = $request->input('to_time_going');
-
-        $fromTime_return = $request->input('from_time_return');
-        $toTime_return = $request->input('to_time_return');
+        $fromTime = $request->input('from_time');
+        $toTime = $request->input('to_time');
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
@@ -166,19 +168,11 @@ class BusTripController extends Controller
         $busTrips = Bus_Trip::query();
 
         if ($fromTime) {
-            $busTrips->where('from_time_going', $fromTime);
+            $busTrips->where('from_time', $fromTime);
         }
 
         if ($toTime) {
-            $busTrips->where('to_time_going', $toTime);
-        }
-
-        if ($fromTime_return) {
-            $busTrips->where('from_time_return', $toTime);
-        }
-
-        if ($toTime_return) {
-            $busTrips->where('to_time_return', $toTime);
+            $busTrips->where('to_time', $toTime);
         }
 
         if ($type) {
@@ -208,14 +202,8 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'price_trip' => $busTrip->trip->price,
-                'from_time_going' => $busTrip->from_time_going,
-                'to_time_going' => $busTrip->to_time_going,
-                'from_time_return' => $busTrip->from_time_return,
-                'to_time_return' => $busTrip->to_time_return,
-                'date_end' => $busTrip->date_end,
-                'date_start' => $busTrip->date_start,
-                'status' => $busTrip->status,
+                'from_time' => $busTrip->from_time,
+                'to_time' => $busTrip->to_time,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];
@@ -264,31 +252,19 @@ class BusTripController extends Controller
             $errors = $validator->errors()->first();
             return response()->json(['error' => $errors], 422);
         }
-        $fromTime = $request->input('from_time_going');
-        $toTime = $request->input('to_time_going');
-
-
-        $fromTime_return = $request->input('from_time_return');
-        $toTime_return = $request->input('to_time_return');
-
+        $fromTime = $request->input('from_time');
+        $toTime = $request->input('to_time');
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
-
         $busTrips = Bus_Trip::whereHas('bus', function ($query) use ($company) {
             $query->where('company_id', $company);
         });
         if ($fromTime) {
-            $busTrips->where('from_time_going', $fromTime);
+            $busTrips->where('from_time', $fromTime);
         }
         if ($toTime) {
-            $busTrips->where('to_time_going', $toTime);
-        }
-        if ($fromTime_return) {
-            $busTrips->where('from_time_return', $fromTime);
-        }
-        if ($toTime_return) {
-            $busTrips->where('to_time_return', $toTime);
+            $busTrips->where('to_time', $toTime);
         }
         if ($type) {
             $busTrips->where('type', $type);
@@ -308,14 +284,8 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'price_trip' => $busTrip->trip->price,
-                'from_time_going' => $busTrip->from_time_going,
-                'to_time_going' => $busTrip->to_time_going,
-                'from_time_return' => $busTrip->from_time_return,
-                'to_time_return' => $busTrip->to_time_return,
-                'date_end' => $busTrip->date_end,
-                'date_start' => $busTrip->date_start,
-                'status' => $busTrip->status,
+                'from_time' => $busTrip->from_time,
+                'to_time' => $busTrip->to_time,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];

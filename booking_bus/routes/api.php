@@ -65,7 +65,7 @@ Route::get('all_user', [AdminDashBoardController::class, 'all_user']);
 
 
 
-Route::get('/my_notification', [UserNotificationController::class, 'index']);
+Route::get('/my_notification', [UserNotificationController::class, 'index'])->middleware('auth:sanctum');
 Route::post('/read_notification/{id}', [UserNotificationController::class, 'read']);
 Route::get('/readable_massege', [UserNotificationController::class, 'readable_massege']);
 
@@ -329,6 +329,8 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum', 'throttle:30,
 
     Route::get('/get_all_company', [UserApiController::class, 'get_all_company']);
     Route::get('/get_all_driver', [UserApiController::class, 'get_all_driver']);
+    Route::get('/getLocationOfRservation/{id}', [ProfileController::class, 'getLocationOfSpecifcReservation']);
+    Route::get('/GetCanceltionRuleforCompany/{companyName}', [CancellationRuleController::class, 'GetCanceltionRuleforCompany']);
 });
 
 
