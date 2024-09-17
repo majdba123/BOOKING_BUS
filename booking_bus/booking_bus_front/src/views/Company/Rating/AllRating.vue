@@ -55,11 +55,7 @@
                         <p>Admin</p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -104,12 +100,13 @@
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import GetAllRating from "@/components/GetAllRating.vue";
 import pathchart from "@/components/pathchart.vue";
+import photo from "@/components/photo.vue";
 import store from "@/store";
 import router from "@/router";
 
 export default {
     name: "AllDriver",
-    components: { SidebarCompany, GetAllRating, pathchart },
+    components: { SidebarCompany, GetAllRating, pathchart, photo },
     data() {
         return {
             x: store.state.x,
@@ -151,9 +148,9 @@ export default {
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {
-                sideMenu.style.display = "block"; // Show sidebar on large screens
+                sideMenu.style.display = "block";
             } else {
-                sideMenu.style.display = "none"; // Hide sidebar on small screens
+                sideMenu.style.display = "none";
             }
         },
         openMenu() {
@@ -204,12 +201,7 @@ export default {
             store.dispatch("logout");
             this.$router.push("/");
         },
-        fetchProfileInfo() {
-            const userDataFrame = {
-                image: "path/to/profile-image.jpg",
-            };
-            this.profileImage = userDataFrame.image;
-        },
+
         updateDateTime() {
             const now = new Date();
             this.currentDateTime.date = now.toISOString().split("T")[0];
@@ -236,7 +228,6 @@ export default {
         },
         search() {
             console.log("Searching for:", this.searchQuery);
-            // Add your search logic here
         },
     },
     mounted() {
@@ -373,11 +364,9 @@ small {
     color: var(--clr-dark);
 }
 .profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
+    position: relative;
     display: flex;
     align-items: center;
-}
-.profile-photo img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -385,6 +374,7 @@ small {
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
 .profile-photo img:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);

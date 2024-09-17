@@ -467,6 +467,7 @@ export default {
                     console.error(error);
                 });
         },
+
         AllDriver() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -475,9 +476,12 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.Driver = response.data;
-                    store.state.Driver = response.data;
-                    console.log(response.data);
+                    this.Driver = response.data.sort((a, b) => {
+                        if (a.name < b.name) return -1;
+                        if (a.name > b.name) return 1;
+                        return 0;
+                    });
+                    console.log(this.Driver);
                     this.loading = false;
                 })
                 .catch((error) => {

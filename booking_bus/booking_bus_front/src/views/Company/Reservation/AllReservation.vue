@@ -54,11 +54,7 @@
                         <p>Admin</p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -102,6 +98,7 @@
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import Revchart from "@/components/Revchart.vue";
+import photo from "@/components/photo.vue";
 import store from "@/store";
 import router from "@/router";
 import GetAllReservation from "@/components/GetAllReservation.vue";
@@ -112,6 +109,7 @@ export default {
         SidebarCompany,
         Revchart,
         GetAllReservation,
+        photo,
     },
     data() {
         return {
@@ -696,8 +694,8 @@ aside .logo {
     text-align: center;
     background: linear-gradient(135deg, #ff4d4d, #72c3ff);
     color: transparent;
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 .time-box span {

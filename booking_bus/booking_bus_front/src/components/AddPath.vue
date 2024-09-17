@@ -755,6 +755,18 @@ select:focus {
     height: 350px;
 }
 
+@keyframes borderColorShift {
+    0% {
+        border-color: rgb(255, 123, 0);
+    }
+    50% {
+        border-color: rgb(255, 255, 0);
+    }
+    100% {
+        border-color: rgb(255, 123, 0);
+    }
+}
+
 .form-containerd {
     display: flex;
     flex-direction: column;
@@ -768,6 +780,8 @@ select:focus {
     max-width: 400px;
     width: 100%;
     text-align: center;
+    border: 1px solid;
+    animation: borderColorShift 3s infinite;
 }
 
 h2 {

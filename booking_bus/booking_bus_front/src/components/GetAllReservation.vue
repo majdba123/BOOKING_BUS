@@ -688,6 +688,9 @@ export default {
             this.showDriverRatingsModal = false;
         },
     },
+    mounted() {
+        this.fetchReservation();
+    },
     computed: {
         paginatedReservations() {
             const start = (this.currentPage - 1) * this.itemsPerPage;

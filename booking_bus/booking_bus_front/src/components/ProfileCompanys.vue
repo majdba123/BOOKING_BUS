@@ -61,6 +61,7 @@
                                 v-if="company.logoURL"
                                 :src="company.logoURL"
                                 alt="Company Logo"
+                                class="logo-image"
                             />
                         </div>
                     </div>
@@ -81,7 +82,6 @@
         </div>
     </div>
 </template>
-
 <script>
 import axios from "axios";
 import { useToast } from "vue-toastification";
@@ -98,13 +98,15 @@ export default {
                 area: "",
                 phone: "",
                 logo: null,
-                logoURL: null, // For displaying the logo
+                logoURL: null,
+                addressId: null,
             },
             isDataFilled: false,
         };
     },
+
     mounted() {
-        this.isDataFilled = false; // Ensure button is disabled before data fetch
+        this.isDataFilled = false;
         this.fetchCompanyInfo();
         this.fetchCompanyAddress();
     },
@@ -120,8 +122,8 @@ export default {
                     this.company.name = response.data.name;
                     this.company.email = response.data.email;
                     this.company.phone = response.data.phoneNumber;
-                    this.company.logoURL = response.data.profile_image; // Use for displaying the logo
-                    this.checkDataFilled(); // Check if all data is filled
+                    this.company.logoURL = response.data.profile_image;
+                    this.checkDataFilled();
                 })
                 .catch((error) => {
                     console.error(
@@ -137,7 +139,7 @@ export default {
                 this.company.city !== "" &&
                 this.company.area !== "" &&
                 this.company.phone !== "" &&
-                this.company.logoURL !== null; // Ensure logoURL is checked
+                this.company.logoURL !== null;
         },
         fetchCompanyAddress() {
             const access_token = window.localStorage.getItem("access_token");
@@ -150,7 +152,8 @@ export default {
                         const address = response.data[0];
                         this.company.city = address.city;
                         this.company.area = address.area;
-                        this.checkDataFilled(); // Recheck data completeness
+                        this.company.addressId = address.id;
+                        this.checkDataFilled();
                     } else {
                         console.error("No address found.");
                     }
@@ -223,10 +226,10 @@ export default {
             const formData = this.createFormData();
             const access_token = window.localStorage.getItem("access_token");
             const toast = useToast();
-            console.log(this.company.id);
+
             axios
                 .put(
-                    `http://127.0.0.1:8000/api/company/update_address/${this.company.id}?city=${this.company.city}&area=${this.company.area}`,
+                    `http://127.0.0.1:8000/api/company/update_address/${this.company.addressId}?city=${this.company.city}&area=${this.company.area}`,
                     {},
                     { headers: { Authorization: `Bearer ${access_token}` } }
                 )
@@ -273,7 +276,6 @@ export default {
                     );
                 });
         },
-
         handleLogoUpload(event) {
             this.company.logo = event.target.files[0];
             const reader = new FileReader();

@@ -49,7 +49,7 @@ import router from "@/router";
 export default {
     data() {
         return {
-            trips: [], // Add a new data property for trips
+            trips: [],
         };
     },
     mounted() {

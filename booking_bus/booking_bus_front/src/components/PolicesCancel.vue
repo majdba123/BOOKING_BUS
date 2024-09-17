@@ -558,7 +558,7 @@ export default {
             reward_percentage: "",
             x: null,
             formData: {
-                trip_id: "",
+                id: "",
                 description: "",
                 reasons: [{ value: "" }],
             },
@@ -709,7 +709,6 @@ export default {
             this.showDeleteConfirmModal = true;
         },
 
-        // Delete the reward after confirmation
         deleteReward() {
             if (this.rewardToDelete) {
                 const access_token =
@@ -750,8 +749,6 @@ export default {
                         name: `${trip.path.from} to ${trip.path.to}`,
                         from: trip.path.from,
                         to: trip.path.to,
-                        price: parseFloat(trip.price),
-                        status: trip.status,
                     }));
 
                     this.options = response.data.map((trip) => ({
@@ -783,17 +780,15 @@ export default {
                 return;
             }
 
-            console.log("Selected trip ID:", this.formData.trip_id);
             const payload = {
-                trip_id: Number(this.formData.trip_id),
+                trip_id: this.formData.id,
                 description: this.formData.description,
                 reasons: this.formData.reasons.map((field) => field.value),
                 rate: this.compensationData.rate,
                 satisfaction_rate_description:
                     this.compensationData.satisfaction_rate_description,
             };
-            console.log("Payload being sent:", payload);
-            // Check if trip ID is valid
+            console.log("Selected trip ID:", this.formData.trip_id);
             if (
                 !this.options.some(
                     (option) => option.value === this.formData.trip_id

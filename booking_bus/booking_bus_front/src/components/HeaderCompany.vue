@@ -61,13 +61,8 @@
                         <p>Admin</p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            class="profile-picture"
-                            @click="toggleProfileMenu"
-                        />
-                        <ul v-if="showProfileMenu" class="dropdown-menu">
+                        <photo @click="toggleProfileMenu" />
+                        <ul v-if="showProfileMenu" class="dropdown-menu show">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
                         </ul>
@@ -80,9 +75,11 @@
 
 <script>
 import store from "@/store";
+import photo from "@/components/photo.vue";
 
 export default {
     name: "HeaderCompany",
+    components: { photo },
     data() {
         return {
             x: store.state.x,
@@ -193,7 +190,6 @@ export default {
     },
 };
 </script>
-
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -453,6 +449,12 @@ small {
     position: relative;
     display: flex;
     align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid var(--clr-primary);
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .profile-photo img {
@@ -468,7 +470,6 @@ small {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
 }
-
 .dropdown-menu {
     position: absolute;
     top: 60px;
@@ -481,7 +482,6 @@ small {
     padding: 10px 0;
     z-index: 1000;
     width: 150px;
-    animation: fadeIn 0.3s ease;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);

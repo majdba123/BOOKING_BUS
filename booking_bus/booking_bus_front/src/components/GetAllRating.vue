@@ -408,10 +408,9 @@ export default {
             tripRatingsDetails: [],
             driverRatingsDetails: [],
 
-            // Pagination variables
             currentPageTrips: 1,
             currentPageDrivers: 1,
-            itemsPerPage: 10, // عدد العناصر في كل صفحة
+            itemsPerPage: 10,
         };
     },
     computed: {
@@ -426,7 +425,9 @@ export default {
             return this.Drivers.slice(start, end);
         },
     },
-
+    mounted() {
+        this.fetchTripRatings();
+    },
     methods: {
         toggleTripRatings() {
             this.showTripRatings = true;
