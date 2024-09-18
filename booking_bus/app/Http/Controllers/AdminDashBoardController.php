@@ -194,7 +194,7 @@ class AdminDashBoardController extends Controller
 
 
 
-  /* LAZY  public function all_trip_history_of_user($id)
+    /* LAZY  public function all_trip_history_of_user($id)
     {
         $reservations = Reservation::where('user_id', $id)
             ->get();
@@ -259,7 +259,11 @@ class AdminDashBoardController extends Controller
 
         // Filter by date range
         if ($request->query('from_date') && $request->query('to_date')) {
-            $customBusTrips->whereBetween('date', [$request->query('from_date'), $request->query('to_date')]);
+            $customBusTrips->where(function ($query) use ($request) {
+                $query->where('date_start', '<=', $request->input('to_date'));
+
+                $query->where('date_end', '>=', $request->input('from_date'));
+            });
         }
 
         // Filter by status
@@ -1097,91 +1101,102 @@ class AdminDashBoardController extends Controller
 
     public function statiesticle_dash()
     {
-        $user = User::count();
-        $company = Company::count();
-        $driver = Driver::count();
-        $trip = Trip::count();
-        $reservationCounts = Reservation::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->keyBy('status')
-            ->mapWithKeys(function ($item) {
-                return [$item->status => $item->count];
-            });
+        $company = Auth::user()->Company;
+        $key = 'dashboard_company_' . $company->id;
+
+        if (Cache::has($key)) {
+
+            $dash = Cache::get($key);
+        } else {
+
+            $user = User::count();
+            $company = Company::count();
+            $driver = Driver::count();
+            $trip = Trip::count();
+            $reservationCounts = Reservation::selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->get()
+                ->keyBy('status')
+                ->mapWithKeys(function ($item) {
+                    return [$item->status => $item->count];
+                });
 
 
-        $trip_count = Trip::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->keyBy('status')
-            ->mapWithKeys(function ($item) {
-                return [$item->status => $item->count];
-            });
+            $trip_count = Trip::selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->get()
+                ->keyBy('status')
+                ->mapWithKeys(function ($item) {
+                    return [$item->status => $item->count];
+                });
 
 
-        $reservationSums = Reservation::selectRaw('status, SUM(price) as sum')
-            ->groupBy('status')
-            ->get()
-            ->keyBy('status')
-            ->mapWithKeys(function ($item) {
-                return [$item->status => $item->sum];
-            });
+            $reservationSums = Reservation::selectRaw('status, SUM(price) as sum')
+                ->groupBy('status')
+                ->get()
+                ->keyBy('status')
+                ->mapWithKeys(function ($item) {
+                    return [$item->status => $item->sum];
+                });
 
-        $bus_trip = Bus_Trip::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->keyBy('status')
-            ->mapWithKeys(function ($item) {
-                return [$item->status => $item->count];
-            });
+            $bus_trip = Bus_Trip::selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->get()
+                ->keyBy('status')
+                ->mapWithKeys(function ($item) {
+                    return [$item->status => $item->count];
+                });
 
-        $driverCounts = Driver::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->keyBy('status')
-            ->mapWithKeys(function ($item) {
-                return [$item->status => $item->count];
-            });
-        $allDrivers = $driverCounts->sum();
-        $completed_Drivers = $driverCounts->get('completed', 0);
-        $availableDrivers = $driverCounts->get('available', 0);
-        $pending_Drivers = $driverCounts->get('pending', 0);
+            $driverCounts = Driver::selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->get()
+                ->keyBy('status')
+                ->mapWithKeys(function ($item) {
+                    return [$item->status => $item->count];
+                });
+            $allDrivers = $driverCounts->sum();
+            $completed_Drivers = $driverCounts->get('completed', 0);
+            $availableDrivers = $driverCounts->get('available', 0);
+            $pending_Drivers = $driverCounts->get('pending', 0);
 
-        $busCounts = Bus::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->keyBy('status')
-            ->mapWithKeys(function ($item) {
-                return [$item->status => $item->count];
-            });
+            $busCounts = Bus::selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->get()
+                ->keyBy('status')
+                ->mapWithKeys(function ($item) {
+                    return [$item->status => $item->count];
+                });
 
-        $privateTripCounts = Order_Private_Trip::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->keyBy('status')
-            ->mapWithKeys(function ($item) {
-                return [$item->status => $item->count];
-            });
-        $acceptedTotalPrice = Order_Private_Trip::where('status', 'accepted')
-            ->sum('price');
+            $privateTripCounts = Order_Private_Trip::selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->get()
+                ->keyBy('status')
+                ->mapWithKeys(function ($item) {
+                    return [$item->status => $item->count];
+                });
+            $acceptedTotalPrice = Order_Private_Trip::where('status', 'accepted')
+                ->sum('price');
 
 
-        $favourite_count = Favourite::count();
+            $favourite_count = Favourite::count();
 
-        $all_user = User::count();
-        $all_company = Company::count();
+            $all_user = User::whereDoesntHave('Driver')
+                ->whereDoesntHave('Company')
+                ->where('type', '!=', 1)
+                ->count();
+            $all_company = Company::count();
 
         $dash = [
-            'pending_reservations' => $reservationCounts->get('padding', 0),
+            'pending_reservations' => $reservationCounts->get('pending', 0),
             'completed_reservations' => $reservationCounts->get('completed', 0),
             'out_reservation' => $reservationCounts->get('out', 0),
-            'pending_trip' => $trip_count->get('padding', 0),
+            'pending_trip' => $trip_count->get('pending', 0),
             'finished_trip' => $trip_count->get('finished', 0),
             'finished_going_trip' => $trip_count->get('finished_going', 0),
             'pending_bus_trip' => $bus_trip->get('pending', 0),
             'finished_bus_trip' => $bus_trip->get('finished', 0),
             'finished_going_bus_trip' => $bus_trip->get('finished_going', 0),
-            'total_profit_pending' => $reservationSums->get('padding', 0),
+            'total_profit_pending' => $reservationSums->get('pending', 0),
             'total_profit_completed' => $reservationSums->get('completed', 0),
             'total_profit_out' => $reservationSums->get('out', 0),
             'all_drivers' => $allDrivers,
@@ -1192,7 +1207,7 @@ class AdminDashBoardController extends Controller
             'completed_Buses' => $busCounts->get('completed', 0),
             'availableBuses' => $busCounts->get('available', 0),
             'pending_Buses' => $busCounts->get('pending', 0),
-            'inProgress_PrivateTrips' => $privateTripCounts->get('padding', 0),
+            'inProgress_PrivateTrips' => $privateTripCounts->get('pending', 0),
             'completed_PrivateTrips' => $privateTripCounts->get('accepted', 0),
             'canceled_PrivateTrips' => $privateTripCounts->get('cancelled', 0),
             'total_price_completed_PrivateTrips' => $acceptedTotalPrice,
@@ -1201,8 +1216,10 @@ class AdminDashBoardController extends Controller
             'all_company' => $all_company,
 
 
-        ];
-
+            ];
+            Cache::put($key, $dash, now()->addMinutes(45));
+        }
+>>>>>>> Hamza_Mobile_Application_Flutter
         return response()->json($dash);
     }
     /**Lazy Loading vs Eager Loading in the statiesticle_dash Method
@@ -1212,12 +1229,11 @@ class AdminDashBoardController extends Controller
         Eager Loading
         Eager loading is used when you're using the selectRaw method with groupBy and get to retrieve the data, like: */
 
-    public function getPriceData1(Request $request ,$company_id)
+    public function getPriceData1(Request $request, $company_id)
     {
         $period = $request->input('period'); // daily, monthly, yearly
-        $company =Company::find($company_id);
-        if(!$company)
-        {
+        $company = Company::find($company_id);
+        if (!$company) {
             return response()->json(['error' => 'company not found '], 422);
         }
         $validator = Validator::make($request->all(), [
@@ -1231,20 +1247,20 @@ class AdminDashBoardController extends Controller
         $reservations = Reservation::whereHas('bus_trip.trip.company', function ($query) use ($company_id) {
             $query->where('id', $company_id);
         })
-        ->when($period === 'daily', function ($query) {
-            $query->whereDate('created_at', today());
-        })
-        ->when($period === 'monthly', function ($query) {
-            $query->whereMonth('created_at', now()->month);
-        })
-        ->when($period === 'yearly', function ($query) {
-            $query->whereYear('created_at', now()->year);
-        })
-        ->select('price') // select only the price column
-        ->get();
+            ->when($period === 'daily', function ($query) {
+                $query->whereDate('created_at', today());
+            })
+            ->when($period === 'monthly', function ($query) {
+                $query->whereMonth('created_at', now()->month);
+            })
+            ->when($period === 'yearly', function ($query) {
+                $query->whereYear('created_at', now()->year);
+            })
+            ->select('price') // select only the price column
+            ->get();
 
         $prices = $reservations->pluck('price')->toArray();
-     //   var_dump($prices);
+        //   var_dump($prices);
         if (empty($prices)) {
             return response()->json(['message' => 'No prices found for the given period'], 200);
         }
@@ -1265,7 +1281,7 @@ class AdminDashBoardController extends Controller
         return $sum / $count;
     }
 }
-   /**It depends on the situation.
+/**It depends on the situation.
 
 Use Eager Loading when:
 
