@@ -48,8 +48,8 @@
 
         <router-link
             to="AllChargebalnce"
-            @click="selectOption('AllChargebalnce')"
-            :class="{ active: selectedOption === 'AllChargebalnce' }"
+            @click="selectOption('Chargebalnce')"
+            :class="{ active: selectedOption === 'Chargebalnce' }"
         >
             <span class="material-icons" aria-label="Rate">payments</span>
             <h3>Chargebalnce</h3>

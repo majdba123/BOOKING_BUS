@@ -49,7 +49,7 @@
                                     v-for="notification in notifications"
                                     :key="notification.id"
                                 >
-                                    {{ notification.message }}
+                                    {{ this.messages }}
                                 </li>
                             </ul>
                         </div>
@@ -69,12 +69,15 @@
 
 <script>
 import store from "@/store";
-
+import axios from "axios";
+import Pusher from "pusher-js";
 export default {
     name: "HeaderAdmin",
     components: {},
     data() {
         return {
+            messages: "",
+            id: null,
             x: store.state.x,
             showProfileMenu: false,
             profileImage: "",
@@ -88,6 +91,50 @@ export default {
         };
     },
     methods: {
+        initializePusher() {
+            Pusher.logToConsole = true;
+            const pusher = new Pusher("7342c00647f26084d14f", {
+                cluster: "ap2",
+                authEndpoint: "/pusher/auth",
+                auth: {
+                    params: {
+                        userId: this.id,
+                    },
+                },
+            });
+
+            const channel = pusher.subscribe(
+                `notification-private-channel-${this.id}`
+            );
+            console.log("Pusher Channel:", channel);
+
+            channel.bind("PrivateNotification", (data) => {
+                const notification = data.message;
+                this.$store.commit("ADD_NOTIFICATION", notification);
+                this.messages = notification;
+                console.log("Notification:", this.messages);
+                if (this.messages != null) {
+                    this.notifications = ["1"];
+                }
+            });
+        },
+        AllUsers() {
+            const access_token = window.localStorage.getItem("access_token");
+            this.loading = true;
+            return axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/admin/my_info",
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.id = response.data.id;
+                    console.log("User ID:", this.id);
+                })
+                .catch((error) => {
+                    this.toast.error("Error getting user info.");
+                    console.error(error);
+                });
+        },
         toggleProfileMenu() {
             this.showProfileMenu = !this.showProfileMenu;
             if (this.showProfileMenu) {
@@ -162,14 +209,17 @@ export default {
                 }
             }
         },
-        fetchNotifications() {
-            this.notifications = [
-                { id: 1, message: "New user registered" },
-                { id: 2, message: "System update available" },
-            ];
-        },
+        fetchNotifications() {},
+    },
+    watch() {
+        this.messages;
     },
     mounted() {
+        this.AllUsers().then(() => {
+            if (this.id) {
+                this.initializePusher();
+            }
+        });
         this.updateDateTime();
         this.fetchProfileInfo();
         this.fetchNotifications(); // Fetch notifications on mount
@@ -309,6 +359,12 @@ small {
 .date button:hover {
     background-color: var(--clr-primary-variant);
     transition: 0.4s ease-in;
+}
+main {
+    justify-content: space-around;
+    padding: 20px;
+    border-end-end-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
 
 .profile-menu {

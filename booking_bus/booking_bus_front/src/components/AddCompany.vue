@@ -75,6 +75,7 @@
                                     <th>Bus</th>
                                     <th>Trip</th>
                                     <th>Reservation</th>
+                                    <th>Information</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -85,7 +86,10 @@
                                     <td>{{ index }}</td>
                                     <td>{{ user.name_company }}</td>
                                     <td>{{ user.user.email }}</td>
-                                    <td>{{ user.user.profile?.phone }}</td>
+                                    <td v-if="user.user.profile?.phone != null">
+                                        {{ user.user.profile?.phone }}
+                                    </td>
+                                    <td v-else>NULL</td>
                                     <td>
                                         <button
                                             class="nav-btnd btn-primary"
@@ -124,6 +128,14 @@
                                             Reservation
                                         </button>
                                     </td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-primary"
+                                            @click="openInfoModal(user.id)"
+                                        >
+                                            Info
+                                        </button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -155,7 +167,128 @@
                 </button>
             </div>
         </div>
-
+        <div v-if="showInfoModal" class="modal">
+            <div class="modal-contentr">
+                <!-- Close button -->
+                <div class="modal-body">
+                    <!-- Info content in a structured format -->
+                    <table class="x">
+                        <tr>
+                            <th class="y">Pending Reservations</th>
+                            <td class="z">{{ info.pending_reservations }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Completed Reservations</th>
+                            <td class="z">{{ info.completed_reservations }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Out Reservation</th>
+                            <td class="z">{{ info.out_reservation }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Pending Trip</th>
+                            <td class="z">{{ info.pending_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Finished Trip</th>
+                            <td class="z">{{ info.finished_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Finished Going Trip</th>
+                            <td class="z">{{ info.finished_going_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Pending Bus Trip</th>
+                            <td class="z">{{ info.pending_bus_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Finished Bus Trip</th>
+                            <td class="z">{{ info.finished_bus_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Finished Going Bus_trip</th>
+                            <td class="z">
+                                {{ info.finished_going_bus_trip }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="y">Total Profit Pending</th>
+                            <td class="z">{{ info.total_profit_pending }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Total Profit Completed</th>
+                            <td class="z">{{ info.total_profit_completed }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Total Profit Out</th>
+                            <td class="z">{{ info.total_profit_out }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">All Drivers</th>
+                            <td class="z">{{ info.all_drivers }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Pending Drivers</th>
+                            <td class="z">{{ info.pending_drivers }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Available Drivers</th>
+                            <td class="z">{{ info.available_drivers }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Completed Driver</th>
+                            <td class="z">{{ info.completed_driver }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">All Buses</th>
+                            <td class="z">{{ info.allBuses }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Completed Buses</th>
+                            <td class="z">{{ info.completed_Buses }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Available Buses</th>
+                            <td class="z">{{ info.availableBuses }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Pending Buses</th>
+                            <td class="z">{{ info.pending_Buses }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">inProgress PrivateTrips</th>
+                            <td class="z">
+                                {{ info.inProgress_PrivateTrips }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="y">Completed PrivateTrips</th>
+                            <td class="z">{{ info.completed_PrivateTrips }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Canceled PrivateTrips</th>
+                            <td class="z">{{ info.canceled_PrivateTrips }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">
+                                Total Price Completed PrivateTrips
+                            </th>
+                            <td class="z">
+                                {{ info.total_price_completed_PrivateTrips }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="y">Count Favourite</th>
+                            <td class="z">{{ info.count_favourite }}</td>
+                        </tr>
+                        <!-- Add more fields as needed -->
+                    </table>
+                </div>
+                <button @click="closeInfoModal" class="close-modal">
+                    Close
+                </button>
+            </div>
+        </div>
         <div v-if="showDriverStatusModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Driver Status</div>
@@ -638,11 +771,14 @@ export default {
             Reservation: [],
             Pivot: [],
             BusTrip: [],
+            info: [],
             Trips: [],
             driverWithBusData: [],
             name: "",
             email: "",
             password: "",
+            showInfoModal: false,
+
             showDriverStatusModal: false,
             showTripModal: false,
             showReservationModal: false,
@@ -672,6 +808,12 @@ export default {
             this.currentCompanyId = company_id;
             // Set the current company ID
             this.showDriverStatusModal = true;
+        },
+        openInfoModal(company_id) {
+            this.currentCompanyId = company_id;
+            // Set the current company ID
+            this.showInfoModal = true;
+            this.fetchInfo(this.currentCompanyId);
         },
 
         openBusModal(company_id) {
@@ -734,6 +876,9 @@ export default {
 
         closeDriverStatusModal() {
             this.showDriverStatusModal = false;
+        },
+        closeInfoModal() {
+            this.showInfoModal = false;
         },
         closeTripModal() {
             this.showTripModal = false;
@@ -946,6 +1091,25 @@ export default {
                     this.Reservation = response.data;
                     this.ReversationStatusData = response.data;
                     console.log(this.Reservation);
+                    this.loading4 = false;
+                })
+                .catch((error) => {
+                    this.toast.error("Error getting buses.");
+                    console.error(error);
+                });
+            this.loading4 = true;
+        },
+        fetchInfo(company_name) {
+            console.log(company_name);
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/admin/company_all_info/${company_name}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.info = response.data;
+                    console.log(this.info);
                     this.loading4 = false;
                 })
                 .catch((error) => {
@@ -1256,6 +1420,58 @@ select:focus {
     justify-content: center;
     height: 20px;
     width: 20px;
+}
+.modal-containerr {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-contentr {
+    background-color: var(--clr-color-background);
+    padding: 20px;
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
+}
+
+.close-buttonr {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.x {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.y,
+.z {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.y {
+    background-color: #f2f2f2;
 }
 .spinner {
     border: 4px solid var(--clr-light);

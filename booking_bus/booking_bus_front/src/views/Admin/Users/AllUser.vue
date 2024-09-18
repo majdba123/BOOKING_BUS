@@ -19,7 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>User</h1>
+                <HeaderAdmin />
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -29,14 +29,6 @@
                             v-model="searchQuery"
                         />
                         <button @click="search">Search</button>
-                    </div>
-                    <div
-                        class="theme-toggler"
-                        ref="themeToggler"
-                        @click="toggleTheme"
-                    >
-                        <span class="material-icons active">light_mode</span>
-                        <span class="material-icons">dark_mode</span>
                     </div>
                 </div>
                 <ShowUsers ref="ShowUsers" />
@@ -62,10 +54,11 @@ import ShowUsers from "@/components/ShowUsers.vue";
 import router from "@/router";
 
 import store from "@/store";
+import HeaderAdmin from "@/components/HeaderAdmin.vue";
 
 export default {
     name: "AllUser",
-    components: { SidebarAdmin, ShowUsers },
+    components: { SidebarAdmin, ShowUsers, HeaderAdmin },
     data() {
         return {
             x: store.state.x,
@@ -151,24 +144,6 @@ export default {
     },
     mounted() {
         this.checkToken();
-
-        // التحقق من تفضيلات المستخدم المحفوظة في localStorage
-        const savedTheme = localStorage.getItem("darkMode");
-        if (savedTheme === "enabled") {
-            this.isDarkMode = true;
-            document.body.classList.add("dark-theme-variables");
-        } else {
-            this.isDarkMode = false;
-            document.body.classList.remove("dark-theme-variables");
-        }
-
-        const themeToggler = this.$refs.themeToggler;
-        themeToggler
-            .querySelector("span:nth-child(1)")
-            .classList.toggle("active", !this.isDarkMode);
-        themeToggler
-            .querySelector("span:nth-child(2)")
-            .classList.toggle("active", this.isDarkMode);
     },
 };
 </script>
@@ -344,6 +319,7 @@ aside .logo {
 
 .date input {
     flex: 1;
+    width: 1100px;
 }
 
 .date button {
@@ -377,8 +353,6 @@ aside .logo {
           start right side
   ***************************** */
 .right {
-    margin-top: 1.4rem;
-    padding: 1rem;
     background-color: var(--clr-color-background);
     grid-column: span 1;
 }

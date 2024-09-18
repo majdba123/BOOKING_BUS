@@ -39,17 +39,13 @@
                                         <td>
                                             <button
                                                 class="nav-btnd accept-btn"
-                                                @click="
-                                                    acceptOrder(item.user_id)
-                                                "
+                                                @click="acceptOrder(item.id)"
                                             >
                                                 Accept
                                             </button>
                                             <button
                                                 class="nav-btnd cancel-btn"
-                                                @click="
-                                                    cancelOrder(item.user_id)
-                                                "
+                                                @click="cancelOrder(item.id)"
                                             >
                                                 Cancel
                                             </button>
@@ -111,7 +107,7 @@ export default {
             })
                 .then((response) => {
                     this.items = response.data;
-                    toast.success("Data fetched successfully");
+                    console.log(response.data);
                     this.loading = false;
                 })
                 .catch((error) => {
