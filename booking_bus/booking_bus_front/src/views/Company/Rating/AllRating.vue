@@ -51,8 +51,9 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
                         <photo @click="toggleProfileMenu" />
@@ -103,6 +104,7 @@ import pathchart from "@/components/pathchart.vue";
 import photo from "@/components/photo.vue";
 import store from "@/store";
 import router from "@/router";
+import { mapGetters } from "vuex";
 
 export default {
     name: "AllDriver",
@@ -143,6 +145,9 @@ export default {
             store.commit("updateSearchQuery", newQuery);
             console.log(store.state.searchQuery);
         },
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     methods: {
         handleResize() {

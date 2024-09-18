@@ -50,15 +50,12 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -103,12 +100,14 @@
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import pathchart from "@/components/pathchart.vue";
 import AddTrip from "@/components/AddTrip.vue";
+import photo from "@/components/photo.vue";
 import router from "@/router";
 import store from "@/store";
+import { mapGetters } from "vuex";
 
 export default {
     name: "AllTrip",
-    components: { SidebarCompany, pathchart, AddTrip },
+    components: { SidebarCompany, pathchart, AddTrip, photo },
     data() {
         return {
             x: store.state.x,
@@ -145,6 +144,9 @@ export default {
             store.commit("updateSearchQuery", newQuery);
             console.log(store.state.searchQuery);
         },
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     methods: {
         handleResize() {
@@ -377,7 +379,7 @@ small {
     display: flex;
     align-items: center;
 }
-.profile-photo img {
+.profile-photo {
     width: 50px;
     height: 50px;
     border-radius: 50%;

@@ -50,15 +50,12 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -102,13 +99,15 @@
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddBus from "@/components/AddBus.vue";
+import photo from "@/components/photo.vue";
 import buschart from "@/components/buschart.vue";
 import store from "@/store";
 import router from "@/router";
+import { mapGetters } from "vuex";
 
 export default {
     name: "AllDriver",
-    components: { SidebarCompany, AddBus, buschart },
+    components: { SidebarCompany, AddBus, buschart, photo },
     data() {
         return {
             x: store.state.x,
@@ -145,6 +144,9 @@ export default {
             store.commit("updateSearchQuery", newQuery);
             console.log(store.state.searchQuery);
         },
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     methods: {
         handleResize() {
@@ -373,23 +375,15 @@ small {
 }
 
 .profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
+    position: relative;
     display: flex;
     align-items: center;
-}
-
-.profile-photo img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     border: 2px solid var(--clr-primary);
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.profile-photo img:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.05);
 }
 
 .text-muted {

@@ -50,15 +50,13 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
+
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -103,12 +101,14 @@
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddPath from "@/components/AddPath.vue";
 import pathchart from "@/components/pathchart.vue";
+import photo from "@/components/photo.vue";
 import store from "@/store";
 import router from "@/router";
+import { mapGetters } from "vuex";
 
 export default {
     name: "AllPath2",
-    components: { SidebarCompany, AddPath, pathchart },
+    components: { SidebarCompany, AddPath, pathchart, photo },
     data() {
         return {
             x: store.state.x,
@@ -146,13 +146,16 @@ export default {
             console.log(store.state.searchQuery);
         },
     },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
+    },
     methods: {
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {
-                sideMenu.style.display = "block"; // Show sidebar on large screens
+                sideMenu.style.display = "block";
             } else {
-                sideMenu.style.display = "none"; // Hide sidebar on small screens
+                sideMenu.style.display = "none";
             }
         },
         openMenu() {
@@ -235,7 +238,6 @@ export default {
         },
         search() {
             console.log("Searching for:", this.searchQuery);
-            // Add your search logic here
         },
     },
     mounted() {
@@ -376,7 +378,7 @@ small {
     display: flex;
     align-items: center;
 }
-.profile-photo img {
+.profile-photo {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -621,8 +623,8 @@ aside .logo {
     font-weight: bold;
     color: #72c3ff;
     background: linear-gradient(90deg, #72c3ff, #ff4d4d);
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
     margin-bottom: 5px;
 }

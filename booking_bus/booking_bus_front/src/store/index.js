@@ -6,6 +6,7 @@ export default createStore({
         breacklat: null,
         breacklong: null,
         x: "Dashboard",
+        companyName: "",
         Bus: {},
         Driver: [],
         Company: {},
@@ -34,8 +35,12 @@ export default createStore({
     },
     getters: {
         getNotifications: (state) => state.message,
+        getCompanyName: (state) => state.companyName,
     },
     mutations: {
+        SET_COMPANY_NAME(state, name) {
+            state.companyName = name;
+        },
         ADD_TRAKING(state, lattrack, langtrack) {
             state.lattrack = lattrack;
             state.langtrack = langtrack;
@@ -90,6 +95,9 @@ export default createStore({
         },
     },
     actions: {
+        updateCompanyName({ commit }, name) {
+            commit("SET_COMPANY_NAME", name);
+        },
         addNotification({ commit }, message) {
             commit("ADD_NOTIFICATION", message);
         },
