@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('rate', 5, 2);
             $table->text('description');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

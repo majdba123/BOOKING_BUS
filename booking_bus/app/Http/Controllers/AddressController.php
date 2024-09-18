@@ -64,6 +64,9 @@ class AddressController extends Controller
         $address->city = $request->input('city');
         $address->area = $request->input('area');
         $address->save();
+        $key = 'user_addresses_' . Auth::user()->id;
+        Cache::put($key, $address, now()->addMinutes(30)); // Cache for 30 minutes
+
         return response()->json([
             'message' => "Address saved",
             'address' => $address,
@@ -91,6 +94,10 @@ class AddressController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'city' => 'string|max:255',
+            'area' => 'string|max:255',
+        ]);
         $user = Auth::user()->id;
         $key = 'user_addresses_' . $user;
         $address = Address::with('user')->find($id);

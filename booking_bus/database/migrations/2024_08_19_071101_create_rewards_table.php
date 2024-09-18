@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('Reservation_Costs', 8, 2);
             $table->decimal('reward_percentage', 5, 2)->default(0);
 
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }

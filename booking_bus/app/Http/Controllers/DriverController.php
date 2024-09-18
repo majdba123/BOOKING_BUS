@@ -11,11 +11,13 @@ use App\Models\Bus_Trip;
 use App\Models\user;
 use App\Events\BreakTripEvent;
 use App\Events\PrivateNotification;
+use App\Models\Trip;
 use App\Models\UserNotification;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 
@@ -237,8 +239,8 @@ class DriverController extends Controller
             // Load related data for each trip
             $trip->load(['trip.path', 'Pivoit.Reservation.user']);
 
-            $fromTime = new \DateTime($trip->from_time);
-            $toTime = new \DateTime($trip->to_time);
+            $fromTime = new \DateTime($trip->from_time_going);
+            $toTime = new \DateTime($trip->to_time_return);
             $interval = $fromTime->diff($toTime);
             $tripDuration = $interval->format('%H:%I');
             $response[] = [
@@ -297,16 +299,10 @@ class DriverController extends Controller
         foreach ($trips as $trip) {
             // Load related data for each trip
             $trip->load(['trip.path', 'Pivoit.Reservation.user']);
+            $fromTime = new \DateTime($trip->from_time_going);
+            $toTime = new \DateTime($trip->to_time_return);
 
-            $goingfromTime = new \DateTime($trip->from_time_going);
-            $goingtoTime = new \DateTime($trip->to_time_going);
-            $ReturnfromTime = new \DateTime($trip->from_time_return);
-            $ReturntoTime = new \DateTime($trip->to_time_return);
-            $GoingformattedFromTime = $goingfromTime->format('H:i');
-            $GoingformattedToTime =  $goingtoTime->format('H:i');
-            $RetuenformattedFromTime = $ReturnfromTime->format('H:i');
-            $RetuenformattedToTime =  $ReturntoTime->format('H:i');
-            $interval = $goingfromTime->diff($goingtoTime);
+            $interval = $fromTime->diff($toTime);
             $tripDuration = $interval->format('%H:%I');
             $response[] = [
                 'id' => $trip->id,
@@ -387,15 +383,10 @@ class DriverController extends Controller
             ];
         }
 
-        $goingfromTime = new \DateTime($trip->from_time_going);
-        $goingtoTime = new \DateTime($trip->to_time_going);
-        $ReturnfromTime = new \DateTime($trip->from_time_return);
-        $ReturntoTime = new \DateTime($trip->to_time_return);
-        $GoingformattedFromTime = $goingfromTime->format('H:i');
-        $GoingformattedToTime =  $goingtoTime->format('H:i');
-        $RetuenformattedFromTime = $ReturnfromTime->format('H:i');
-        $RetuenformattedToTime =  $ReturntoTime->format('H:i');
-        $interval = $goingfromTime->diff($goingtoTime);
+        $fromTime = new \DateTime($trip->from_time_going);
+        $toTime = new \DateTime($trip->to_time_return);
+
+        $interval = $fromTime->diff($toTime);
         $tripDuration = $interval->format('%H:%I');
         $trip->load(['trip.path']);
         // $trip->load(['Bus_Trip.bus']);
@@ -473,8 +464,7 @@ class DriverController extends Controller
                     'notification' => $massage,
                 ]);
 
-
-                $reservations = Reservation::where('status', 'padding')
+                $reservations = Reservation::where('status', 'pending')
                     ->where('pivoit_id', $pivoit_id->id)
                     ->where('type', 1)
                     ->get()
@@ -491,27 +481,29 @@ class DriverController extends Controller
                         ];
                     });
 
-                foreach ($reservations as $reservation) {
-                    $user_id = $reservation['user_id'];
-                    $bus_tripw = $reservation['bus__trip_id'];
-                    $massage = "Trip  started  $bus_tripw ";
-                    event(new PrivateNotification($user_id, $massage));
-                    UserNotification::create([
-                        'user_id' => $user_id,
-                        'notification' => $massage,
-                    ]);
+                    foreach ($reservations as $reservation) {
+                        $user_id = $reservation['user_id'];
+                        $bus_tripw=$reservation['bus__trip_id'];
+                        $massage = "Trip  started  $bus_tripw ";
+                        event(new PrivateNotification($user_id, $massage));
+                        UserNotification::create([
+                            'user_id' => $user_id,
+                            'notification' => $massage,
+                        ]);
+                    }
+                $trip_id =$bus_trip->trip_id;
+                $key = 'trip_' . $trip_id;
+                    // Check if the trip is already cached
+                if (Cache::has($key)) {
+                        // If it is, retrieve the cached trip and update it
+                        // Update the trip information here (e.g., $trip1->status = 'updated')
+                        Cache::forget($key); // Remove the old cache entry
                 }
-
-                foreach ($reservations as $reservation) {
-                    $user_id = $reservation['user_id'];
-                    $bus_tripw = $reservation['bus__trip_id'];
-                    $massage = "Trip  started  $bus_tripw ";
-                    event(new PrivateNotification($user_id, $massage));
-                    UserNotification::create([
-                        'user_id' => $user_id,
-                        'notification' => $massage,
-                    ]);
-                }
+                $trip1 = Trip::where('id', $trip_id)
+                            ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
+                            ->first();
+                    // Cache the updated trip information
+                Cache::put($key, $trip1, now()->addMinutes(30));
 
                 DB::commit();
                 return response()->json($reservations);
@@ -554,16 +546,17 @@ class DriverController extends Controller
         $next_pivoit = Pivoit::where('bus__trip_id', $bus_trip->id)
             ->where('id', $pivoit_id + 1)
             ->first();
-
+            DB::beginTransaction();
         try {
 
             if ($pivoit->status == 'pending') {
-                $na = $pivoit->break_trip->break->name;
-                if ($na != "start" && $previous_pivoit->status == "pending") {
+                $na=$pivoit->break_trip->break->name;
+                if( $na !="start" && $previous_pivoit->status == "pending")
+                {
                     return response()->json([
                         'massage' => 'Can not you have break you did not finished it '
                     ]);
-                } elseif ($pivoit->status == 'done2') {
+                }elseif ($pivoit->status == 'done2') {
                     return response()->json([
                         'massage' => 'break already finished going and trip '
                     ]);
@@ -583,7 +576,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -619,7 +612,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -653,7 +646,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -708,7 +701,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -740,7 +733,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -764,11 +757,27 @@ class DriverController extends Controller
                     ]);
                 }
             } else {
+                DB::rollBack();
                 return response()->json([
                     'massage' => 'something get wrong'
                 ]);
             }
+            $trip_id =$bus_trip->trip_id;
+            $key = 'trip_' . $trip_id;
+                // Check if the trip is already cached
+            if (Cache::has($key)) {
+                    // If it is, retrieve the cached trip and update it
+                    // Update the trip information here (e.g., $trip1->status = 'updated')
+                    Cache::forget($key); // Remove the old cache entry
+            }
+            $trip1 = Trip::where('id', $trip_id)
+                        ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
+                        ->first();
+                // Cache the updated trip information
+            Cache::put($key, $trip1, now()->addMinutes(30));
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'error' => $e->getMessage()
             ], 500);
@@ -779,6 +788,7 @@ class DriverController extends Controller
 
     public function access_break($pivoit_id)
     {
+        DB::beginTransaction();
         try {
 
             $driver = Auth::user()->Driver;
@@ -828,7 +838,6 @@ class DriverController extends Controller
                         $bus_trip->trip->save();
                     }
 
-
                     $reservations = Reservation::where('status', 'padding')
                         ->where('pivoit_id', $pivoit_id)
                         ->where('type', 2)
@@ -857,7 +866,7 @@ class DriverController extends Controller
                 } elseif ($previous_pivoit->status == "done1" && $next_pivoit->status == "pending") {
                     $bus_trip->event = $pivoit->break_trip->break->name;
                     $bus_trip->save();
-                    $reservations = Reservation::where('status', 'padding')
+                    $reservations = Reservation::where('status', 'pending')
                         ->where('pivoit_id', $pivoit_id)
                         ->where('type', 1)
                         ->get()
@@ -931,7 +940,7 @@ class DriverController extends Controller
                 } elseif ($next_pivoit->status == "done2" && $previous_pivoit->status == "done1") {
                     $bus_trip->event = $pivoit->break_trip->break->name;
                     $bus_trip->save();
-                    $reservations = Reservation::where('status', 'padding')
+                    $reservations = Reservation::where('status', 'pending')
                         ->where('pivoit_id', $pivoit_id)
                         ->where('type', 2)
                         ->get()
@@ -958,15 +967,33 @@ class DriverController extends Controller
                     return response()->json($reservations);
                 }
             } elseif ($pivoit->status == 'done2') {
+                DB::rollBack();
                 return response()->json([
                     'massage' => 'break already finished going and trip '
                 ]);
             } else {
+                DB::rollBack();
                 return response()->json([
+
                     'massage' => 'something get wrong'
                 ]);
             }
+            $trip_id =$bus_trip->trip_id;
+            $key = 'trip_' . $trip_id;
+                // Check if the trip is already cached
+            if (Cache::has($key)) {
+                    // If it is, retrieve the cached trip and update it
+                    // Update the trip information here (e.g., $trip1->status = 'updated')
+                    Cache::forget($key); // Remove the old cache entry
+            }
+            $trip1 = Trip::where('id', $trip_id)
+                        ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
+                        ->first();
+                // Cache the updated trip information
+            Cache::put($key, $trip1, now()->addMinutes(30));
+            DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'error' => $e->getMessage()
             ], 500);
@@ -1056,13 +1083,16 @@ class DriverController extends Controller
             $response[] = [
                 'bus_trip_id' => $trip->id,
                 'bus_id' => $trip->bus_id,
-                'from_time' => $trip->from_time,
-                'to_time' => $trip->to_time,
-                'date' => $trip->date,
                 'type' => $trip->type,
                 'event' => $trip->event,
                 'status' => $trip->status,
                 'breaks_data' => $pivotData,
+                'from_time_going' => $trip->from_time_going,
+                'to_time_going' => $trip->to_time_going,
+                'from_time_return' => $trip->from_time_return,
+                'to_time_return' => $trip->to_time_return,
+                'date_end' => $trip->date_end,
+                'date_start' => $trip->date_start,
             ];
         }
 
@@ -1110,13 +1140,16 @@ class DriverController extends Controller
                 $response[] = [
                     'bus_trip_id' => $trip->id,
                     'bus_id' => $trip->bus_id,
-                    'from_time' => $trip->from_time,
-                    'to_time' => $trip->to_time,
-                    'date' => $trip->date,
                     'type' => $trip->type,
                     'event' => $trip->event,
                     'status' => $trip->status,
                     'breaks_data' => $pivotData,
+                    'from_time_going' => $trip->from_time_going,
+                    'to_time_going' => $trip->to_time_going,
+                    'from_time_return' => $trip->from_time_return,
+                    'to_time_return' => $trip->to_time_return,
+                    'date_end' => $trip->date_end,
+                    'date_start' => $trip->date_start,
                 ];
             }
             DB::commit();
@@ -1147,16 +1180,38 @@ class DriverController extends Controller
             return response()->json(['error' => 'No specific pivot found for the trip'], 404);
         }
 
-        $reservations = $pivoit->Reservation;
+        $trips = Bus_Trip::where('status', 'finished_going')
+            ->where('bus_id', $bus->bus_id)
+            ->get();
 
-        $formattedReservations = $reservations->map(function ($reservation) {
-            return
+        if ($trips->isEmpty()) {
+            return response()->json(['error' => 'No pending trip found for the bus'], 404);
+        }
 
-                $reservation->user ? $reservation->user->name : 'Unknown';
-        })->toArray();
+        $response = [];
+        foreach ($trips as $trip) {
+            $pivotData = [];
+            foreach ($trip->Pivoit as $pivoit) {
+                $pivotData[] = [
+                    'id' => $pivoit->id,
+                    'bus_trip_id' => $pivoit->bus__trip_id,
+                    'break_name' => $pivoit->break_trip->break->name,
+                    'status' => $pivoit->status,
+                ];
+            }
 
-
-
+            $response[] = [
+                'bus_trip_id' => $trip->id,
+                'bus_id' => $trip->bus_id,
+                'from_time' => $trip->from_time,
+                'to_time' => $trip->to_time,
+                'date' => $trip->date,
+                'type' => $trip->type,
+                'event' => $trip->event,
+                'status' => $trip->status,
+                'breaks_data' => $pivotData,
+            ];
+        }
 
         return response()->json(['reservations' => $formattedReservations]);
     }

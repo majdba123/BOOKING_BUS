@@ -94,15 +94,9 @@ class BusTripController extends Controller
         $busTripsData = [];
 
         foreach ($busTrips as $busTrip) {
-            $goingfromTime = new \DateTime($busTrip->from_time_going);
-            $goingtoTime = new \DateTime($busTrip->to_time_going);
-            $ReturnfromTime = new \DateTime($busTrip->from_time_return);
-            $ReturntoTime = new \DateTime($busTrip->to_time_return);
-            $GoingformattedFromTime = $goingfromTime->format('H:i');
-            $GoingformattedToTime =  $goingtoTime->format('H:i');
-            $RetuenformattedFromTime = $ReturnfromTime->format('H:i');
-            $RetuenformattedToTime =  $ReturntoTime->format('H:i');
-            $interval = $goingfromTime->diff($goingtoTime);
+            $fromTime = new \DateTime($busTrip->from_time_going);
+            $toTime = new \DateTime($busTrip->to_time_return);
+            $interval = $fromTime->diff($toTime);
             $tripDuration = $interval->format('%H:%I');
             $busTripData = [
                 'bus_trip_id' => $busTrip->id,
@@ -159,8 +153,33 @@ class BusTripController extends Controller
 
     public function getBusTripsByFillter(Request $request)
     {
-        $fromTime = $request->input('from_time');
-        $toTime = $request->input('to_time');
+
+        $validator = Validator::make($request->all(), [
+
+            'from_time_going' => 'nullable|date_format:H:i',
+
+            'to_time_going' => 'nullable|date_format:H:i',
+
+            'from_time_return' => 'nullable|date_format:H:i',
+
+            'to_time_return' => 'nullable|date_format:H:i',
+
+            'type' => 'nullable|string',
+
+            'from' => 'nullable|string',
+
+            'to' => 'nullable|string',
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 422);
+        }
+        $fromTime = $request->input('from_time_going');
+        $toTime = $request->input('to_time_going');
+
+        $fromTime_return = $request->input('from_time_return');
+        $toTime_return = $request->input('to_time_return');
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
@@ -236,21 +255,33 @@ class BusTripController extends Controller
         return response()->json($busTripsData);
     }
 
+
+
+
     public function get_fillter_bus_trip(Request $request)
     {
         $company = Auth::user()->Company->id;
 
         $validator = Validator::make($request->all(), [
-            'from_time' => 'sometimes|string',
-            'to_time' => 'sometimes|string',
-            'type' => 'sometimes|string',
-            'from' => 'sometimes|string',
-            'to' => 'sometimes|string',
+
+            'from_time_going' => 'nullable|date_format:H:i',
+
+            'to_time_going' => 'nullable|date_format:H:i',
+
+            'from_time_return' => 'nullable|date_format:H:i',
+
+            'to_time_return' => 'nullable|date_format:H:i',
+
+            'type' => 'nullable|string',
+
+            'from' => 'nullable|string',
+
+            'to' => 'nullable|string',
+
         ]);
 
         if ($validator->fails()) {
-            $errors = $validator->errors()->first();
-            return response()->json(['error' => $errors], 422);
+            return response()->json(['error' => $validator->messages()], 422);
         }
         $fromTime = $request->input('from_time');
         $toTime = $request->input('to_time');

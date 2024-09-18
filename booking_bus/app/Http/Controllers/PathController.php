@@ -121,8 +121,7 @@ class PathController extends Controller
 
             $break->save();
 
-
-            $d = Auth::user()->Company->id;
+           $d= Auth::user()->Company->id;
 
 
             $massage = "your  path created successfully:  $path->id  ";

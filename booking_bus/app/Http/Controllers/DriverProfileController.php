@@ -20,7 +20,7 @@ class DriverProfileController extends Controller
             $user = Cache::get($key);
         } else {
             // If not, retrieve the data from the database and cache it
-            $user = auth()->user()->load(['profile', 'address']);
+            $user = Auth::with(['profile', 'address'])->user();
 
             Cache::put($key, $user, now()->addMinutes(30)); // Cache for 30 minutes
         }
@@ -139,10 +139,9 @@ class DriverProfileController extends Controller
         }
 
         $user->password = Hash::make($request->new_password);
-        $user->save();
+        $user->save(); 
         Cache::forget('user_data_' . auth()->id());
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
-
 
 }

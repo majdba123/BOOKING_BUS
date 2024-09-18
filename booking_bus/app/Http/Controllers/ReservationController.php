@@ -241,7 +241,7 @@ class ReservationController extends Controller
                 'reservation_id' => $bookink->id,
                 'break' => $bookink->pivoit->break_trip->break->name,
                 'bus_trip_id' => $bus_trip_id,
-                'seats' => $bookink->seat_reservation->where('status', 'padding')->all(),
+                'seats' => $bookink->seat_reservation->where('status', 'pending')->all(),
                 'price' => $bookink->price,
                 'user_name' => $bookink->user->name,
             ];
@@ -529,12 +529,12 @@ class ReservationController extends Controller
                 $user->point -= $price;
                 $user->save();
 
-                // إضافة المكافأة إلى نقاط المستخدم
-                if ($reward_points > 0) {
-                    $user->point += $reward_points;
-                    $user->save();
+            // إضافة المكافأة إلى نقاط المستخدم
+            if ($reward_points > 0) {
+                $user->point += $reward_points;
+                $user->save();
 
-                    $user->rewards()->attach($reward->id);
+                    $user->rewards->attach($reward->id);
                 }
 
                 $bookink = new Reservation();

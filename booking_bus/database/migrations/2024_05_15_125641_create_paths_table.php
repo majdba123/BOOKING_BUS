@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreign('from_location')->references('id')->on('geolocations')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('to');
             $table->unsignedBigInteger('to_location');
+            $table->softDeletes();
             $table->foreign('to_location')->references('id')->on('geolocations')->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('Distance');
             $table->timestamps();

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('quastion');
             $table->string('status')->default('pending');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
