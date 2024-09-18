@@ -168,7 +168,14 @@ class BreaksController extends Controller
             return response()->json(['error' => 'Break not found.'], 404);
         }
 
-        if ($break->path->company_id !== Auth::user()->Company->id) {
+        if (in_array(strtolower($break->name), ['start', 'end'])) {
+
+            return response()->json(['error' => 'Cannot select this break as it is a start or end break.'], 422);
+        
+        }
+
+
+        if ($break->path->company->id !== Auth::user()->Company->id) {
 
             return response()->json(['error' => 'You are not authorized to update this break.'], 403);
         }

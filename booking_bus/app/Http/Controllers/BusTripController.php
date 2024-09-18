@@ -156,20 +156,15 @@ class BusTripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-
             'from_time_going' => 'nullable|date_format:H:i',
-    
             'to_time_going' => 'nullable|date_format:H:i',
-    
             'from_time_return' => 'nullable|date_format:H:i',
-    
             'to_time_return' => 'nullable|date_format:H:i',
-    
             'type' => 'nullable|string',
-    
             'from' => 'nullable|string',
-    
             'to' => 'nullable|string',
+            'date_start' => 'nullable|date_format:Y-m-d',
+            'date_end' => 'nullable|date_format:Y-m-d',
     
         ]);
     
@@ -181,6 +176,8 @@ class BusTripController extends Controller
 
         $fromTime_return = $request->input('from_time_return');
         $toTime_return = $request->input('to_time_return');
+        $date_start = $request->input('date_start');
+        $date_end = $request->input('date_end');
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
@@ -188,23 +185,31 @@ class BusTripController extends Controller
         $busTrips = Bus_Trip::query();
 
         if ($fromTime) {
-            $busTrips->where('from_time_going', $fromTime);
+            $busTrips->where('from_time_going', 'like', '%' . $fromTime . '%');
         }
 
         if ($toTime) {
-            $busTrips->where('to_time_going', $toTime);
+            $busTrips->where('to_time_going', 'like', '%' . $toTime . '%');
         }
 
         if ($fromTime_return) {
-            $busTrips->where('from_time_return', $toTime);
+            $busTrips->where('from_time_return', 'like', '%' . $fromTime_return . '%');
         }
 
         if ($toTime_return) {
-            $busTrips->where('to_time_return', $toTime);
+            $busTrips->where('to_time_return', 'like', '%' . $toTime_return . '%');
         }
 
         if ($type) {
             $busTrips->where('type', $type);
+        }
+
+        if ($date_start) {
+            $busTrips->where('date_start', 'like', '%' . $date_start . '%');
+        }
+
+        if ($date_end) {
+            $busTrips->where('date_end', 'like', '%' . $date_end . '%');
         }
 
         if ($from) {

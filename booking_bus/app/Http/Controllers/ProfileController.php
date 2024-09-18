@@ -21,7 +21,10 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $user = Auth::with(['profile', 'address'])->user();
+        $s = Auth::user();
+        $user=$s->load('profile', 'address');
+
+
         $profileImage = $user->profile ? $user->profile->image : null;
         $phoneNumber = $user->profile ? $user->profile->phone : null;
 

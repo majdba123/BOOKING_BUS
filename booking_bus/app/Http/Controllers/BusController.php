@@ -51,7 +51,7 @@ class BusController extends Controller
             $company = Auth::user()->Company->id;
     
             $validator = Validator::make($request->all(), [
-                'number_bus' => 'required|string',
+                'number_bus' => 'required|string|unique:buses,number_bus',
                 'number_passenger' => 'required|string',
             ]);
     
@@ -133,7 +133,7 @@ class BusController extends Controller
         $company = Auth::user()->Company->id;
 
         $validator = Validator::make($request->all(), [
-            'number_bus' => 'sometimes|string',
+            'number_bus' => 'sometimes|string|unique:buses,number_bus,' . $id,
             'number_passenger' => 'sometimes|string',
         ]);
 

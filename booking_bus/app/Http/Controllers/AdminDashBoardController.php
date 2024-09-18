@@ -1121,8 +1121,8 @@ class AdminDashBoardController extends Controller
 
     public function statiesticle_dash()
     {
-        $company = Auth::user()->Company;
-        $key = 'dashboard_company_' . $company->id;
+        $admin_id = Auth::user()->id;
+        $key = 'dashboard_company_' . $admin_id;
 
         if (Cache::has($key)) {
     

@@ -108,7 +108,7 @@ class TripController extends Controller
     {
         $company = Auth::user()->Company->id;
         $validator = Validator::make($request->all(), [
-            'path_id' => 'required|exists:paths,id',
+            'path_id' => 'required|exists:paths,id,deleted_at,NULL',
             'price' => 'sometimes|required|string|max:255',
            /* 'breaks_ids' => 'required|array',
             'breaks_ids.*' => 'integer',*/
@@ -312,10 +312,10 @@ class TripController extends Controller
             'bus_ids' => 'required_with:breaks_ids|array',
             'bus_ids.*.bus_id' => 'sometimes|string',
             'bus_ids.*.type' => 'string',
-            'bus_ids.*.from_time_going' => 'sometimes|date_format:H:i A',
-            'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i A',
-            'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i A',
-            'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i A',
+            'bus_ids.*.from_time_going' => 'sometimes|date_format:H:i',
+            'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i',
+            'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i',
+            'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i',
             'bus_ids.*.date_start' => 'sometimes|date',
             'bus_ids.*.date_end' => 'sometimes|date',
         ]);
@@ -363,16 +363,17 @@ class TripController extends Controller
                 if ($bus_trips->count() > 0) {
                     foreach ($bus_trips as $bus_trip) {
                         $bus = $bus_trip->bus;
-                        $re=Reservation::where('status' , 'padding')
+                        $re=Reservation::where('status' , 'pending')
                         ->where('bus__trip_id' ,$bus_trip->id)->first();
                         if($re)
                         {
+                            DB::rollBack();
                             return response()->json([
                                 'message' => 'bus has reservation ',
                             ]);
 
                         }
-                        if($bus_trip->event != 'stopped' )
+                        if($bus_trip->event == 'stopped' )
                         {
                             if ($bus) {
                                 $bus->status = 'available';
@@ -389,6 +390,7 @@ class TripController extends Controller
                                 }
                             }
                         }else{
+                            DB::rollBack();
                             return response()->json([
                                 'message' => 'bus active on trip ',
                             ]);
@@ -439,6 +441,7 @@ class TripController extends Controller
                                 $pivoit->save();
                             }
                         } else {
+                            DB::rollBack();
                             throw new Exception('Bus not available');
                         }
                     }
@@ -490,7 +493,7 @@ class TripController extends Controller
         if ($bus_trips->count() > 0) {
             foreach ($bus_trips as $bus_trip) {
                 $bus = $bus_trip->bus;
-                $re=Reservation::where('status' , 'padding')
+                $re=Reservation::where('status' , 'pending')
                 ->where('bus__trip_id' ,$bus_trip->id)->first();
                 if($re)
                 {
@@ -542,8 +545,8 @@ class TripController extends Controller
     {
 
         //this commment by hamza
-        // $trips = Trip::where('status', ['padding' ,'finished_going'])->with('bus_trip')->get();
-        $trips = Trip::where('status', 'padding')->get();
+        // $trips = Trip::where('status', ['pending' ,'finished_going'])->with('bus_trip')->get();
+        $trips = Trip::where('status', 'pending')->get();
 
         $data = [];
 
@@ -605,7 +608,7 @@ class TripController extends Controller
     public function index_user()
     {
         $trips = [];
-        foreach (Trip::where('status', 'padding')->pluck('id') as $trip_id) {
+        foreach (Trip::where('status', 'pending')->pluck('id') as $trip_id) {
             $key = 'trip_' . $trip_id; // Create a unique cache key for each trip
             // Check if the trip is already cached
             if (Cache::has($key)) {
@@ -638,7 +641,7 @@ class TripController extends Controller
         $companyName = $request->input('company_name');
         $name_break = $request->input('name_break');
 
-        $tripsQuery = Trip::where('status', 'padding')
+        $tripsQuery = Trip::where('status', 'pending')
 
             ->whereHas('path', function ($query) use ($from, $to) {
 
@@ -803,7 +806,7 @@ class TripController extends Controller
             }
             $reservedSeats = Seat_Reservation::whereHas('seat', function ($query) use ($buses) {
                 $query->whereIn('bus_id', $buses->pluck('id'));
-            })->where('status', 'padding')->get();
+            })->where('status', 'pending')->get();
 
             foreach ($reservedSeats as $reservation) {
 
