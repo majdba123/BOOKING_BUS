@@ -1219,7 +1219,6 @@ class AdminDashBoardController extends Controller
             ];
             Cache::put($key, $dash, now()->addMinutes(45));
         }
->>>>>>> Hamza_Mobile_Application_Flutter
         return response()->json($dash);
     }
     /**Lazy Loading vs Eager Loading in the statiesticle_dash Method

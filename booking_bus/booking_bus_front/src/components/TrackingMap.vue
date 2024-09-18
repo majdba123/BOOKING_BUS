@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div id="map-container">
+        <div id="map-container" :class="{ 'map-loaded': shouldDisplayMap }">
             <div id="map" v-show="shouldDisplayMap"></div>
             <div class="no-route-message" v-if="!shouldDisplayMap">
                 <p>Select Trip To Display in Map</p>
@@ -11,6 +11,7 @@
         </div>
     </div>
 </template>
+
 <script>
 /* global google */
 
@@ -52,8 +53,8 @@ export default {
             directionsService: null,
             directionsRenderer: null,
             busMarker: null,
-            lastPosition: null, // لتخزين آخر موقع للباص
-            busPath: null, // لتخزين المسار الذي يتبعه الباص
+            lastPosition: null,
+            busPath: null,
         };
     },
     computed: {
@@ -119,7 +120,6 @@ export default {
             const newLatLng = new google.maps.LatLng(lat, lng);
             if (this.busMarker) {
                 this.animateMarker(newLatLng);
-                // Update the bus path whenever the bus position changes
                 this.drawBusPath();
             } else {
                 this.addBusMarker(lat, lng);
@@ -130,17 +130,21 @@ export default {
                 this.lastPosition = newLatLng;
                 return;
             }
-            const duration = 1000; // 1 second animation
+            const duration = 2000; // 2 second animation for smooth movement
+            const easeOutQuad = (t) => t * (2 - t);
             let startTime = performance.now();
             const animate = (currentTime) => {
                 const elapsedTime = currentTime - startTime;
                 const progress = Math.min(elapsedTime / duration, 1);
+                const easingProgress = easeOutQuad(progress);
                 const interpolatedLat =
                     this.lastPosition.lat() +
-                    progress * (newLatLng.lat() - this.lastPosition.lat());
+                    easingProgress *
+                        (newLatLng.lat() - this.lastPosition.lat());
                 const interpolatedLng =
                     this.lastPosition.lng() +
-                    progress * (newLatLng.lng() - this.lastPosition.lng());
+                    easingProgress *
+                        (newLatLng.lng() - this.lastPosition.lng());
                 this.busMarker.setPosition(
                     new google.maps.LatLng(interpolatedLat, interpolatedLng)
                 );
@@ -185,9 +189,9 @@ export default {
                     this.busPath = new google.maps.Polyline({
                         path: result.routes[0].overview_path,
                         geodesic: true,
-                        strokeColor: "#FF0000",
-                        strokeOpacity: 1.0,
-                        strokeWeight: 2,
+                        strokeColor: "#FF5733", // Improved color
+                        strokeOpacity: 0.8,
+                        strokeWeight: 4, // Thicker line for better visibility
                         map: this.map,
                     });
                 } else {
@@ -268,7 +272,6 @@ export default {
                 if (status === google.maps.DirectionsStatus.OK) {
                     this.directionsRenderer.setDirections(result);
 
-                    // Add the bus marker if the bus coordinates are available
                     if (this.hasBus) {
                         this.addBusMarker(this.latbus, this.longbus);
                     }
@@ -293,9 +296,8 @@ export default {
                 },
             });
 
-            this.lastPosition = new google.maps.LatLng(lat, lng); // Set initial last position
+            this.lastPosition = new google.maps.LatLng(lat, lng);
 
-            // Add the path from the start of the route to the bus
             this.drawBusPath();
         },
     },
@@ -306,40 +308,43 @@ export default {
 #map-container {
     position: relative;
     width: 100%;
-    height: 400px;
+    height: 500px;
 }
 
 #map {
-    height: 100%;
     width: 100%;
-    border-radius: 9px;
-}
-
-.no-route-message,
-.no-bus-message {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100%;
-    color: red;
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
 }
 
-.no-bus-message {
+.map-loaded #map {
+    opacity: 1;
+}
+
+.no-route-message {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    color: orange;
-    font-size: 18px;
-    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
     text-align: center;
+    font-size: 18px;
+}
+
+.bus-marker {
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 </style>

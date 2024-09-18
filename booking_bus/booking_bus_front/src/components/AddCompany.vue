@@ -1158,7 +1158,7 @@ table tbody tr {
     background-color: var(--clr-white);
     border-radius: 5px;
     width: 100%;
-    max-width: 900px;
+    max-width: 1100px;
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-left: 3rem;
