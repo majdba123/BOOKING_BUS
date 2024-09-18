@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Bus::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Driver::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('status')->default('pending');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

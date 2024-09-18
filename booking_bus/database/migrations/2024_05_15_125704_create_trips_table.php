@@ -14,7 +14,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Path::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('status')->default('padding');
+            $table->softDeletes();
+            $table->string('status')->default('pending');
             $table->string('price');
             $table->timestamps();
         });

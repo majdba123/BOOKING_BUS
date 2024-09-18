@@ -17,6 +17,7 @@ return new class extends Migration
             $table->char('number_bus', 6)->unique();
             $table->integer('number_passenger')->default(0);
             $table->string('status')->default('pending');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

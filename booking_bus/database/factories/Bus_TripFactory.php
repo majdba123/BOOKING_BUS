@@ -25,9 +25,12 @@ class Bus_TripFactory extends Factory
             'trip_id' => Trip::factory(), // create a trip for each bus trip
             'bus_id' => Bus::factory(), // create a bus for each bus trip
             'status' => $this->faker->randomElement(['finished', 'pending']),
-            'from_time' => $this->faker->time,
-            'date' => $this->faker->date,
-            'to_time' => $this->faker->time,
+            'from_time_going' => $this->faker->time,
+            'to_time_going' => $this->faker->time,
+            'to_time_return' => $this->faker->time,
+            'from_time_return' => $this->faker->time,
+            'date_start' => $this->faker->date,
+            'date_end' => $this->faker->date,
             'type' => $this->faker->randomElement(['all', 'going']),
             'event' => $this->faker->word,
         ];

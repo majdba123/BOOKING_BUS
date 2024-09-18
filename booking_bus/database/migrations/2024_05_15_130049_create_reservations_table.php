@@ -20,8 +20,9 @@ return new class extends Migration
             $table->foreignIdFor(Pivoit::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Bus_Trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('price');
+            $table->softDeletes();
             $table->string('type');
-            $table->string('status')->default('padding');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

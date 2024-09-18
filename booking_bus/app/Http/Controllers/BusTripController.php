@@ -122,6 +122,7 @@ class BusTripController extends Controller
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
                 'seats' => $busTrip->bus->seat->count()
+
             ];
 
             $breaksData = [];
@@ -159,8 +160,33 @@ class BusTripController extends Controller
 
     public function getBusTripsByFillter(Request $request)
     {
-        $fromTime = $request->input('from_time');
-        $toTime = $request->input('to_time');
+
+        $validator = Validator::make($request->all(), [
+
+            'from_time_going' => 'nullable|date_format:H:i',
+
+            'to_time_going' => 'nullable|date_format:H:i',
+
+            'from_time_return' => 'nullable|date_format:H:i',
+
+            'to_time_return' => 'nullable|date_format:H:i',
+
+            'type' => 'nullable|string',
+
+            'from' => 'nullable|string',
+
+            'to' => 'nullable|string',
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 422);
+        }
+        $fromTime = $request->input('from_time_going');
+        $toTime = $request->input('to_time_going');
+
+        $fromTime_return = $request->input('from_time_return');
+        $toTime_return = $request->input('to_time_return');
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
@@ -168,11 +194,19 @@ class BusTripController extends Controller
         $busTrips = Bus_Trip::query();
 
         if ($fromTime) {
-            $busTrips->where('from_time', $fromTime);
+            $busTrips->where('from_time_going', $fromTime);
         }
 
         if ($toTime) {
-            $busTrips->where('to_time', $toTime);
+            $busTrips->where('to_time_going', $toTime);
+        }
+
+        if ($fromTime_return) {
+            $busTrips->where('from_time_return', $toTime);
+        }
+
+        if ($toTime_return) {
+            $busTrips->where('to_time_return', $toTime);
         }
 
         if ($type) {
@@ -202,8 +236,14 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
+                'price_trip' => $busTrip->trip->price,
+                'from_time_going' => $busTrip->from_time_going,
+                'to_time_going' => $busTrip->to_time_going,
+                'from_time_return' => $busTrip->from_time_return,
+                'to_time_return' => $busTrip->to_time_return,
+                'date_end' => $busTrip->date_end,
+                'date_start' => $busTrip->date_start,
+                'status' => $busTrip->status,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];
@@ -236,35 +276,59 @@ class BusTripController extends Controller
         return response()->json($busTripsData);
     }
 
+
+
+
     public function get_fillter_bus_trip(Request $request)
     {
         $company = Auth::user()->Company->id;
 
         $validator = Validator::make($request->all(), [
-            'from_time' => 'sometimes|string',
-            'to_time' => 'sometimes|string',
-            'type' => 'sometimes|string',
-            'from' => 'sometimes|string',
-            'to' => 'sometimes|string',
+
+            'from_time_going' => 'nullable|date_format:H:i',
+
+            'to_time_going' => 'nullable|date_format:H:i',
+
+            'from_time_return' => 'nullable|date_format:H:i',
+
+            'to_time_return' => 'nullable|date_format:H:i',
+
+            'type' => 'nullable|string',
+
+            'from' => 'nullable|string',
+
+            'to' => 'nullable|string',
+
         ]);
 
         if ($validator->fails()) {
-            $errors = $validator->errors()->first();
-            return response()->json(['error' => $errors], 422);
+            return response()->json(['error' => $validator->messages()], 422);
         }
-        $fromTime = $request->input('from_time');
-        $toTime = $request->input('to_time');
+        $fromTime = $request->input('from_time_going');
+        $toTime = $request->input('to_time_going');
+
+
+        $fromTime_return = $request->input('from_time_return');
+        $toTime_return = $request->input('to_time_return');
+
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
+
         $busTrips = Bus_Trip::whereHas('bus', function ($query) use ($company) {
             $query->where('company_id', $company);
         });
         if ($fromTime) {
-            $busTrips->where('from_time', $fromTime);
+            $busTrips->where('from_time_going', $fromTime);
         }
         if ($toTime) {
-            $busTrips->where('to_time', $toTime);
+            $busTrips->where('to_time_going', $toTime);
+        }
+        if ($fromTime_return) {
+            $busTrips->where('from_time_return', $fromTime);
+        }
+        if ($toTime_return) {
+            $busTrips->where('to_time_return', $toTime);
         }
         if ($type) {
             $busTrips->where('type', $type);
@@ -284,8 +348,14 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
+                'price_trip' => $busTrip->trip->price,
+                'from_time_going' => $busTrip->from_time_going,
+                'to_time_going' => $busTrip->to_time_going,
+                'from_time_return' => $busTrip->from_time_return,
+                'to_time_return' => $busTrip->to_time_return,
+                'date_end' => $busTrip->date_end,
+                'date_start' => $busTrip->date_start,
+                'status' => $busTrip->status,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];

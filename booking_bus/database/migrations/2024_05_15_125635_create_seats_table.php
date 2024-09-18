@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignIdFor(Bus::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class TripController extends Controller
@@ -34,9 +35,58 @@ class TripController extends Controller
     public function index()
     {
         $company_id = Auth::user()->Company->id;
-        $trips = Trip::where('company_id', $company_id)->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->get();
+        $trips = [];
+        // Loop through each trip and cache it individually
+        foreach (Trip::where('company_id', $company_id)->pluck('id') as $trip_id) {
+            $key = 'trip_' . $trip_id; // Create a unique cache key for each trip
+            // Check if the trip is already cached
+            if (Cache::has($key)) {
+                $trips[] = Cache::get($key);
+            } else {
+                // If not, retrieve the trip from the database and cache it
+                $trip = Trip::where('id', $trip_id)
+                    ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
+                    ->first();
+                $trips[] = $trip;
+                Cache::put($key, $trip, now()->addMinutes(30)); // Cache for 30 minutes
+            }
+        }
         return response()->json($trips);
     }
+
+    /**public function index()
+    {
+        $company_id = Auth::user()->Company->id;
+        $trips = [];
+        // Loop through each trip and cache it individually
+        foreach (Trip::where('company_id', $company_id)->pluck('id') as $trip_id) {
+            $key = 'trip_' . $trip_id; // Create a unique cache key for each trip
+            // Check if the trip is already cached
+            if (Cache::has($key)) {
+                $trips[] = Cache::get($key);
+            } else {
+                // If not, retrieve the trip from the database and cache it
+                $trip = Trip::where('id', $trip_id)
+                    ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
+                    ->first();
+                $trips[] = $trip;
+                Cache::put($key, $trip, now()->addMinutes(30)); // Cache for 30 minutes
+            }
+        }
+        return response()->json($trips);
+    } */
+
+
+/**
+ *
+ *  Cache::forget('trip_' . $trip->id);
+ *
+ *
+ */
+
+ /*    $key = 'trip_' . $trip->id;
+
+    Cache::put($key, $trip, now()->addMinutes(30)); */
 
 
     /**
@@ -216,9 +266,13 @@ class TripController extends Controller
                 }
             }
             DB::commit();
-
+            
             $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->find($trip->id);
+            $key = 'trip_' . $trips1->id;
+            Cache::put($key, $trips1, now()->addMinutes(30));
+
             event(new NewTrip($trips1));
+            
             return response()->json($trips1, 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -258,10 +312,10 @@ class TripController extends Controller
             'bus_ids' => 'required_with:breaks_ids|array',
             'bus_ids.*.bus_id' => 'sometimes|string',
             'bus_ids.*.type' => 'string',
-            'bus_ids.*.from_time_going' => 'sometimes|date_format:H:i',
-            'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i',
-            'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i',
-            'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i',
+            'bus_ids.*.from_time_going' => 'sometimes|date_format:H:i A',
+            'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i A',
+            'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i A',
+            'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i A',
             'bus_ids.*.date_start' => 'sometimes|date',
             'bus_ids.*.date_end' => 'sometimes|date',
         ]);
@@ -387,6 +441,19 @@ class TripController extends Controller
                 }
             }
 
+            $trip_id = $id;
+            $key = 'trip_' . $trip_id;
+            // Check if the trip is already cached
+            if (Cache::has($key)) {
+                // If it is, retrieve the cached trip and update it
+                // Update the trip information here (e.g., $trip1->status = 'updated')
+                Cache::forget($key); // Remove the old cache entry
+            }
+            $trip1 = Trip::where('id', $trip_id)
+                    ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
+                    ->first();
+            // Cache the updated trip information
+            Cache::put($key, $trip1, now()->addMinutes(30));
             DB::commit();
 
             return response()->json([
@@ -449,13 +516,21 @@ class TripController extends Controller
             }
         }
         $trip->delete();
+        $trip_id = $id;
+        $key = 'trip_' . $trip_id;
+        // Check if the trip is already cached
+        if (Cache::has($key)) {
+            // If it is, retrieve the cached trip and update it
+            // Update the trip information here (e.g., $trip1->status = 'updated')
+            Cache::forget($key); // Remove the old cache entry   
+        }
         return response()->json([
             'message' => 'Trip deleted successfully',
         ]);
     }
 
 
-    public function index_user()
+ /*   public function index_user()
     {
 
         //this commment by hamza
@@ -517,6 +592,34 @@ class TripController extends Controller
             ];
         }
         return response()->json($data);
+    }*/
+
+    public function index_user()
+    {
+        $trips = [];
+        foreach (Trip::where('status', 'padding')->pluck('id') as $trip_id) {
+            $key = 'trip_' . $trip_id; // Create a unique cache key for each trip
+            // Check if the trip is already cached
+            if (Cache::has($key)) {
+                $trips[] = Cache::get($key);
+            } else {
+                // If not, retrieve the trip from the database and cache it
+                $trip = Trip::where('id', $trip_id)
+                    ->with('path')
+                    ->first();
+                $data = [
+                    'trip_id' => $trip->id,
+                    'company_name' => $trip->company->user->name,
+                    'from'  => $trip->path->from,
+                    'to'  => $trip->path->to,
+                    'price' => $trip->price,
+                    // 'bus_trips' => $busTripsData,
+                ];
+                $trips[] = $data;
+                Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
+            }
+        }
+        return response()->json($trips);
     }
 
 
