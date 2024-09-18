@@ -368,6 +368,18 @@ small {
     font-size: 0.75rem;
     color: var(--clr-dark);
 }
+@keyframes borderColorShift {
+    0% {
+        border-color: yellow;
+    }
+    50% {
+        border-color: blue;
+    }
+    100% {
+        border-color: yellow;
+    }
+}
+
 .profile-photo {
     position: relative;
     display: flex;
@@ -375,11 +387,11 @@ small {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid var(--clr-primary);
+    border: 2px solid yellow;
+    animation: borderColorShift 3s infinite;
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-
 .profile-photo img:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
@@ -606,6 +618,17 @@ aside .logo {
     color: var(--clr-dark);
 }
 /* Styling for datetime container */
+@keyframes borderShift {
+    0% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+    50% {
+        border-image-source: linear-gradient(to left, yellow, blue);
+    }
+    100% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+}
 .datetime-container {
     text-align: center;
     font-family: "Arial", sans-serif;
@@ -617,12 +640,11 @@ aside .logo {
     font-weight: bold;
     color: #72c3ff;
     background: linear-gradient(90deg, #72c3ff, #ff4d4d);
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
     margin-bottom: 5px;
 }
-
 .time {
     display: flex;
     gap: 1rem;
@@ -631,7 +653,10 @@ aside .logo {
 
 .time-box {
     background: #111111;
-    border-radius: 0.5rem;
+    border-radius: 50% 20% / 10% 40%;
+    border-bottom: 1px solid yellow;
+    border-top: 1px solid yellow;
+    animation: borderColorShift 3s infinite;
     padding: 1rem 1.5rem;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;
@@ -640,8 +665,8 @@ aside .logo {
     text-align: center;
     background: linear-gradient(135deg, #ff4d4d, #72c3ff);
     color: transparent;
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 .time-box span {

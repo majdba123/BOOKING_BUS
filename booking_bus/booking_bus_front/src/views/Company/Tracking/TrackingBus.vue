@@ -401,8 +401,8 @@ small {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid yellow; /* لون الحدود الأولي */
-    animation: borderColorShift 3s infinite; /* تحريك لون الحدود */
+    border: 2px solid yellow;
+    animation: borderColorShift 3s infinite;
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -681,7 +681,7 @@ aside .logo {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 .time {
     display: flex;
@@ -691,7 +691,7 @@ aside .logo {
 
 .time-box {
     background: #111111;
-    border-radius: 0.5rem;
+    border-radius: 50% 20% / 10% 40%;
     border-bottom: 1px solid yellow;
     border-top: 1px solid yellow;
     animation: borderColorShift 3s infinite;
@@ -703,8 +703,8 @@ aside .logo {
     text-align: center;
     background: linear-gradient(135deg, #ff4d4d, #72c3ff);
     color: transparent;
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 .time-box span {
