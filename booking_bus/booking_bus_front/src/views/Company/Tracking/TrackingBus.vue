@@ -75,25 +75,10 @@
                 </div>
             </div>
 
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!--end driver_status-->
             <div class="driver_chart">
-                <h2>Driver Workload Status</h2>
-                <DriverChart :chartData="chartData" />
+                <h2>Trip Workload Status</h2>
+                <pathchart :chartData="pathchart" />
             </div>
         </div>
         <!-- Right section end -->
@@ -102,7 +87,7 @@
 
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import DriverChart from "@/components/DriverChart.vue";
+import pathchart from "@/components/pathchart.vue";
 import photo from "@/components/photo.vue";
 import store from "@/store";
 import router from "@/router";
@@ -113,7 +98,7 @@ export default {
     name: "TrakingBus",
     components: {
         SidebarCompany,
-        DriverChart,
+        pathchart,
         TrakingBuss,
         photo,
     },
@@ -355,6 +340,7 @@ h1 {
     font-weight: 800;
     font-size: 1.8rem;
     margin-top: 20px;
+    margin-bottom: 20px;
     color: var(--clr-dark);
 }
 
@@ -401,8 +387,8 @@ small {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid yellow; /* لون الحدود الأولي */
-    animation: borderColorShift 3s infinite; /* تحريك لون الحدود */
+    border: 2px solid yellow;
+    animation: borderColorShift 3s infinite;
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -681,7 +667,7 @@ aside .logo {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 .time {
     display: flex;
@@ -691,7 +677,7 @@ aside .logo {
 
 .time-box {
     background: #111111;
-    border-radius: 0.5rem;
+    border-radius: 50% 20% / 10% 40%;
     border-bottom: 1px solid yellow;
     border-top: 1px solid yellow;
     animation: borderColorShift 3s infinite;
@@ -703,8 +689,8 @@ aside .logo {
     text-align: center;
     background: linear-gradient(135deg, #ff4d4d, #72c3ff);
     color: transparent;
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 .time-box span {

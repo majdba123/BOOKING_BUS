@@ -3,6 +3,7 @@
         <div class="content">
             <div class="form-container">
                 <form class="profile-form" @submit.prevent="storeCompanyInfo">
+                    <!-- Form fields for company info -->
                     <div class="form-group">
                         <label for="name">Company Name</label>
                         <input
@@ -19,24 +20,6 @@
                             id="email"
                             placeholder="Enter Email"
                             v-model="company.email"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="city">City</label>
-                        <input
-                            type="text"
-                            id="city"
-                            placeholder="Enter City"
-                            v-model="company.city"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="area">Area</label>
-                        <input
-                            type="text"
-                            id="area"
-                            placeholder="Enter Area"
-                            v-model="company.area"
                         />
                     </div>
                     <div class="form-group">
@@ -65,6 +48,11 @@
                             />
                         </div>
                     </div>
+                    <div class="form-group">
+                        <button type="button" @click="openAddressModal">
+                            Manage Addresses
+                        </button>
+                    </div>
                     <div class="submit-btn">
                         <button v-if="!isDataFilled" type="submit">
                             Save Profile
@@ -80,8 +68,58 @@
                 </form>
             </div>
         </div>
+
+        <!-- Address Modal -->
+        <div v-if="isAddressModalOpen" class="modal-overlay">
+            <div class="modal-content">
+                <h2>Manage Addresses</h2>
+                <button @click="closeAddressModal" class="close-modal-btn">
+                    Close
+                </button>
+
+                <!-- Container for addresses with scroll -->
+                <div class="addresses-list">
+                    <div
+                        v-for="address in addresses"
+                        :key="address.id"
+                        class="address-item"
+                    >
+                        <p>{{ address.city }} <b>>></b> {{ address.area }}</p>
+                        <button @click="editAddress(address)">Edit</button>
+                        <button @click="deleteAddress(address.id)">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+
+                <form @submit.prevent="saveAddress">
+                    <div class="form-group">
+                        <label for="modalCity">City</label>
+                        <input
+                            type="text"
+                            id="modalCity"
+                            v-model="currentAddress.city"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="modalArea">Area</label>
+                        <input
+                            type="text"
+                            id="modalArea"
+                            v-model="currentAddress.area"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit">
+                            {{ isEditing ? "Update Address" : "Add Address" }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </template>
+
 <script>
 import axios from "axios";
 import { useToast } from "vue-toastification";
@@ -94,13 +132,18 @@ export default {
                 id: null,
                 name: "",
                 email: "",
-                city: "",
-                area: "",
                 phone: "",
                 logo: null,
                 logoURL: null,
-                addressId: null,
             },
+            addresses: [],
+            currentAddress: {
+                id: null,
+                city: "",
+                area: "",
+            },
+            isAddressModalOpen: false,
+            isEditing: false,
             isDataFilled: false,
         };
     },
@@ -108,11 +151,16 @@ export default {
     mounted() {
         this.isDataFilled = false;
         this.fetchCompanyInfo();
-        this.fetchCompanyAddress();
+        this.fetchCompanyAddresses();
     },
+
     methods: {
+        getAccessToken() {
+            return window.localStorage.getItem("access_token");
+        },
+
         fetchCompanyInfo() {
-            const access_token = window.localStorage.getItem("access_token");
+            const access_token = this.getAccessToken();
             axios
                 .get("http://127.0.0.1:8000/api/company/my_info", {
                     headers: { Authorization: `Bearer ${access_token}` },
@@ -126,163 +174,30 @@ export default {
                     this.checkDataFilled();
                 })
                 .catch((error) => {
-                    console.error(
-                        "There was an error fetching the company info:",
-                        error
-                    );
+                    console.error("Error fetching company info:", error);
                 });
         },
+
         checkDataFilled() {
             this.isDataFilled =
                 this.company.name !== "" &&
                 this.company.email !== "" &&
-                this.company.city !== "" &&
-                this.company.area !== "" &&
                 this.company.phone !== "" &&
                 this.company.logoURL !== null;
         },
-        fetchCompanyAddress() {
-            const access_token = window.localStorage.getItem("access_token");
+
+        fetchCompanyAddresses() {
+            const access_token = this.getAccessToken();
             axios
                 .get("http://127.0.0.1:8000/api/company/all_my_address", {
                     headers: { Authorization: `Bearer ${access_token}` },
                 })
                 .then((response) => {
-                    if (response.data.length > 0) {
-                        const address = response.data[0];
-                        this.company.city = address.city;
-                        this.company.area = address.area;
-                        this.company.addressId = address.id;
-                        this.checkDataFilled();
-                    } else {
-                        console.error("No address found.");
-                    }
+                    this.addresses = response.data;
                 })
                 .catch((error) => {
-                    console.error(
-                        "There was an error fetching the company address:",
-                        error
-                    );
+                    console.error("Error fetching company addresses:", error);
                 });
-        },
-        storeCompanyInfo() {
-            const formData = this.createFormData();
-            const access_token = window.localStorage.getItem("access_token");
-            const toast = useToast();
-
-            axios
-                .post(
-                    `http://127.0.0.1:8000/api/company/store_address?city=${this.company.city}&area=${this.company.area}`,
-                    {},
-                    { headers: { Authorization: `Bearer ${access_token}` } }
-                )
-                .then(() => {
-                    axios
-                        .post(
-                            "http://127.0.0.1:8000/api/company/store_profile_info",
-                            formData,
-                            {
-                                headers: {
-                                    Authorization: `Bearer ${access_token}`,
-                                    "Content-Type": "multipart/form-data",
-                                },
-                            }
-                        )
-                        .then(() => {
-                            toast.success("Company info stored successfully!");
-                        })
-                        .catch((error) => {
-                            console.error(
-                                "Error storing company info:",
-                                error.response ? error.response.data : error
-                            );
-                            toast.error(
-                                "Error storing company info: " +
-                                    (error.response
-                                        ? error.response.data.detail
-                                        : "Unknown error")
-                            );
-                        });
-                })
-                .catch((error) => {
-                    console.error(
-                        "Error updating address:",
-                        error.response ? error.response.data : error
-                    );
-                    toast.error(
-                        "Error updating address: " +
-                            (error.response
-                                ? error.response.data.detail
-                                : "Unknown error")
-                    );
-                });
-        },
-        modifyCompanyInfo() {
-            if (!this.company.city || !this.company.area) {
-                console.error("Address data is missing.");
-                return;
-            }
-
-            const formData = this.createFormData();
-            const access_token = window.localStorage.getItem("access_token");
-            const toast = useToast();
-
-            axios
-                .put(
-                    `http://127.0.0.1:8000/api/company/update_address/${this.company.addressId}?city=${this.company.city}&area=${this.company.area}`,
-                    {},
-                    { headers: { Authorization: `Bearer ${access_token}` } }
-                )
-                .then(() => {
-                    axios
-                        .post(
-                            "http://127.0.0.1:8000/api/company/update_profile_info",
-                            formData,
-                            {
-                                headers: {
-                                    Authorization: `Bearer ${access_token}`,
-                                    "Content-Type": "multipart/form-data",
-                                },
-                            }
-                        )
-                        .then(() => {
-                            toast.success(
-                                "Company info modified successfully!"
-                            );
-                        })
-                        .catch((error) => {
-                            console.error(
-                                "Error modifying company info:",
-                                error.response ? error.response.data : error
-                            );
-                            toast.error(
-                                "Error modifying company info: " +
-                                    (error.response
-                                        ? error.response.data.detail
-                                        : "Unknown error")
-                            );
-                        });
-                })
-                .catch((error) => {
-                    console.error(
-                        "Error updating address:",
-                        error.response ? error.response.data : error
-                    );
-                    toast.error(
-                        "Error updating address: " +
-                            (error.response
-                                ? error.response.data.detail
-                                : "Unknown error")
-                    );
-                });
-        },
-        handleLogoUpload(event) {
-            this.company.logo = event.target.files[0];
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.company.logoURL = e.target.result;
-            };
-            reader.readAsDataURL(this.company.logo);
         },
         createFormData() {
             const formData = new FormData();
@@ -292,13 +207,162 @@ export default {
             if (this.company.logo) {
                 formData.append("image", this.company.logo);
             }
-
             return formData;
+        },
+
+        handleLogoUpload(event) {
+            this.company.logo = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.company.logoURL = e.target.result;
+            };
+            reader.readAsDataURL(this.company.logo);
+        },
+
+        storeCompanyInfo() {
+            const formData = this.createFormData();
+            const access_token = this.getAccessToken();
+            const toast = useToast();
+
+            axios
+                .post(
+                    "http://127.0.0.1:8000/api/company/store_profile_info",
+                    formData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${access_token}`,
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                )
+                .then(() => {
+                    toast.success("Company info stored successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error storing company info:", error);
+                    toast.error(
+                        "Error storing company info: " +
+                            (error.response
+                                ? error.response.data.detail
+                                : "Unknown error")
+                    );
+                });
+        },
+
+        modifyCompanyInfo() {
+            const formData = this.createFormData();
+            const access_token = this.getAccessToken();
+            const toast = useToast();
+
+            axios
+                .post(
+                    "http://127.0.0.1:8000/api/company/update_profile_info",
+                    formData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${access_token}`,
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                )
+                .then(() => {
+                    toast.success("Company info modified successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error modifying company info:", error);
+                    toast.error(
+                        "Error modifying company info: " +
+                            (error.response
+                                ? error.response.data.detail
+                                : "Unknown error")
+                    );
+                });
+        },
+
+        openAddressModal() {
+            this.isAddressModalOpen = true;
+        },
+
+        closeAddressModal() {
+            this.isAddressModalOpen = false;
+            this.resetForm();
+        },
+
+        resetForm() {
+            this.currentAddress = { id: null, city: "", area: "" };
+            this.isEditing = false;
+        },
+
+        saveAddress() {
+            const access_token = this.getAccessToken();
+            const toast = useToast();
+            const url = this.isEditing
+                ? `http://127.0.0.1:8000/api/company/update_address/${this.currentAddress.id}`
+                : "http://127.0.0.1:8000/api/company/store_address";
+            const method = this.isEditing ? "put" : "post";
+
+            axios[method](
+                url,
+                {
+                    city: this.currentAddress.city,
+                    area: this.currentAddress.area,
+                },
+                { headers: { Authorization: `Bearer ${access_token}` } }
+            )
+                .then(() => {
+                    this.fetchCompanyAddresses();
+                    this.closeAddressModal();
+                    toast.success(
+                        this.isEditing
+                            ? "Address updated successfully!"
+                            : "Address added successfully!"
+                    );
+                })
+                .catch((error) => {
+                    console.error("Error saving address:", error);
+                    toast.error(
+                        "Error saving address: " +
+                            (error.response
+                                ? error.response.data.detail
+                                : "Unknown error")
+                    );
+                });
+        },
+
+        editAddress(address) {
+            this.currentAddress = { ...address };
+            this.isEditing = true;
+            this.openAddressModal();
+        },
+
+        deleteAddress(id) {
+            const access_token = this.getAccessToken();
+            const toast = useToast();
+
+            axios
+                .delete(
+                    `http://127.0.0.1:8000/api/company/delete_address/${id}`,
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
+                .then(() => {
+                    this.fetchCompanyAddresses();
+                    toast.success("Address deleted successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error deleting address:", error);
+                    toast.error(
+                        "Error deleting address: " +
+                            (error.response
+                                ? error.response.data.detail
+                                : "Unknown error")
+                    );
+                });
         },
     },
 };
 </script>
-
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -322,6 +386,78 @@ export default {
     --card-padding: 1.8rem;
     --padding-1: 1.2rem;
     --box-shadow: 0 2rem 3rem var(--clr-light);
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f00;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.address-item {
+    margin-bottom: 10px;
+}
+
+.address-item button {
+    margin-left: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .containers {

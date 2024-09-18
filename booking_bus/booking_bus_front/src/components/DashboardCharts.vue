@@ -26,6 +26,9 @@
             <div class="chart-container">
                 <canvas id="privateTripsChart"></canvas>
             </div>
+            <div class="chart-container">
+                <canvas id="reservationProfitChart"></canvas>
+            </div>
         </div>
         <div class="recent-orders">
             <h1>Trips Overview</h1>
@@ -96,18 +99,15 @@ export default {
             const lastUpdated = localStorage.getItem("lastUpdated");
             const now = new Date().getTime();
 
-            // If cached data exists and is less than 30 minutes old, use it
             if (
                 cachedDashboardData &&
                 lastUpdated &&
                 now - lastUpdated < 1800000
             ) {
-                // 30 minutes
                 this.dashboardData = cachedDashboardData;
                 this.processProfitsData();
                 this.createCharts();
             } else {
-                // Fetch new data if no cache or cache expired
                 this.fetchTripsData();
                 this.fetchDashboardData();
             }
@@ -147,7 +147,7 @@ export default {
                 })
                 .then((response) => {
                     this.dashboardData = response.data;
-                    this.cacheDashboardData(); // Cache the data after fetching
+                    this.cacheDashboardData();
                     this.processProfitsData();
                     this.createCharts();
                 })
@@ -157,7 +157,6 @@ export default {
         },
 
         cacheDashboardData() {
-            // Save the dashboard data and the time of the update
             localStorage.setItem(
                 "dashboardData",
                 JSON.stringify(this.dashboardData)
@@ -173,6 +172,17 @@ export default {
 
         createCharts() {
             if (this.dashboardData) {
+                this.createChart(
+                    "reservationProfitChart",
+                    ["Pending Profit", "Completed Profit", "Out Profit"],
+                    [
+                        this.dashboardData.total_profit_pending,
+                        this.dashboardData.total_profit_completed,
+                        this.dashboardData.total_profit_out,
+                    ], // Data from API
+                    "bar",
+                    "#ff4d4d"
+                );
                 this.createChart(
                     "tripStatusChart",
                     ["Pending Trip", "Finished Trip", "Finished Going Trip"],
@@ -290,7 +300,9 @@ export default {
                                 .replace("Chart", "")
                                 .replace(/([A-Z])/g, " $1")
                                 .trim(),
-                            data: data.map((val) => val || 1), // To handle all zero cases
+                            data: data.map((val) =>
+                                val !== null && val !== undefined ? val : 0
+                            ),
                             backgroundColor: ["#007bff", "#28a745", "#ffc107"],
                             borderColor: borderColor ? borderColor : "#333",
                             fill: type === "line" ? false : true,
@@ -303,7 +315,9 @@ export default {
                     scales:
                         type !== "pie"
                             ? {
-                                  y: { beginAtZero: true },
+                                  y: {
+                                      beginAtZero: true,
+                                  },
                               }
                             : undefined,
                     plugins: {

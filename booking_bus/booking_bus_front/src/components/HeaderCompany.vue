@@ -511,14 +511,16 @@ small {
 }
 
 /* Adding a subtle fade-in animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
+
+@keyframes borderShift {
+    0% {
+        border-image-source: linear-gradient(to right, yellow, blue);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    50% {
+        border-image-source: linear-gradient(to left, yellow, blue);
+    }
+    100% {
+        border-image-source: linear-gradient(to right, yellow, blue);
     }
 }
 .datetime-container {
@@ -535,9 +537,8 @@ small {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
-
 .time {
     display: flex;
     gap: 1rem;
@@ -545,9 +546,13 @@ small {
 }
 
 .time-box {
+    background: #111111;
     border-radius: 50% 20% / 10% 40%;
+    border-bottom: 2px solid yellow;
+    border-top: 2px solid rgb(0, 102, 255);
+    animation: borderColorShift 3s infinite;
     padding: 1rem 1.5rem;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;
     position: relative;
     color: #ffffff;

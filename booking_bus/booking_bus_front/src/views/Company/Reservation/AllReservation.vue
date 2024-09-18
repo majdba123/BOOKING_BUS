@@ -398,8 +398,8 @@ small {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid yellow; /* لون الحدود الأولي */
-    animation: borderColorShift 3s infinite; /* تحريك لون الحدود */
+    border: 2px solid yellow;
+    animation: borderColorShift 3s infinite;
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -688,7 +688,7 @@ aside .logo {
 
 .time-box {
     background: #111111;
-    border-radius: 10px 100px / 120px;
+    border-radius: 50% 20% / 10% 40%;
     border-bottom: 1px solid yellow;
     border-top: 1px solid yellow;
     animation: borderColorShift 3s infinite;

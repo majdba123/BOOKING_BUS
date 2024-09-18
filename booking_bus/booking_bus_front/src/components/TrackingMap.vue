@@ -308,7 +308,7 @@ export default {
 #map-container {
     position: relative;
     width: 100%;
-    height: 500px;
+    height: 600px;
 }
 
 #map {
