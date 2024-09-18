@@ -52,8 +52,8 @@ export default {
             directionsService: null,
             directionsRenderer: null,
             busMarker: null,
-            lastPosition: null, // لتخزين آخر موقع للباص
-            busPath: null, // لتخزين المسار الذي يتبعه الباص
+            lastPosition: null,
+            busPath: null,
         };
     },
     computed: {
@@ -306,7 +306,7 @@ export default {
 #map-container {
     position: relative;
     width: 100%;
-    height: 400px;
+    height: 600px;
 }
 
 #map {

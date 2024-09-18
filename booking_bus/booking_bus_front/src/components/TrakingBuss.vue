@@ -1,10 +1,11 @@
 <template>
-    <div class="containerd">
-        <!-- Header with buttons -->
-        <div v-if="showForm" class="form-map-container">
-            <form @submit.prevent="handleSubmit" class="form-containerd">
-                <h2>Select Trip</h2>
+    <!-- Header with buttons -->
+    <div v-if="showForm" class="form-map-container">
+        <form @submit.prevent="handleSubmit" class="form-containerd">
+            <div class="select-group">
                 <div class="select-container">
+                    <h3>Select Trip</h3>
+
                     <select v-model="trip_id" @change="AllPaths(trip_id)">
                         <option
                             v-for="(busItem, i) in trips"
@@ -12,11 +13,14 @@
                             :value="busItem.id"
                         >
                             {{ busItem.path.from }} ->
-                            {{ busItem.path.to }} Price: {{ busItem.price }}
+                            {{ busItem.path.to }} Price:
+                            {{ busItem.price }}
                         </option>
                     </select>
                 </div>
+
                 <div class="select-container">
+                    <h3>Select Bus Trip</h3>
                     <select v-model="bus_id" @change="initializePusher()">
                         <option
                             v-for="(busItem, i) in Paths"
@@ -27,30 +31,25 @@
                         </option>
                     </select>
                 </div>
-                <div class="submit-btnnd">
-                    <button
-                        type="submit"
-                        @click="CreatePath"
-                        class="submit-btnd"
-                    >
-                        Submit
-                    </button>
-                </div>
-            </form>
-            <div class="map-container">
-                <TrackingMap
-                    :fromlat="this.fromlat"
-                    :fromlong="this.fromlang"
-                    :tolat="this.tolat"
-                    :tolong="this.tolang"
-                    :latbus="this.lat"
-                    :longbus="this.lang"
-                />
             </div>
+            <div class="submit-btnnd">
+                <button type="submit" @click="CreatePath" class="submit-btnd">
+                    Submit
+                </button>
+            </div>
+        </form>
+        <div class="map-container">
+            <TrackingMap
+                :fromlat="this.fromlat"
+                :fromlong="this.fromlang"
+                :tolat="this.tolat"
+                :tolong="this.tolang"
+                :latbus="this.lat"
+                :longbus="this.lang"
+            />
         </div>
     </div>
 </template>
-
 <script>
 import Pusher from "pusher-js";
 import axios from "axios";
@@ -371,9 +370,12 @@ h1 {
     color: var(--clr-dark);
 }
 
-h2 {
-    font-size: 1.4rem;
+h3 {
+    display: flex;
+    justify-content: center;
     color: var(--clr-dark);
+    align-items: center;
+    margin-bottom: 5px;
 }
 
 .recent_orders {
@@ -453,6 +455,8 @@ select {
     border-radius: 4px;
     background-color: var(--clr-white);
     color: var(--clr-dark);
+    margin-bottom: 10px;
+    width: 100%;
 }
 
 select:focus {
@@ -500,51 +504,25 @@ select:focus {
 }
 
 /* Button styles with icons */
-.edit-btn.material-icons,
-.delete-btn.material-icons,
-.status-btn.material-icons {
-    padding: 2px 6px;
-    border: none;
-    padding: 2px 6px;
-    border: none;
-    margin: 8px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-size: 9px;
+.submit-btnnd {
     display: flex;
-    align-items: center;
     justify-content: center;
-    height: 20px;
-    width: 20px;
-    cursor: pointer;
 }
 
-.edit-btn {
-    color: #4caf50;
-    background-color: var(--clr-white);
-    border-radius: 9px;
-    padding: 3px;
-    margin: 5px;
-}
-.edit-btn:hover {
+.submit-btnd {
+    padding: 10px 20px;
+    border: none;
+    background-color: var(--clr-primary);
     color: var(--clr-white);
-    background-color: var(--clr-success);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
-.delete-btn {
-    color: #f44336;
-    background-color: var(--clr-white);
-    border-radius: 9px;
-    padding: 3px;
-    margin: 5px;
+.submit-btnd:hover {
+    background-color: var(--clr-primary-variant);
+    transform: translateY(-3px);
 }
-
-.delete-btn:hover {
-    color: #fff;
-    background-color: #f44336;
-}
-
 /* Navigation styling */
 .navd {
     display: flex;
@@ -568,303 +546,75 @@ select:focus {
     cursor: pointer;
     font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
-    background-size: 200% 200%;
-    animation: gradientAnimation 5s ease infinite;
-    width: 100%;
-}
-
-@keyframes gradientAnimation {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
 }
 
 .nav-btnd:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    transition: 0.3s ease;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.nav-btnds {
-    padding: 4px 9px;
-    border: none;
-    border-radius: var(--border-radius-2);
-    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+.nav-btnd:focus {
+    outline: none;
+}
+
+#header {
+    width: 100%;
+    padding: 0;
+    background: var(--clr-primary);
+    height: 60px;
     color: var(--clr-white);
-    cursor: pointer;
-    font-size: 12px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    background-size: 200% 200%;
-    animation: gradientAnimation 5s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.nav-btnds:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    transition: 0.3s ease;
+#header h1 {
+    font-size: 1.6rem;
 }
 
-/* Form and Map styling */
+/* Form and map container styling */
 .form-map-container {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 20px;
-    height: 350px;
+    flex-direction: column;
+    height: 100vh;
 }
 
 .form-containerd {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
     padding: 20px;
-    background: var(--clr-white);
+    background-color: var(--clr-white);
     box-shadow: var(--box-shadow);
     border-radius: var(--border-radius-2);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-}
-
-h2 {
     margin-bottom: 20px;
-    font-size: 1.5rem;
-    color: var(--clr-dark);
 }
 
-.form-groupd {
-    width: 100%;
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    text-align: left;
-    font-weight: bold;
-    color: var(--clr-dark);
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: var(--border-radius-1);
-    transition: border-color 0.3s;
-}
-
-input:focus {
-    border-color: var(--clr-primary);
-}
-
-.submit-btnnd {
-    margin-top: auto;
+.select-group {
     display: flex;
-    justify-content: center;
+    gap: 20px;
 }
 
-.submit-btnd {
-    padding: 10px 20px;
-    border: none;
-    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
-    color: var(--clr-white);
-    cursor: pointer;
-    border-radius: var(--border-radius-1);
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.submit-btnd:hover {
-    background-color: var(--clr-primary-variant);
-    transform: translateY(-3px);
+.select-container {
+    flex: 1;
 }
 
 .map-container {
     flex: 1;
-    margin-left: 10px;
-    min-width: 400px;
-    border-radius: 20px;
-}
-
-.map-containers {
-    flex: 1;
-    margin-top: 20px;
-    min-width: 400px;
-    border-radius: 20px;
-}
-
-/* Modal Styling delete */
-
-.dialog-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
-.dialog-box {
-    background: var(--clr-white);
-    color: var(--clr-dark);
-    padding: 15px;
-    border-radius: 10px;
-    max-width: 400px;
-    width: 50%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    text-align: center;
-}
-
-.dialog-header,
-.dialog-body,
-.dialog-footer {
-    margin-bottom: 15px;
-}
-
-.dialog-header {
-    font-size: 1.3rem;
-    font-weight: bold;
-    text-align: center;
-}
-
-.dialog-body {
-    text-align: center;
-}
-
-.dialog-footer {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.confirm-btn {
-    padding: 8px 16px;
-    background-color: var(--clr-success);
-    color: var(--clr-white);
-    border: none;
-    border-radius: var(--border-radius-1);
-    cursor: pointer;
-}
-
-.confirm-btn:hover {
-    background-color: #4cae4c;
-}
-
-.cancel-btn {
-    padding: 8px 16px;
-    background-color: var(--clr-danger);
-    color: var(--clr-white);
-    border: none;
-    border-radius: var(--border-radius-1);
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-.cancel-btn:hover {
-    background-color: #c9302c;
-}
-
-/* Edit Modal Styling */
-.modal {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-    background-color: var(--clr-white);
-    color: var(--clr-dark);
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 600px;
-    width: 90%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    overflow-y: auto;
-    max-height: 90vh;
-}
-
-.modal-content::-webkit-scrollbar {
-    display: none;
-}
-
-.modal-content {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-.modal-header,
-.modal-body,
-.modal-footer {
-    margin-bottom: 10px;
-    color: var(--clr-dark);
-}
-
-.modal-header {
-    font-size: 1.3rem;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.close-modal {
-    padding: 8px 16px;
-    background-color: var(--clr-danger);
-    color: var(--clr-white);
-    border: none;
-    border-radius: var(--border-radius-1);
-    cursor: pointer;
-}
-
-.close-modal:hover {
-    background-color: #c9302c;
-}
-
-.update-btn {
-    padding: 8px 16px;
-    background-color: var(--clr-success);
-    color: var(--clr-white);
-    border: none;
-    border-radius: var(--border-radius-1);
-    cursor: pointer;
-    margin-right: 10px;
-}
-
-.update-btn:hover {
-    background-color: #489248;
-}
-
-@media screen and (max-width: 1200px) {
-    .form-map-container {
-        flex-direction: column;
-        align-items: center;
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .form-containerd {
+        padding: 15px;
     }
 
-    .form-containerd,
     .map-container {
-        width: 100%;
-        margin-top: 20px;
+        height: 60vh;
+    }
+
+    .select-group {
+        flex-direction: column;
+        gap: 10px;
     }
 }
 </style>
