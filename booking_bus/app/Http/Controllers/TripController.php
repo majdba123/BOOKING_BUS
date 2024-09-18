@@ -307,7 +307,7 @@ class TripController extends Controller
     {
         $company = Auth::user()->Company->id;
         $validator = Validator::make($request->all(), [
-            'path_id' => 'required|exists:paths,id',
+            'path_id' => 'required|exists:paths,id,deleted_at,NULL',
             'price' => 'sometimes|string|max:255',
             'bus_ids' => 'required_with:breaks_ids|array',
             'bus_ids.*.bus_id' => 'sometimes|string',
