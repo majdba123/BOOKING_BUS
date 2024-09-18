@@ -16,7 +16,8 @@ class Address extends Model
     ];
     protected $keyType = 'string'; // Set the key type to UUID
     public $incrementing = false; // Disable auto-incrementing
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
         // Auto generate UUID when creating data User
         static::creating(function ($model) {
@@ -32,6 +33,6 @@ class Address extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class , 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
