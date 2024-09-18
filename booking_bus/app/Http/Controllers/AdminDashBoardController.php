@@ -1121,9 +1121,9 @@ class AdminDashBoardController extends Controller
 
     public function statiesticle_dash()
     {
-        $company = Auth::user()->Company;
-        $key = 'dashboard_company_' . $company->id;
-
+        $admin_id = Auth::user()->id;
+        // $key = 'dashboard_company_' . $company->id;
+        $key = 'dashboard_Admin_'.$admin_id;
         if (Cache::has($key)) {
 
             $dash = Cache::get($key);
@@ -1200,10 +1200,9 @@ class AdminDashBoardController extends Controller
 
             $favourite_count = Favourite::count();
 
-            $all_user = User::whereDoesntHave('Driver')
-                ->whereDoesntHave('Company')
-                ->where('type', '!=', 1)
-                ->count();
+            $all_user = User::where('type', '!=', 1) // Exclude users with type 0
+                ->doesntHave('driver')
+                ->doesntHave('company')->count();;
             $all_company = Company::count();
 
             $dash = [
