@@ -10,7 +10,12 @@ import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/Mapprovider.
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/timeline_tile_widget.dart';
 import 'package:mobile_app/screens/Dashborad_Driver/Start_Trip_Page/BreakGeolocation.dart';
 
-class FullMapViewScreen extends StatelessWidget {
+class FullMapViewScreen extends StatefulWidget {
+  @override
+  State<FullMapViewScreen> createState() => _FullMapViewScreenState();
+}
+
+class _FullMapViewScreenState extends State<FullMapViewScreen> {
   @override
   Widget build(BuildContext context) {
     var driverProvider = Provider.of<DriverProvider>(context, listen: false);
@@ -20,7 +25,8 @@ class FullMapViewScreen extends StatelessWidget {
 
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    // late GoogleMapController mapController;
+    late GoogleMapController mapController;
+
     // const double _minZoom = 1.0;
     // const double _maxZoom = 5.0;
     final initialPosition = LatLng(
