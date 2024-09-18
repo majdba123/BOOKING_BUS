@@ -7,10 +7,11 @@
                     <canvas id="tripStatusChart"></canvas>
                 </div>
                 <div class="chart-container">
-                    <canvas id="busStatusChart"></canvas>
-                </div>
-                <div class="chart-container">
                     <canvas id="driverStatusChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="BusesChart"></canvas>
                 </div>
             </div>
             <div class="chart-trio">
@@ -31,37 +32,10 @@
                 <div class="chart-container">
                     <canvas id="privateTripsChart"></canvas>
                 </div>
+                <div class="chart-container">
+                    <canvas id="busStatusChart"></canvas>
+                </div>
             </div>
-        </div>
-        <div class="recent-orders">
-            <h1>Name Trips</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Trip Name</th>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="trip in trips" :key="trip.name">
-                        <td>{{ trip.name }}</td>
-                        <td>{{ trip.from }}</td>
-                        <td>{{ trip.to }}</td>
-                        <td>{{ trip.price }}</td>
-                        <td
-                            :class="{
-                                warning: trip.status === 'Pending',
-                                primary: trip.status === 'Completed',
-                            }"
-                        >
-                            {{ trip.status }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 </template>
@@ -83,6 +57,8 @@ export default {
             busStatusChart: null,
             driverStatusChart: null,
             reservationChart: null,
+            BusesChart: null,
+
             privateTripsChart: null,
             dailyProfitsChart: null,
             weeklyProfitsChart: null,
@@ -90,37 +66,12 @@ export default {
         };
     },
     mounted() {
-        this.fetchTripsData(); // Fetch trips data when component is mounted
         this.loadDashboardData();
     },
     beforeUnmount() {
         this.destroyCharts();
     },
     methods: {
-        fetchTripsData() {
-            const accessToken = window.localStorage.getItem("access_token");
-            axios
-                .get("http://127.0.0.1:8000/api/company/all_trips", {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                })
-                .then((response) => {
-                    this.trips = response.data
-                        .map((trip) => ({
-                            name: `${trip.path.from} to ${trip.path.to}`,
-                            from: trip.path.from,
-                            to: trip.path.to,
-                            price: parseFloat(trip.price),
-                            status: trip.status,
-                        }))
-                        .sort((a, b) => b.price - a.price);
-                })
-                .catch((error) => {
-                    console.error("Error fetching trips data:", error);
-                });
-        },
-
         loadDashboardData() {
             const cachedData = localStorage.getItem("dashboardData");
             const cacheTimestamp = localStorage.getItem(
@@ -233,6 +184,8 @@ export default {
                 this.createBusStatusChart();
                 this.createDriverStatusChart();
                 this.createReservationChart();
+                this.createBusesChart();
+
                 this.createPrivateTripsChart();
                 this.createDailyProfitsChart();
                 this.createWeeklyProfitsChart();
@@ -241,6 +194,8 @@ export default {
         },
 
         destroyCharts() {
+            if (this.BusesChart) this.BusesChart.destroy();
+
             if (this.tripStatusChart) this.tripStatusChart.destroy();
             if (this.busStatusChart) this.busStatusChart.destroy();
             if (this.driverStatusChart) this.driverStatusChart.destroy();
@@ -389,6 +344,42 @@ export default {
                         "Pending Reservations",
                         "Completed Reservations",
                         "Out Reservations",
+                    ],
+                    datasets: [
+                        {
+                            data: data,
+                            backgroundColor: ["#007bff", "#28a745", "#ffc107"],
+                            borderWidth: 1,
+                            borderColor: "#333",
+                            hoverBorderWidth: 3,
+                            hoverOffset: 15,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                },
+            });
+        },
+        createBusesChart() {
+            let data = [
+                this.dashboardData.completed_Buses,
+                this.dashboardData.availableBuses,
+                this.dashboardData.pending_Buses,
+            ];
+
+            if (data.every((val) => val === 0)) {
+                data = [1, 1, 1];
+            }
+
+            const ctx = document.getElementById("BusesChart").getContext("2d");
+            this.BusesChart = new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: [
+                        "Completed Buses",
+                        "Available Buses",
+                        "Pending Buses",
                     ],
                     datasets: [
                         {

@@ -53,7 +53,6 @@
         >
             <span class="material-icons" aria-label="Rate">payments</span>
             <h3>Chargebalnce</h3>
-            <span class="msg_count">14</span>
         </router-link>
 
         <router-link
@@ -63,6 +62,16 @@
         >
             <span class="material-icons" aria-label="Products">comment</span>
             <h3>Inquires</h3>
+        </router-link>
+        <router-link
+            to="AllInquires"
+            @click="selectOption('Notification')"
+            :class="{ active: selectedOption === 'Notification' }"
+        >
+            <span class="material-icons" aria-label="Notification"
+                >comment</span
+            >
+            <h3>Notification</h3>
         </router-link>
 
         <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">

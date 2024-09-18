@@ -112,7 +112,10 @@
                                         <button
                                             class="nav-btnd btn-warning"
                                             @click="
-                                                openTripModal(user.name_company)
+                                                openTripModal(
+                                                    user.name_company,
+                                                    user.id
+                                                )
                                             "
                                         >
                                             Trip
@@ -420,6 +423,7 @@
                                         <th>From</th>
                                         <th>To</th>
                                         <th>Price</th>
+                                        <th>Profit Trip</th>
                                         <th>Bus</th>
                                     </tr>
                                 </thead>
@@ -432,6 +436,19 @@
                                         <td>{{ Trip.from }}</td>
                                         <td>{{ Trip.to }}</td>
                                         <td>{{ Trip.price }}</td>
+                                        <td>
+                                            <button
+                                                class="nav-btnd"
+                                                @click="
+                                                    openProfitTripModal(
+                                                        Trip.trip_id
+                                                    )
+                                                "
+                                            >
+                                                Profit
+                                            </button>
+                                        </td>
+
                                         <td>
                                             <button
                                                 class="nav-btnd"
@@ -561,10 +578,14 @@
                                 <thead>
                                     <tr>
                                         <th>Bus ID</th>
-                                        <th>From Time</th>
-                                        <th>To Time</th>
+                                        <th>Data Start</th>
+                                        <th>Data End</th>
                                         <th>Type</th>
-                                        <th>Pivot</th>
+                                        <th>From Time Going</th>
+                                        <th>From Time Return</th>
+                                        <th>To Time Going</th>
+                                        <th>To Time Return</th>
+                                        <th>Event</th>
                                         <th>Seats</th>
                                     </tr>
                                 </thead>
@@ -574,21 +595,19 @@
                                         :key="index"
                                     >
                                         <td>{{ index }}</td>
-                                        <td>{{ Bus.from_time }}</td>
-                                        <td>{{ Bus.to_time }}</td>
+                                        <td>{{ Bus.date_start }}</td>
+                                        <td>{{ Bus.date_end }}</td>
                                         <td>{{ Bus.type }}</td>
+                                        <td>{{ Bus.from_time_going }}</td>
+                                        <td>{{ Bus.from_time_return }}</td>
+                                        <td>{{ Bus.to_time_going }}</td>
+                                        <td>{{ Bus.to_time_return }}</td>
+                                        <td>{{ Bus.event }}</td>
+
                                         <td>
                                             <button
                                                 class="nav-btnd"
-                                                @click="openPivotModal(index)"
-                                            >
-                                                Pivot
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <button
-                                                class="nav-btnd"
-                                                @click="openSeatsModal(index)"
+                                                @click="openSeatsModal(Bus.id)"
                                             >
                                                 Seats
                                             </button>
@@ -601,6 +620,37 @@
                 </div>
                 <div class="modal-footer">
                     <button @click="closeBusTripModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div v-if="showProfitTripModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Profit Trip</div>
+                <div class="modal-body">
+                    <div v-if="loading5" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div v-else>
+                        <div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Total Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ this.profittrip }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeProfitTripModal" class="close-modal">
                         Close
                     </button>
                 </div>
@@ -745,6 +795,8 @@ export default {
     name: "AddCompany",
     data() {
         return {
+            user_id: "",
+            profittrip: "",
             current_page: 1,
             last_page: null,
             first_page: null,
@@ -785,6 +837,8 @@ export default {
 
             showBusModal: false,
             showBusTripModal: false,
+            showProfitTripModal: false,
+
             showReservationSeatModal: false,
 
             showPivotModal: false,
@@ -830,6 +884,12 @@ export default {
             this.idd = trip_id;
             this.fetchBusTrip(trip_id, this.currentCompanyId);
         },
+        openProfitTripModal(trip_id) {
+            // Set the current company ID
+            this.showProfitTripModal = true;
+            this.idd = trip_id;
+            this.fetctProfitTrip(trip_id, this.currentCompanyId);
+        },
         openReservationSeatModal(trip_id) {
             this.fetchReservationSeat(trip_id, this.currentCompanyId);
 
@@ -837,17 +897,14 @@ export default {
             this.idd = trip_id;
             this.showReservationSeatModal = true;
         },
-        openPivotModal(index) {
-            // Set the current company ID
-            this.showPivotModal = true;
-            this.fetchPivot(index, this.idd, this.currentCompanyId);
-        },
+
         openSeatsModal(index) {
             // Set the current company ID
             this.showSeatsModal = true;
             this.fetchPivot(index, this.idd, this.currentCompanyId);
         },
-        openTripModal(company_id) {
+        openTripModal(company_id, user_id) {
+            this.user_id = user_id;
             this.currentCompanyId = company_id;
             // Set the current company ID
             this.showTripModal = true;
@@ -858,20 +915,6 @@ export default {
             // Set the current company ID
             this.showReservationModal = true;
             this.fetchReservation(this.currentCompanyId);
-        },
-        fetchReversationS(x) {
-            console.log(this.currentCompanyId);
-            console.log(x);
-            if (x == undefined) {
-                this.fetchReservation(this.currentCompanyId);
-            }
-            this.fetchReversationStatus(this.currentCompanyId, x);
-        },
-        fetchDriverS(x) {
-            console.log(this.currentCompanyId);
-            console.log(x);
-
-            this.fetchDriverStatus(this.currentCompanyId, x);
         },
 
         closeDriverStatusModal() {
@@ -892,6 +935,9 @@ export default {
         closeBusTripModal() {
             this.showBusTripModal = false;
         },
+        closeProfitTripModal() {
+            this.showProfitTripModal = false;
+        },
         closeReservationSeatModal() {
             this.showReservationSeatModal = false;
         },
@@ -904,6 +950,21 @@ export default {
 
         handleSubmit() {
             console.log("Form Submitted", this.name, this.email, this.password);
+        },
+
+        fetchReversationS(x) {
+            console.log(this.currentCompanyId);
+            console.log(x);
+            if (x == undefined) {
+                this.fetchReservation(this.currentCompanyId);
+            }
+            this.fetchReversationStatus(this.currentCompanyId, x);
+        },
+        fetchDriverS(x) {
+            console.log(this.currentCompanyId);
+            console.log(x);
+
+            this.fetchDriverStatus(this.currentCompanyId, x);
         },
 
         CreateCompany() {
@@ -978,28 +1039,24 @@ export default {
                 });
             this.loading = true;
         },
-        fetchPivot(index, id, company_name) {
+        fetchPivot(x, id, company_name) {
             console.log(company_name);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: `http://127.0.0.1:8000/api/admin/fillter_all_trip?company_name=${company_name}`,
+                url: `http://127.0.0.1:8000/api/admin/get_all_BusTripsByTripId/${this.user_id}?trip_id=${id}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.Pivot = response.data[id - 1].bus_trips[index].pivot;
-                    this.Seats = response.data[id - 1].bus_trips[index].seats;
+                    this.BusTrip = response.data;
+                    for (let index = 0; index < response.data.length; index++) {
+                        if (response.data[index].id == x) {
+                            this.Seats = response.data[index].seats;
+                        }
+                    }
 
-                    console.log(this.Pivot);
-
-                    const filteredData = response.data.filter(
-                        (item) => item.bus_trips && item.bus_trips.length > 0
-                    );
-
-                    console.log("Updated filtered data:", filteredData);
-
-                    this.updatedData = filteredData;
                     this.loading7 = false;
+                    this.loading8 = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting buses.");
@@ -1012,26 +1069,33 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: `http://127.0.0.1:8000/api/admin/fillter_all_trip?company_name=${company_name}`,
+                url: `http://127.0.0.1:8000/api/admin/get_all_BusTripsByTripId/${this.user_id}?trip_id=${id}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    // تحقق من وجود response.data[id] ووجود bus_trips
-                    if (response.data[id] && response.data[id - 1].bus_trips) {
-                        this.BusTrip = response.data[id - 1].bus_trips;
-                    }
+                    this.BusTrip = response.data;
 
-                    // قم بفلترة العناصر التي لا تحتوي على bus_trips
-                    const filteredData = response.data.filter(
-                        (item) => item.bus_trips && item.bus_trips.length > 0
-                    );
+                    console.log(response.data);
+                    this.loading5 = false;
+                })
+                .catch((error) => {
+                    this.toast.error("Error getting buses.");
+                    console.error(error);
+                });
+            this.loading5 = true;
+        },
+        fetctProfitTrip(id, company_name) {
+            console.log(company_name);
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/admin/get_profit_trip/${id}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.profittrip = response.data.total_price;
+                    console.log(response.data);
 
-                    // عرض المصفوفة المحدثة
-                    console.log("Updated filtered data:", filteredData);
-
-                    // إذا كنت تريد تحديث مكون آخر أو عرض البيانات في واجهة المستخدم
-                    // يمكنك تعيين filteredData إلى متغير آخر أو حالة (state) في Vue
-                    this.updatedData = filteredData;
                     this.loading5 = false;
                 })
                 .catch((error) => {
