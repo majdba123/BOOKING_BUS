@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('name');
             $table->foreignIdFor(Geolocation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
-            $table->softDeletes();
         });
         DB::table('breaks')->insert([
             [

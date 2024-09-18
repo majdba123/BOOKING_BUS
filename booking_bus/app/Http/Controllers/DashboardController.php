@@ -15,7 +15,7 @@ use App\Models\Favourite;
 use App\Models\Bus;
 use App\Models\Order_Private_trip;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
+
 
 class DashboardController extends Controller
 {
@@ -131,20 +131,65 @@ class DashboardController extends Controller
 
     public function my_dash_boad()
     {
-        
         $company = Auth::user()->Company;
-        $key = 'dashboard_company_' . $company->id;
 
-        if (Cache::has($key)) {
-    
-            $dash = Cache::get($key);
-    
-        } else {
-            $company = Auth::user()->Company;
+        $reservationCounts = Reservation::whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company) {
+            $query->where('id', $company->id);
+        })
+        ->selectRaw('status, COUNT(*) as count')
+        ->groupBy('status')
+        ->get()
+        ->keyBy('status')
+        ->mapWithKeys(function ($item) {
+            return [$item->status => $item->count];
+        });
 
-            $reservationCounts = Reservation::whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company) {
-                $query->where('id', $company->id);
-            })
+        $trip_count =Trip::where('company_id' , $company->id )
+        ->selectRaw('status, COUNT(*) as count')
+        ->groupBy('status')
+        ->get()
+        ->keyBy('status')
+        ->mapWithKeys(function ($item) {
+            return [$item->status => $item->count];
+        });
+
+        $bus_trip = Bus_Trip::whereHas('trip.company', function ($query) use ($company) {
+            $query->where('id', $company->id);
+        })
+        ->selectRaw('status, COUNT(*) as count')
+        ->groupBy('status')
+        ->get()
+        ->keyBy('status')
+        ->mapWithKeys(function ($item) {
+            return [$item->status => $item->count];
+        });
+
+        $reservationSums = Reservation::whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company) {
+            $query->where('id', $company->id);
+        })
+        ->selectRaw('status, SUM(price) as sum')
+        ->groupBy('status')
+        ->get()
+        ->keyBy('status')
+        ->mapWithKeys(function ($item) {
+            return [$item->status => $item->sum];
+        });
+
+        $driverCounts = Driver::where('company_id', $company->id)
+
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status')
+            ->mapWithKeys(function ($item) {
+                return [$item->status => $item->count];
+            });
+        $allDrivers = $driverCounts->sum();
+        $completed_Drivers = $driverCounts->get('completed', 0);
+        $availableDrivers = $driverCounts->get('available', 0);
+        $pending_Drivers = $driverCounts->get('pending', 0);
+
+        $busCounts = Bus::where('company_id', $company->id)
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->get()
@@ -153,7 +198,7 @@ class DashboardController extends Controller
                 return [$item->status => $item->count];
             });
 
-            $trip_count =Trip::where('company_id' , $company->id )
+        $privateTripCounts = Order_Private_Trip::where('company_id', $company->id)
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->get()
@@ -162,100 +207,43 @@ class DashboardController extends Controller
                 return [$item->status => $item->count];
             });
 
-            $bus_trip = Bus_Trip::whereHas('trip.company', function ($query) use ($company) {
-                $query->where('id', $company->id);
-            })
-            ->selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->keyBy('status')
-            ->mapWithKeys(function ($item) {
-                return [$item->status => $item->count];
-            });
+        $acceptedTotalPrice = Order_Private_Trip::where('company_id', $company->id)
+            ->where('status', 'accepted')
+            ->sum('price');
 
-            $reservationSums = Reservation::whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company) {
-                $query->where('id', $company->id);
-            })
-            ->selectRaw('status, SUM(price) as sum')
-            ->groupBy('status')
-            ->get()
-            ->keyBy('status')
-            ->mapWithKeys(function ($item) {
-                return [$item->status => $item->sum];
-            });
+        $favourite_count =Favourite::where('company_id' , $company->id)->count();
 
-            $driverCounts = Driver::where('company_id', $company->id)
+        $dash = [
+            'pending_reservations' => $reservationCounts->get('padding', 0),
+            'completed_reservations' => $reservationCounts->get('completed', 0),
+            'out_reservation' => $reservationCounts->get('out', 0),
+            'pending_trip' => $trip_count->get('padding', 0),
+            'finished_trip' => $trip_count->get('finished', 0),
+            'finished_going_trip' => $trip_count->get('finished_going', 0),
+            'pending_bus_trip' => $bus_trip->get('pending', 0),
+            'finished_bus_trip' => $bus_trip->get('finished', 0),
+            'finished_going_bus_trip' => $bus_trip->get('finished_going', 0),
+            'total_profit_pending' => $reservationSums->get('padding', 0),
+            'total_profit_completed' => $reservationSums->get('completed', 0),
+            'total_profit_out' => $reservationSums->get('out', 0),
+            'all_drivers' => $allDrivers,
+            'pending_drivers' => $pending_Drivers,
+            'available_drivers' => $availableDrivers,
+            'completed_driver' => $completed_Drivers,
+            'allBuses' => $busCounts->sum(),
+            'completed_Buses' => $busCounts->get('completed', 0),
+            'availableBuses' => $busCounts->get('available', 0),
+            'pending_Buses' => $busCounts->get('pending', 0),
+            'inProgress_PrivateTrips' => $privateTripCounts->get('padding', 0),
+            'completed_PrivateTrips' => $privateTripCounts->get('accepted', 0),
+            'canceled_PrivateTrips' => $privateTripCounts->get('cancelled', 0),
+            'total_price_completed_PrivateTrips' => $acceptedTotalPrice,
+            'count_favourite' => $favourite_count,
 
-                ->selectRaw('status, COUNT(*) as count')
-                ->groupBy('status')
-                ->get()
-                ->keyBy('status')
-                ->mapWithKeys(function ($item) {
-                    return [$item->status => $item->count];
-                });
-            $allDrivers = $driverCounts->sum();
-            $completed_Drivers = $driverCounts->get('completed', 0);
-            $availableDrivers = $driverCounts->get('available', 0);
-            $pending_Drivers = $driverCounts->get('pending', 0);
-
-            $busCounts = Bus::where('company_id', $company->id)
-                ->selectRaw('status, COUNT(*) as count')
-                ->groupBy('status')
-                ->get()
-                ->keyBy('status')
-                ->mapWithKeys(function ($item) {
-                    return [$item->status => $item->count];
-                });
-
-            $privateTripCounts = Order_Private_Trip::where('company_id', $company->id)
-                ->selectRaw('status, COUNT(*) as count')
-                ->groupBy('status')
-                ->get()
-                ->keyBy('status')
-                ->mapWithKeys(function ($item) {
-                    return [$item->status => $item->count];
-                });
-
-            $acceptedTotalPrice = Order_Private_Trip::where('company_id', $company->id)
-                ->where('status', 'accepted')
-                ->sum('price');
-
-            $favourite_count =Favourite::where('company_id' , $company->id)->count();
-
-            $dash = [
-                'pending_reservations' => $reservationCounts->get('pending', 0),
-                'completed_reservations' => $reservationCounts->get('completed', 0),
-                'out_reservation' => $reservationCounts->get('out', 0),
-                'pending_trip' => $trip_count->get('pending', 0),
-                'finished_trip' => $trip_count->get('finished', 0),
-                'finished_going_trip' => $trip_count->get('finished_going', 0),
-                'pending_bus_trip' => $bus_trip->get('pending', 0),
-                'finished_bus_trip' => $bus_trip->get('finished', 0),
-                'finished_going_bus_trip' => $bus_trip->get('finished_going', 0),
-                'total_profit_pending' => $reservationSums->get('pending', 0),
-                'total_profit_completed' => $reservationSums->get('completed', 0),
-                'total_profit_out' => $reservationSums->get('out', 0),
-                'all_drivers' => $allDrivers,
-                'pending_drivers' => $pending_Drivers,
-                'available_drivers' => $availableDrivers,
-                'completed_driver' => $completed_Drivers,
-                'allBuses' => $busCounts->sum(),
-                'completed_Buses' => $busCounts->get('completed', 0),
-                'availableBuses' => $busCounts->get('available', 0),
-                'pending_Buses' => $busCounts->get('pending', 0),
-                'inProgress_PrivateTrips' => $privateTripCounts->get('pending', 0),
-                'completed_PrivateTrips' => $privateTripCounts->get('accepted', 0),
-                'canceled_PrivateTrips' => $privateTripCounts->get('cancelled', 0),
-                'total_price_completed_PrivateTrips' => $acceptedTotalPrice,
-                'count_favourite' => $favourite_count,
-
-            ];
-            Cache::put($key, $dash, now()->addMinutes(45));
-        }
+        ];
 
         return response()->json($dash);
     }
-
 
  /*   public function get_profit_bus_trip($id_bus_trip)
     {

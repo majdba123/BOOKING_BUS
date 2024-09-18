@@ -20,7 +20,7 @@ class OrderPrivateTripController extends Controller
     public function index($private_trip_id)
     {
         $orderPrivateTrips = Order_Private_trip::where('private_trip_id', $private_trip_id)
-                                              ->where('status', 'pending')
+                                              ->where('status', 'padding')
                                               ->get();
 
         return response()->json($orderPrivateTrips);
@@ -80,9 +80,9 @@ class OrderPrivateTripController extends Controller
         $orderPrivate->save();
         $orderPrivate->private_trip->save();
         $otherOrderPrivates = Order_Private_trip::where('private_trip_id', $orderPrivate->private_trip_id)
-        ->where('status', 'pending')
+        ->where('status', 'padding')
         ->get();
-    // Cancel all other order privates with status "pending"
+    // Cancel all other order privates with status "padding"
         foreach ($otherOrderPrivates as $otherOrderPrivate) {
             $otherOrderPrivate->status = 'cancelled';
             $otherOrderPrivate->save();

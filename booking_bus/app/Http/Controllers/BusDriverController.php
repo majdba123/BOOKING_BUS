@@ -177,33 +177,28 @@ class BusDriverController extends Controller
 
     public function getFirstTrip()
     {
-        $validator = Validator::make([], [
 
-            'driver_id' => 'required|exists:drivers,id',
-
-        ]);
-
-
-        if ($validator->fails()) {
-
-            return response()->json(['error' => $validator->messages()], 422);
-
-        }
         $user = Auth::user();
 
         $busDriver = Bus_Driver::where('driver_id', $user->Driver->id)->firstOrFail();
 
         $firstTrip = Bus_Trip::where('bus_id', $busDriver->bus_id)
             ->where('status', 'pending')
-            ->orderBy('date_start', 'asc')
-            ->orderBy('from_time_going', 'asc')
+            ->orderBy('date_start', 'DESC')
+            ->orderBy('from_time_going', 'DESC')
             ->first();
-
         if ($firstTrip) {
+
             $firstTrip->load(['trip.path']);
-            $fromTime = new \DateTime($firstTrip->from_time);
-            $toTime = new \DateTime($firstTrip->to_time);
-            $interval = $fromTime->diff($toTime);
+            $goingfromTime = new \DateTime($firstTrip->from_time_going);
+            $goingtoTime = new \DateTime($firstTrip->to_time_going);
+            $ReturnfromTime = new \DateTime($firstTrip->from_time_return);
+            $ReturntoTime = new \DateTime($firstTrip->to_time_return);
+            $GoingformattedFromTime = $goingfromTime->format('H:i');
+            $GoingformattedToTime =  $goingtoTime->format('H:i');
+            $RetuenformattedFromTime = $ReturnfromTime->format('H:i');
+            $RetuenformattedToTime =  $ReturntoTime->format('H:i');
+            $interval = $goingfromTime->diff($goingtoTime);
             $tripDuration = $interval->format('%H:%I');
             return response()->json([
                 'id' => $firstTrip->id,
@@ -211,9 +206,12 @@ class BusDriverController extends Controller
                 'from' => $firstTrip->trip->path->from ?? null,
                 'to' => $firstTrip->trip->path->to ?? null,
                 'Distance' => $firstTrip->trip->path->Distance ?? null,
-                'from_time' => $firstTrip->from_time,
-                // 'date' => $firstTrip->date,
-                'to_time' => $firstTrip->to_time,
+                'goingfromTime' => $GoingformattedFromTime,
+                'goingtoTime' => $GoingformattedToTime,
+                'ReturnfromTime' => $RetuenformattedFromTime,
+                'ReturntoTime' => $RetuenformattedToTime,
+                'date_start' => $firstTrip->date_start,
+                'date_end' => $firstTrip->date_end,
                 'Passengers' =>  $firstTrip->bus->getNumberOfReservationsAttribute(),
                 'Stops' =>  $firstTrip->Pivoit->count(),
                 'trip_duration' => $tripDuration,

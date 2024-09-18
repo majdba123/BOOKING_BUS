@@ -5,15 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Address extends Model
 {
     use HasFactory;
-    use SoftDeletes;
-    protected $dates = [
-        'deleted_at'
-    ];
     protected $keyType = 'string'; // Set the key type to UUID
     public $incrementing = false; // Disable auto-incrementing
     public static function boot() {

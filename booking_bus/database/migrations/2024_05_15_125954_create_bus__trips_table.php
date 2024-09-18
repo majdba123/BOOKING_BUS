@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('to_time_return');
             $table->string('date_start');
             $table->string('date_end');
-            $table->softDeletes();
+
             $table->string('status')->default('pending');
             $table->enum('type', ['all', 'going'])->default('all');
             $table->string('event')->default('stopped');

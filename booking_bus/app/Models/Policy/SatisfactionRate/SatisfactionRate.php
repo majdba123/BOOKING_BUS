@@ -6,15 +6,10 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SatisfactionRate extends Model
 {
     use HasFactory;
-    use SoftDeletes;
-    protected $dates = [
-        'deleted_at'
-    ];
     protected $fillable = [
         'company_id',
         'rate',

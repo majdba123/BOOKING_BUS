@@ -26,7 +26,7 @@ class Private_tripFactory extends Factory
             'to_location' => Geolocation::factory(), // Assumes you have a Geolocation factory
             'date' => $this->faker->date(),
             'start_time' => $this->faker->time(),
-            'status' => 'pending', // Default status
+            'status' => 'padding', // Default status
             'Distance' => $this->faker->numberBetween(10, 1000), // Random distance
             'created_at' => now(),
             'updated_at' => now(),

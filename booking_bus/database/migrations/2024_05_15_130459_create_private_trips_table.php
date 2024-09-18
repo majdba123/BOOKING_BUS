@@ -24,8 +24,7 @@ return new class extends Migration
             $table->foreign('to_location')->references('id')->on('geolocations')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('date');
             $table->string('start_time');
-            $table->string('status')->default('pending');
-            $table->softDeletes();
+            $table->string('status')->default('padding');
             $table->integer('Distance');
             $table->timestamps();
         });

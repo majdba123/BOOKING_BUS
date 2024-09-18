@@ -5,15 +5,10 @@ namespace App\Models;
 use App\Models\Policy\CancelTrip\CanceledTrip;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Trip extends Model
 {
     use HasFactory;
-    use SoftDeletes;
-    protected $dates = [
-        'deleted_at'
-    ];
     protected $fillable = [
         'company_id',
         'path_id',

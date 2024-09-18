@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('trip_id')->constrained('bus__trips')->onDelete('cascade');
             $table->text('description');
-            $table->softDeletes();
             $table->timestamps();
         });
     }

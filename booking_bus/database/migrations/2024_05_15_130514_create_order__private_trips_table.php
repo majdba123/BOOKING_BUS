@@ -17,8 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Private_trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('price');
-            $table->string('status')->default('pending');
-            $table->softDeletes();
+            $table->string('status')->default('padding');
             $table->timestamps();
         });
     }

@@ -63,10 +63,6 @@ class TripTest extends TestCase
             'long_from' => 0.0012,
             'lat_to' => 0.0012,
             'long_to' => 0.0012,    // Assuming you have a factory for Geolocation
-            'lat_start' => 0.0012,  // Assuming you have a factory for Geolocation
-            'long_start' => 0.0012,
-            'lat_end' => 0.0012,  // Assuming you have a factory for Geolocation
-            'long_end' => 0.0012,
             'Distance' => 700,
 
         ];
