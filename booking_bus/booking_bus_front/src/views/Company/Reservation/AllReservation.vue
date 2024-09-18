@@ -50,11 +50,12 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
-                        <photo />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -101,6 +102,8 @@ import Revchart from "@/components/Revchart.vue";
 import photo from "@/components/photo.vue";
 import store from "@/store";
 import router from "@/router";
+import { mapGetters } from "vuex";
+
 import GetAllReservation from "@/components/GetAllReservation.vue";
 
 export default {
@@ -152,9 +155,9 @@ export default {
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {
-                sideMenu.style.display = "block"; // Show sidebar on large screens
+                sideMenu.style.display = "block";
             } else {
-                sideMenu.style.display = "none"; // Hide sidebar on small screens
+                sideMenu.style.display = "none";
             }
         },
         openMenu() {
@@ -239,6 +242,9 @@ export default {
             console.log("Searching for:", this.searchQuery);
             // Add your search logic here
         },
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     mounted() {
         this.checkToken();

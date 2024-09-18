@@ -50,15 +50,12 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -103,12 +100,14 @@
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import privatetrip from "@/components/privatetrip.vue";
 import privatetripchart from "@/components/privatetripchart.vue";
+import photo from "@/components/photo.vue";
+import { mapGetters } from "vuex";
 import store from "@/store";
 import router from "@/router";
 
 export default {
     name: "AllPrivate",
-    components: { SidebarCompany, privatetrip, privatetripchart },
+    components: { SidebarCompany, privatetrip, privatetripchart, photo },
     data() {
         return {
             x: store.state.x,
@@ -237,6 +236,9 @@ export default {
             console.log("Searching for:", this.searchQuery);
             // Add your search logic here
         },
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     mounted() {
         this.checkToken();
@@ -372,11 +374,11 @@ small {
     color: var(--clr-dark);
 }
 .profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
+    position: relative;
     display: flex;
     align-items: center;
 }
-.profile-photo img {
+.profile-photo {
     width: 50px;
     height: 50px;
     border-radius: 50%;

@@ -50,15 +50,12 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -103,12 +100,14 @@
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AllFavourite1 from "@/components/AllFavourite.vue";
 import pathchart from "@/components/pathchart.vue";
+import photo from "@/components/photo.vue";
 import store from "@/store";
 import router from "@/router";
+import { mapGetters } from "vuex";
 
 export default {
     name: "AllAllFavourit",
-    components: { SidebarCompany, AllFavourite1, pathchart },
+    components: { SidebarCompany, AllFavourite1, pathchart, photo },
     data() {
         return {
             x: store.state.x,
@@ -146,13 +145,16 @@ export default {
             console.log(store.state.searchQuery);
         },
     },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
+    },
     methods: {
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {
-                sideMenu.style.display = "block"; // Show sidebar on large screens
+                sideMenu.style.display = "block";
             } else {
-                sideMenu.style.display = "none"; // Hide sidebar on small screens
+                sideMenu.style.display = "none";
             }
         },
         openMenu() {
@@ -372,11 +374,11 @@ small {
     color: var(--clr-dark);
 }
 .profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
+    position: relative;
     display: flex;
     align-items: center;
 }
-.profile-photo img {
+.profile-photo {
     width: 50px;
     height: 50px;
     border-radius: 50%;

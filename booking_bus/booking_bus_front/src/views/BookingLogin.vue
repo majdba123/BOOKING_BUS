@@ -56,7 +56,6 @@ export default {
         this.checkToken();
         this.handleResize();
         window.addEventListener("resize", this.handleResize);
-
         // Fetch trips data when the component is mounted
         this.fetchTrips();
     },

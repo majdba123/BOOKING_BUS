@@ -57,8 +57,9 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
                         <photo @click="toggleProfileMenu" />
@@ -76,6 +77,7 @@
 <script>
 import store from "@/store";
 import photo from "@/components/photo.vue";
+import { mapGetters } from "vuex";
 
 export default {
     name: "HeaderCompany",
@@ -93,6 +95,9 @@ export default {
                 time: "",
             },
         };
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     methods: {
         toggleProfileMenu() {

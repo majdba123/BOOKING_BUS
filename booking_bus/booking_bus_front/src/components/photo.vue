@@ -5,6 +5,7 @@
 </template>
 <script>
 import axios from "axios";
+import { mapActions } from "vuex";
 
 export default {
     name: "ProfileCompanyLogo",
@@ -16,6 +17,8 @@ export default {
         };
     },
     methods: {
+        ...mapActions(["updateCompanyName"]),
+
         fetchCompanyLogo() {
             const access_token = window.localStorage.getItem("access_token");
             axios
@@ -23,7 +26,9 @@ export default {
                     headers: { Authorization: `Bearer ${access_token}` },
                 })
                 .then((response) => {
+                    this.company.name = response.data.name;
                     this.company.logoURL = response.data.profile_image;
+                    this.updateCompanyName(response.data.name);
                 })
                 .catch((error) => {
                     console.error(
@@ -31,7 +36,6 @@ export default {
                         error
                     );
                 });
-            console.log(this.company.logoURL);
         },
     },
     mounted() {

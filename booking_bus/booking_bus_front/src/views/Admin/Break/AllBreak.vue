@@ -50,15 +50,13 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
+
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -117,13 +115,15 @@
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddBreak from "@/components/AddBreak.vue";
+import photo from "@/components/photo.vue";
 import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 import router from "@/router";
+import { mapGetters } from "vuex";
 
 export default {
     name: "AllBreak",
-    components: { SidebarCompany, AddBreak, DriverChart },
+    components: { SidebarCompany, photo, AddBreak, DriverChart },
     data() {
         return {
             x: store.state.x,
@@ -161,14 +161,15 @@ export default {
             console.log(store.state.searchQuery);
         },
     },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
+    },
     methods: {
         checkToken() {
-            // الحصول على التوكن من localStorage
             const token = window.localStorage.getItem("access_token");
             const userType = window.localStorage.getItem("type_user");
 
             if (token && userType) {
-                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
                 if (userType === "admin") {
                     router.push("/");
                 } else if (userType === "user") {
@@ -379,7 +380,7 @@ small {
     display: flex;
     align-items: center;
 }
-.profile-photo img {
+.profile-photo {
     width: 50px;
     height: 50px;
     border-radius: 50%;
