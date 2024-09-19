@@ -107,7 +107,7 @@ export default {
             });
 
             const channel = pusher.subscribe(
-                "trip-geolocation-private-channel-" + this.bus_id
+                "trip-geolocation-private-channel-1"
             );
             console.log("Pusher Channel:", channel);
 

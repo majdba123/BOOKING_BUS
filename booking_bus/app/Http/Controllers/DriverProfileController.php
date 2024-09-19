@@ -14,17 +14,22 @@ class DriverProfileController extends Controller
 {
     public function index()
     {
-        $key = 'user_data_' . auth()->id(); // Create a unique cache key for the current user
-        // Check if the data is already cached
-        if (Cache::has($key)) {
-            $user = Cache::get($key);
-        } else {
-            // If not, retrieve the data from the database and cache it
-            $user = auth()->user()->load(['profile', 'address']);
+        $user = auth()->user()->load(['profile', 'address']);
+        $profileImage = $user->profile ? $user->profile->image : null;
+        $phoneNumber = $user->profile ? $user->profile->phone : null;
 
-            Cache::put($key, $user, now()->addMinutes(30)); // Cache for 30 minutes
-        }
-        return response()->json($user);
+        // Construct the response
+        $response = [
+            'id' => $user->id,
+            'name' => $user->name,
+            // 'type' => $user->type,
+            'email' => $user->email,
+            'point' => $user->point,
+            'profile_image' => $profileImage,
+            'phoneNumber' => $phoneNumber,
+            // 'address' => $user->address
+        ];
+        return response()->json($response);
     }
     public function store(Request $request)
     {
@@ -143,6 +148,4 @@ class DriverProfileController extends Controller
         Cache::forget('user_data_' . auth()->id());
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
-
-
 }

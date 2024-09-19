@@ -27,8 +27,6 @@
             <!-- Main content -->
             <MainAdmin />
 
-            {{ this.messages }}
-
             <!-- Dashboard Charts -->
             <div class="charts-wrapper">
                 <DashboardChartsAdmin />
@@ -43,12 +41,10 @@
     </div>
 </template>
 <script>
-import axios from "axios";
 import MainAdmin from "@/components/MainAdmin.vue";
 import DashboardChartsAdmin from "@/components/DashboardChartsAdmin.vue";
 import SidebarAdmin from "@/components/SidebarAdmin.vue";
 import router from "@/router";
-import Pusher from "pusher-js";
 
 export default {
     data() {
@@ -56,11 +52,6 @@ export default {
     },
 
     mounted() {
-        this.AllUsers().then(() => {
-            if (this.id) {
-                this.initializePusher();
-            }
-        });
         this.handleResize();
         this.checkToken();
 
@@ -70,47 +61,6 @@ export default {
         window.removeEventListener("resize", this.handleResize);
     },
     methods: {
-        initializePusher() {
-            Pusher.logToConsole = true;
-            const pusher = new Pusher("7342c00647f26084d14f", {
-                cluster: "ap2",
-                authEndpoint: "/pusher/auth",
-                auth: {
-                    params: {
-                        userId: this.id,
-                    },
-                },
-            });
-
-            const channel = pusher.subscribe(
-                `notification-private-channel-${this.id}`
-            );
-            console.log("Pusher Channel:", channel);
-
-            channel.bind("PrivateNotification", (data) => {
-                const notification = data.message;
-                this.$store.commit("ADD_NOTIFICATION", notification);
-                this.messages = notification;
-                console.log("Notification:", this.messages);
-            });
-        },
-        AllUsers() {
-            const access_token = window.localStorage.getItem("access_token");
-            this.loading = true;
-            return axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/admin/my_info",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.id = response.data.id;
-                    console.log("User ID:", this.id);
-                })
-                .catch((error) => {
-                    this.toast.error("Error getting user info.");
-                    console.error(error);
-                });
-        },
         checkToken() {
             const userType = window.localStorage.getItem("type_user");
 

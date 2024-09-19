@@ -20,22 +20,22 @@
             <h3>Company</h3>
         </RouterLink>
 
-        <router-link
+        <!-- <router-link
             to="AllGovernment"
             @click="selectOption('Government')"
             :class="{ active: selectedOption === 'Government' }"
         >
             <span class="material-icons" aria-label="Analytics">timeline</span>
             <h3>Government</h3>
-        </router-link>
-        <router-link
+        </router-link> -->
+        <!-- <router-link
             to="AllBreak"
             @click="selectOption('Break')"
             :class="{ active: selectedOption === 'Break' }"
         >
             <span class="material-icons" aria-label="Analytics">pin_drop</span>
             <h3>Break</h3>
-        </router-link>
+        </router-link> -->
 
         <router-link
             to="AllUser"
@@ -48,12 +48,11 @@
 
         <router-link
             to="AllChargebalnce"
-            @click="selectOption('AllChargebalnce')"
-            :class="{ active: selectedOption === 'AllChargebalnce' }"
+            @click="selectOption('Chargebalnce')"
+            :class="{ active: selectedOption === 'Chargebalnce' }"
         >
             <span class="material-icons" aria-label="Rate">payments</span>
             <h3>Chargebalnce</h3>
-            <span class="msg_count">14</span>
         </router-link>
 
         <router-link
@@ -63,6 +62,16 @@
         >
             <span class="material-icons" aria-label="Products">comment</span>
             <h3>Inquires</h3>
+        </router-link>
+        <router-link
+            to="AllInquires"
+            @click="selectOption('Notification')"
+            :class="{ active: selectedOption === 'Notification' }"
+        >
+            <span class="material-icons" aria-label="Notification"
+                >comment</span
+            >
+            <h3>Notification</h3>
         </router-link>
 
         <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">

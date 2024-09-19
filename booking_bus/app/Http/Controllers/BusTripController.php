@@ -159,8 +159,33 @@ class BusTripController extends Controller
 
     public function getBusTripsByFillter(Request $request)
     {
-        $fromTime = $request->input('from_time');
-        $toTime = $request->input('to_time');
+
+        $validator = Validator::make($request->all(), [
+
+            'from_time_going' => 'nullable|date_format:H:i',
+
+            'to_time_going' => 'nullable|date_format:H:i',
+
+            'from_time_return' => 'nullable|date_format:H:i',
+
+            'to_time_return' => 'nullable|date_format:H:i',
+
+            'type' => 'nullable|string',
+
+            'from' => 'nullable|string',
+
+            'to' => 'nullable|string',
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 422);
+        }
+        $fromTime = $request->input('from_time_going');
+        $toTime = $request->input('to_time_going');
+
+        $fromTime_return = $request->input('from_time_return');
+        $toTime_return = $request->input('to_time_return');
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
@@ -241,11 +266,21 @@ class BusTripController extends Controller
         $company = Auth::user()->Company->id;
 
         $validator = Validator::make($request->all(), [
-            'from_time' => 'sometimes|string',
-            'to_time' => 'sometimes|string',
-            'type' => 'sometimes|string',
-            'from' => 'sometimes|string',
-            'to' => 'sometimes|string',
+
+            'from_time_going' => 'nullable|date_format:H:i',
+
+            'to_time_going' => 'nullable|date_format:H:i',
+
+            'from_time_return' => 'nullable|date_format:H:i',
+
+            'to_time_return' => 'nullable|date_format:H:i',
+
+            'type' => 'nullable|string',
+
+            'from' => 'nullable|string',
+
+            'to' => 'nullable|string',
+
         ]);
 
         if ($validator->fails()) {

@@ -19,7 +19,8 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>Company</h1>
+                <HeaderAdmin />
+
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -29,14 +30,6 @@
                             v-model="searchQuery"
                         />
                         <button @click="search">Search</button>
-                    </div>
-                    <div
-                        class="theme-toggler"
-                        ref="themeToggler"
-                        @click="toggleTheme"
-                    >
-                        <span class="material-icons active">light_mode</span>
-                        <span class="material-icons">dark_mode</span>
                     </div>
                 </div>
                 <AddCompany ref="addCompany" />
@@ -61,10 +54,11 @@ import store from "@/store";
 import SidebarAdmin from "@/components/SidebarAdmin.vue";
 import AddCompany from "@/components/AddCompany.vue";
 import router from "@/router";
+import HeaderAdmin from "@/components/HeaderAdmin.vue";
 
 export default {
     name: "AllCompany",
-    components: { SidebarAdmin, AddCompany },
+    components: { SidebarAdmin, AddCompany, HeaderAdmin },
     data() {
         return {
             x: store.state.x,
@@ -123,45 +117,11 @@ export default {
                 sideMenu.style.display = "none";
             }
         },
-        toggleTheme() {
-            this.isDarkMode = !this.isDarkMode;
-            document.body.classList.toggle(
-                "dark-theme-variables",
-                this.isDarkMode
-            );
-            localStorage.setItem(
-                "darkMode",
-                this.isDarkMode ? "enabled" : "disabled"
-            );
 
-            const themeToggler = this.$refs.themeToggler;
-            themeToggler
-                .querySelector("span:nth-child(1)")
-                .classList.toggle("active", !this.isDarkMode);
-            themeToggler
-                .querySelector("span:nth-child(2)")
-                .classList.toggle("active", this.isDarkMode);
-        },
         search() {},
     },
     mounted() {
         this.checkToken();
-        const savedTheme = localStorage.getItem("darkMode");
-        if (savedTheme === "enabled") {
-            this.isDarkMode = true;
-            document.body.classList.add("dark-theme-variables");
-        } else {
-            this.isDarkMode = false;
-            document.body.classList.remove("dark-theme-variables");
-        }
-
-        const themeToggler = this.$refs.themeToggler;
-        themeToggler
-            .querySelector("span:nth-child(1)")
-            .classList.toggle("active", !this.isDarkMode);
-        themeToggler
-            .querySelector("span:nth-child(2)")
-            .classList.toggle("active", this.isDarkMode);
     },
 };
 </script>
@@ -338,11 +298,12 @@ aside .logo {
     padding: 9px;
     margin-top: 15px;
     margin-bottom: 15px;
-    margin-left: 10px;
+    margin-left: 47px;
 }
 
 .date input {
     flex: 1;
+    width: 985px;
 }
 
 .date button {
@@ -377,7 +338,6 @@ aside .logo {
           start right side
   ***************************** */
 .right {
-    padding: 1rem;
     border-radius: 2rem 0 0 2rem;
     display: flex;
     flex-direction: column;
