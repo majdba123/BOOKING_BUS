@@ -14,9 +14,7 @@
             @click="selectOption('Driver')"
             :class="{ active: selectedOption === 'Driver' }"
         >
-            <span class="material-icons" aria-label="Customers"
-                >person_outline</span
-            >
+            <span class="material-icons" aria-label="Customers">groups</span>
             <h3>Driver</h3>
         </RouterLink>
 
@@ -104,7 +102,7 @@
             :class="{ active: selectedOption === 'Tracking' }"
         >
             <span class="material-icons" aria-label="Analytics"
-                >description</span
+                >location_searching</span
             >
             <h3>Tracking</h3>
         </router-link>
@@ -114,7 +112,9 @@
             @click="selectOption('Reservation')"
             :class="{ active: selectedOption === 'Reservation' }"
         >
-            <span class="material-icons" aria-label="Products">person</span>
+            <span class="material-icons" aria-label="Products"
+                >library_books</span
+            >
             <h3>Reservation</h3>
         </router-link>
 

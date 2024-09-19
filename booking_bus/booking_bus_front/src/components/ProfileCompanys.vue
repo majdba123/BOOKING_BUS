@@ -49,7 +49,11 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <button type="button" @click="openAddressModal">
+                        <button
+                            class="buttons"
+                            type="button"
+                            @click="openAddressModal"
+                        >
                             Manage Addresses
                         </button>
                     </div>
@@ -68,30 +72,17 @@
                 </form>
             </div>
         </div>
-
         <!-- Address Modal -->
         <div v-if="isAddressModalOpen" class="modal-overlay">
             <div class="modal-content">
-                <h2>Manage Addresses</h2>
-                <button @click="closeAddressModal" class="close-modal-btn">
-                    Close
-                </button>
-
-                <!-- Container for addresses with scroll -->
-                <div class="addresses-list">
-                    <div
-                        v-for="address in addresses"
-                        :key="address.id"
-                        class="address-item"
-                    >
-                        <p>{{ address.city }} <b>>></b> {{ address.area }}</p>
-                        <button @click="editAddress(address)">Edit</button>
-                        <button @click="deleteAddress(address.id)">
-                            Delete
-                        </button>
-                    </div>
+                <div class="modal-header">
+                    <h2>Manage Addresses</h2>
+                    <button @click="closeAddressModal" class="close-modal-btn">
+                        ×
+                    </button>
                 </div>
 
+                <!-- Container for addresses with scroll -->
                 <form @submit.prevent="saveAddress">
                     <div class="form-group">
                         <label for="modalCity">City</label>
@@ -110,11 +101,37 @@
                         />
                     </div>
                     <div class="form-group">
-                        <button type="submit">
+                        <button class="buttons" type="submit">
                             {{ isEditing ? "Update Address" : "Add Address" }}
                         </button>
                     </div>
                 </form>
+                <div class="addresses-list">
+                    <div
+                        v-for="address in addresses"
+                        :key="address.id"
+                        class="address-item"
+                    >
+                        <p class="address-info">
+                            City : {{ address.city }} <b></b> Area :
+                            {{ address.area }}
+                            <span class="address-actions">
+                                <button
+                                    class="buttons"
+                                    @click="editAddress(address)"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    class="buttons"
+                                    @click="deleteAddress(address.id)"
+                                >
+                                    Delete
+                                </button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -386,7 +403,7 @@ export default {
     --card-padding: 1.8rem;
     --padding-1: 1.2rem;
     --box-shadow: 0 2rem 3rem var(--clr-light);
-}
+} /* Overlay for the modal */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -398,66 +415,105 @@ export default {
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    transition: opacity 0.3s ease;
 }
-
 .modal-content {
-    background: #fff;
+    background: var(--clr-color-background);
+    color: var(--clr-dark);
     padding: 20px;
     border-radius: 8px;
     width: 80%;
     max-width: 500px;
     max-height: 80vh;
     overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     position: relative;
 }
 
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+    color: var(--clr-dark);
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content.hidden {
+    transform: translateY(-20px);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    color: var(--clr-dark);
+    padding: 15px 20px;
+}
+
 .close-modal-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #f00;
-    color: #fff;
+    color: var(--clr-dark);
+    background: var(--clr-danger);
     border: none;
     border-radius: 50%;
     padding: 5px 10px;
     cursor: pointer;
+    font-size: 20px;
+    display: inline-block;
+    line-height: 1;
+}
+.close-modal-btn:hover {
+    color: var(--clr-danger);
+    background: var(--clr-dark);
 }
 
 .address-item {
     margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
 }
 
-.address-item button {
-    margin-left: 10px;
+.address-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
 }
 
-.form-group {
-    margin-bottom: 15px;
+.address-actions button {
+    margin-left: 5px;
 }
 
-button {
-    padding: 10px 20px;
+.address-actions button:first-of-type {
+    margin-left: 15px;
+}
+
+.buttons {
+    padding: 5px 15px;
     border: none;
     border-radius: 5px;
+    margin-bottom: 10px;
     background: #007bff;
     color: #fff;
     cursor: pointer;
+    font-size: 14px;
 }
 
-button:hover {
+.buttons:hover {
     background: #0056b3;
-}
-.modal-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
-}
-
-.modal-content::-webkit-scrollbar-thumb:hover {
-    background: #555;
 }
 
 .containers {
@@ -503,6 +559,7 @@ button:hover {
 .form-group {
     display: flex;
     flex-direction: column;
+    margin-top: 10px;
 }
 
 label {

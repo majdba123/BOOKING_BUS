@@ -87,22 +87,6 @@
                 </div>
             </div>
 
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--end driver_status-->
             <div class="driver_chart">
                 <h2>Driver Workload Status</h2>
                 <DriverChart :chartData="chartData" />
@@ -359,10 +343,12 @@ a {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-weight: 450;
+    font-size: 2rem;
     margin-top: 20px;
     color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 h2 {

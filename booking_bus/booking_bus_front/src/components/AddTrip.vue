@@ -421,26 +421,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="showDeleteConfirmModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Confirm Delete</div>
-                <div class="modal-body">
-                    Are you sure you want to delete the trip with ID
-                    {{ tripToDelete.id }}?
-                </div>
-                <div class="modal-footer">
-                    <button @click="deleteConfirmedTrip" class="update-btn">
-                        Yes
-                    </button>
-                    <button
-                        @click="closeDeleteConfirmModal"
-                        class="close-modal"
-                    >
-                        No
-                    </button>
-                </div>
-            </div>
-        </div>
+
         <div v-if="showDeleteConfirmModal" class="dialog-container">
             <div class="dialog-box">
                 <div class="dialog-header">Confirm Delete</div>

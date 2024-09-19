@@ -338,10 +338,12 @@ a {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-weight: 450;
+    font-size: 2rem;
     margin-top: 20px;
     color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 h2 {

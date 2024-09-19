@@ -106,7 +106,7 @@ import router from "@/router";
 import { mapGetters } from "vuex";
 
 export default {
-    name: "AllDriver",
+    name: "AllBus",
     components: { SidebarCompany, AddBus, buschart, photo },
     data() {
         return {
@@ -343,12 +343,13 @@ a {
 }
 
 h1 {
-    margin-top: 13px;
-    font-weight: 700;
+    font-weight: 450;
     font-size: 2rem;
+    margin-top: 20px;
     color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
-
 h2 {
     font-size: 1.4rem;
     color: var(--clr-dark);

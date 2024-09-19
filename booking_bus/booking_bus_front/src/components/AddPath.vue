@@ -508,8 +508,13 @@ h1 {
 }
 
 h2 {
+    font-family: sans-serif;
     font-size: 1.4rem;
     color: var(--clr-dark);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
 }
 
 .recent_orders {
