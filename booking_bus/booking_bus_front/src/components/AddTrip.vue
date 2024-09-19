@@ -181,7 +181,7 @@
         </div>
 
         <div v-else class="recent_orders">
-            <h1>All Trips</h1>
+            <h2>All Trips</h2>
             <div class="table-container">
                 <div v-if="loading" class="spinner-container">
                     <div class="spinner"></div>
@@ -970,8 +970,12 @@ h1 {
 }
 
 h2 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+    margin-left: 15px;
 }
+
 /* Modal Styling delete*/
 .dialog-container {
     display: flex;

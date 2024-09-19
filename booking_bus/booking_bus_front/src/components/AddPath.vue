@@ -502,9 +502,9 @@ body {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-size: 1.2rem;
     color: var(--clr-dark);
+    margin-bottom: 5px;
 }
 
 h2 {

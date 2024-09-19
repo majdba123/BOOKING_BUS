@@ -737,6 +737,11 @@ export default {
     --clr-dark-variant: #1f1f1f;
     --clr-color-background: #121212;
 }
+h1 {
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+}
 
 * {
     margin: 0;

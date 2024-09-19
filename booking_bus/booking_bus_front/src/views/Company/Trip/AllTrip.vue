@@ -19,7 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>Driver</h1>
+                <h1>Trip</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input

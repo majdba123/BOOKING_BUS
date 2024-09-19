@@ -660,10 +660,11 @@ body {
 }
 
 h1 {
-    font-weight: 700;
-    font-size: 2rem;
+    font-size: 1.2rem;
     color: var(--clr-dark);
+    margin-bottom: 5px;
 }
+
 
 h2 {
     font-weight: 500;
@@ -1034,7 +1035,7 @@ input:focus {
     border-radius: 10px;
     max-width: 500px;
     width: 80%;
-    height: 86%;
+    height: 50%;
     overflow-y: scroll;
     scrollbar-width: none;
     margin: 10px;
