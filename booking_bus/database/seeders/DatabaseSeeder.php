@@ -39,5 +39,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PiSeedres::class);
         $this->call(ReservationSeedres::class);
         $this->call(Seat_ReservationSeedres::class);
+        $this->call(InsuranceCostSeeder::class);
+        $this->call(MaintenanceCostSeeder::class);
     }
 }

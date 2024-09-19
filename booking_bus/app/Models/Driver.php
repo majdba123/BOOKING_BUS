@@ -28,6 +28,7 @@ class Driver extends Model
         'user_id',
         'company_id',
         'status',
+        'Wages',
 
     ];
     public function user()

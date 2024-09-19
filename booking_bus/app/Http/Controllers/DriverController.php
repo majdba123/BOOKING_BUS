@@ -56,6 +56,7 @@ class DriverController extends Controller
             'name' => ['required', 'string'],
             'email' => ['required', 'string', 'email', 'unique:users'],
             'password' => ['required', 'min:8'],
+            'Wages' => ['required|integer'],
         ], [
             'name.required' => 'Name is required',
             'email.required' => 'Email is required',
@@ -63,6 +64,7 @@ class DriverController extends Controller
             'email.unique' => 'Email has already been taken',
             'password.required' => 'Password is required',
             'password.min' => 'Password must be at least 8 characters long',
+            'Wages.required' => 'Wages filed required'
         ]);
 
         if ($validator->fails()) {
@@ -83,6 +85,7 @@ class DriverController extends Controller
         $driver = Driver::create([
             'user_id' => $id,
             'company_id' => $company_id->id,
+            'Wages' => $request->input('Wages'),
         ]);
         $drivaer_name = $driver->user->name;
 
