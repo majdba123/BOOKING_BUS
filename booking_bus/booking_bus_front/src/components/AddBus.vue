@@ -665,7 +665,6 @@ h1 {
     margin-bottom: 5px;
 }
 
-
 h2 {
     font-weight: 500;
     font-size: 1.6rem;

@@ -1120,7 +1120,7 @@ input:focus {
     background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
-    max-width: 500px;
+    max-width: 600px;
     width: 80%;
     height: 86%;
     overflow-y: scroll;
