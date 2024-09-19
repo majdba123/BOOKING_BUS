@@ -10,18 +10,17 @@
 <script>
 /* global google */
 import store from "@/store";
-import { useToast } from "vue-toastification"; // استيراد استخدام التوست
-
+import { useToast } from "vue-toastification";
 export default {
     data() {
         return {
             map: null,
             infoWindow: null,
-            toast: null, // لإدارة التوست
+            toast: null,
         };
     },
     mounted() {
-        this.toast = useToast(); // تهيئة التوست
+        this.toast = useToast();
         this.loadGoogleMapsScript();
     },
     methods: {
@@ -34,19 +33,19 @@ export default {
 
             script.onload = () => {
                 this.initAutocomplete();
-                this.toast.info("Please search for a Government."); // إشعار البحث عن Government
+                this.toast.info("Please search for a Government.");
             };
 
             script.onerror = () => {
                 console.error("Failed to load Google Maps script");
-                setTimeout(this.loadGoogleMapsScript, 3000); // إعادة التحميل بعد 3 ثوانٍ
+                setTimeout(this.loadGoogleMapsScript, 3000);
             };
         },
         initAutocomplete() {
             if (typeof google !== "undefined") {
                 this.map = new google.maps.Map(document.getElementById("map"), {
-                    center: { lat: 34.8021, lng: 38.9968 }, // إحداثيات سوريا
-                    zoom: 7, // مستوى التكبير المناسب لسوريا
+                    center: { lat: 34.8021, lng: 38.9968 },
+                    zoom: 7,
                     mapTypeId: "roadmap",
                 });
 
@@ -98,7 +97,6 @@ export default {
                             this.infoWindow.setContent(contentString);
                             this.infoWindow.open(this.map, marker);
 
-                            // تخزين البيانات في store
                             store.state.placeName = place.name;
                             store.state.lat = place.geometry.location.lat();
                             store.state.lng = place.geometry.location.lng();
@@ -117,11 +115,11 @@ export default {
                     });
                     this.map.fitBounds(bounds);
 
-                    this.toast.success("Please select the region(Click)."); // إشعار اختيار المنطقة
+                    this.toast.success("Please select the region(Click).");
                 });
             } else {
                 console.error("Google Maps not loaded yet");
-                setTimeout(this.initAutocomplete, 3000); // إعادة المحاولة بعد 3 ثوانٍ
+                setTimeout(this.initAutocomplete, 3000);
             }
         },
     },
