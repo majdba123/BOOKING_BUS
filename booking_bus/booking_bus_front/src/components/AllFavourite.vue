@@ -4,7 +4,7 @@
 
         <!-- Start recent orders -->
         <div class="recent_orders">
-            <h1>Users Who Favorited the Company</h1>
+            <h2>Users Who Favorited the Company</h2>
             <div v-if="loading" class="spinner-container">
                 <div class="spinner"></div>
             </div>
@@ -145,7 +145,8 @@ h1 {
 }
 
 h2 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    color: var(--clr-dark);
 }
 
 h3 {

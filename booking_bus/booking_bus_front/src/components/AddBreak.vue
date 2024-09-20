@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div v-if="showbreack" class="recent_orders">
-                <h1>All Breaks</h1>
+                <h2>All Breaks</h2>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -124,7 +124,7 @@
                 </div>
             </div>
             <div v-if="showbreackbypath" class="recent_orders">
-                <h1>Break By Path</h1>
+                <h2>Break By Path</h2>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -594,7 +594,12 @@ export default {
     --padding-1: 1.2rem;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
-
+h2 {
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+    margin-left: 15px;
+}
 .containerd {
     padding: 20px;
     background: var(--clr-color-background);

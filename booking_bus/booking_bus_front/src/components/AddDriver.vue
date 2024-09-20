@@ -737,6 +737,11 @@ export default {
     --clr-dark-variant: #1f1f1f;
     --clr-color-background: #121212;
 }
+h1 {
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+}
 
 * {
     margin: 0;
@@ -1115,7 +1120,7 @@ input:focus {
     background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
-    max-width: 500px;
+    max-width: 600px;
     width: 80%;
     height: 86%;
     overflow-y: scroll;

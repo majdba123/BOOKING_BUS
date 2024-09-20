@@ -19,7 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>Driver</h1>
+                <h1>Trip</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -344,10 +344,12 @@ a {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-weight: 450;
+    font-size: 2rem;
     margin-top: 20px;
     color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 h2 {

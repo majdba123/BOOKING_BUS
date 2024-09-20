@@ -16,7 +16,7 @@
 
         <!-- Start all trips table -->
         <div v-if="showAllTrips" class="recent_orders">
-            <h1>All Trips</h1>
+            <h2>All Trips</h2>
             <div class="table-container">
                 <div v-if="loading" class="spinner-container">
                     <div class="spinner"></div>
@@ -87,7 +87,7 @@
 
         <!-- Start all drivers table -->
         <div v-if="showAllDrivers" class="recent_orders">
-            <h1>All Drivers</h1>
+            <h2>All Drivers</h2>
             <div class="table-container">
                 <div v-if="loading1" class="spinner-container">
                     <div class="spinner"></div>
@@ -154,7 +154,7 @@
 
         <!-- Start ratings tables -->
         <div v-if="showTripRatings" class="recent_orders">
-            <h1>Trip Ratings</h1>
+            <h2>Trip Ratings</h2>
             <div class="table-container" v-if="showTripRatings">
                 <div v-if="loading2" class="spinner-container">
                     <div class="spinner"></div>
@@ -206,7 +206,7 @@
         </div>
 
         <div v-if="showDriverRatings" class="recent_orders">
-            <h1>Driver Ratings</h1>
+            <h2>Driver Ratings</h2>
             <div class="table-container" v-if="showDriverRatings">
                 <div v-if="loading3" class="spinner-container">
                     <div class="spinner"></div>
@@ -700,7 +700,10 @@ h1 {
 }
 
 h2 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+    margin-left: 15px;
 }
 
 .recent_orders {

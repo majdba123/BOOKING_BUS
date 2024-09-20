@@ -164,7 +164,7 @@
 
         <!-- All Rewards Page -->
         <div v-if="showAllRewards" class="recent_orders">
-            <h1>All Rewards</h1>
+            <h2>All Rewards</h2>
 
             <!-- Form for adding or editing rewards -->
             <div class="form-container">
@@ -344,7 +344,7 @@
         </div>
         <!-- All rules -->
         <div v-if="showAllRules" class="recent_orders">
-            <h1>All Cancellation Rules</h1>
+            <h2>All Cancellation Rules</h2>
 
             <div class="form-container">
                 <form @submit.prevent="addRule()">
@@ -1011,7 +1011,12 @@ export default {
     --clr-dark-variant: #1f1f1f;
     --clr-color-background: #121212;
 }
-
+h2 {
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+    margin-left: 15px;
+}
 /* Reset Styles */
 * {
     margin: 0;

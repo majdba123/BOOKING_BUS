@@ -502,14 +502,19 @@ body {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-size: 1.2rem;
     color: var(--clr-dark);
+    margin-bottom: 5px;
 }
 
 h2 {
+    font-family: sans-serif;
     font-size: 1.4rem;
     color: var(--clr-dark);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
 }
 
 .recent_orders {
