@@ -64,7 +64,7 @@
             <h3>Inquires</h3>
         </router-link>
         <router-link
-            to="AllInquires"
+            to="NotificationPage"
             @click="selectOption('Notification')"
             :class="{ active: selectedOption === 'Notification' }"
         >

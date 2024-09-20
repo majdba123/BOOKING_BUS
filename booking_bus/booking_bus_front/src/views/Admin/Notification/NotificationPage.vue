@@ -20,18 +20,8 @@
         <div class="main-content">
             <main>
                 <HeaderAdmin />
-                <div class="top-bar">
-                    <div class="date">
-                        <input
-                            type="text"
-                            placeholder="Search By Name OR Email"
-                            aria-label="Search"
-                            v-model="searchQuery"
-                        />
-                        <button @click="search">Search</button>
-                    </div>
-                </div>
-                <ShowUsers ref="ShowUsers" />
+
+                <NotificationComponent ref="notificationcomponent" />
             </main>
         </div>
         <!-- Right section start -->
@@ -49,16 +39,15 @@
 </template>
 
 <script>
-import SidebarAdmin from "@/components/SidebarAdmin.vue";
-import ShowUsers from "@/components/ShowUsers.vue";
-import router from "@/router";
-
 import store from "@/store";
+import SidebarAdmin from "@/components/SidebarAdmin.vue";
+import router from "@/router";
 import HeaderAdmin from "@/components/HeaderAdmin.vue";
+import NotificationComponent from "@/components/NotificationComponent.vue";
 
 export default {
-    name: "AllUser",
-    components: { SidebarAdmin, ShowUsers, HeaderAdmin },
+    name: "AllCompany",
+    components: { SidebarAdmin, HeaderAdmin, NotificationComponent },
     data() {
         return {
             x: store.state.x,
@@ -83,7 +72,7 @@ export default {
                     },
                 ],
             },
-            isDarkMode: false, // لإدارة حالة الوضع الداكن
+            isDarkMode: false,
         };
     },
     watch: {
@@ -94,12 +83,10 @@ export default {
     },
     methods: {
         checkToken() {
-            // الحصول على التوكن من localStorage
             const token = window.localStorage.getItem("access_token");
             const userType = window.localStorage.getItem("type_user");
 
             if (token && userType) {
-                // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
                 if (userType === "company") {
                     router.push("/HomeView");
                 } else if (userType === "user") {
@@ -119,28 +106,8 @@ export default {
                 sideMenu.style.display = "none";
             }
         },
-        toggleTheme() {
-            this.isDarkMode = !this.isDarkMode; // تغيير حالة الوضع الداكن
-            document.body.classList.toggle(
-                "dark-theme-variables",
-                this.isDarkMode
-            );
-            localStorage.setItem(
-                "darkMode",
-                this.isDarkMode ? "enabled" : "disabled"
-            ); // حفظ الحالة في localStorage
 
-            const themeToggler = this.$refs.themeToggler;
-            themeToggler
-                .querySelector("span:nth-child(1)")
-                .classList.toggle("active", !this.isDarkMode);
-            themeToggler
-                .querySelector("span:nth-child(2)")
-                .classList.toggle("active", this.isDarkMode);
-        },
-        search() {
-            // هنا يمكنك تنفيذ وظيفة البحث
-        },
+        search() {},
     },
     mounted() {
         this.checkToken();
@@ -300,16 +267,17 @@ aside .logo {
     gap: 1rem;
 }
 
-.map-container {
-    margin: 10px;
-    flex: 1;
+#menu_bar {
+    display: none;
 }
-@media screen and (max-width: 768px) {
-    .date input {
-        flex: 1;
-        width: 150px !important;
-    }
+
+.top-bar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
 }
+
 .date {
     display: flex;
     align-items: center;
@@ -319,12 +287,12 @@ aside .logo {
     padding: 9px;
     margin-top: 15px;
     margin-bottom: 15px;
-    margin-left: 10px;
+    margin-left: 47px;
 }
 
 .date input {
     flex: 1;
-    width: 1100px;
+    width: 985px;
 }
 
 .date button {
@@ -335,6 +303,7 @@ aside .logo {
     border-radius: 9px;
     cursor: pointer;
 }
+
 @keyframes gradientAnimation {
     0% {
         background-position: 0% 50%;
@@ -358,26 +327,34 @@ aside .logo {
           start right side
   ***************************** */
 .right {
-    background-color: var(--clr-color-background);
-    grid-column: span 1;
+    border-radius: 2rem 0 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .right .top {
     display: flex;
     justify-content: space-between;
-    gap: 2rem;
-    margin-left: 15px;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .right .top button {
-    display: none;
+    background: var(--clr-primary);
+    border: none;
+    border-radius: 0.5rem;
+    color: var(--clr-white);
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
-.top-bar {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    justify-content: space-between;
+
+.right .top button:hover {
+    background-color: var(--clr-primary-variant);
 }
+
 .top-bar .theme-toggler {
     display: flex;
     align-items: center;
@@ -399,21 +376,15 @@ aside .logo {
 }
 
 .right .profile {
+    position: relative;
     display: flex;
-    gap: 1rem;
     align-items: center;
+    cursor: pointer;
 }
 
 .right .profile .info p {
-    margin: 0;
+    margin-right: 1rem;
     color: var(--clr-dark);
-}
-
-.right .profile .profile-photo img {
-    width: 2.8rem;
-    height: 2.8rem;
-    border-radius: 50%;
-    overflow: hidden;
 }
 
 .right .driver_status {
@@ -552,6 +523,39 @@ select:focus {
 /**********
   media query
   ********** */
+@media screen and (max-width: 1200px) {
+    .container {
+        width: 94%;
+        grid-template-columns: 7rem auto 18rem;
+    }
+    aside .sidebar h3 {
+        display: none;
+    }
+    aside .sidebar a span.msg_count {
+        padding: 1px 4px;
+        font-size: 10px;
+        border-radius: 0.2rem;
+    }
+    aside .sidebar a:hover span {
+        margin: 0;
+    }
+    aside .top .close span {
+        display: none;
+    }
+    aside .sidebar a:last-child {
+        position: relative;
+        margin-top: 1.8rem;
+    }
+
+    main .insights {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 1.6rem;
+        padding: 40px;
+    }
+}
+
+/* Mobile Responsive */
 
 @media screen and (max-width: 1200px) {
     .container {

@@ -1782,6 +1782,17 @@ label {
 }
 
 @media (max-width: 480px) {
+    .navd {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--clr-white);
+        border-radius: 5px;
+        width: 90%;
+        padding: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-left: 1rem;
+    }
     .form-content {
         padding: 20px;
     }

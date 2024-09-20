@@ -534,6 +534,12 @@ select:focus {
 /**********
   media query
   ********** */
+@media screen and (max-width: 768px) {
+    .date input {
+        flex: 1;
+        width: 190px;
+    }
+}
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
