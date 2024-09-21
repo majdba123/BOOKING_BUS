@@ -6,6 +6,7 @@ use App\Events\PrivateNotification;
 use App\Models\Breaks;
 use App\Models\Geolocation;
 use App\Models\Path;
+use App\Models\Trip;
 use App\Models\User;
 use App\Models\UserNotification;
 use Illuminate\Http\Request;
@@ -200,6 +201,18 @@ class PathController extends Controller
                 DB::rollBack();
                 return response()->json(['error' => 'you are not owner to update path'], 403);
             }
+
+            $trips = Trip::where('path_id', $path->id)
+            ->where(function ($query) {
+                $query->where('status', 'pending')
+                      ->orWhere('status', 'finished_going');
+            })
+            ->exists();
+            if ($trips) {
+                     return response()->json(['error' => 'Cannot delete path because it has associated pending or finished trips.'], 422);
+            }
+
+            
             if ($request->has('from')) {
                 $path->from = $request->input('from');
             }
@@ -262,6 +275,15 @@ class PathController extends Controller
         $path = Path::findOrfail($path);
         if ($path->company_id !== $company) {
             return response()->json(['error' => 'you are not owner to update path'], 403);
+        }
+        $trips = Trip::where('path_id', $path->id)
+        ->where(function ($query) {
+            $query->where('status', 'pending')
+                  ->orWhere('status', 'finished_going');
+        })
+        ->exists();
+        if ($trips) {
+                 return response()->json(['error' => 'Cannot delete path because it has associated pending or finished trips.'], 422);
         }
         $path->delete();
         return response()->json([

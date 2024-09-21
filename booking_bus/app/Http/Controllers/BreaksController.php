@@ -6,6 +6,7 @@ use App\Events\PrivateNotification;
 use App\Models\Breaks;
 use App\Models\Geolocation;
 use App\Models\Path;
+use App\Models\Trip;
 use App\Models\User;
 use App\Models\UserNotification;
 use Illuminate\Support\Facades\Validator;
@@ -116,7 +117,7 @@ class BreaksController extends Controller
         $endBreak->id = $break->id + 1;
         $endBreak->save();
 
-        $massage = "  created new break  : $break->id";
+        $massage = " created new break  : $break->id";
         event(new PrivateNotification($user->id, $massage));
         UserNotification::create([
             'user_id' => $user->id,
@@ -173,6 +174,15 @@ class BreaksController extends Controller
             return response()->json(['error' => 'Cannot select this break as it is a start or end break.'], 422);
         
         }
+        $trips = Trip::where('path_id', $break->path_id)
+        ->where(function ($query) {
+            $query->where('status', 'pending')
+                  ->orWhere('status', 'finished_going');
+        })
+        ->exists();
+        if ($trips) {
+                 return response()->json(['error' => 'Cannot delete break because it has associated pending or finished trips.'], 422);
+        }
 
 
         if ($break->path->company->id !== Auth::user()->Company->id) {
@@ -221,6 +231,15 @@ class BreaksController extends Controller
         }
         if ($break->path->company_id !== Auth::user()->Company->id) {
             return response()->json(['error' => 'You are not authorized to update this break.'], 403);
+        }
+        $trips = Trip::where('path_id', $break->path_id)
+        ->where(function ($query) {
+            $query->where('status', 'pending')
+                  ->orWhere('status', 'finished_going');
+        })
+        ->exists();
+        if ($trips) {
+        return response()->json(['error' => 'Cannot delete break because it has associated pending or finished trips.'], 422);
         }
         $break->delete();
 

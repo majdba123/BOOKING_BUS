@@ -2,8 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-
+use Illuminate\Support\Str;
 return new class extends Migration
 {
     /**
@@ -23,7 +24,19 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+        DB::table('users')->insert([
+            [
+                'id' => Str::uuid(),
+                'name' => 'robert',
+                'type' => 1,
+                'email' => 'a@info.com',
+                'password' => bcrypt('12345678'),
+                'email_verified_at'=> now()
+            ]
+        ]);
     }
+    
 
     /**
      * Reverse the migrations.
