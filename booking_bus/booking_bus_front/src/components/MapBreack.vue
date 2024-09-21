@@ -307,9 +307,8 @@ export default {
 
 <style scoped>
 #map-container {
-    position: relative;
+    height: 550px;
     width: 100%;
-    height: 400px;
 }
 #map {
     height: 100%;

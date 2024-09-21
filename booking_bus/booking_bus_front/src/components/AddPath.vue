@@ -29,19 +29,19 @@
                         required
                     />
                 </div>
+                <div class="map-container">
+                    <MapPath />
+                </div>
                 <div class="submit-btnnd">
                     <button
                         type="submit"
                         @click="CreatePath"
                         class="submit-btnd"
                     >
-                        Submit
+                        ADD
                     </button>
                 </div>
             </form>
-            <div class="map-container">
-                <MapPath />
-            </div>
         </div>
 
         <div v-else class="recent_orders">
@@ -91,7 +91,7 @@
                                     <td>
                                         <button
                                             class="edit-btn"
-                                            @click="openEditModal(path, index)"
+                                            @click="openEditConfirmModal(path)"
                                         >
                                             <span class="material-icons"
                                                 >edit</span
@@ -115,41 +115,6 @@
                 </div>
             </div>
         </div>
-
-        <div v-if="showEditModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Edit Path</div>
-                <div class="modal-body">
-                    <label for="editNameStart">Name Start</label>
-                    <input
-                        type="text"
-                        id="editNameStart"
-                        v-model="editedPath.from"
-                        required
-                    />
-
-                    <label for="editNameEnd">Name End</label>
-                    <input
-                        type="text"
-                        id="editNameEnd"
-                        v-model="editedPath.to"
-                        required
-                    />
-
-                    <div class="map-containers">
-                        <MapPath />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="update-btn" @click="updatePath">
-                        Update
-                    </button>
-                    <button @click="closeEditModal" class="close-modal">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
         <div v-if="showMapModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Location on Map</div>
@@ -170,7 +135,25 @@
                 </div>
             </div>
         </div>
-
+        <div v-if="showEditConfirmModal" class="dialog-container">
+            <div class="dialog-box">
+                <div class="dialog-header">Confirm Edit</div>
+                <div class="dialog-body">
+                    Are you sure you want to edit the path?
+                    <span>Note:</span> When editing the path, the current path
+                    and all breack will be deleted, and a new path will be
+                    added.
+                </div>
+                <div class="dialog-footer">
+                    <button @click="EditConfirmedPath" class="confirm-btn">
+                        Yes
+                    </button>
+                    <button @click="closeEditConfirmModal" class="cancel-btn">
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
         <!-- Delete Confirmation Modal -->
         <div v-if="showDeleteConfirmModal" class="dialog-container">
             <div class="dialog-box">
@@ -219,8 +202,10 @@ export default {
             editedPath: { from: "", to: "" },
             editingIndex: null,
             toast: useToast(),
+            showEditConfirmModal: false,
             showDeleteConfirmModal: false,
             pathToDelete: {},
+            pathToEdit: {},
         };
     },
     mounted() {
@@ -251,83 +236,33 @@ export default {
         handleSubmit() {
             console.log("Form Submitted", this.StartPath, this.EndPath);
         },
-        CreatePath() {
+        async CreatePath() {
             const token = window.localStorage.getItem("access_token");
-            axios({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/company/path_store",
-                data: {
-                    from: this.StartPath,
-                    to: this.EndPath,
-                    lat_from: store.state.startLat,
-                    long_from: store.state.startLng,
-                    lat_to: store.state.endLat,
-                    long_to: store.state.endLng,
-                    Distance: store.state.distance,
-                },
 
-                headers: { Authorization: `Bearer ${token}` },
-            })
-                .then((response) => {
-                    if (response.status === 200) {
-                        console.log(response);
-                        this.toast.success("Path Created Successfully", {
-                            transition: "Vue-Toastification__bounce",
-                            hideProgressBar: true,
-                            closeOnClick: true,
-                            pauseOnFocusLoss: false,
-                            pauseOnHover: true,
-                            draggable: true,
-                            draggablePercent: 0.6,
-                        });
-                        this.AllPaths();
-                    }
-                })
-                .catch((error) => {
-                    console.log(
-                        "from:",
-                        this.StartPath,
-                        " to:",
-                        this.EndPath,
-                        " lat_from:",
-                        store.state.startLat,
-                        " long_from:",
-                        store.state.startLng,
-                        " lat_to:",
-                        store.state.endLat,
-                        "  long_to: ",
-                        store.state.endLng,
-                        " Distance: ",
-                        store.state.distance
-                    );
-                    this.toast.error("Error Creating Path", {
-                        transition: "Vue-Toastification__shake",
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                    });
-                    console.log(error);
+            try {
+                const response = await axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/company/path_store",
+                    data: {
+                        from: this.StartPath,
+                        to: this.EndPath,
+                        lat_from: store.state.startLat,
+                        long_from: store.state.startLng,
+                        lat_to: store.state.endLat,
+                        long_to: store.state.endLng,
+                        Distance: store.state.routeDistance || 0,
+                        lat_start: store.state.breacklat1,
+                        long_start: store.state.breacklong1,
+                        lat_end: store.state.breacklat2,
+                        long_end: store.state.breacklong2,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
-        },
-        AllPaths() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_path",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.Paths = response.data;
-                    store.state.Paths = response.data;
+
+                if (response.status === 200) {
                     console.log(response.data);
-                    this.loading = false;
-                })
-                .catch((error) => {
-                    this.toast.error("Error Getting Paths", {
-                        transition: "Vue-Toastification__shake",
+                    this.toast.success("Path Created Successfully", {
+                        transition: "Vue-Toastification__bounce",
                         hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnFocusLoss: false,
@@ -335,9 +270,85 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    console.error(error);
+
+                    await this.AllPaths();
+                }
+            } catch (error) {
+                console.log("Error during path creation:", error);
+                this.toast.error("Error Creating Path", {
+                    transition: "Vue-Toastification__shake",
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
                 });
-            this.loading = true;
+            }
+            if (
+                this.Paths &&
+                this.Paths.length > 0 &&
+                store.state.additionalBreaks.length > 0
+            ) {
+                const latestPath = this.Paths[this.Paths.length - 1];
+                console.log("Latest Path:", latestPath);
+                const latestPathId = latestPath.id;
+                console.log(latestPathId);
+                console.log(store.state.additionalBreaks[0]);
+                console.log(store.state.additionalBreaks[0].name);
+
+                for (
+                    let index = 0;
+                    index < store.state.additionalBreaks.length;
+                    index++
+                ) {
+                    const breakResponse = await axios({
+                        method: "post",
+                        url: `http://127.0.0.1:8000/api/company/store_breaks/${latestPathId}`,
+                        data: {
+                            name: store.state.additionalBreaks[index].name,
+                            lat: store.state.additionalBreaks[index].lat,
+                            long: store.state.additionalBreaks[index].lng,
+                        },
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+
+                    console.log(breakResponse.data);
+                }
+            }
+        },
+
+        async AllPaths() {
+            const access_token = window.localStorage.getItem("access_token");
+            this.loading = true; // تأكد من ضبط التحميل في البداية
+            try {
+                const response = await axios({
+                    method: "get",
+                    url: "http://127.0.0.1:8000/api/company/all_path",
+                    headers: { Authorization: `Bearer ${access_token}` },
+                });
+
+                this.Paths = response.data; // تحديث this.Paths
+                store.state.Paths = response.data; // تحديث الحالة في التخزين
+                console.log(response.data);
+            } catch (error) {
+                this.toast.error("Error Getting Paths", {
+                    transition: "Vue-Toastification__shake",
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                });
+                console.error(error);
+            } finally {
+                this.loading = false; // التأكد من إيقاف التحميل
+            }
+        },
+        openEditConfirmModal(path) {
+            this.pathToEdit = path;
+            this.showEditConfirmModal = true;
         },
         openDeleteConfirmModal(path) {
             this.pathToDelete = path;
@@ -345,6 +356,9 @@ export default {
         },
         closeDeleteConfirmModal() {
             this.showDeleteConfirmModal = false;
+        },
+        closeEditConfirmModal() {
+            this.showEditConfirmModal = false;
         },
         deleteConfirmedPath() {
             const id = this.pathToDelete.id;
@@ -385,34 +399,19 @@ export default {
                     this.closeDeleteConfirmModal();
                 });
         },
-        openEditModal(path, index) {
-            this.editedPath = { ...path };
-            this.editingIndex = index;
-            this.showEditModal = true;
-        },
-        closeEditModal() {
-            this.showEditModal = false;
-        },
-        updatePath() {
-            const id = this.editedPath.id;
+        EditConfirmedPath() {
+            const id = this.pathToEdit.id;
             const access_token = window.localStorage.getItem("access_token");
             axios({
-                method: "put",
-                url: `http://127.0.0.1:8000/api/company/path_update/${id}`,
-                data: {
-                    from: this.editedPath.from,
-                    to: this.editedPath.to,
-                    lat_from: store.state.startLat,
-                    long_from: store.state.startLng,
-                    lat_to: store.state.endLat,
-                    long_to: store.state.endLng,
-                    Distance: store.state.distance,
-                },
+                method: "delete",
+                url: `http://127.0.0.1:8000/api/company/path_delete/${id}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
-                    this.Paths[this.editingIndex] = { ...this.editedPath };
-                    this.toast.success("Path Updated Successfully", {
+                    this.Paths = this.Paths.filter(
+                        (pathItem) => pathItem.id !== id
+                    );
+                    this.toast.success("Path Deleted Successfully", {
                         transition: "Vue-Toastification__bounce",
                         hideProgressBar: true,
                         closeOnClick: true,
@@ -424,7 +423,7 @@ export default {
                     this.AllPaths();
                 })
                 .catch((error) => {
-                    this.toast.error("Error Updating Path", {
+                    this.toast.error("Error Deleting Path", {
                         transition: "Vue-Toastification__shake",
                         hideProgressBar: true,
                         closeOnClick: true,
@@ -436,13 +435,27 @@ export default {
                     console.error(error);
                 })
                 .finally(() => {
-                    this.closeEditModal();
+                    this.closeEditConfirmModal();
+                    this.showForm = true;
                 });
+        },
+
+        closeEditModal() {
+            this.showEditModal = false;
         },
     },
     computed: {
         filteredPaths() {
-            return this.Paths;
+            return store.state.Paths.filter((driver) => {
+                return (
+                    driver.from
+                        .toLowerCase()
+                        .includes(store.state.searchQuery.toLowerCase()) ||
+                    driver.to
+                        .toLowerCase()
+                        .includes(store.state.searchQuery.toLowerCase())
+                );
+            });
         },
     },
 };
@@ -691,12 +704,14 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
     background-color: var(--clr-white);
-    border-radius: var(--border-radius-3);
+    border-radius: 10px;
     width: 100%;
-    max-width: 800px;
-    margin-top: 15px;
+}
+@media screen and (max-width: 700px) {
+    .navd {
+        align-items: center;
+    }
 }
 
 .nav-btnd {
@@ -754,10 +769,8 @@ select:focus {
 /* Form and Map styling */
 .form-map-container {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 20px;
-    height: 350px;
+    flex-direction: column;
+    height: 100vh;
 }
 
 @keyframes borderColorShift {
@@ -773,20 +786,13 @@ select:focus {
 }
 
 .form-containerd {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
     padding: 20px;
-    background: var(--clr-white);
+    background-color: var(--clr-white);
     box-shadow: var(--box-shadow);
     border-radius: var(--border-radius-2);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-    border: 1px solid;
-    animation: borderColorShift 3s infinite;
+    margin-top: 20px;
+    width: 100% !important;
+    margin-bottom: 20px;
 }
 
 h2 {
@@ -821,13 +827,13 @@ input:focus {
 }
 
 .submit-btnnd {
-    margin-top: auto;
+    margin-top: 15px;
     display: flex;
     justify-content: center;
 }
 
 .submit-btnd {
-    padding: 10px 20px;
+    padding: 10px 50px;
     border: none;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
@@ -1008,18 +1014,5 @@ input:focus {
 
 .update-btn:hover {
     background-color: #489248;
-}
-
-@media screen and (max-width: 1200px) {
-    .form-map-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .form-containerd,
-    .map-container {
-        width: 100%;
-        margin-top: 20px;
-    }
 }
 </style>

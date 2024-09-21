@@ -4,265 +4,209 @@
             <button class="nav-btnd" @click="toggleshowaddbreack">
                 Add Break
             </button>
-            <button class="nav-btnd" @click="toggleshowbreack">
-                Show Break
-            </button>
+
             <button class="nav-btnd" @click="toggleshowbreackbypath">
                 Show Break By Path
             </button>
         </header>
-        <div class="content">
-            <div class="form-map-container" v-if="showaddbreack">
-                <div class="form-container">
-                    <form
-                        @submit.prevent="handleSubmit(Idgovernment)"
-                        class="break-form"
-                    >
-                        <div class="form-group">
-                            <label for="breakName">Name Break</label>
-                            <input
-                                type="text"
-                                id="breakName"
-                                placeholder="Enter Name Break"
-                                v-model="name"
-                                required
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label for="government"> Select Path </label>
-                            <select
-                                id="government"
-                                v-model="Idgovernment"
-                                @change="updateMapLocation"
-                                required
-                                class="custom-select"
+        <div class="form-map-container" v-if="showaddbreack">
+            <div class="form-containerd">
+                <form
+                    @submit.prevent="handleSubmit(Idgovernment)"
+                    class="break-form"
+                >
+                    <div class="form-group">
+                        <label for="breakName">Name Break</label>
+                        <input
+                            type="text"
+                            id="breakName"
+                            placeholder="Enter Name Break"
+                            v-model="name"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="government"> Select Path </label>
+                        <select
+                            id="government"
+                            v-model="Idgovernment"
+                            @change="updateMapLocation"
+                            required
+                            class="custom-select"
+                        >
+                            <option value="" disabled class="custom-select">
+                                Select Path
+                            </option>
+                            <option
+                                v-for="gov in governments"
+                                :key="gov.id"
+                                :value="gov.id"
                             >
-                                <option value="" disabled class="custom-select">
-                                    Select Path
-                                </option>
-                                <option
-                                    v-for="gov in governments"
-                                    :key="gov.id"
-                                    :value="gov.id"
-                                >
-                                    {{ gov.from }}>>{{ gov.to }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <div class="submit-btn">
-                            <button type="submit">ADD</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="map-container">
-                    <MapBreack
-                        :lat="this.lat"
-                        :long="this.long"
-                        :fromlat="frommapLat"
-                        :fromlng="frommapLng"
-                        :tolng="tomapLng"
-                        :tolat="tomapLat"
-                    />
-                </div>
-            </div>
-            <div v-if="showbreack" class="recent_orders">
-                <h2>All Breaks</h2>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Break Name</th>
-                                <th>Display IN Map</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(breack, index) in breaks" :key="index">
-                                <td>{{ index }}</td>
-                                <td>{{ breack.break_name }}</td>
-                                <td>
-                                    <button
-                                        class="nav-btnds"
-                                        @click="
-                                            openMapModal(
-                                                breack.id,
-                                                breack.Path_id
-                                            )
-                                        "
-                                    >
-                                        <span class="material-icons">
-                                            travel_explore
-                                        </span>
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        class="edit-btn"
-                                        @click="
-                                            openEditModal(
-                                                breack.id,
-                                                breack.Path_id
-                                            )
-                                        "
-                                    >
-                                        <span class="material-icons">edit</span>
-                                    </button>
-                                    <button
-                                        class="delete-btn"
-                                        @click="confirmDelete(breack.id)"
-                                    >
-                                        <span class="material-icons"
-                                            >delete</span
-                                        >
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div v-if="showbreackbypath" class="recent_orders">
-                <h2>Break By Path</h2>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>From</th>
-                                <th>To</th>
-                                <th>Distance</th>
-                                <th>View Break</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(breack, index) in governments"
-                                :key="index"
-                            >
-                                <td>{{ index }}</td>
-                                <td>{{ breack.from }}</td>
-                                <td>{{ breack.to }}</td>
-                                <td>{{ breack.Distance }}</td>
-                                <td>
-                                    <button
-                                        class="nav-btnds"
-                                        @click="openbreackmodel(breack.id)"
-                                    >
-                                        <span class="material-icons">
-                                            travel_explore
-                                        </span>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                {{ gov.from }}>>{{ gov.to }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="map-container">
+                        <MapBreack
+                            :lat="this.lat"
+                            :long="this.long"
+                            :fromlat="frommapLat"
+                            :fromlng="frommapLng"
+                            :tolng="tomapLng"
+                            :tolat="tomapLat"
+                        />
+                    </div>
+                    <div class="submit-btn">
+                        <button type="submit">ADD</button>
+                    </div>
+                </form>
             </div>
         </div>
-        <div v-if="showbreachpath" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Break</div>
 
+        <div v-if="showbreackbypath" class="recent_orders">
+            <h2>Break By Path</h2>
+            <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Distance</th>
+                            <th>View Break</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(bus, index) in breakbypath" :key="index">
+                        <tr v-for="(breack, index) in governments" :key="index">
                             <td>{{ index }}</td>
-                            <td>{{ bus.name }}</td>
+                            <td>{{ breack.from }}</td>
+                            <td>{{ breack.to }}</td>
+                            <td>{{ breack.Distance }}</td>
+                            <td>
+                                <button
+                                    class="nav-btnds"
+                                    @click="openbreackmodel(breack.id)"
+                                >
+                                    <span class="material-icons">
+                                        travel_explore
+                                    </span>
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+    <div v-if="showbreachpath" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Break</div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(bus, index) in breakbypath" :key="index">
+                        <td>{{ index }}</td>
+                        <td>{{ bus.name }}</td>
+                        <td>
+                            <button
+                                class="edit-btn"
+                                @click="openEditConfirmModal(bus.id)"
+                            >
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <button
+                                class="delete-btn"
+                                @click="confirmDelete(bus.id)"
+                            >
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="modal-footer">
                 <button @click="closeBusStatusModal" class="close-modal">
                     Close
                 </button>
             </div>
         </div>
-        <div v-if="showEditModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Edit Break</div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="editBreakName">Name Break</label>
-                        <input
-                            type="text"
-                            id="editBreakName"
-                            v-model="name"
-                            required
-                        />
-                    </div>
-
-                    <div class="map-container">
-                        <MapBreack
-                            :fromlat="frommapLatt"
-                            :fromlng="frommapLngt"
-                            :tolng="tomapLngt"
-                            :tolat="tomapLatt"
-                            :lat="this.lat"
-                            :long="this.long"
-                        />
-                    </div>
+    </div>
+    <div v-if="showEditModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Edit Break</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editBreakName">Name Break</label>
+                    <input
+                        type="text"
+                        id="editBreakName"
+                        v-model="name"
+                        required
+                    />
                 </div>
-                <div class="modal-footer">
-                    <button @click="updateBreak" class="update-btn">
-                        Update
-                    </button>
-                    <button @click="closeEditModal" class="close-modal">
-                        Close
-                    </button>
+
+                <div class="map-container">
+                    <MapBreack
+                        :fromlat="frommapLatt"
+                        :fromlng="frommapLngt"
+                        :tolng="tomapLngt"
+                        :tolat="tomapLatt"
+                        :lat="this.lat"
+                        :long="this.long"
+                    />
                 </div>
             </div>
-        </div>
-        <div v-if="showMapModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Location on Map</div>
-                <div class="modal-body">
-                    <div class="map-containers">
-                        <DisplayMap
-                            :fromlat="this.frommapLat"
-                            :fromlong="this.frommapLog"
-                            :tolat="this.tomapLat"
-                            :tolong="this.tomapLog"
-                            :lat="this.lat"
-                            :lng="this.long"
-                        />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button @click="closeMapModal" class="close-modal">
-                        Close
-                    </button>
-                </div>
+            <div class="modal-footer">
+                <button @click="updateBreak" class="update-btn">Update</button>
+                <button @click="closeEditModal" class="close-modal">
+                    Close
+                </button>
             </div>
         </div>
+    </div>
+    <div v-if="showMapModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Location on Map</div>
+            <div class="modal-body">
+                <div class="map-containers">
+                    <DisplayMap
+                        :fromlat="this.frommapLat"
+                        :fromlong="this.frommapLog"
+                        :tolat="this.tomapLat"
+                        :tolong="this.tomapLog"
+                        :lat="this.lat"
+                        :lng="this.long"
+                    />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeMapModal" class="close-modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
 
-        <!-- Delete Confirmation Modal -->
-        <div v-if="showConfirmDeleteModal" class="dialog-container">
-            <div class="dialog-box">
-                <div class="dialog-header">Confirm Delete</div>
-                <div class="dialog-body">
-                    Are you sure you want to delete driver with ID
-                    {{ breakIdToDelete }}?
-                </div>
-                <div class="dialog-footer">
-                    <button @click="deleteBreak" class="confirm-btn">
-                        Yes
-                    </button>
-                    <button
-                        @click="closeConfirmDeleteModal"
-                        class="close-modal"
-                    >
-                        No
-                    </button>
-                </div>
+    <!-- Delete Confirmation Modal -->
+    <div v-if="showConfirmDeleteModal" class="dialog-container">
+        <div class="dialog-box">
+            <div class="dialog-header">Confirm Delete</div>
+            <div class="dialog-body">
+                Are you sure you want to delete breack with ID
+                {{ breakIdToDelete }}?
+            </div>
+            <div class="dialog-footer">
+                <button @click="deleteBreak" class="confirm-btn">Yes</button>
+                <button @click="closeConfirmDeleteModal" class="close-modal">
+                    No
+                </button>
             </div>
         </div>
     </div>
@@ -283,6 +227,7 @@ export default {
             lat: null,
             long: null,
             breakbypath: [],
+
             showbreackbypath: false,
             showaddbreack: true,
             showbreack: false,
@@ -326,6 +271,9 @@ export default {
         return { toast };
     },
     methods: {
+        closeBusStatusModal() {
+            this.showbreachpath = false;
+        },
         toggleshowbreackbypath() {
             this.showbreackbypath = true;
             this.showaddbreack = false;
@@ -336,11 +284,7 @@ export default {
             this.showaddbreack = true;
             this.showbreack = false;
         },
-        toggleshowbreack() {
-            this.showbreackbypath = false;
-            this.showaddbreack = false;
-            this.showbreack = true;
-        },
+
         confirmDelete(id) {
             this.breakIdToDelete = id;
             this.showConfirmDeleteModal = true;
@@ -470,15 +414,16 @@ export default {
             this.showbreachpath = true;
             this.fetchBreaksbypath(id);
         },
-        fetchBreaksbypath(id) {
+        async fetchBreaksbypath(id) {
             const access_token = window.localStorage.getItem("access_token");
-            axios({
+            await axios({
                 method: "get",
                 url: `http://127.0.0.1:8000/api/company/all_breaks/${id}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     this.breakbypath = response.data;
+                    console.log(this.breakbypath);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -600,44 +545,25 @@ h2 {
     margin-bottom: 5px;
     margin-left: 15px;
 }
-.containerd {
-    padding: 20px;
-    background: var(--clr-color-background);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-}
 
 .header {
     width: 100%;
 }
 
-.content {
-    width: 100%;
-    max-width: 1200px;
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .form-map-container {
     display: flex;
-    gap: 10px;
-    background: var(--clr-white);
-    padding: 20px;
-    border-radius: var(--border-radius-3);
-    box-shadow: var(--box-shadow);
-    width: 100%;
+    flex-direction: column;
+    height: 100vh;
 }
 
-.form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    flex: 1;
+.form-containerd {
+    padding: 20px;
+    background-color: var(--clr-white);
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius-2);
+    margin-top: 20px;
+    width: 100% !important;
+    margin-bottom: 20px;
 }
 
 /* Navigation styling */
@@ -731,6 +657,7 @@ textarea:focus {
 }
 
 .submit-btn button {
+    width: 100%;
     padding: 10px 20px;
     border: none;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
@@ -763,7 +690,6 @@ textarea:focus {
     border-radius: var(--border-radius-3);
     overflow: hidden;
     padding: 10px;
-    margin-bottom: 30px;
 }
 .nav-btnds {
     padding: 4px 9px;
@@ -1061,14 +987,6 @@ table tbody tr:last-child td {
     .nav-btnd {
         width: 100%;
         margin: 5px 0;
-    }
-
-    .form-map-container {
-        flex-direction: column;
-    }
-
-    .form-container {
-        width: 100%;
     }
 
     .map-container {

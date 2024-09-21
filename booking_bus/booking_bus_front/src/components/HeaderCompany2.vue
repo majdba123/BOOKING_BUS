@@ -18,20 +18,73 @@
                     </div>
                 </div>
             </div>
-            <div class="profile-menu"></div>
+            <div class="profile-menu">
+                <div class="theme-notification-container">
+                    <div
+                        class="theme-toggler"
+                        ref="themeToggler"
+                        @click="toggleTheme"
+                    >
+                        <span class="material-icons active">light_mode</span>
+                        <span class="material-icons">dark_mode</span>
+                    </div>
+                    <div
+                        class="notification-icon"
+                        @click="toggleNotificationsMenu"
+                    >
+                        <span class="material-icons">notifications</span>
+                        <!-- Notification count badge -->
+                        <span
+                            v-if="notifications.length"
+                            class="notification-badge"
+                        >
+                            {{ notifications.length }}
+                        </span>
+                        <div
+                            v-if="showNotificationsMenu"
+                            class="notifications-dropdown"
+                        >
+                            <ul>
+                                <li
+                                    v-for="notification in notifications"
+                                    :key="notification.id"
+                                >
+                                    {{ this.messages }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
+                    </div>
+                    <div class="profile-photo">
+                        <photo @click="toggleProfileMenu" />
+                        <ul v-if="showProfileMenu" class="dropdown-menu show">
+                            <li @click="goToProfile">Go to Profile</li>
+                            <li @click="logout">Logout</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 </template>
 
 <script>
+import photo from "@/components/photo.vue";
 import store from "@/store";
-import { mapGetters } from "vuex";
-
+import Pusher from "pusher-js";
 export default {
-    name: "HeaderCompany",
-    components: {},
+    name: "HeaderCompany2",
+    components: { photo },
     data() {
         return {
+            messages: "",
+            id: null,
             x: store.state.x,
             showProfileMenu: false,
             profileImage: "",
@@ -44,10 +97,35 @@ export default {
             },
         };
     },
-    computed: {
-        ...mapGetters(["getCompanyName"]),
-    },
     methods: {
+        initializePusher() {
+            Pusher.logToConsole = true;
+            const pusher = new Pusher("7342c00647f26084d14f", {
+                cluster: "ap2",
+                authEndpoint: "/pusher/auth",
+                auth: {
+                    params: {
+                        userId: this.id,
+                    },
+                },
+            });
+
+            const channel = pusher.subscribe(
+                `notification-private-channel-${this.id}`
+            );
+            console.log("Pusher Channel:", channel);
+
+            channel.bind("PrivateNotification", (data) => {
+                const notification = data.message;
+                this.$store.commit("ADD_NOTIFICATION", notification);
+                this.messages = notification;
+                console.log("Notification:", this.messages);
+                if (this.messages != null) {
+                    this.notifications = ["1"];
+                }
+            });
+        },
+
         toggleProfileMenu() {
             this.showProfileMenu = !this.showProfileMenu;
             if (this.showProfileMenu) {
@@ -122,12 +200,10 @@ export default {
                 }
             }
         },
-        fetchNotifications() {
-            this.notifications = [
-                { id: 1, message: "New user registered" },
-                { id: 2, message: "System update available" },
-            ];
-        },
+        fetchNotifications() {},
+    },
+    watch() {
+        this.messages;
     },
     mounted() {
         this.updateDateTime();
@@ -269,6 +345,12 @@ small {
 .date button:hover {
     background-color: var(--clr-primary-variant);
     transition: 0.4s ease-in;
+}
+main {
+    justify-content: space-around;
+    padding: 20px;
+    border-end-end-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
 
 .profile-menu {
@@ -459,16 +541,14 @@ small {
 }
 
 /* Adding a subtle fade-in animation */
-
-@keyframes borderShift {
-    0% {
-        border-image-source: linear-gradient(to right, yellow, blue);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
     }
-    50% {
-        border-image-source: linear-gradient(to left, yellow, blue);
-    }
-    100% {
-        border-image-source: linear-gradient(to right, yellow, blue);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 .datetime-container {
@@ -485,8 +565,9 @@ small {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
+
 .time {
     display: flex;
     gap: 1rem;

@@ -1,6 +1,6 @@
 <template>
     <main>
-        <HeaderCompany />
+        <HeaderCompany2 />
         <StatisticsCompany />
         <!-- End insights -->
 
@@ -10,7 +10,7 @@
 <script>
 import store from "@/store";
 import StatisticsCompany from "./StatisticsCompany.vue";
-import HeaderCompany from "./HeaderCompany.vue";
+import HeaderCompany2 from "./HeaderCompany2.vue";
 
 export default {
     name: "MainCompany",
@@ -45,7 +45,7 @@ export default {
         },
     },
     mounted() {},
-    components: { StatisticsCompany, HeaderCompany },
+    components: { StatisticsCompany, HeaderCompany2 },
 };
 </script>
 <style>

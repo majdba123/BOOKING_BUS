@@ -19,7 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>Driver</h1>
+                <HeaderCompany />
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -71,20 +71,7 @@
             <!--start driver_status-->
             <div class="datetime-container">
                 <div class="dateright">{{ currentDateTime.date }}</div>
-                <div class="time">
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[0] }}
-                        <span>hour</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[1] }}
-                        <span>minutes</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[2] }}
-                        <span>seconds</span>
-                    </div>
-                </div>
+                <div class="time"></div>
             </div>
 
             <div class="driver_chart">
@@ -104,10 +91,17 @@ import photo from "@/components/photo.vue";
 import store from "@/store";
 import router from "@/router";
 import { mapGetters } from "vuex";
+import HeaderCompany from "@/components/HeaderCompany.vue";
 
 export default {
     name: "AllDriver",
-    components: { SidebarCompany, AddDriver, DriverChart, photo },
+    components: {
+        SidebarCompany,
+        AddDriver,
+        DriverChart,
+        photo,
+        HeaderCompany,
+    },
     data() {
         return {
             x: store.state.x,
@@ -486,12 +480,15 @@ aside .logo {
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 15px;
-    margin-left: 10px;
+    margin-bottom: 15px;
+    margin-left: 47px;
 }
 
 .date input {
     flex: 1;
+    width: 773px;
 }
+
 .date button {
     padding: 0.5rem 1rem;
     border: none;
@@ -499,6 +496,12 @@ aside .logo {
     color: var(--clr-white);
     border-radius: 9px;
     cursor: pointer;
+}
+@media screen and (max-width: 768px) {
+    .date input {
+        flex: 1;
+        width: 190px;
+    }
 }
 @keyframes gradientAnimation {
     0% {

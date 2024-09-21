@@ -52,7 +52,7 @@
                         @click="CreateDriver"
                         class="submit-btnd"
                     >
-                        Submit
+                        ADD
                     </button>
                 </div>
             </form>
@@ -86,7 +86,7 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(user, index) in paginatedDrivers"
+                                    v-for="(user, index) in filteredDrivers"
                                     :key="index"
                                 >
                                     <td>{{ user.id }}</td>
@@ -447,8 +447,15 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    this.toast.error("Email is already registered.");
-                    console.log(error);
+                    if (this.name.length == 0)
+                        this.toast.error(error.response.data.error.name[0]);
+
+                    if (this.email.length == 0)
+                        this.toast.error(error.response.data.error.email[0]);
+
+                    if (this.password.length <= 0)
+                        this.toast.error(error.response.data.error.password[0]);
+                    this.toast.error(error.response.data.error.email[0]);
                 });
         },
         CancelDriver(driverId) {
@@ -463,7 +470,7 @@ export default {
                     this.AllDriver();
                 })
                 .catch((error) => {
-                    this.toast.error("Error cancelling driver.");
+                    this.toast.error(error.response.data.error);
                     console.error(error);
                 });
         },
@@ -476,6 +483,12 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
+                    store.state.Driver = response.data.sort((a, b) => {
+                        if (a.name < b.name) return -1;
+                        if (a.name > b.name) return 1;
+                        return 0;
+                    });
+
                     this.Driver = response.data.sort((a, b) => {
                         if (a.name < b.name) return -1;
                         if (a.name > b.name) return 1;
@@ -537,11 +550,9 @@ export default {
                 .then(() => {
                     console.log("Selection Complete for Bus ID:", busId);
                     this.toast.success("Driver assigned to bus successfully!");
-
-                    localStorage.setItem(`driver_${userId}_busId`, busId);
                 })
                 .catch((error) => {
-                    this.toast.error("Error assigning driver to bus.");
+                    this.toast.error(error.response.data.error);
                     console.error("Error for Bus ID:", busId, error);
                 });
         },
@@ -670,7 +681,7 @@ export default {
         paginatedDrivers() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
             const end = start + this.itemsPerPage;
-            return this.Driver.slice(start, end);
+            return store.state.Driver.slice(start, end);
         },
         totalPages() {
             return Math.ceil(this.Driver.length / this.itemsPerPage);
@@ -996,15 +1007,14 @@ select:focus {
     background-color: #f44336;
 }
 /* Navigation styling */
+
 .navd {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
     background-color: var(--clr-white);
-    border-radius: var(--border-radius-3);
+    border-radius: 10px;
     width: 100%;
-    max-width: 800px;
 }
 
 .nav-btnd {
@@ -1053,6 +1063,8 @@ select:focus {
     max-width: 500px;
     width: 100%;
     margin-top: 50px;
+    margin-bottom: 0px !important;
+
     transition: background-color 0.3s ease;
 }
 
@@ -1120,11 +1132,12 @@ input:focus {
     background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
-    max-width: 600px;
+    max-width: 500px;
     width: 80%;
-    height: 86%;
+    height: 50%;
     overflow-y: scroll;
     scrollbar-width: none;
+    margin: 10px;
 }
 
 .modal-content::-webkit-scrollbar {
