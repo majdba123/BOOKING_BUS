@@ -58,7 +58,7 @@
                 <div class="profile">
                     <div class="info">
                         <h2>
-                            <p><b>ADMIN</b></p>
+                            <b>ADMIN</b>
                         </h2>
                     </div>
                 </div>
@@ -296,12 +296,17 @@ a {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-weight: 450;
+    font-size: 2rem;
+    margin-top: 20px;
+    color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
     font-size: 1.4rem;
+    color: var(--clr-dark);
 }
 
 h3 {

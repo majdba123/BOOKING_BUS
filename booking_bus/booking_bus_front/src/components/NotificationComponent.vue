@@ -4,7 +4,7 @@
             <div class="container">
                 <div
                     v-for="Not in Notification"
-                    :key="index"
+                    :key="Not.id"
                     class="post-container"
                 >
                     <div class="post">

@@ -69,7 +69,7 @@
             :class="{ active: selectedOption === 'Notification' }"
         >
             <span class="material-icons" aria-label="Notification"
-                >comment</span
+                >notifications</span
             >
             <h3>Notification</h3>
         </router-link>
