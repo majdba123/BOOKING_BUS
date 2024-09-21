@@ -105,7 +105,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Id</th>
                         <th>Name</th>
                         <th>Action</th>
                     </tr>
