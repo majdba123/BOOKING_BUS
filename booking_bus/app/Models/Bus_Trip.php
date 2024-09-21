@@ -27,6 +27,8 @@ class Bus_Trip extends Model
         'type',
         'date_start',
         'date_end',
+        'pricing_id',
+        'pricing_type',
         'event',
     ];
     public function Reservation()
@@ -45,5 +47,10 @@ class Bus_Trip extends Model
     public function trip()
     {
         return $this->belongsTo(Trip::class, 'trip_id');
+    }
+    //polymorphic Reation
+    public function pricing()
+    {
+        return $this->morphTo();
     }
 }

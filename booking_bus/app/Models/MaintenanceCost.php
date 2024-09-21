@@ -13,4 +13,9 @@ class MaintenanceCost extends Model
         'cost',
         'maintenance_date',
     ];
+
+    public function bus()
+    {
+        return $this->belongsTo(Bus::class);
+    }
 }

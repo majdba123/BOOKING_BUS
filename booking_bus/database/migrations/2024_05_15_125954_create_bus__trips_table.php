@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Bus;
 use App\Models\Trip;
+
 return new class extends Migration
 {
     /**
@@ -22,6 +23,8 @@ return new class extends Migration
             $table->string('to_time_return');
             $table->string('date_start');
             $table->string('date_end');
+            $table->unsignedBigInteger('pricing_id');
+            $table->string('pricing_type');
             $table->softDeletes();
             $table->string('status')->default('pending');
             $table->enum('type', ['all', 'going'])->default('all');

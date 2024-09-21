@@ -32,8 +32,9 @@ use App\Http\Controllers\CancellationRuleController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\UserNotificationController;
 use App\Events\tripgeolocationEvent;
-
-
+use App\Http\Controllers\DaynmicPricingController;
+use App\Http\Controllers\InsuranceCostController;
+use App\Http\Controllers\MaintenanceCostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +52,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('get_geolocation/{id}' ,[AreaController::class , 'get_geolocation']);
+Route::post('get_geolocation/{id}', [AreaController::class, 'get_geolocation']);
 
 Route::post('register', [UserApiController::class, 'register']);
 Route::post('login', [UserApiController::class, 'login']);
@@ -165,7 +166,9 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     Route::post('/get_profit_trip/{bus_trip_id}', [DashboardController::class, 'get_profit_trip']);
     Route::post('/user_infomation_id/{user_id}', [DashboardController::class, 'user_info']);
 
-    Route::prefix('rewards')->group(function () {   //hamza
+
+    //hamza
+    Route::prefix('rewards')->group(function () {
         Route::get('/', [RewardController::class, 'index']);
         Route::get('/{id}', [RewardController::class, 'show']);
         Route::post('/store', [RewardController::class, 'store']);
@@ -181,6 +184,23 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     });
 
     Route::post('/get_profit_1', [DashboardController::class, 'getPriceData']);
+    //hamza
+    Route::post('/calculateKm', action: [DaynmicPricingController::class, 'calculateKm']);
+    Route::post('/pricingMethod', action: [DaynmicPricingController::class, 'pricingMethod']);
+    Route::prefix('insurance-costs')->group(function () {
+        Route::get('/', [InsuranceCostController::class, 'index']); // List all insurance costs
+        Route::post('/store', [InsuranceCostController::class, 'store']); // Create a new insurance cost
+        Route::get('/{id}', [InsuranceCostController::class, 'show']); // Show a specific insurance cost by ID
+        Route::put('/{id}', [InsuranceCostController::class, 'update']); // Update an insurance cost by ID
+        Route::delete('/{id}', [InsuranceCostController::class, 'destroy']); // Delete an insurance cost by ID
+    });
+    Route::prefix('maintenance-costs')->group(function () {
+        Route::get('/', [MaintenanceCostController::class, 'index']); // List all maintenance costs
+        Route::post('/store', [MaintenanceCostController::class, 'store']); // Create a new maintenance cost
+        Route::get('/{id}', [MaintenanceCostController::class, 'show']); // Show a specific maintenance cost by ID
+        Route::put('/{id}', [MaintenanceCostController::class, 'update']); // Update a maintenance cost by ID
+        Route::delete('/{id}', [MaintenanceCostController::class, 'destroy']); // Delete a maintenance cost by ID
+    });
 });
 
 

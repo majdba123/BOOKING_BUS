@@ -24,7 +24,7 @@ class TripFactory extends Factory
             'company_id' => Company::factory(), // create a company for each trip
             'path_id' => Path::factory(), // create a path for each trip
             'status' => 'pending',
-            'price' => '20', // random price between 0 and 99999
+            // 'price' => '20', // random price between 0 and 99999
         ];
     }
 }

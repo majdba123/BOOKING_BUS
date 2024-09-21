@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(Path::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->softDeletes();
             $table->string('status')->default('pending');
-            $table->string('price');
+            // $table->string('price');
             $table->timestamps();
         });
     }

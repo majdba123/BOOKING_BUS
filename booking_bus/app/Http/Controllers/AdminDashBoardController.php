@@ -208,7 +208,7 @@ class AdminDashBoardController extends Controller
                     'id' => $busTrip->id,
                     'from' => $busTrip->trip->path->from,
                     'to' => $busTrip->trip->path->to,
-                    'price_trip' => $busTrip->trip->price,
+                    'price_trip' => $busTrip->pricing->cost,
                     'from_time' => $busTrip->from_time,
                     'to_time' => $busTrip->to_time,
                     'date' => $busTrip->date,
@@ -233,7 +233,7 @@ class AdminDashBoardController extends Controller
                 'id' => $busTrip->id,
                 'from' => $busTrip->trip->path->from,
                 'to' => $busTrip->trip->path->to,
-                'price_trip' => $busTrip->trip->price,
+                'price_trip' => $busTrip->pricing->cost,
                 'from_time_going' => $busTrip->from_time_going,
                 'to_time_going' => $busTrip->to_time_going,
                 'from_time_return' => $busTrip->from_time_return,
@@ -291,7 +291,7 @@ class AdminDashBoardController extends Controller
                     'id' => $busTrip->id,
                     'from' => $busTrip->trip->path->from,
                     'to' => $busTrip->trip->path->to,
-                    'price_trip' => $busTrip->trip->price,
+                    'price_trip' => $busTrip->pricing->cost,
                     'from_time_going' => $busTrip->from_time_going,
                     'to_time_going' => $busTrip->to_time_going,
                     'from_time_return' => $busTrip->from_time_return,
@@ -605,7 +605,7 @@ class AdminDashBoardController extends Controller
                 $busTripData = [
 
                     'bus_id' => $busTrip->bus_id,
-                    'price_trip' => $busTrip->trip->price,
+                    'price_trip' => $busTrip->pricing->cost,
                     'from_time_going' => $busTrip->from_time_going,
                     'to_time_going' => $busTrip->to_time_going,
                     'from_time_return' => $busTrip->from_time_return,
@@ -690,7 +690,7 @@ class AdminDashBoardController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'price_trip' => $busTrip->trip->price,
+                'price_trip' => $busTrip->pricing->cost,
                 'from_time_going' => $busTrip->from_time_going,
                 'to_time_going' => $busTrip->to_time_going,
                 'from_time_return' => $busTrip->from_time_return,
@@ -792,7 +792,7 @@ class AdminDashBoardController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'price_trip' => $busTrip->trip->price,
+                'price_trip' => $busTrip->pricing->cost,
                 'from_time_going' => $busTrip->from_time_going,
                 'to_time_going' => $busTrip->to_time_going,
                 'from_time_return' => $busTrip->from_time_return,
@@ -1123,7 +1123,7 @@ class AdminDashBoardController extends Controller
     {
         $admin_id = Auth::user()->id;
         // $key = 'dashboard_company_' . $company->id;
-        $key = 'dashboard_Admin_'.$admin_id;
+        $key = 'dashboard_Admin_' . $admin_id;
         if (Cache::has($key)) {
 
             $dash = Cache::get($key);

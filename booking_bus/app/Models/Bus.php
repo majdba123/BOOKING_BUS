@@ -62,4 +62,12 @@ class Bus extends Model
     {
         return $this->reservations()->count();
     }
+    public function insuranceCosts()
+    {
+        return $this->hasMany(InsuranceCost::class);
+    }
+    public function maintenanceCosts()
+    {
+        return $this->hasMany(MaintenanceCost::class);
+    }
 }

@@ -17,6 +17,7 @@ class Path extends Model
     ];
 
     protected $fillable = [
+        'id',
         'company_id',
         'from',
         'from_location',

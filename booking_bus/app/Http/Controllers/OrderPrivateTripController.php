@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Events\PrivateNotification;
+use App\Models\CappingPricingModel;
+use App\Models\DecreasingProportionalModel;
+use App\Models\FixedPricingModel;
 use App\Models\Order_Private_trip;
 use App\Models\Private_trip;
+use App\Models\ProportionalPricingModel;
 use App\Models\UserNotification;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +25,8 @@ class OrderPrivateTripController extends Controller
     public function index($private_trip_id)
     {
         $orderPrivateTrips = Order_Private_trip::where('private_trip_id', $private_trip_id)
-                                              ->where('status', 'pending')
-                                              ->get();
+            ->where('status', 'pending')
+            ->get();
 
         return response()->json($orderPrivateTrips);
     }
@@ -41,19 +46,19 @@ class OrderPrivateTripController extends Controller
 
         // Get the authenticated user
         $user = Auth::user();
-            // Check if the user is the same as the owner of the private trip
+        // Check if the user is the same as the owner of the private trip
 
         if ($user->id != $orderPrivate->private_trip->user->id) {
             return response()->json(['error' => 'You cannot accept your own private trip'], 403);
         }
 
         // Check if the user has enough points
-        if ($user->point < $orderPrivate->price) {
+        if ($user->point < $orderPrivate->pricing->cost) {
             return response()->json(['error' => 'You do not have enough points'], 403);
         }
 
         // Calculate the points to be deducted from the user
-        $pointsToDeduct = $orderPrivate->price;
+        $pointsToDeduct = $orderPrivate->pricing->cost;
         $user->point -= $pointsToDeduct;
         $user->save();
 
@@ -62,7 +67,7 @@ class OrderPrivateTripController extends Controller
         $companyUser->point += $pointsToDeduct;
         $companyUser->save();
 
-        
+
         $massage = " User accept your for its  private trip  your order private $orderPrivate->id ";
         event(new PrivateNotification($companyUser->id, $massage));
         UserNotification::create([
@@ -80,9 +85,9 @@ class OrderPrivateTripController extends Controller
         $orderPrivate->save();
         $orderPrivate->private_trip->save();
         $otherOrderPrivates = Order_Private_trip::where('private_trip_id', $orderPrivate->private_trip_id)
-        ->where('status', 'pending')
-        ->get();
-    // Cancel all other order privates with status "pending"
+            ->where('status', 'pending')
+            ->get();
+        // Cancel all other order privates with status "pending"
         foreach ($otherOrderPrivates as $otherOrderPrivate) {
             $otherOrderPrivate->status = 'cancelled';
             $otherOrderPrivate->save();
@@ -97,28 +102,33 @@ class OrderPrivateTripController extends Controller
     public function store(Request $request, $private_trip_id)
     {
         DB::beginTransaction();
-    
+
         try {
             $validatedData = $request->validate([
-                'price' => 'required|numeric',
+
+                'pricing_type' => 'required|string',
             ]);
-    
+
             $company_id = Auth::user()->Company->id;
-    
+
             if (Order_Private_trip::where('company_id', $company_id)
                 ->where('private_trip_id', $private_trip_id)
-                ->exists()) {
+                ->exists()
+            ) {
                 DB::rollBack();
                 return response()->json(['error' => 'Company has already accepted this private trip'], 422);
             }
-    
+
             $privateTrip = Private_trip::findOrFail($private_trip_id);
-    
+
             $order = new Order_Private_trip();
             $order->private_trip_id = $privateTrip->id;
             $order->company_id = $company_id;
-            $order->price = $request->input('price');
-    
+            $pricingModelInstance = $this->createPricingModel($request->input('pricing_type'), $request);
+            $order->pricing()->associate($pricingModelInstance); //polymorphic reation   hamza
+            $order->save();
+            // $order->price = $request->input('price');
+
             $company_name = Auth::user()->Company;
             $massage = " company $company_name->name accept your private trip ";
             event(new PrivateNotification($privateTrip->user->id, $massage));
@@ -127,9 +137,9 @@ class OrderPrivateTripController extends Controller
                 'notification' => $massage,
             ]);
             $order->save();
-    
+
             DB::commit();
-    
+
             return response()->json($order);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -169,5 +179,43 @@ class OrderPrivateTripController extends Controller
     public function destroy(Order_Private_trip $order_Private_trip)
     {
         //
+    }
+    public function createPricingModel($pricingType, Request $request)
+    {
+        switch ($pricingType) {
+            case 'fixed':
+                // Create FixedPricingModel
+                return FixedPricingModel::create([
+                    'cost' => $request->input('cost'),
+                ]);
+
+            case 'proportional':
+                // Create ProportionalPricingModel
+                return ProportionalPricingModel::create([
+                    'RatePerKm' => $request->input('rate_of_km'),
+                    'cost' => $request->input('cost'),
+                ]);
+
+            case 'decreasing':
+                // Create DecreasingProportionalModel
+                return DecreasingProportionalModel::create([
+                    'number_of_station' => $request->input('number_of_station'),
+                    'Rate_of_Km' => $request->input('rate_of_km'),
+                    'min_price_for_Km' => $request->input('min_price_for_km'),
+                    'cost' => $request->input('cost'),
+                ]);
+
+            case 'capping':
+                // Create CappingPricingModel
+                return CappingPricingModel::create([
+                    'number_of_station' => $request->input('number_of_station'),
+                    'Rate_of_Km' => $request->input('rate_of_km'),
+                    'max_price_for_Km' => $request->input('max_price_for_km'),
+                    'cost' => $request->input('cost'),
+                ]);
+
+            default:
+                throw new Exception("Invalid pricing type");
+        }
     }
 }
