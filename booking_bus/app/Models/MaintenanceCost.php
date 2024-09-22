@@ -12,6 +12,7 @@ class MaintenanceCost extends Model
         'bus_id',
         'cost',
         'maintenance_date',
+        'description',
     ];
 
     public function bus()

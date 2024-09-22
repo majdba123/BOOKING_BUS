@@ -32,7 +32,7 @@ return new class extends Migration
         $user = User::create([
             'name' => 'Driver User',
             'email' => 'd@gmail.com',
-            'password' => Hash::make('12345689'),
+            'password' => Hash::make('123456789'),
         ]);
 
         // Fetch a company (you may need to adjust this based on your logic)

@@ -29,7 +29,7 @@ return new class extends Migration
         $user = User::create([
             'name' => 'Company Owner',
             'email' => 'c@gmail.com',
-            'password' => Hash::make('12345689'),
+            'password' => Hash::make('123456789'),
         ]);
 
         // Create a company associated with the user

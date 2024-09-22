@@ -15,6 +15,7 @@ class Bus_Trip extends Model
     ];
     protected $table = 'bus__trips';
 
+
     protected $fillable = [
         'id',
         'trip_id',
@@ -48,9 +49,6 @@ class Bus_Trip extends Model
     {
         return $this->belongsTo(Trip::class, 'trip_id');
     }
-    //polymorphic Reation
-    public function pricing()
-    {
-        return $this->morphTo();
-    }
+    
+
 }

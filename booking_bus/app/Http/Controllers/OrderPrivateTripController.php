@@ -27,7 +27,11 @@ class OrderPrivateTripController extends Controller
         $orderPrivateTrips = Order_Private_trip::where('private_trip_id', $private_trip_id)
             ->where('status', 'pending')
             ->get();
-
+        if ($orderPrivateTrips->isEmpty()) {
+            return response()->json([
+                'message' => 'No companies have accepted the order yet.'
+            ],); // You can choose a different status code if needed
+        }
         return response()->json($orderPrivateTrips);
     }
 

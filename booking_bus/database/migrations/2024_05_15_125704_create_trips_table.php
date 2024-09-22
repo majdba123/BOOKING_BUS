@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Company;
 use App\Models\Path;
+
 return new class extends Migration
 {
 
@@ -16,6 +17,8 @@ return new class extends Migration
             $table->foreignIdFor(Path::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->softDeletes();
             $table->string('status')->default('pending');
+            $table->unsignedBigInteger('pricing_id');
+            $table->string('pricing_type');
             // $table->string('price');
             $table->timestamps();
         });

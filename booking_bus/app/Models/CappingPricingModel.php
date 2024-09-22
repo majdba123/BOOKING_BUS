@@ -11,6 +11,6 @@ class CappingPricingModel extends Model
     protected $fillable = ['number_of_station', 'Rate_of_Km', 'max_price_for_Km', 'cost'];
     public function busTrips()
     {
-        return $this->morphMany(Bus_Trip::class, 'pricingModel');
+        return $this->morphMany(Trip::class, 'pricingModel');
     }
 }

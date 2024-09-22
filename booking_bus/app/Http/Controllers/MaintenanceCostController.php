@@ -18,10 +18,9 @@ class MaintenanceCostController extends Controller
                 return response()->json(['error' => 'Unauthorized. No company associated with the user.'], 403);
             }
 
-            $maintenanceCosts = MaintenanceCost::with('bus')
-                ->whereHas('bus', function ($query) use ($company) {
-                    $query->where('company_id', $company->id);
-                })
+            $maintenanceCosts = MaintenanceCost::whereHas('bus', function ($query) use ($company) {
+                $query->where('company_id', $company->id);
+            })
                 ->get();
 
             return response()->json($maintenanceCosts);
@@ -43,6 +42,7 @@ class MaintenanceCostController extends Controller
                 'bus_id' => 'required|exists:buses,id',
                 'cost' => 'required|numeric',
                 'maintenance_date' => 'required|date',
+                'description' => 'required|String'
             ]);
 
             $bus = Bus::where('id', $validatedData['bus_id'])
@@ -54,7 +54,9 @@ class MaintenanceCostController extends Controller
             }
 
             $maintenanceCost = MaintenanceCost::create($validatedData);
-            return response()->json($maintenanceCost, 201);
+            return response()->json([
+                'message' => 'Maintenance Cost add it successfully.'
+            ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
@@ -68,10 +70,9 @@ class MaintenanceCostController extends Controller
                 return response()->json(['error' => 'Unauthorized. No company associated with the user.'], 403);
             }
 
-            $maintenanceCost = MaintenanceCost::with('bus')
-                ->whereHas('bus', function ($query) use ($company) {
-                    $query->where('company_id', $company->id);
-                })
+            $maintenanceCost = MaintenanceCost::whereHas('bus', function ($query) use ($company) {
+                $query->where('company_id', $company->id);
+            })
                 ->findOrFail($id);
 
             return response()->json($maintenanceCost);
@@ -107,7 +108,9 @@ class MaintenanceCostController extends Controller
             }
 
             $maintenanceCost->update($validatedData);
-            return response()->json($maintenanceCost);
+            return response()->json([
+                'message' => ' Update successfully.'
+            ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
@@ -127,7 +130,7 @@ class MaintenanceCostController extends Controller
             })->findOrFail($id);
 
             $maintenanceCost->delete();
-            return response()->json(null, 204);
+            return response()->json(['message' => 'deleted successfully  '], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }

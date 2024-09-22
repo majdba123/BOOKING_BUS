@@ -78,7 +78,7 @@ class FavouriteController extends Controller
 
         // Get the authenticated user
         $user = Auth::user();
-        $recentFavourite = $user->favourite->where('company_id', $company_id)->latest()->first();
+        $recentFavourite = $user->favourite->where('company_id', $company_id)-> first();
 
         if ($recentFavourite && $recentFavourite->created_at->gt(now()->subMinutes(10))) {
 
@@ -136,7 +136,7 @@ class FavouriteController extends Controller
                 'user_name' => $user->name,
                 'user_id' => $favourite->user->id,
                 'company_id' => $favourite->company->id,
-                'company_name' => $favourite->company->name,
+                'company_name' => $favourite->company->user->name,
             ];
         }
 

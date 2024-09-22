@@ -4,10 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Bus;
 use App\Models\Bus_Trip;
-use App\Models\CappingPricingModel;
-use App\Models\DecreasingProportionalModel;
-use App\Models\FixedPricingModel;
-use App\Models\ProportionalPricingModel;
+
 use App\Models\Trip;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -36,13 +33,7 @@ class Bus_TripFactory extends Factory
             'from_time_return' => $this->faker->time,
             'date_start' => $this->faker->date,
             'date_end' => $this->faker->date,
-            'pricing_id'           => $this->faker->randomFloat(2, 50, 1000), // Random price
-            'pricing_type'    => $this->faker->randomElement([
-                FixedPricingModel::class,
-                ProportionalPricingModel::class,
-                DecreasingProportionalModel::class,
-                CappingPricingModel::class
-            ]),
+
             'type' => $this->faker->randomElement(['all', 'going']),
             'event' => $this->faker->word,
         ];

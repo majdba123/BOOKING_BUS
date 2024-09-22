@@ -12,6 +12,6 @@ class ProportionalPricingModel extends Model
 
     public function busTrips()
     {
-        return $this->morphMany(Bus_Trip::class, 'pricingModel');
+        return $this->morphMany(Trip::class, 'pricingModel');
     }
 }

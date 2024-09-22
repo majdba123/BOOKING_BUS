@@ -24,7 +24,7 @@ class ChargeBalanceController extends Controller
     public function index()
     {
         $chargeBalances = Charge_Balance::where('status', 'pending')->get();
-    
+
         $data = [];
         foreach ($chargeBalances as $chargeBalance) {
             $key = 'charge_balance_' . $chargeBalance->id; // Create a unique cache key for each charge balance
@@ -81,22 +81,21 @@ class ChargeBalanceController extends Controller
             $imageUrl = asset('storage/order_balance/' . $imageName);
             $user = auth()->user();
             // Create Post
-            $chargeBalance = Charge_Balance::create($request->all());
-            $key = 'charge_balance_' . $chargeBalance->id;
-            Cache::put($key, [
-                'id' => $chargeBalance->id,
-                'user_id' => $chargeBalance->user_id,
-                'point' => $chargeBalance->point,
-                'image' => $chargeBalance->image,
-                'status' => $chargeBalance->status,
-            ], now()->addMinutes(30)); // Cache for 30 minutes
+            Charge_Balance::create([
+                'user_id' => $user->id,
+                'image' => $imageUrl,
+                'point' => $request->point
+            ]);
+
             // Save Image in Storage folder
             $request->image->storeAs('public/order_balance', $imageName);
+
             // Return Json Response
             return response()->json([
                 'message' => "Post successfully created."
             ], 200);
         } catch (\Exception $e) {
+            // print($e);
             // Return Json Response
             return response()->json([
                 'message' => "Something went really wrong!"
@@ -185,11 +184,11 @@ class ChargeBalanceController extends Controller
         } else {
             // If the cache key doesn't exist, retrieve the data from the database
             $chargeBalance = Charge_Balance::find($id);
-    
+
             if (!$chargeBalance) {
                 return response()->json(['error' => 'Not found'], 404);
             }
-    
+
             $chargeBalanceData = [
                 'id' => $chargeBalance->id,
                 'user_id' => $chargeBalance->user_id,
@@ -198,20 +197,20 @@ class ChargeBalanceController extends Controller
                 'status' => $chargeBalance->status,
             ];
         }
-    
+
         if ($chargeBalanceData['status'] != 'pending') {
             return response()->json(['error' => 'not pending'], 404);
         }
-    
+
         // Update the charge balance status in the database
         $chargeBalance = Charge_Balance::find($id);
         $chargeBalance->status = 'completed';
         $chargeBalance->save();
-    
+
         // Update the cache with the new status
         $chargeBalanceData['status'] = 'completed';
         Cache::put($key, $chargeBalanceData, now()->addMinutes(30)); // Cache for 30 minutes
-    
+
         // Update the user's points
         $user = $chargeBalance->user; // assuming you have a user relationship in Charge_Balance model
         $points = $chargeBalance->point; // assuming you have a points attribute in Charge_Balance model
@@ -219,13 +218,13 @@ class ChargeBalanceController extends Controller
         $user->save();
         $user_id = $user->id;
         $massage = "your status of charage balance update to  : completed";
-    
+
         event(new PrivateNotification($user_id, $massage));
         UserNotification::create([
-            'user_id' =>$user_id,
+            'user_id' => $user_id,
             'notification' => $massage,
         ]);
-    
+
         return response()->json(['message' => 'Charge balance status updated to completed and points added to user'], 200);
     }
 
@@ -272,7 +271,7 @@ class ChargeBalanceController extends Controller
 
         event(new PrivateNotification($user_id, $massage));
         UserNotification::create([
-            'user_id' =>$user_id,
+            'user_id' => $user_id,
             'notification' => $massage,
         ]);
 

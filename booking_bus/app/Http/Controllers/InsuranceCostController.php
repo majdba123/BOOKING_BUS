@@ -18,10 +18,9 @@ class InsuranceCostController extends Controller
                 return response()->json(['error' => 'Unauthorized. No company associated with the user.'], 403);
             }
 
-            $insuranceCosts = InsuranceCost::with('bus')
-                ->whereHas('bus', function ($query) use ($company) {
-                    $query->where('company_id', $company->id);
-                })
+            $insuranceCosts = InsuranceCost::whereHas('bus', function ($query) use ($company) {
+                $query->where('company_id', $company->id);
+            })
                 ->get();
 
             if ($insuranceCosts->isEmpty()) {
@@ -48,7 +47,7 @@ class InsuranceCostController extends Controller
             $validatedData = $request->validate([
                 'bus_id' => 'required|exists:buses,id',
                 'insurance_cost' => 'required|numeric',
-                'insurance_date' => 'required|date',
+                'insurance_date' => 'required',
             ]);
 
             // Check if the bus belongs to the authenticated company
@@ -63,7 +62,9 @@ class InsuranceCostController extends Controller
             // Create the insurance cost record
             $insuranceCost = InsuranceCost::create($validatedData);
 
-            return response()->json($insuranceCost, 201);
+            return response()->json([
+                'message' => 'Insurance cost add it successfully.'
+            ], 200);
         } catch (\Exception $e) {
             // Handle unexpected exceptions
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
@@ -81,10 +82,9 @@ class InsuranceCostController extends Controller
             }
 
             // Find the insurance cost with the associated bus, and check if the bus belongs to the company
-            $insuranceCost = InsuranceCost::with('bus')
-                ->whereHas('bus', function ($query) use ($company) {
-                    $query->where('company_id', $company->id);
-                })
+            $insuranceCost = InsuranceCost::whereHas('bus', function ($query) use ($company) {
+                $query->where('company_id', $company->id);
+            })
                 ->findOrFail($id);
 
             return response()->json($insuranceCost);
@@ -109,7 +109,7 @@ class InsuranceCostController extends Controller
             $validatedData = $request->validate([
                 'bus_id' => 'required|exists:buses,id',
                 'insurance_cost' => 'required|numeric',
-                'insurance_date' => 'required|date',
+                'insurance_date' => 'required',
             ]);
 
             $bus = Bus::where('id', $validatedData['bus_id'])
@@ -122,7 +122,9 @@ class InsuranceCostController extends Controller
 
             $insuranceCost->update($validatedData);
 
-            return response()->json($insuranceCost);
+            return response()->json([
+                'message' => ' Update successfully.'
+            ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
@@ -144,7 +146,7 @@ class InsuranceCostController extends Controller
 
             $insuranceCost->delete();
 
-            return response()->json(null, 204);
+            return response()->json(['message' => 'deleted successfully  '], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }

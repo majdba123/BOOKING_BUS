@@ -48,9 +48,14 @@ class TripController extends Controller
                 $trips[] = Cache::get($key);
             } else {
                 // If not, retrieve the trip from the database and cache it
+
                 $trip = Trip::where('id', $trip_id)
                     ->with(['bus_trip.Pivoit', 'breaks_trip.break',  'path'])
                     ->first();
+
+
+                $trip->price = $trip->pricing ? $trip->pricing->cost : null;
+                // $trips[] = $trip;
                 $trips[] = $trip;
                 Cache::put($key, $trip, now()->addMinutes(30)); // Cache for 30 minutes
             }
@@ -102,6 +107,9 @@ class TripController extends Controller
         $trips = Trip::where('company_id', $company_id)
             ->where('status', $request->input('status'))
             ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->get();
+        foreach ($trips as $trip) {
+            $trip->price = $trip->pricing ? $trip->pricing->cost : null;
+        }
         return response()->json($trips);
     }
 
@@ -113,9 +121,11 @@ class TripController extends Controller
         $company = Auth::user()->Company->id;
         $validator = Validator::make($request->all(), [
             'path_id' => 'required|exists:paths,id',
+            'pricing_type' => 'required|string',
             // 'price' => 'sometimes|required|string|max:255',
             /* 'breaks_ids' => 'required|array',
             'breaks_ids.*' => 'integer',*/
+
             'bus_ids' => 'required|array',
             'bus_ids.*.bus_id' => 'required',
             'bus_ids.*.type' => 'string|required',
@@ -125,7 +135,7 @@ class TripController extends Controller
             'bus_ids.*.to_time_return' => 'required|date_format:H:i',
             'bus_ids.*.date_start' => 'required|date',
             'bus_ids.*.date_end' => 'required|date',
-            'bus_ids.*.pricing_type' => 'required|string',
+
         ]);
 
         $validator->after(function ($validator) use ($request) {
@@ -191,6 +201,9 @@ class TripController extends Controller
             $trip = new Trip();
             $trip->path_id = $request->input('path_id');
             $trip->company_id = $company;
+            $pricingModelInstance = $this->createPricingModel($request->input('pricing_type'), $request);
+            $trip->pricing()->associate($pricingModelInstance); //polymorphic reation   hamza
+
             // $trip->price = $request->input('price');
             $trip->save();
             $user_id = Auth::user()->id;
@@ -249,8 +262,6 @@ class TripController extends Controller
                     $busTrip->to_time_return = $busId['to_time_return'];
                     $busTrip->date_end = $busId['date_end'];
                     $busTrip->date_start = $busId['date_start'];
-                    $pricingModelInstance = $this->createPricingModel($busId['pricing_type'], $busId);
-                    $busTrip->pricing()->associate($pricingModelInstance); //polymorphic reation   hamza
                     $busTrip->save();
                     $bus->status = 'completed';
                     $bus->bus_driver->pluck('driver')->each->update(['status' => 'completed']);
@@ -273,6 +284,7 @@ class TripController extends Controller
             DB::commit();
 
             $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->find($trip->id);
+            $trips1->price = $trips1->pricing ? $trips1->pricing->cost : null;
             $key = 'trip_' . $trips1->id;
             Cache::put($key, $trips1, now()->addMinutes(30));
 
@@ -294,6 +306,11 @@ class TripController extends Controller
         $trips = Trip::where('company_id', $company_id)
             ->where('id', $trip)
             ->with(['bus_trip.Pivoit.break_trip', 'breaks_trip.break', 'path'])->get();
+        foreach ($trips as $trip) {
+            $trip->price = $trip->pricing ? $trip->pricing->cost : null;
+        }
+
+
         return response()->json($trips);
     }
 
@@ -313,17 +330,18 @@ class TripController extends Controller
         $company = Auth::user()->Company->id;
         $validator = Validator::make($request->all(), [
             'path_id' => 'required|exists:paths,id',
+            'pricing_type' => 'required|string',
             // 'price' => 'sometimes|string|max:255',
             'bus_ids' => 'required_with:breaks_ids|array',
             'bus_ids.*.bus_id' => 'sometimes|string',
             'bus_ids.*.type' => 'string',
-            'bus_ids.*.from_time_going' => 'sometimes|date_format:H:i A',
-            'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i A',
-            'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i A',
-            'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i A',
+            'bus_ids.*.from_time_going' => 'sometimes|date_format:H:i',
+            'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i',
+            'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i',
+            'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i',
             'bus_ids.*.date_start' => 'sometimes|date',
             'bus_ids.*.date_end' => 'sometimes|date',
-            'bus_ids.*.pricing_type' => 'required|string',
+
 
         ]);
         $validator->after(function ($validator) use ($request) {
@@ -359,17 +377,18 @@ class TripController extends Controller
         DB::beginTransaction();
 
         try {
-            // if ($request->has('price')) {
-            //     $trip->price = $request->input('price');
-            //     $trip->save();
-            // }
+            if ($request->has('pricing_type')) {
+                $pricingModelInstance = $this->createPricingModel($request->input('pricing_type'), $request);
+                $trip->pricing()->associate($pricingModelInstance);
+                $trip->save();
+            }
 
             if ($request->has('path_id') && $request->has('bus_ids')) {
                 $bus_trips = Bus_Trip::where('trip_id', $trip->id)->get();
                 if ($bus_trips->count() > 0) {
                     foreach ($bus_trips as $bus_trip) {
                         $bus = $bus_trip->bus;
-                        $re = Reservation::where('status', 'padding')
+                        $re = Reservation::where('status', 'pending')
                             ->where('bus__trip_id', $bus_trip->id)->first();
                         if ($re) {
                             return response()->json([
@@ -428,8 +447,7 @@ class TripController extends Controller
                             $busTrip->to_time_return = $busId['to_time_return'];
                             $busTrip->date_end = $busId['date_end'];
                             $busTrip->date_start = $busId['date_start'];
-                            $pricingModelInstance = $this->createPricingModel($busId['pricing_type'], $busId);
-                            $busTrip->pricing()->associate($pricingModelInstance); //polymorphic reation   hamza
+
                             $busTrip->save();
                             $bus->status = 'completed';
                             $bus->bus_driver->pluck('driver')->each->update(['status' => 'completed']);
@@ -460,6 +478,7 @@ class TripController extends Controller
             $trip1 = Trip::where('id', $trip_id)
                 ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
                 ->first();
+
             // Cache the updated trip information
             Cache::put($key, $trip1, now()->addMinutes(30));
             DB::commit();
@@ -605,7 +624,7 @@ class TripController extends Controller
     public function index_user()
     {
         $trips = [];
-        foreach (Trip::where('status', 'padding')->pluck('id') as $trip_id) {
+        foreach (Trip::where('status', 'pending')->pluck('id') as $trip_id) {
             $key = 'trip_' . $trip_id; // Create a unique cache key for each trip
             // Check if the trip is already cached
             if (Cache::has($key)) {
@@ -615,16 +634,17 @@ class TripController extends Controller
                 $trip = Trip::where('id', $trip_id)
                     ->with('path')
                     ->first();
+
                 $data = [
                     'trip_id' => $trip->id,
                     'company_name' => $trip->company->user->name,
                     'from'  => $trip->path->from,
                     'to'  => $trip->path->to,
-                    'price' => $trip->price,
+                    // 'price' => $trip->price,
                     // 'bus_trips' => $busTripsData,
                 ];
                 $trips[] = $data;
-                Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
+                // Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
             }
         }
         return response()->json($trips);
@@ -638,7 +658,7 @@ class TripController extends Controller
         $companyName = $request->input('company_name');
         $name_break = $request->input('name_break');
 
-        $tripsQuery = Trip::where('status', 'padding')
+        $tripsQuery = Trip::where('status', 'pending')
 
             ->whereHas('path', function ($query) use ($from, $to) {
 
@@ -708,7 +728,7 @@ class TripController extends Controller
                 'company_name' => $trip->company->user->name,
                 'from'  => $trip->path->from,
                 'to'  => $trip->path->to,
-                'price' => $trip->price,
+                // 'price' => $trip->price,
                 // 'bus_trips' => $busTripsData,
 
                 // Add any other columns you want to include from the trips table
@@ -875,38 +895,38 @@ class TripController extends Controller
 
 
 
-    public function createPricingModel($pricingType, $busId)
+    public function createPricingModel($pricingType, Request $request)
     {
         switch ($pricingType) {
             case 'fixed':
                 // Create FixedPricingModel
                 return FixedPricingModel::create([
-                    'cost' => $busId['cost'],
+                    'cost' => $request->input('cost'),
                 ]);
 
             case 'proportional':
                 // Create ProportionalPricingModel
                 return ProportionalPricingModel::create([
-                    'RatePerKm' => $busId['rate_of_km'],
-                    'cost' => $busId['cost'],
+                    'RatePerKm' => $request->input('rate_of_km'),
+                    'cost' => $request->input('cost'),
                 ]);
 
             case 'decreasing':
                 // Create DecreasingProportionalModel
                 return DecreasingProportionalModel::create([
-                    'number_of_station' => $busId['number_of_station'],
-                    'Rate_of_Km' => $busId['rate_of_km'],
-                    'min_price_for_Km' => $busId['min_price_for_km'],
-                    'cost' => $busId['cost'],
+                    'number_of_station' => $request->input('number_of_station'),
+                    'Rate_of_Km' => $request->input('rate_of_km'),
+                    'min_price_for_Km' => $request->input('min_price_for_km'),
+                    'cost' => $request->input('cost'),
                 ]);
 
             case 'capping':
                 // Create CappingPricingModel
                 return CappingPricingModel::create([
-                    'number_of_station' => $busId['number_of_station'],
-                    'Rate_of_Km' => $busId['rate_of_km'],
-                    'max_price_for_Km' => $busId['max_price_for_km'],
-                    'cost' => $busId['cost'],
+                    'number_of_station' => $request->input('number_of_station'),
+                    'Rate_of_Km' => $request->input('rate_of_km'),
+                    'max_price_for_Km' => $request->input('max_price_for_km'),
+                    'cost' => $request->input('cost'),
                 ]);
 
             default:
