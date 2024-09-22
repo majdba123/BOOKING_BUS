@@ -34,6 +34,7 @@ export default createStore({
         lat: null,
         lng: null,
         Users: {},
+        breakpoints: [],
         lattrack: null,
         langtrack: null,
         additionalBreaks: [],

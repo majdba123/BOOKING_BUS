@@ -3,11 +3,29 @@
         <div id="map-container" v-if="shouldDisplayMap">
             <div id="map"></div>
         </div>
+        <button @click="prepareToAddBreak" class="styled-button">
+            Add Breakpoint
+        </button>
+        <div v-if="showModal" class="modal">
+            <div class="modal-content">
+                <h3>Enter Breakpoint Name</h3>
+                <input
+                    v-model="breakName"
+                    type="text"
+                    placeholder="Enter name for breakpoint"
+                />
+                <div class="modal-actions">
+                    <button @click="saveBreakName">Save</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
 /* global google */
+
+import { useToast } from "vue-toastification";
 
 export default {
     name: "MapBreak",
@@ -55,40 +73,14 @@ export default {
             directionsService: null,
             directionsRenderer: null,
             routePath: null,
-            selectedMarker: null,
             polyline: null,
+            addingBreak: false,
+            firstBreakAdded: false, // New flag for the first break
+            toast: useToast(), // Toast notification
+            showModal: false, // Controls the visibility of the modal
+            breakName: "", // Holds the input for the break name
+            selectedLatLng: null, // Holds the selected LatLng for the breakpoint
         };
-    },
-    computed: {
-        shouldDisplayMap() {
-            return (
-                this.fromlat &&
-                this.fromlng &&
-                this.tolat &&
-                this.tolng &&
-                !isNaN(parseFloat(this.fromlat)) &&
-                !isNaN(parseFloat(this.fromlng)) &&
-                !isNaN(parseFloat(this.tolat)) &&
-                !isNaN(parseFloat(this.tolng))
-            );
-        },
-        shouldDisplayMarker() {
-            return (
-                this.lat &&
-                this.long &&
-                !isNaN(parseFloat(this.lat)) &&
-                !isNaN(parseFloat(this.long))
-            );
-        },
-    },
-    mounted() {
-        if (this.shouldDisplayMap) {
-            this.loadGoogleMapsScript();
-        } else {
-            console.error(
-                "One or more coordinates are missing or invalid. Map will not be displayed."
-            );
-        }
     },
     watch: {
         fromlat() {
@@ -103,12 +95,29 @@ export default {
         tolng() {
             if (this.shouldDisplayMap) this.updateMap();
         },
-        lat() {
-            if (this.shouldDisplayMarker) this.addMarker();
+    },
+    computed: {
+        shouldDisplayMap() {
+            return (
+                this.fromlat &&
+                this.fromlng &&
+                this.tolat &&
+                this.tolng &&
+                !isNaN(parseFloat(this.fromlat)) &&
+                !isNaN(parseFloat(this.fromlng)) &&
+                !isNaN(parseFloat(this.tolat)) &&
+                !isNaN(parseFloat(this.tolng))
+            );
         },
-        long() {
-            if (this.shouldDisplayMarker) this.addMarker();
-        },
+    },
+    mounted() {
+        if (this.shouldDisplayMap) {
+            this.loadGoogleMapsScript();
+        } else {
+            console.error(
+                "One or more coordinates are missing or invalid. Map will not be displayed."
+            );
+        }
     },
     methods: {
         updateMap() {
@@ -117,6 +126,48 @@ export default {
             } else {
                 this.initMap();
             }
+        },
+        saveBreakName() {
+            if (!this.breakName) {
+                alert("Please enter a name for the breakpoint.");
+                return;
+            }
+
+            // إذا كانت الإحداثيات موجودة
+            if (this.selectedLatLng) {
+                // إضافة النقطة في المتجر مع الاسم
+                this.$store.state.breakpoints.push({
+                    name: this.breakName,
+                    lat: this.selectedLatLng.lat(),
+                    lng: this.selectedLatLng.lng(),
+                });
+
+                const newMarker = new google.maps.Marker({
+                    position: this.selectedLatLng,
+                    map: this.map,
+                    icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                    animation: google.maps.Animation.BOUNCE,
+                });
+
+                this.map.setCenter(this.selectedLatLng);
+
+                // إعادة تعيين المتغيرات
+                this.addingBreak = false;
+                this.breakName = ""; // إعادة تعيين الحقل النصي
+                this.showModal = false; // إخفاء المودال
+
+                setTimeout(() => {
+                    newMarker.setAnimation(null);
+                }, 2000);
+            } else {
+                this.toast.error("No LatLng selected for the break.");
+            }
+        },
+        // Cancel the naming of the break
+        cancelBreakName() {
+            this.showModal = false;
+            this.breakName = ""; // Clear the input
+            this.addingBreak = false; // Reset adding break mode
         },
         loadGoogleMapsScript() {
             const script = document.createElement("script");
@@ -130,7 +181,9 @@ export default {
             };
 
             script.onerror = () => {
-                console.error("Failed to load Google Maps script");
+                this.toast.error(
+                    "Failed to load Google Maps script, retrying..."
+                );
                 setTimeout(this.loadGoogleMapsScript, 3000);
             };
         },
@@ -139,7 +192,7 @@ export default {
             const fromLng = parseFloat(this.fromlng);
 
             if (isNaN(fromLat) || isNaN(fromLng)) {
-                console.error("Invalid latitude or longitude values");
+                this.toast.error("Invalid latitude or longitude values.");
                 return;
             }
 
@@ -148,10 +201,6 @@ export default {
                     center: { lat: fromLat, lng: fromLng },
                     zoom: 7,
                     mapTypeId: "roadmap",
-                    disableDefaultUI: false,
-                    draggable: true,
-                    scrollwheel: true,
-                    disableDoubleClickZoom: false,
                 });
 
                 this.directionsService = new google.maps.DirectionsService();
@@ -163,14 +212,17 @@ export default {
                 this.calculateAndDisplayRoute();
 
                 this.map.addListener("click", (event) => {
-                    this.handleMapClick(event.latLng);
+                    if (this.addingBreak) {
+                        this.handleMapClick(event.latLng);
+                    }
                 });
 
-                if (this.shouldDisplayMarker) {
-                    this.addMarker();
+                // Automatically add the first breakpoint after the route is displayed
+                if (!this.firstBreakAdded) {
+                    this.prepareToAddBreak();
                 }
             } else {
-                console.error("Google Maps not loaded yet");
+                this.toast.error("Google Maps not loaded yet");
                 setTimeout(this.initMap, 3000);
             }
         },
@@ -186,9 +238,7 @@ export default {
                 isNaN(toLat) ||
                 isNaN(toLng)
             ) {
-                console.error(
-                    "Invalid latitude or longitude values for route calculation."
-                );
+                this.toast.error("Invalid coordinates for route calculation.");
                 return;
             }
 
@@ -204,13 +254,13 @@ export default {
                     this.routePath = result.routes[0].overview_path;
                     this.enableRouteClicking(this.routePath);
                 } else {
-                    console.error("Directions request failed due to " + status);
+                    this.toast.error("Directions request failed: " + status);
                 }
             });
         },
         enableRouteClicking(routePath) {
             if (!routePath || routePath.length === 0) {
-                console.error("No route available. Please select a route.");
+                this.toast.error("No route available. Please select a route.");
                 this.polyline = null;
                 return;
             }
@@ -223,12 +273,47 @@ export default {
                 map: this.map,
             });
         },
-        findClosestPointOnPolyline(latLng) {
+        prepareToAddBreak() {
+            this.addingBreak = true;
+            if (!this.firstBreakAdded) {
+                this.toast.info(
+                    "Please click a point on the route to add the first breakpoint."
+                );
+                this.firstBreakAdded = true;
+            } else {
+                this.toast.info(
+                    "Click a point on the route to add another breakpoint."
+                );
+            }
+        },
+        handleMapClick(latLng) {
             if (!this.polyline) {
-                console.error("No route available. Please select a route.");
-                return latLng;
+                this.toast.error("No route available. Please select a route.");
+                return;
             }
 
+            const closestPoint = this.findClosestPointOnPolyline(latLng);
+            this.selectedLatLng = closestPoint;
+
+            // Open the modal for name input
+            this.showModal = true;
+
+            const newMarker = new google.maps.Marker({
+                position: closestPoint,
+                map: this.map,
+                icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                animation: google.maps.Animation.BOUNCE,
+            });
+
+            this.map.setCenter(closestPoint);
+
+            this.addingBreak = false;
+
+            setTimeout(() => {
+                newMarker.setAnimation(null);
+            }, 2000);
+        },
+        findClosestPointOnPolyline(latLng) {
             let closestPoint = null;
             let minDistance = Infinity;
 
@@ -246,61 +331,6 @@ export default {
 
             return closestPoint || latLng;
         },
-        handleMapClick(latLng) {
-            if (!this.polyline) {
-                console.error("No route available. Please select a route.");
-                return;
-            }
-
-            if (this.selectedMarker) {
-                this.selectedMarker.setMap(null);
-            }
-
-            const closestPoint = this.findClosestPointOnPolyline(latLng);
-
-            this.selectedMarker = new google.maps.Marker({
-                position: closestPoint,
-                map: this.map,
-                icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-                animation: google.maps.Animation.BOUNCE,
-            });
-
-            this.map.setCenter(closestPoint);
-
-            console.log(
-                `Selected Coordinates: Latitude: ${closestPoint.lat()}, Longitude: ${closestPoint.lng()}`
-            );
-
-            this.$store.state.selectedLat = closestPoint.lat();
-            this.$store.state.selectedLng = closestPoint.lng();
-
-            setTimeout(() => {
-                if (this.selectedMarker) {
-                    this.selectedMarker.setAnimation(null);
-                }
-            }, 2000);
-        },
-        addMarker() {
-            const lat = parseFloat(this.lat);
-            const lng = parseFloat(this.long);
-
-            if (isNaN(lat) || isNaN(lng)) {
-                console.error(
-                    "Invalid latitude or longitude values for the marker."
-                );
-                return;
-            }
-
-            if (this.map) {
-                new google.maps.Marker({
-                    position: { lat, lng },
-                    map: this.map,
-                    icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                });
-
-                this.map.setCenter({ lat, lng });
-            }
-        },
     },
 };
 </script>
@@ -311,8 +341,59 @@ export default {
     width: 100%;
 }
 #map {
-    height: 100%;
+    height: 550px;
     width: 100%;
     border-radius: 9px;
+}
+button {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #0056b3;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 10px;
+    width: 300px;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.modal-actions button {
+    padding: 10px 15px;
+    cursor: pointer;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+}
+
+.modal-actions button:hover {
+    background-color: #0056b3;
 }
 </style>
