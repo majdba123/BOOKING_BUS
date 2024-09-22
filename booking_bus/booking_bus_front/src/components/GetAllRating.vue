@@ -729,7 +729,6 @@ h2 {
     text-align: center;
     box-shadow: 0 1rem 1.5rem var(--clr-light);
     color: var(--clr-dark);
-    max-width: none;
     font-size: 0.85rem;
 }
 
@@ -785,14 +784,27 @@ select:focus {
     background-color: var(--clr-white);
     border-radius: var(--border-radius-3);
     width: 100%;
-    max-width: 800px;
+}
+
+.navd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--clr-white);
+    border-radius: 10px;
+    width: 100%;
+}
+@media screen and (max-width: 700px) {
+    .navd {
+        align-items: center;
+    }
 }
 
 .nav-btnd {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 9px;
+    border-radius: var(--border-radius-2);
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;

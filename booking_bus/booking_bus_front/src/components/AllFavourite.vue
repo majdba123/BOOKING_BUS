@@ -413,7 +413,6 @@ main .recent_orders h1 {
 main .recent_orders table {
     background-color: #fff;
     width: 100%;
-    max-width: 1000px;
     border-radius: 2rem;
     padding: 0.8rem;
     text-align: center;
