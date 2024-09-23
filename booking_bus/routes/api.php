@@ -79,7 +79,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     Route::get('/all_driver', [DriverController::class, 'index']);
     Route::post('register/driver', [DriverController::class, 'register_driver']);
     Route::delete('/delete_driver/{id}', [DriverController::class, 'destroy']);
-    Route::put('update_driver/{id}', [DriverController::class, 'update_driver']);//hamza
+    Route::put('update_driver/{id}', [DriverController::class, 'update_driver']); //hamza
 
     Route::get('/all_breaks/{path_id}', [BreaksController::class, 'index']);
     Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
@@ -201,6 +201,10 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
         Route::put('/{id}', [MaintenanceCostController::class, 'update']); // Update a maintenance cost by ID
         Route::delete('/{id}', [MaintenanceCostController::class, 'destroy']); // Delete a maintenance cost by ID
     });
+
+    //hamza
+
+    Route::get('/allBusCompleteorAavaliable', [BusController::class, 'getBusAvailableBus']);
 });
 
 

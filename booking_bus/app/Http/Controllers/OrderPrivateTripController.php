@@ -167,6 +167,9 @@ class OrderPrivateTripController extends Controller
         $orders = Order_Private_trip::whereHas('company', function ($query) use ($company_id) {
             $query->where('id', $company_id);
         })->with('private_trip')->get();
+        foreach ($orders as $order) {
+            $order->price = $order->private_trip->pricing ? $order->private_trip->pricing->cost : null;
+        }
         return $orders;
     }
     /**

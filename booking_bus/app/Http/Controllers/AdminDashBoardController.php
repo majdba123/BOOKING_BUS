@@ -233,7 +233,7 @@ class AdminDashBoardController extends Controller
                 'id' => $busTrip->id,
                 'from' => $busTrip->trip->path->from,
                 'to' => $busTrip->trip->path->to,
-                'price_trip' => $busTrip->pricing->cost,
+                'price_trip' => $busTrip->trip->pricing->cost,
                 'from_time_going' => $busTrip->from_time_going,
                 'to_time_going' => $busTrip->to_time_going,
                 'from_time_return' => $busTrip->from_time_return,
@@ -291,7 +291,7 @@ class AdminDashBoardController extends Controller
                     'id' => $busTrip->id,
                     'from' => $busTrip->trip->path->from,
                     'to' => $busTrip->trip->path->to,
-                    'price_trip' => $busTrip->pricing->cost,
+                    'price_trip' => $busTrip->trip->pricing->cost,
                     'from_time_going' => $busTrip->from_time_going,
                     'to_time_going' => $busTrip->to_time_going,
                     'from_time_return' => $busTrip->from_time_return,
@@ -356,7 +356,7 @@ class AdminDashBoardController extends Controller
                         'id' => $orderPrivateTrip->id,
                         'company_id' => $orderPrivateTrip->company_id,
                         'company_name' => $orderPrivateTrip->company->name_company,
-                        'price' => $orderPrivateTrip->price,
+                        'price' => $orderPrivateTrip->pricing->cost,
                         'payment_status' => $orderPrivateTrip->status,
                     ];
                 })->all() : [],
@@ -436,7 +436,7 @@ class AdminDashBoardController extends Controller
                     return [
                         'id' => $orderPrivateTrip->id,
                         'company_id' => $orderPrivateTrip->company_id,
-                        'price' => $orderPrivateTrip->price,
+                        'price' => $orderPrivateTrip->pricing->cost,
                         'payment_status' => $orderPrivateTrip->status,
                     ];
                 })->all() : [],
@@ -605,7 +605,7 @@ class AdminDashBoardController extends Controller
                 $busTripData = [
 
                     'bus_id' => $busTrip->bus_id,
-                    'price_trip' => $busTrip->pricing->cost,
+                    'price_trip' => $busTrip->trip->pricing->cost,
                     'from_time_going' => $busTrip->from_time_going,
                     'to_time_going' => $busTrip->to_time_going,
                     'from_time_return' => $busTrip->from_time_return,
@@ -649,7 +649,7 @@ class AdminDashBoardController extends Controller
                 'company_id' => $trip->company->user->name,
                 'from'  => $trip->path->from,
                 'to'  => $trip->path->to,
-                'price' => $trip->price,
+                'price' => $trip->pricing->cost,
                 'bus_trips' => $busTripsData,
 
                 // Add any other columns you want to include from the trips table
@@ -1082,7 +1082,11 @@ class AdminDashBoardController extends Controller
 
         $acceptedTotalPrice = Order_Private_Trip::where('company_id', $company->id)
             ->where('status', 'accepted')
-            ->sum('price');
+            ->with('pricing')
+            ->get()
+            ->sum(function ($order) {
+                return $order->pricing ? $order->pricing->cost : 0;
+            });
 
         $favourite_count = Favourite::where('company_id', $company->id)->count();
 
@@ -1195,7 +1199,11 @@ class AdminDashBoardController extends Controller
                     return [$item->status => $item->count];
                 });
             $acceptedTotalPrice = Order_Private_Trip::where('status', 'accepted')
-                ->sum('price');
+                ->with('pricing')
+                ->get()
+                ->sum(function ($order) {
+                    return $order->pricing ? $order->pricing->cost : 0;
+                });
 
 
             $favourite_count = Favourite::count();

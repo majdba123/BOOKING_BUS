@@ -217,9 +217,11 @@ class DashboardController extends Controller
 
             $acceptedOrders = Order_Private_Trip::where('company_id', $company->id)
                 ->where('status', 'accepted')
+                ->with('pricing')
                 ->get();
+
             $acceptedTotalPrice = $acceptedOrders->sum(function ($order) {
-                return $order->price; // Calls the getPriceAttribute method
+                return $order->pricing ? $order->pricing->cost : 0;
             });
             $favourite_count = Favourite::where('company_id', $company->id)->count();
 

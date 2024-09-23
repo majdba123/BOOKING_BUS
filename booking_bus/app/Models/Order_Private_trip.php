@@ -14,6 +14,10 @@ class Order_Private_trip extends Model
     protected $dates = [
         'deleted_at'
     ];
+    protected $hidden = [
+        'pricing_id',
+        'pricing_type'
+    ];
     protected $keyType = 'string'; // Set the key type to UUID
     public $incrementing = false; // Disable auto-incrementing
 

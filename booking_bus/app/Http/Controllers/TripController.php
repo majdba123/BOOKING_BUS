@@ -823,7 +823,7 @@ class TripController extends Controller
             }
             $reservedSeats = Seat_Reservation::whereHas('seat', function ($query) use ($buses) {
                 $query->whereIn('bus_id', $buses->pluck('id'));
-            })->where('status', 'padding')->get();
+            })->where('status', 'pending')->get();
 
             foreach ($reservedSeats as $reservation) {
 

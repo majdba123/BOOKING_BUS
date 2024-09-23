@@ -16,7 +16,8 @@ class Trip extends Model
     ];
     protected $hidden = [
         'pricing_id',
-        'pricing_type'
+        'pricing_type',
+        // 'pricing',
     ];
     protected $fillable = [
         'company_id',

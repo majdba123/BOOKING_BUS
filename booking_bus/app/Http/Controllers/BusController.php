@@ -225,4 +225,17 @@ class BusController extends Controller
             'message' => 'bus deleted',
         ]);
     }
+
+
+
+    public function getBusAvailableBus(Request $request)
+    {
+        $company = Auth::user()->Company->id;
+
+        $bus = Bus::where('company_id', $company)
+            ->whereIn('status', ['pending', 'available'])
+            ->get();
+
+        return response()->json($bus, 200);
+    }
 }

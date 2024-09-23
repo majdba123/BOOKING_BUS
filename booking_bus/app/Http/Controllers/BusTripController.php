@@ -110,7 +110,7 @@ class BusTripController extends Controller
                 'nameCompany' => $trip->company->name_company,
                 'from' => $trip->path->from,
                 'to' => $trip->path->to,
-                'price' => (int) $busTrip->pricing->cost,
+                'price' => (int) $busTrip->trip->pricing->cost,
                 'goingfromTime' => $GoingformattedFromTime,
                 'goingtoTime' => $GoingformattedToTime,
                 'ReturnfromTime' => $RetuenformattedFromTime,
@@ -236,7 +236,7 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'price_trip' => $busTrip->pricing->cost,
+                'price_trip' => $busTrip->trip->pricing->cost,
                 'from_time_going' => $busTrip->from_time_going,
                 'to_time_going' => $busTrip->to_time_going,
                 'from_time_return' => $busTrip->from_time_return,
@@ -348,7 +348,7 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'price_trip' => $busTrip->pricing->cost,
+                'price_trip' => $busTrip->trip->pricing->cost,
                 'from_time_going' => $busTrip->from_time_going,
                 'to_time_going' => $busTrip->to_time_going,
                 'from_time_return' => $busTrip->from_time_return,

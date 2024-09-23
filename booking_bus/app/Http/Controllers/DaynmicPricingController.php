@@ -24,8 +24,9 @@ class DaynmicPricingController extends Controller
 
         $validator = Validator::make($request->all(), [
             'pathId' => 'required|exists:paths,id',
-            'bus_ids' => 'required|array', // Ensure bus_ids is an array
-            'bus_ids.*' => 'required|exists:buses,id', // Validate each bus ID in the array
+            'Distance' => 'nullable|integer',
+            'bus_ids' => 'required|array',
+            'bus_ids.*' => 'required|exists:buses,id',
             'priceOfLiter' => 'required|numeric|min:0',
         ]);
 
@@ -48,15 +49,14 @@ class DaynmicPricingController extends Controller
             return response()->json(['error' => 'You do not have any previous trips to process the calculation!'], 400);
         }
         $fixedCost = ($InsuranceCost + $wages + $Depreciation) / $expectedKm;
-        $fuelCost = $this->calculateFuelCostForTrip($request->input('pathId'), $request->input('bus_ids'), $request->input('priceOfLiter'));
+        $fuelCost = $this->calculateFuelCostForTrip($request->input('pathId'), $request->input('bus_ids'), $request->input('priceOfLiter'), $request->input('Distance'),);
 
-        $MaintenanceCost = $this->calculateMaintenanceCost($request->input('bus_ids'), $request->input('pathId'));
+        $MaintenanceCost = $this->calculateMaintenanceCost($request->input('bus_ids'), $request->input('pathId'), $request->input('Distance'));
         $variableCost = $fuelCost + $MaintenanceCost;
         $totalPriceForKm = $fixedCost + $variableCost;
 
         $roundedPriceForKm = round($totalPriceForKm, 2);
         return response()->json(['priceForKm' => $roundedPriceForKm]);
-
     }
 
 
@@ -134,7 +134,7 @@ class DaynmicPricingController extends Controller
 
 
 
-    public function calculateFuelCostForTrip($pathId, array $busIds, $priceForLiter)
+    public function calculateFuelCostForTrip($pathId, array $busIds, $priceForLiter, $Distance)
     {
         $buses = Bus::whereIn('id', $busIds)->get();
 
@@ -142,9 +142,14 @@ class DaynmicPricingController extends Controller
             return response()->json(['error' => 'No buses found'], 404);
         }
         $maxConsumptionBus = $buses->sortByDesc('fuel_consumption')->first();
+        $distance = 0;
+        if (!is_null(value: $pathId)) {
+            $path = Path::where('id', $pathId)->firstOrFail();
+            $distance = $path->Distance;
+        } else {
+            $distance = $Distance;
+        }
 
-        $path = Path::where('id', $pathId)->firstOrFail();
-        $distance = $path->Distance;
 
 
         $fuelConsumptionRate = $maxConsumptionBus->fuel_consumption;
@@ -162,7 +167,7 @@ class DaynmicPricingController extends Controller
         return $fuelCost;
     }
 
-    public function calculateMaintenanceCost(array $busIds, $pathId)
+    public function calculateMaintenanceCost(array $busIds, $pathId, $Distance)
     {
         $companyId = Auth::user()->Company->id;
 
@@ -192,9 +197,15 @@ class DaynmicPricingController extends Controller
         }
 
         $maintenanceCostPerKm = $totalDistance > 0 ? $totalMaintenanceCost / $totalDistance : 0;
-
-        $path = Path::find($pathId);
-        $totalMaintenanceCostForPath = $maintenanceCostPerKm * $path->Distance;
+        $distance = 0;
+        if (!is_null(value: $pathId)) {
+            $path = Path::where('id', $pathId)->firstOrFail();
+            $distance = $path->Distance;
+        } else {
+            $distance = $Distance;
+        }
+        // $path = Path::find($pathId);
+        $totalMaintenanceCostForPath = $maintenanceCostPerKm * $distance;
 
         return $totalMaintenanceCostForPath;
     }
@@ -209,7 +220,6 @@ class DaynmicPricingController extends Controller
             'Distance' => 'required',
         ]);
 
-        // Check for validation errors
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
