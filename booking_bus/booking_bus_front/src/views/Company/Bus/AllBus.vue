@@ -485,6 +485,7 @@ aside .logo {
 
 .date input {
     flex: 1;
+    width: 773px;
 }
 
 .date button {
