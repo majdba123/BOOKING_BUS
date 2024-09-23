@@ -13,7 +13,7 @@ class PrivateTripuserProvider with ChangeNotifier {
       _privatetripsRequset;
   int? get tripId => _tripId;
   String? get message => _message;
-  String _status = 'padding';
+  String _status = 'pending';
   String get status => _status;
   bool _isLoading = false;
   bool get isLoading => _isLoading;

@@ -112,19 +112,19 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Icons.person, color: Colors.grey[600]),
-                                SizedBox(width: 8),
-                                Text(
-                                  'User ID: ${company.userId}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     Icon(Icons.person, color: Colors.grey[600]),
+                            //     SizedBox(width: 8),
+                            //     // Text(
+                            //     //   'User ID: ${company.userId}',
+                            //     //   style: TextStyle(
+                            //     //     fontSize: 16,
+                            //     //     color: Colors.grey[600],
+                            //     //   ),
+                            //     // ),
+                            //   ],
+                            // ),
                             SizedBox(height: 20),
                             Divider(),
                             _buildAboutSection(),

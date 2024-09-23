@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/Rating_Provider.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/PositionedMessage.dart';
+import 'package:mobile_app/screens/WidgetApp/AppBar.dart';
+import 'package:mobile_app/widgets/CustomeCirculerProgress.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Data_Models/Driver.dart';
 
@@ -28,16 +31,15 @@ class _RatingDriverUiState extends State<RatingDriverUi> {
     final userProvider = Provider.of<RatingUserProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Driver Rating'),
-      ),
+      appBar: customeAppBar(context, 'Driver Rateing', null),
       body: Stack(
         children: [
+          backImage(context),
           FutureBuilder(
             future: _fetchDriversFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: CustomeProgressIndecator(context));
               }
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
@@ -91,10 +93,7 @@ class DriverCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundImage: NetworkImage(
-                    // driver.user?.profileImageUrl ??
-                    'https://via.placeholder.com/150', // Placeholder image URL
-                  ),
+                  backgroundImage: AssetImage('assets/images/driver.jpg'),
                 ),
                 SizedBox(width: 10),
                 Expanded(
