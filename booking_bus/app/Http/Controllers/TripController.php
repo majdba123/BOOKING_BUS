@@ -338,6 +338,10 @@ class TripController extends Controller
             'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i',
             'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i',
             'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i',
+            'bus_ids.*.from_time_going' => 'sometimes|date_format:H:i',
+            'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i',
+            'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i',
+            'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i',
             'bus_ids.*.date_start' => 'sometimes|date',
             'bus_ids.*.date_end' => 'sometimes|date',
 
@@ -409,7 +413,7 @@ class TripController extends Controller
                                     }
                                 }
                             }
-                        } else {
+                        }else{
                             return response()->json([
                                 'message' => 'bus active on trip ',
                             ]);
@@ -460,6 +464,7 @@ class TripController extends Controller
                                 $pivoit->save();
                             }
                         } else {
+                            DB::rollBack();
                             throw new Exception('Bus not available');
                         }
                     }
@@ -512,9 +517,10 @@ class TripController extends Controller
         if ($bus_trips->count() > 0) {
             foreach ($bus_trips as $bus_trip) {
                 $bus = $bus_trip->bus;
-                $re = Reservation::where('status', 'padding')
-                    ->where('bus__trip_id', $bus_trip->id)->first();
-                if ($re) {
+                $re=Reservation::where('status' , 'pending')
+                ->where('bus__trip_id' ,$bus_trip->id)->first();
+                if($re)
+                {
                     return response()->json([
                         'message' => 'bus has reservation ',
                     ]);
@@ -560,8 +566,8 @@ class TripController extends Controller
     {
 
         //this commment by hamza
-        // $trips = Trip::where('status', ['padding' ,'finished_going'])->with('bus_trip')->get();
-        $trips = Trip::where('status', 'padding')->get();
+        // $trips = Trip::where('status', ['pending' ,'finished_going'])->with('bus_trip')->get();
+        $trips = Trip::where('status', 'pending')->get();
 
         $data = [];
 

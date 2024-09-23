@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserApiController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CompanyController;
+use Illuminate\Support\Facades\Validator;
+
 use App\Http\Controllers\BusController;
 use App\Http\Controllers\PathController;
 use App\Http\Controllers\DriverController;
@@ -391,6 +393,16 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum', 'throttle:3
 
 
     Route::post('/geolocation/{bus_trip_id}', function (Request $request, $busTripId) {
+        $validator = Validator::make($request->all(), [
+            'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'lang' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
+        }
 
         $lang = $request->input('lang');
         $lat = $request->input('lat');
