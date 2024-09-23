@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(SatisfactionRate::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

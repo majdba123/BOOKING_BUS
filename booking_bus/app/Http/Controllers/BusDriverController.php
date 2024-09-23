@@ -177,18 +177,7 @@ class BusDriverController extends Controller
 
     public function getFirstTrip()
     {
-        $validator = Validator::make([], [
 
-            'driver_id' => 'required|exists:drivers,id',
-
-        ]);
-
-
-        if ($validator->fails()) {
-
-            return response()->json(['error' => $validator->messages()], 422);
-
-        }
         $user = Auth::user();
 
         $busDriver = Bus_Driver::where('driver_id', $user->Driver->id)->firstOrFail();
@@ -198,8 +187,8 @@ class BusDriverController extends Controller
             ->orderBy('date_start', 'DESC')
             ->orderBy('from_time_going', 'DESC')
             ->first();
-
         if ($firstTrip) {
+
             $firstTrip->load(['trip.path']);
             $goingfromTime = new \DateTime($firstTrip->from_time_going);
             $goingtoTime = new \DateTime($firstTrip->to_time_going);

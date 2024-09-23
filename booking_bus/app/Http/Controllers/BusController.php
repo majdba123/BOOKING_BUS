@@ -238,4 +238,5 @@ class BusController extends Controller
 
         return response()->json($bus, 200);
     }
+
 }

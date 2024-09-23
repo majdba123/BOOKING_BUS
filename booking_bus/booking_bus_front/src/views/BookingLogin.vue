@@ -49,14 +49,13 @@ import router from "@/router";
 export default {
     data() {
         return {
-            trips: [], // Add a new data property for trips
+            trips: [],
         };
     },
     mounted() {
         this.checkToken();
         this.handleResize();
         window.addEventListener("resize", this.handleResize);
-
         // Fetch trips data when the component is mounted
         this.fetchTrips();
     },
@@ -65,10 +64,8 @@ export default {
     },
     methods: {
         checkToken() {
-            // الحصول على التوكن من localStorage
             const userType = window.localStorage.getItem("type_user");
 
-            // توجيه المستخدم بناءً على نوع الصفحة التي يجب أن يتوجه إليها
             if (userType === "admin") {
                 router.push("/");
             } else if (userType === "user") {
@@ -262,12 +259,35 @@ a {
     width: 100%;
 }
 
+@keyframes colorShift {
+    0% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+    50% {
+        border-top-color: rgb(255, 255, 0);
+        border-bottom-color: rgb(0, 0, 255);
+        border-right-color: rgb(255, 105, 180);
+    }
+    100% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+}
+
 aside {
     height: 100vh;
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
+    border-radius: 0 2.5rem 2.5rem 0;
     padding: 1rem;
+    border-bottom: 3px solid rgb(255, 0, 0);
+    border-top: 3px solid rgb(0, 0, 255);
+    border-left: 3px solid transparent;
+    animation: colorShift 5s infinite;
 }
 
 aside .top {

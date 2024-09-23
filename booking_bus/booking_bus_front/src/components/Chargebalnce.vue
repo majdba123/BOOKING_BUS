@@ -2,7 +2,6 @@
     <div class="containerd">
         <div class="content">
             <div class="recent_orders">
-                <h1>Charge Balance Padding</h1>
                 <div class="table-container">
                     <div v-if="loading" class="spinner-container">
                         <div class="spinner"></div>
@@ -40,17 +39,13 @@
                                         <td>
                                             <button
                                                 class="nav-btnd accept-btn"
-                                                @click="
-                                                    acceptOrder(item.user_id)
-                                                "
+                                                @click="acceptOrder(item.id)"
                                             >
                                                 Accept
                                             </button>
                                             <button
                                                 class="nav-btnd cancel-btn"
-                                                @click="
-                                                    cancelOrder(item.user_id)
-                                                "
+                                                @click="cancelOrder(item.id)"
                                             >
                                                 Cancel
                                             </button>
@@ -112,7 +107,7 @@ export default {
             })
                 .then((response) => {
                     this.items = response.data;
-                    toast.success("Data fetched successfully");
+                    console.log(response.data);
                     this.loading = false;
                 })
                 .catch((error) => {
@@ -171,11 +166,43 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+:root {
+    --clr-primary: #7380ec;
+    --clr-danger: #ff7782;
+    --clr-success: #41f1b6;
+    --clr-white: #fff;
+    --clr-info-dark: #7d8da1;
+    --clr-info-light: #e4e9f7;
+    --clr-dark: #363949;
+    --clr-warning: #ffbb55;
+    --clr-light: rgba(132, 139, 200, 0.18);
+    --clr-primary-variant: #111e88;
+    --clr-dark-variant: #677483;
+    --clr-color-background: #f6f6f9;
+
+    --card-border-radius: 2rem;
+    --border-radius-1: 0.4rem;
+    --border-radius-2: 0.8rem;
+    --border-radius-3: 1.2rem;
+
+    --card-padding: 1.8rem;
+    --padding-1: 1.2rem;
+
+    box-shadow: 0 2rem 3rem var(--clr-light);
+}
+
+.dark-theme-variables {
+    --clr-color-background: #181a1e;
+    --clr-white: #202528;
+    --clr-light: rgba(0, 0, 0, 0.4);
+    --clr-dark: #edeffd;
+    --clr-dark-variant: #677483;
+    --box-shadow: 0 2rem 3rem var(--clr-light);
+}
 
 .containerd {
     padding: 20px;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -190,7 +217,6 @@ export default {
 .content {
     width: 100%;
     max-width: 1200px;
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -202,7 +228,7 @@ export default {
     justify-content: center;
     margin-bottom: 10px;
     margin-top: 20px;
-    background-color: #fff;
+    background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
 }
@@ -212,8 +238,8 @@ export default {
     margin: 10px;
     border: none;
     border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
     font-size: 12px;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -222,11 +248,11 @@ export default {
 }
 
 .accept-btn {
-    background: #28a745;
+    background: var(--clr-success);
 }
 
 .cancel-btn {
-    background: #dc3545;
+    background: var(--clr-danger);
 }
 
 @keyframes gradientAnimation {
@@ -240,6 +266,7 @@ export default {
         background-position: 0% 50%;
     }
 }
+
 .spinner {
     border: 4px solid var(--clr-light);
     border-left-color: var(--clr-primary);
@@ -256,7 +283,6 @@ export default {
     height: 30vh;
 }
 
-/* Add this part for the spinner rotation */
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -265,6 +291,7 @@ export default {
         transform: rotate(360deg);
     }
 }
+
 .nav-btnd:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -277,12 +304,13 @@ export default {
     align-items: center;
     height: 150px;
     font-size: 1.2rem;
-    color: #677483;
+    color: var(--clr-dark-variant);
     text-align: center;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background-color: var(--clr-color-background);
 }
+
 .table-container {
     width: 100%;
     overflow-x: auto;
@@ -295,7 +323,7 @@ export default {
 }
 
 .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
     border-radius: 10px;
     padding: 1rem;
@@ -305,9 +333,11 @@ export default {
     font-size: 0.85rem;
     border-collapse: collapse;
 }
+
 .recent_orders tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: var(--clr-light);
 }
+
 @media (max-width: 1200px) {
     .recent_orders table {
         font-size: 0.75rem;
@@ -359,9 +389,10 @@ export default {
 .recent_orders td {
     text-align: center;
 }
+
 .recent_orders thead {
     background-color: var(--clr-primary);
-    color: #fff;
+    color: var(--clr-white);
 }
 
 .recent_orders th,
@@ -377,19 +408,19 @@ table thead tr th {
 
 table tbody tr {
     height: 3rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-white);
+    color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
 }
 
 table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: var(--clr-light);
 }
 
 table tbody td {
     height: 3rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-dark);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr:last-child td {
@@ -402,6 +433,7 @@ table tbody tr:last-child td {
     object-fit: cover;
     border-radius: 5px;
 }
+
 .modal {
     display: flex;
     justify-content: center;
@@ -414,8 +446,9 @@ table tbody tr:last-child td {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
+
 .modal-content {
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
     border-radius: var(--border-radius-2);
     max-width: 90%;
@@ -459,7 +492,7 @@ table tbody tr:last-child td {
 
 .modal-body div th {
     background-color: var(--clr-primary);
-    color: #fff;
+    color: var(--clr-white);
 }
 
 .modal-body div td {
@@ -479,7 +512,7 @@ table tbody tr:last-child td {
 .close-modal {
     padding: 10px 20px;
     background-color: var(--clr-danger);
-    color: #fff;
+    color: var(--clr-white);
     border: none;
     border-radius: var(--border-radius-2);
     cursor: pointer;
@@ -490,7 +523,6 @@ table tbody tr:last-child td {
     background-color: #c9302c;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .modal-content {
         width: 95%;

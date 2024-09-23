@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
-
 class DriverProfileController extends Controller
 {
     public function index()
@@ -45,7 +44,7 @@ class DriverProfileController extends Controller
         }
 
         try {
-            $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
+            $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
             $user = auth()->user();
             if ($user->profile) {
                 return response()->json([
@@ -90,11 +89,11 @@ class DriverProfileController extends Controller
         }
 
         try {
-            $user = auth()->user();
+            $user =auth()->user();
             $profile = $user->profile;
 
             if ($request->hasFile('image')) {
-                $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
+                $imageName = Str::random(32). '.'. $request->image->getClientOriginalExtension();
                 $imageUrl = asset('storage/profile_image/' . $imageName);
 
                 // Delete existing image

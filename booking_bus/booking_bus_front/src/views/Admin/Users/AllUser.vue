@@ -19,58 +19,31 @@
         </aside>
         <div class="main-content">
             <main>
-                <div class="right">
-                    <!--start top-->
-                    <div class="top">
-                        <button id="menu_bar" @click="openMenu">
-                            <span class="material-icons">menu</span>
-                        </button>
-                        <div
-                            class="theme-toggler"
-                            ref="themeToggler"
-                            @click="toggleTheme"
-                        >
-                            <span class="material-icons active"
-                                >light_mode</span
-                            >
-                            <span class="material-icons">dark_mode</span>
-                        </div>
-                        <div class="profile">
-                            <div class="info">
-                                <p><b>Babar</b></p>
-                                <p>Admin</p>
-                            </div>
-                            <div class="profile-photo">
-                                <img src="@/assets/busss.png" alt="Profile" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end top-->
-
-                    <!--start driver_chart-->
-
-                    <!--start driver_status-->
-
-                    <!--end driver_status-->
-                </div>
-                <h1>All Users</h1>
+                <HeaderAdmin />
                 <div class="top-bar">
                     <div class="date">
                         <input
                             type="text"
-                            placeholder="Search By Name OR Email ..."
+                            placeholder="Search By Name OR Email"
                             aria-label="Search"
                             v-model="searchQuery"
                         />
                         <button @click="search">Search</button>
                     </div>
                 </div>
-
                 <ShowUsers ref="ShowUsers" />
             </main>
         </div>
         <!-- Right section start -->
-
+        <div class="right">
+            <!--start top-->
+            <div class="top">
+                <button id="menu_bar" @click="openMenu">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
+            <!--end top-->
+        </div>
         <!-- Right section end -->
     </div>
 </template>
@@ -81,10 +54,11 @@ import ShowUsers from "@/components/ShowUsers.vue";
 import router from "@/router";
 
 import store from "@/store";
+import HeaderAdmin from "@/components/HeaderAdmin.vue";
 
 export default {
     name: "AllUser",
-    components: { SidebarAdmin, ShowUsers },
+    components: { SidebarAdmin, ShowUsers, HeaderAdmin },
     data() {
         return {
             x: store.state.x,
@@ -170,24 +144,6 @@ export default {
     },
     mounted() {
         this.checkToken();
-
-        // التحقق من تفضيلات المستخدم المحفوظة في localStorage
-        const savedTheme = localStorage.getItem("darkMode");
-        if (savedTheme === "enabled") {
-            this.isDarkMode = true;
-            document.body.classList.add("dark-theme-variables");
-        } else {
-            this.isDarkMode = false;
-            document.body.classList.remove("dark-theme-variables");
-        }
-
-        const themeToggler = this.$refs.themeToggler;
-        themeToggler
-            .querySelector("span:nth-child(1)")
-            .classList.toggle("active", !this.isDarkMode);
-        themeToggler
-            .querySelector("span:nth-child(2)")
-            .classList.toggle("active", this.isDarkMode);
     },
 };
 </script>
@@ -245,16 +201,16 @@ body {
     height: 100%;
     font-size: 0.88rem;
     user-select: none;
-    background: var(--clr-color-background); /* هنا يتم ضبط الخلفية */
+    background: var(--clr-color-background);
     overflow-y: auto;
 }
 
 .container {
-    background: var(--clr-color-background); /* تأكد من ضبط الخلفية هنا أيضًا */
+    background: var(--clr-color-background);
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto;
+    grid-template-columns: 14rem auto 0rem;
     margin-left: 0;
     height: 100vh;
     overflow-y: auto;
@@ -265,10 +221,12 @@ a {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-weight: 450;
+    font-size: 2rem;
     margin-top: 20px;
     color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
@@ -348,7 +306,12 @@ aside .logo {
     margin: 10px;
     flex: 1;
 }
-
+@media screen and (max-width: 768px) {
+    .date input {
+        flex: 1;
+        width: 150px !important;
+    }
+}
 .date {
     display: flex;
     align-items: center;
@@ -357,26 +320,39 @@ aside .logo {
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 15px;
+    margin-bottom: 15px;
     margin-left: 10px;
 }
 
 .date input {
-    width: 200%;
     flex: 1;
+    width: 1100px;
 }
 
 .date button {
     padding: 0.5rem 1rem;
     border: none;
-    background-color: var(--clr-primary);
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
-    border-radius: 1rem;
+    border-radius: 9px;
     cursor: pointer;
+}
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .date button:hover {
-    background-color: var(--clr-primary-variant);
-    transition: 0.4s ease-in;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
 }
 
 /* Main section styles */
@@ -384,8 +360,6 @@ aside .logo {
           start right side
   ***************************** */
 .right {
-    margin-top: 1.4rem;
-    padding: 1rem;
     background-color: var(--clr-color-background);
     grid-column: span 1;
 }
@@ -400,30 +374,30 @@ aside .logo {
 .right .top button {
     display: none;
 }
-
-.right .theme-toggler {
-    background-color: var(--clr-white);
+.top-bar {
     display: flex;
+    gap: 1rem;
+    align-items: center;
     justify-content: space-between;
-    height: 1.6rem;
-    width: 4.2rem;
-    cursor: pointer;
-    border-radius: 10px;
 }
-
-.right .theme-toggler span {
-    font-size: 1.2rem;
-    width: 50%;
-    height: 100%;
+.top-bar .theme-toggler {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    background: var(--clr-light);
+    padding: 0.5rem;
+    border-radius: 1rem;
+    cursor: pointer;
 }
 
-.right .theme-toggler span.active {
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-    border-radius: 10px;
+.top-bar .theme-toggler span {
+    font-size: 1.4rem;
+    color: var(--clr-warning);
+    cursor: pointer;
+}
+
+.top-bar .theme-toggler span.active {
+    color: var(--clr-primary);
 }
 
 .right .profile {
@@ -580,6 +554,7 @@ select:focus {
 /**********
   media query
   ********** */
+
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
@@ -730,6 +705,22 @@ select:focus {
         background-color: var(--clr-primary);
         color: var(--clr-white);
         border-radius: 10px;
+    }
+
+    #menu_bar {
+        display: block;
+        background: var(--clr-primary);
+        border: none;
+        border-radius: 0.5rem;
+        color: var(--clr-white);
+        padding: 0.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #menu_bar:hover {
+        background-color: var(--clr-primary-variant);
     }
 }
 </style>

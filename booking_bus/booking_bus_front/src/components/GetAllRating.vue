@@ -16,7 +16,7 @@
 
         <!-- Start all trips table -->
         <div v-if="showAllTrips" class="recent_orders">
-            <h1>All Trips</h1>
+            <h2>All Trips</h2>
             <div class="table-container">
                 <div v-if="loading" class="spinner-container">
                     <div class="spinner"></div>
@@ -87,7 +87,7 @@
 
         <!-- Start all drivers table -->
         <div v-if="showAllDrivers" class="recent_orders">
-            <h1>All Drivers</h1>
+            <h2>All Drivers</h2>
             <div class="table-container">
                 <div v-if="loading1" class="spinner-container">
                     <div class="spinner"></div>
@@ -154,7 +154,7 @@
 
         <!-- Start ratings tables -->
         <div v-if="showTripRatings" class="recent_orders">
-            <h1>Trip Ratings</h1>
+            <h2>Trip Ratings</h2>
             <div class="table-container" v-if="showTripRatings">
                 <div v-if="loading2" class="spinner-container">
                     <div class="spinner"></div>
@@ -206,7 +206,7 @@
         </div>
 
         <div v-if="showDriverRatings" class="recent_orders">
-            <h1>Driver Ratings</h1>
+            <h2>Driver Ratings</h2>
             <div class="table-container" v-if="showDriverRatings">
                 <div v-if="loading3" class="spinner-container">
                     <div class="spinner"></div>
@@ -408,10 +408,9 @@ export default {
             tripRatingsDetails: [],
             driverRatingsDetails: [],
 
-            // Pagination variables
             currentPageTrips: 1,
             currentPageDrivers: 1,
-            itemsPerPage: 10, // عدد العناصر في كل صفحة
+            itemsPerPage: 10,
         };
     },
     computed: {
@@ -426,7 +425,9 @@ export default {
             return this.Drivers.slice(start, end);
         },
     },
-
+    mounted() {
+        this.fetchTripRatings();
+    },
     methods: {
         toggleTripRatings() {
             this.showTripRatings = true;
@@ -699,7 +700,10 @@ h1 {
 }
 
 h2 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+    margin-left: 15px;
 }
 
 .recent_orders {
@@ -725,7 +729,6 @@ h2 {
     text-align: center;
     box-shadow: 0 1rem 1.5rem var(--clr-light);
     color: var(--clr-dark);
-    max-width: none;
     font-size: 0.85rem;
 }
 
@@ -781,14 +784,27 @@ select:focus {
     background-color: var(--clr-white);
     border-radius: var(--border-radius-3);
     width: 100%;
-    max-width: 800px;
+}
+
+.navd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--clr-white);
+    border-radius: 10px;
+    width: 100%;
+}
+@media screen and (max-width: 700px) {
+    .navd {
+        align-items: center;
+    }
 }
 
 .nav-btnd {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 9px;
+    border-radius: var(--border-radius-2);
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Breaks::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->softDeletes();
+
             $table->timestamps();
         });
     }

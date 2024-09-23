@@ -6,15 +6,10 @@ use App\Models\Geolocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Path extends Model
 {
     use HasFactory;
-    use SoftDeletes;
-    protected $dates = [
-        'deleted_at'
-    ];
 
     protected $fillable = [
         'id',

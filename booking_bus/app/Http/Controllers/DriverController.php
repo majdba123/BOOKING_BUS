@@ -11,13 +11,11 @@ use App\Models\Bus_Trip;
 use App\Models\user;
 use App\Events\BreakTripEvent;
 use App\Events\PrivateNotification;
-use App\Models\Trip;
 use App\Models\UserNotification;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 
@@ -308,8 +306,8 @@ class DriverController extends Controller
             // Load related data for each trip
             $trip->load(['trip.path', 'Pivoit.Reservation.user']);
 
-            $fromTime = new \DateTime($trip->from_time_going);
-            $toTime = new \DateTime($trip->to_time_return);
+            $fromTime = new \DateTime($trip->from_time);
+            $toTime = new \DateTime($trip->to_time);
             $interval = $fromTime->diff($toTime);
             $tripDuration = $interval->format('%H:%I');
             $response[] = [
@@ -371,8 +369,6 @@ class DriverController extends Controller
         foreach ($trips as $trip) {
             // Load related data for each trip
             $trip->load(['trip.path', 'Pivoit.Reservation.user']);
-            $fromTime = new \DateTime($trip->from_time_going);
-            $toTime = new \DateTime($trip->to_time_return);
 
             $goingfromTime = new \DateTime($trip->from_time_going);
             $goingtoTime = new \DateTime($trip->to_time_going);
@@ -656,7 +652,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'pending')
+                        ->where('status', 'padding')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -692,7 +688,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'pending')
+                        ->where('status', 'padding')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -726,7 +722,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'pending')
+                        ->where('status', 'padding')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -781,7 +777,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'pending')
+                        ->where('status', 'padding')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -813,7 +809,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'pending')
+                        ->where('status', 'padding')
                         ->where('type', $type_reservation)
                         ->get();
 
@@ -837,7 +833,6 @@ class DriverController extends Controller
                     ]);
                 }
             } else {
-                DB::rollBack();
                 return response()->json([
                     'massage' => 'something get wrong'
                 ]);
@@ -857,7 +852,6 @@ class DriverController extends Controller
             Cache::put($key, $trip1, now()->addMinutes(30));
             DB::commit();
         } catch (Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'error' => $e->getMessage()
             ], 500);
@@ -865,7 +859,6 @@ class DriverController extends Controller
     }
     public function access_break($pivoit_id)
     {
-        DB::beginTransaction();
         try {
 
             $driver = Auth::user()->Driver;
@@ -921,7 +914,6 @@ class DriverController extends Controller
                         ->map(function ($reservation) {
                             return [
                                 'id' => $reservation->id,
-                                'user_id' => $reservation->user->id,
                                 'user_name' => $reservation->user->name,
                                 'price' => $reservation->price,
                                 'bus_trip_id' => $reservation->bus_trip_id,
@@ -937,7 +929,7 @@ class DriverController extends Controller
                         $massage = " your bus arrived  : $c ";
                         event(new PrivateNotification($reservation->user_id, $massage));
                         UserNotification::create([
-                            'user_id' => $user1,
+                            'user_id' => $reservation->user_id,
                             'notification' => $massage,
                         ]);
                     }
@@ -945,7 +937,7 @@ class DriverController extends Controller
                 } elseif ($previous_pivoit->status == "done1" && $next_pivoit->status == "pending") {
                     $bus_trip->event = $pivoit->break_trip->break->name;
                     $bus_trip->save();
-                    $reservations = Reservation::where('status', 'pending')
+                    $reservations = Reservation::where('status', 'padding')
                         ->where('pivoit_id', $pivoit_id)
                         ->where('type', 1)
                         ->get()
@@ -1020,7 +1012,7 @@ class DriverController extends Controller
                 } elseif ($next_pivoit->status == "done2" && $previous_pivoit->status == "done1") {
                     $bus_trip->event = $pivoit->break_trip->break->name;
                     $bus_trip->save();
-                    $reservations = Reservation::where('status', 'pending')
+                    $reservations = Reservation::where('status', 'padding')
                         ->where('pivoit_id', $pivoit_id)
                         ->where('type', 2)
                         ->get()
@@ -1047,14 +1039,11 @@ class DriverController extends Controller
                     return response()->json($reservations);
                 }
             } elseif ($pivoit->status == 'done2') {
-                DB::rollBack();
                 return response()->json([
                     'massage' => 'break already finished going and trip '
                 ]);
             } else {
-                DB::rollBack();
                 return response()->json([
-
                     'massage' => 'something get wrong'
                 ]);
             }
@@ -1073,7 +1062,6 @@ class DriverController extends Controller
             Cache::put($key, $trip1, now()->addMinutes(30));
             DB::commit();
         } catch (Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'error' => $e->getMessage()
             ], 500);
@@ -1165,16 +1153,13 @@ class DriverController extends Controller
             $response[] = [
                 'bus_trip_id' => $trip->id,
                 'bus_id' => $trip->bus_id,
+                'from_time' => $trip->from_time,
+                'to_time' => $trip->to_time,
+                'date' => $trip->date,
                 'type' => $trip->type,
                 'event' => $trip->event,
                 'status' => $trip->status,
                 'breaks_data' => $pivotData,
-                'from_time_going' => $trip->from_time_going,
-                'to_time_going' => $trip->to_time_going,
-                'from_time_return' => $trip->from_time_return,
-                'to_time_return' => $trip->to_time_return,
-                'date_end' => $trip->date_end,
-                'date_start' => $trip->date_start,
             ];
         }
 
@@ -1222,16 +1207,13 @@ class DriverController extends Controller
                 $response[] = [
                     'bus_trip_id' => $trip->id,
                     'bus_id' => $trip->bus_id,
+                    'from_time' => $trip->from_time,
+                    'to_time' => $trip->to_time,
+                    'date' => $trip->date,
                     'type' => $trip->type,
                     'event' => $trip->event,
                     'status' => $trip->status,
                     'breaks_data' => $pivotData,
-                    'from_time_going' => $trip->from_time_going,
-                    'to_time_going' => $trip->to_time_going,
-                    'from_time_return' => $trip->from_time_return,
-                    'to_time_return' => $trip->to_time_return,
-                    'date_end' => $trip->date_end,
-                    'date_start' => $trip->date_start,
                 ];
             }
             DB::commit();

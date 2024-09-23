@@ -1,7 +1,7 @@
 <template>
     <main>
-        <HeaderCompany />
-        <StatisticsCompany />
+        <HeaderAdmin />
+        <StatisticsAdmin />
         <!-- End insights -->
 
         <!-- Start recent orders -->
@@ -9,8 +9,8 @@
 </template>
 <script>
 import store from "@/store";
-import StatisticsCompany from "./StatisticsCompany.vue";
-import HeaderCompany from "./HeaderCompany.vue";
+import StatisticsAdmin from "./StatisticsAdmin.vue";
+import HeaderAdmin from "./HeaderAdmin.vue";
 
 export default {
     name: "MainCompany",
@@ -45,7 +45,7 @@ export default {
         },
     },
     mounted() {},
-    components: { StatisticsCompany, HeaderCompany },
+    components: { StatisticsAdmin, HeaderAdmin },
 };
 </script>
 <style>

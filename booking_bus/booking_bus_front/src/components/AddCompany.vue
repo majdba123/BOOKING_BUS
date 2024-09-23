@@ -75,8 +75,7 @@
                                     <th>Bus</th>
                                     <th>Trip</th>
                                     <th>Reservation</th>
-
-                                    <th>Created At</th>
+                                    <th>Information</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -87,7 +86,10 @@
                                     <td>{{ index }}</td>
                                     <td>{{ user.name_company }}</td>
                                     <td>{{ user.user.email }}</td>
-                                    <td>{{ user.user.profile?.phone }}</td>
+                                    <td v-if="user.user.profile?.phone != null">
+                                        {{ user.user.profile?.phone }}
+                                    </td>
+                                    <td v-else>NULL</td>
                                     <td>
                                         <button
                                             class="nav-btnd btn-primary"
@@ -110,7 +112,10 @@
                                         <button
                                             class="nav-btnd btn-warning"
                                             @click="
-                                                openTripModal(user.name_company)
+                                                openTripModal(
+                                                    user.name_company,
+                                                    user.id
+                                                )
                                             "
                                         >
                                             Trip
@@ -126,37 +131,167 @@
                                             Reservation
                                         </button>
                                     </td>
-                                    <td>{{ user.created_at }}</td>
+                                    <td>
+                                        <button
+                                            class="nav-btnd btn-primary"
+                                            @click="openInfoModal(user.id)"
+                                        >
+                                            Info
+                                        </button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            <button
-                type="button"
-                @click="
-                    current_page == first_page
-                        ? (current_page = last_page)
-                        : (current_page -= 1);
-                    AllCompany();
-                "
-            >
-                &#10508;
-            </button>
-            <button
-                type="button"
-                @click="
-                    current_page == last_page
-                        ? (current_page = first_page)
-                        : (current_page += 1);
-                    AllCompany();
-                "
-            >
-                &#10511;
-            </button>
+            <div class="button-container">
+                <button
+                    type="button"
+                    @click="
+                        current_page == first_page
+                            ? (current_page = last_page)
+                            : (current_page -= 1);
+                        AllCompany();
+                    "
+                >
+                    &#10508;
+                </button>
+                <button
+                    type="button"
+                    @click="
+                        current_page == last_page
+                            ? (current_page = first_page)
+                            : (current_page += 1);
+                        AllCompany();
+                    "
+                >
+                    &#10511;
+                </button>
+            </div>
         </div>
-
+        <div v-if="showInfoModal" class="modal">
+            <div class="modal-contentr">
+                <!-- Close button -->
+                <div class="modal-body">
+                    <!-- Info content in a structured format -->
+                    <table class="x">
+                        <tr>
+                            <th class="y">Pending Reservations</th>
+                            <td class="z">{{ info.pending_reservations }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Completed Reservations</th>
+                            <td class="z">{{ info.completed_reservations }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Out Reservation</th>
+                            <td class="z">{{ info.out_reservation }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Pending Trip</th>
+                            <td class="z">{{ info.pending_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Finished Trip</th>
+                            <td class="z">{{ info.finished_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Finished Going Trip</th>
+                            <td class="z">{{ info.finished_going_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Pending Bus Trip</th>
+                            <td class="z">{{ info.pending_bus_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Finished Bus Trip</th>
+                            <td class="z">{{ info.finished_bus_trip }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Finished Going Bus_trip</th>
+                            <td class="z">
+                                {{ info.finished_going_bus_trip }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="y">Total Profit Pending</th>
+                            <td class="z">{{ info.total_profit_pending }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Total Profit Completed</th>
+                            <td class="z">{{ info.total_profit_completed }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Total Profit Out</th>
+                            <td class="z">{{ info.total_profit_out }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">All Drivers</th>
+                            <td class="z">{{ info.all_drivers }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Pending Drivers</th>
+                            <td class="z">{{ info.pending_drivers }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Available Drivers</th>
+                            <td class="z">{{ info.available_drivers }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Completed Driver</th>
+                            <td class="z">{{ info.completed_driver }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">All Buses</th>
+                            <td class="z">{{ info.allBuses }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Completed Buses</th>
+                            <td class="z">{{ info.completed_Buses }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Available Buses</th>
+                            <td class="z">{{ info.availableBuses }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Pending Buses</th>
+                            <td class="z">{{ info.pending_Buses }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">inProgress PrivateTrips</th>
+                            <td class="z">
+                                {{ info.inProgress_PrivateTrips }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="y">Completed PrivateTrips</th>
+                            <td class="z">{{ info.completed_PrivateTrips }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">Canceled PrivateTrips</th>
+                            <td class="z">{{ info.canceled_PrivateTrips }}</td>
+                        </tr>
+                        <tr>
+                            <th class="y">
+                                Total Price Completed PrivateTrips
+                            </th>
+                            <td class="z">
+                                {{ info.total_price_completed_PrivateTrips }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="y">Count Favourite</th>
+                            <td class="z">{{ info.count_favourite }}</td>
+                        </tr>
+                        <!-- Add more fields as needed -->
+                    </table>
+                </div>
+                <button @click="closeInfoModal" class="close-modal">
+                    Close
+                </button>
+            </div>
+        </div>
         <div v-if="showDriverStatusModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">Driver Status</div>
@@ -288,6 +423,7 @@
                                         <th>From</th>
                                         <th>To</th>
                                         <th>Price</th>
+                                        <th>Profit Trip</th>
                                         <th>Bus</th>
                                     </tr>
                                 </thead>
@@ -300,6 +436,19 @@
                                         <td>{{ Trip.from }}</td>
                                         <td>{{ Trip.to }}</td>
                                         <td>{{ Trip.price }}</td>
+                                        <td>
+                                            <button
+                                                class="nav-btnd"
+                                                @click="
+                                                    openProfitTripModal(
+                                                        Trip.trip_id
+                                                    )
+                                                "
+                                            >
+                                                Profit
+                                            </button>
+                                        </td>
+
                                         <td>
                                             <button
                                                 class="nav-btnd"
@@ -429,10 +578,14 @@
                                 <thead>
                                     <tr>
                                         <th>Bus ID</th>
-                                        <th>From Time</th>
-                                        <th>To Time</th>
+                                        <th>Data Start</th>
+                                        <th>Data End</th>
                                         <th>Type</th>
-                                        <th>Pivot</th>
+                                        <th>From Time Going</th>
+                                        <th>From Time Return</th>
+                                        <th>To Time Going</th>
+                                        <th>To Time Return</th>
+                                        <th>Event</th>
                                         <th>Seats</th>
                                     </tr>
                                 </thead>
@@ -442,21 +595,19 @@
                                         :key="index"
                                     >
                                         <td>{{ index }}</td>
-                                        <td>{{ Bus.from_time }}</td>
-                                        <td>{{ Bus.to_time }}</td>
+                                        <td>{{ Bus.date_start }}</td>
+                                        <td>{{ Bus.date_end }}</td>
                                         <td>{{ Bus.type }}</td>
+                                        <td>{{ Bus.from_time_going }}</td>
+                                        <td>{{ Bus.from_time_return }}</td>
+                                        <td>{{ Bus.to_time_going }}</td>
+                                        <td>{{ Bus.to_time_return }}</td>
+                                        <td>{{ Bus.event }}</td>
+
                                         <td>
                                             <button
                                                 class="nav-btnd"
-                                                @click="openPivotModal(index)"
-                                            >
-                                                Pivot
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <button
-                                                class="nav-btnd"
-                                                @click="openSeatsModal(index)"
+                                                @click="openSeatsModal(Bus.id)"
                                             >
                                                 Seats
                                             </button>
@@ -469,6 +620,37 @@
                 </div>
                 <div class="modal-footer">
                     <button @click="closeBusTripModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div v-if="showProfitTripModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Profit Trip</div>
+                <div class="modal-body">
+                    <div v-if="loading5" class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div v-else>
+                        <div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Total Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ this.profittrip }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeProfitTripModal" class="close-modal">
                         Close
                     </button>
                 </div>
@@ -613,6 +795,8 @@ export default {
     name: "AddCompany",
     data() {
         return {
+            user_id: "",
+            profittrip: "",
             current_page: 1,
             last_page: null,
             first_page: null,
@@ -639,17 +823,22 @@ export default {
             Reservation: [],
             Pivot: [],
             BusTrip: [],
+            info: [],
             Trips: [],
             driverWithBusData: [],
             name: "",
             email: "",
             password: "",
+            showInfoModal: false,
+
             showDriverStatusModal: false,
             showTripModal: false,
             showReservationModal: false,
 
             showBusModal: false,
             showBusTripModal: false,
+            showProfitTripModal: false,
+
             showReservationSeatModal: false,
 
             showPivotModal: false,
@@ -674,6 +863,12 @@ export default {
             // Set the current company ID
             this.showDriverStatusModal = true;
         },
+        openInfoModal(company_id) {
+            this.currentCompanyId = company_id;
+            // Set the current company ID
+            this.showInfoModal = true;
+            this.fetchInfo(this.currentCompanyId);
+        },
 
         openBusModal(company_id) {
             this.currentCompanyId = company_id;
@@ -689,6 +884,12 @@ export default {
             this.idd = trip_id;
             this.fetchBusTrip(trip_id, this.currentCompanyId);
         },
+        openProfitTripModal(trip_id) {
+            // Set the current company ID
+            this.showProfitTripModal = true;
+            this.idd = trip_id;
+            this.fetctProfitTrip(trip_id, this.currentCompanyId);
+        },
         openReservationSeatModal(trip_id) {
             this.fetchReservationSeat(trip_id, this.currentCompanyId);
 
@@ -696,17 +897,14 @@ export default {
             this.idd = trip_id;
             this.showReservationSeatModal = true;
         },
-        openPivotModal(index) {
-            // Set the current company ID
-            this.showPivotModal = true;
-            this.fetchPivot(index, this.idd, this.currentCompanyId);
-        },
+
         openSeatsModal(index) {
             // Set the current company ID
             this.showSeatsModal = true;
             this.fetchPivot(index, this.idd, this.currentCompanyId);
         },
-        openTripModal(company_id) {
+        openTripModal(company_id, user_id) {
+            this.user_id = user_id;
             this.currentCompanyId = company_id;
             // Set the current company ID
             this.showTripModal = true;
@@ -718,23 +916,12 @@ export default {
             this.showReservationModal = true;
             this.fetchReservation(this.currentCompanyId);
         },
-        fetchReversationS(x) {
-            console.log(this.currentCompanyId);
-            console.log(x);
-            if (x == undefined) {
-                this.fetchReservation(this.currentCompanyId);
-            }
-            this.fetchReversationStatus(this.currentCompanyId, x);
-        },
-        fetchDriverS(x) {
-            console.log(this.currentCompanyId);
-            console.log(x);
-
-            this.fetchDriverStatus(this.currentCompanyId, x);
-        },
 
         closeDriverStatusModal() {
             this.showDriverStatusModal = false;
+        },
+        closeInfoModal() {
+            this.showInfoModal = false;
         },
         closeTripModal() {
             this.showTripModal = false;
@@ -748,6 +935,9 @@ export default {
         closeBusTripModal() {
             this.showBusTripModal = false;
         },
+        closeProfitTripModal() {
+            this.showProfitTripModal = false;
+        },
         closeReservationSeatModal() {
             this.showReservationSeatModal = false;
         },
@@ -760,6 +950,21 @@ export default {
 
         handleSubmit() {
             console.log("Form Submitted", this.name, this.email, this.password);
+        },
+
+        fetchReversationS(x) {
+            console.log(this.currentCompanyId);
+            console.log(x);
+            if (x == undefined) {
+                this.fetchReservation(this.currentCompanyId);
+            }
+            this.fetchReversationStatus(this.currentCompanyId, x);
+        },
+        fetchDriverS(x) {
+            console.log(this.currentCompanyId);
+            console.log(x);
+
+            this.fetchDriverStatus(this.currentCompanyId, x);
         },
 
         CreateCompany() {
@@ -834,29 +1039,24 @@ export default {
                 });
             this.loading = true;
         },
-        fetchPivot(index, id, company_name) {
+        fetchPivot(x, id, company_name) {
             console.log(company_name);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: `http://127.0.0.1:8000/api/admin/fillter_all_trip?company_name=${company_name}`,
+                url: `http://127.0.0.1:8000/api/admin/get_all_BusTripsByTripId/${this.user_id}?trip_id=${id}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    // تحقق من وجود response.data[id] ووجود bus_trips
-                    this.Pivot = response.data[id - 1].bus_trips[index].pivot;
-                    this.Seats = response.data[id - 1].bus_trips[index].seats;
+                    this.BusTrip = response.data;
+                    for (let index = 0; index < response.data.length; index++) {
+                        if (response.data[index].id == x) {
+                            this.Seats = response.data[index].seats;
+                        }
+                    }
 
-                    console.log(this.Pivot);
-
-                    const filteredData = response.data.filter(
-                        (item) => item.bus_trips && item.bus_trips.length > 0
-                    );
-
-                    console.log("Updated filtered data:", filteredData);
-
-                    this.updatedData = filteredData;
                     this.loading7 = false;
+                    this.loading8 = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error getting buses.");
@@ -869,26 +1069,33 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: `http://127.0.0.1:8000/api/admin/fillter_all_trip?company_name=${company_name}`,
+                url: `http://127.0.0.1:8000/api/admin/get_all_BusTripsByTripId/${this.user_id}?trip_id=${id}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    // تحقق من وجود response.data[id] ووجود bus_trips
-                    if (response.data[id] && response.data[id - 1].bus_trips) {
-                        this.BusTrip = response.data[id - 1].bus_trips;
-                    }
+                    this.BusTrip = response.data;
 
-                    // قم بفلترة العناصر التي لا تحتوي على bus_trips
-                    const filteredData = response.data.filter(
-                        (item) => item.bus_trips && item.bus_trips.length > 0
-                    );
+                    console.log(response.data);
+                    this.loading5 = false;
+                })
+                .catch((error) => {
+                    this.toast.error("Error getting buses.");
+                    console.error(error);
+                });
+            this.loading5 = true;
+        },
+        fetctProfitTrip(id, company_name) {
+            console.log(company_name);
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/admin/get_profit_trip/${id}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.profittrip = response.data.total_price;
+                    console.log(response.data);
 
-                    // عرض المصفوفة المحدثة
-                    console.log("Updated filtered data:", filteredData);
-
-                    // إذا كنت تريد تحديث مكون آخر أو عرض البيانات في واجهة المستخدم
-                    // يمكنك تعيين filteredData إلى متغير آخر أو حالة (state) في Vue
-                    this.updatedData = filteredData;
                     this.loading5 = false;
                 })
                 .catch((error) => {
@@ -948,6 +1155,25 @@ export default {
                     this.Reservation = response.data;
                     this.ReversationStatusData = response.data;
                     console.log(this.Reservation);
+                    this.loading4 = false;
+                })
+                .catch((error) => {
+                    this.toast.error("Error getting buses.");
+                    console.error(error);
+                });
+            this.loading4 = true;
+        },
+        fetchInfo(company_name) {
+            console.log(company_name);
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/admin/company_all_info/${company_name}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.info = response.data;
+                    console.log(this.info);
                     this.loading4 = false;
                 })
                 .catch((error) => {
@@ -1115,6 +1341,19 @@ export default {
     --clr-dark-variant: #1f1f1f;
     --clr-color-background: #121212;
 }
+h1 {
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+    margin-left: 15px;
+}
+
+h2 {
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+    margin-left: 15px;
+}
 
 * {
     margin: 0;
@@ -1143,6 +1382,8 @@ body {
 table thead tr th {
     padding: 10px;
     font-size: 0.9rem;
+    background: var(--clr-color-background);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr {
@@ -1158,15 +1399,17 @@ table tbody tr {
     background-color: var(--clr-white);
     border-radius: 5px;
     width: 100%;
+    max-width: 1100px;
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 3rem;
 }
 
 .nav-btnddd {
     padding: 10px 20px;
-    margin: 0 10px; /* مسافة صغيرة بين الأزرار */
+    margin: 0 10px;
     border: none;
-    border-radius: 5px; /* تقليل نصف القطر */
+    border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;
@@ -1209,13 +1452,13 @@ table tbody td {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px; /* Adjust as needed */
+    height: 150px;
     font-size: 1.2rem;
     color: #677483;
     text-align: center;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background-color: var(--clr-color-background);
 }
 table tbody tr:last-child td {
     border: none;
@@ -1255,20 +1498,82 @@ select:focus {
     height: 20px;
     width: 20px;
 }
-.spinner-container {
+.modal-containerr {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
 }
 
+.modal-contentr {
+    background-color: var(--clr-color-background);
+    padding: 20px;
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
+}
+
+.close-buttonr {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.x {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.y,
+.z {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.y {
+    background-color: #f2f2f2;
+}
 .spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30vh;
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 .cancel-btn {
     color: #4caf50;
@@ -1295,6 +1600,38 @@ select:focus {
     background-color: #f44336;
 }
 /* Navigation styling */
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+button {
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 0 5px;
+}
+
+button:hover {
+    background-color: var(--clr-primary-variant);
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
 
 .nav-btnd.btn-primary {
     background: #7380ec;
@@ -1320,7 +1657,7 @@ select:focus {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
+    border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;
@@ -1350,16 +1687,6 @@ select:focus {
 
 /* Form styling */
 
-.dark-theme-variables .form-containerd {
-    background-color: var(--clr-dark-variant);
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
 input {
     width: 100%;
     padding: 10px;
@@ -1372,28 +1699,20 @@ input:focus {
     border-color: #007bff;
 }
 
-.submit-btnd:hover {
-    background-color: var(--clr-primary-variant);
-    transform: translateY(-3px);
-}
-
 .form-containerd {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 40px;
-    background: url("@/assets/Company.jpg") no-repeat center center; /* إضافة صورة خلفية */
-    background-size: cover; /* تغطية كاملة للكومبوننت */
-    border-radius: 15px; /* تحسين شكل الزوايا */
+    background-size: cover;
+    border-radius: 15px;
     width: 100%;
     transition: background-color 0.3s ease;
-    margin: 20px auto; /* لجعل الكومبوننت في المنتصف */
 }
-
 .form-content {
-    background-color: rgba(255, 255, 255, 0.8); /* خلفية شبه شفافة */
+    background-color: rgba(var(--clr-white), 0.9);
     padding: 40px;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.5);
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.2);
     border-radius: 15px;
     width: 100%;
     max-width: 600px;
@@ -1404,12 +1723,12 @@ input:focus {
     width: 100%;
 }
 
-.form-groupd label {
-    font-weight: bold;
-    margin-bottom: 8px;
+label {
     display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--clr-dark);
 }
-
 .form-groupd input {
     width: 100%;
     padding: 12px;
@@ -1428,18 +1747,24 @@ input:focus {
     justify-content: center;
 }
 
+.submit-btnnd {
+    display: flex;
+    justify-content: center;
+}
+
 .submit-btnd {
-    padding: 12px 24px;
-    background-color: var(--clr-primary);
-    color: #fff;
+    padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    background-color: var(--clr-primary);
+    color: var(--clr-dark);
     cursor: pointer;
-    transition: background-color 0.3s;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-btnd:hover {
-    background-color: var(--clr-primary-dark);
+    background-color: var(--clr-primary-variant);
+    transform: translateY(-3px);
 }
 
 /* Animations */
@@ -1470,6 +1795,17 @@ input:focus {
 }
 
 @media (max-width: 480px) {
+    .navd {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--clr-white);
+        border-radius: 5px;
+        width: 90%;
+        padding: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-left: 1rem;
+    }
     .form-content {
         padding: 20px;
     }
@@ -1493,7 +1829,7 @@ input:focus {
     background: rgba(0, 0, 0, 0.5);
 }
 .modal-content {
-    background: #fff;
+    background-color: var(--clr-color-background);
     padding: 20px;
     border-radius: var(--border-radius-2);
     max-width: 90%;
@@ -1511,6 +1847,7 @@ input:focus {
 }
 
 .modal-header {
+    color: var(--clr-dark);
     font-size: 1.5rem;
     font-weight: bold;
     text-align: center;
@@ -1579,6 +1916,7 @@ input:focus {
 .status-btn {
     padding: 8px 16px;
     margin: 5px;
+    margin-bottom: 0.5rem;
     border-radius: 4px;
     cursor: pointer;
     border: none;
@@ -1592,8 +1930,8 @@ input:focus {
 }
 .recent_orders {
     width: 100%;
-    overflow-x: auto;
     margin-top: 20px;
+    margin-left: 1.2rem;
 }
 .recent_orders thead {
     background-color: var(--clr-primary);
@@ -1650,15 +1988,12 @@ input:focus {
         color: var(--clr-primary);
     }
 }
-.recent_orders tbody tr:hover {
-    background-color: #f1f1f1;
-}
 
 .recent_orders td {
     text-align: center;
 }
 .recent_orders table {
-    background-color: #fff;
+    background: var(--clr-color-background);
     width: 100%;
     border-radius: var(--border-radius-2);
     padding: 1rem;
@@ -1666,7 +2001,7 @@ input:focus {
     box-shadow: var(--box-shadow);
     color: var(--clr-dark);
     font-size: 0.85rem;
-    border-collapse: collapse; /* Ensure borders are collapsed */
+    border-collapse: collapse;
 }
 
 /* Responsive Design */

@@ -1,72 +1,66 @@
 <template>
-    <div class="containerd">
-        <div class="content">
-            <div class="recent_orders">
-                <h1>Inquiries</h1>
-                <div class="navd">
-                    <button @click="fetchData('pending')" class="nav-btnddd">
-                        Pending
-                    </button>
-                    <button @click="fetchData('completed')" class="nav-btnddd">
-                        Completed
-                    </button>
+    <div class="content">
+        <div class="recent_orders">
+            <div class="navd">
+                <button @click="fetchData('pending')" class="nav-btnddd">
+                    Pending
+                </button>
+                <button @click="fetchData('completed')" class="nav-btnddd">
+                    Completed
+                </button>
+            </div>
+            <div class="table-container">
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
                 </div>
-                <div class="table-container">
-                    <div v-if="loading" class="spinner-container">
-                        <div class="spinner"></div>
+                <div v-else>
+                    <div v-if="!items.length > 0" class="no-data-message">
+                        No Data Available
                     </div>
                     <div v-else>
-                        <div v-if="!items.length > 0" class="no-data-message">
-                            No Data Available
-                        </div>
-                        <div v-else>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>User ID</th>
-                                        <th>Email</th>
-                                        <th>Question</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr
-                                        v-for="(item, index) in items"
-                                        :key="index"
-                                    >
-                                        <td>{{ index }}</td>
-                                        <td>{{ item.email_user }}</td>
-                                        <td>{{ item.question }}</td>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Email</th>
+                                    <th>Question</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in items" :key="index">
+                                    <td>{{ index }}</td>
+                                    <td>{{ item.email_user }}</td>
+                                    <td>{{ item.question }}</td>
 
-                                        <td>{{ item.status }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                    <td>{{ item.status }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-if="showItemModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Inquiry Details</div>
-                <div class="modal-body">
-                    <p>
-                        <strong>User Name:</strong>
-                        {{ selectedItem.user_id }}
-                    </p>
-                    <p><strong>Email:</strong> {{ selectedItem.email }}</p>
-                    <p>
-                        <strong>Question:</strong>
-                        {{ selectedItem.question }}
-                    </p>
-                    <p><strong>Status:</strong> {{ selectedItem.status }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button @click="closeItemModal" class="close-modal">
-                        Close
-                    </button>
-                </div>
+    </div>
+    <div v-if="showItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Inquiry Details</div>
+            <div class="modal-body">
+                <p>
+                    <strong>User Name:</strong>
+                    {{ selectedItem.user_id }}
+                </p>
+                <p><strong>Email:</strong> {{ selectedItem.email }}</p>
+                <p>
+                    <strong>Question:</strong>
+                    {{ selectedItem.question }}
+                </p>
+                <p><strong>Status:</strong> {{ selectedItem.status }}</p>
+            </div>
+            <div class="modal-footer">
+                <button @click="closeItemModal" class="close-modal">
+                    Close
+                </button>
             </div>
         </div>
     </div>
@@ -129,11 +123,43 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+:root {
+    --clr-primary: #7380ec;
+    --clr-danger: #ff7782;
+    --clr-success: #41f1b6;
+    --clr-white: #fff;
+    --clr-info-dark: #7d8da1;
+    --clr-info-light: #e4e9f7;
+    --clr-dark: #363949;
+    --clr-warning: #ffbb55;
+    --clr-light: rgba(132, 139, 200, 0.18);
+    --clr-primary-variant: #111e88;
+    --clr-dark-variant: #677483;
+    --clr-color-background: #f6f6f9;
+
+    --card-border-radius: 2rem;
+    --border-radius-1: 0.4rem;
+    --border-radius-2: 0.8rem;
+    --border-radius-3: 1.2rem;
+
+    --card-padding: 1.8rem;
+    --padding-1: 1.2rem;
+
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+}
+
+.dark-theme-variables {
+    --clr-color-background: #181a1e;
+    --clr-white: #202528;
+    --clr-light: rgba(0, 0, 0, 0.4);
+    --clr-dark: #edeffd;
+    --clr-dark-variant: #677483;
+    --box-shadow: 0 2rem 3rem var(--clr-light);
+}
 
 .containerd {
     padding: 20px;
-    background: #f6f6f9;
+    background: var(--clr-color-background);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -148,41 +174,32 @@ export default {
 .content {
     width: 100%;
     max-width: 1200px;
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.navd {
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
-    background-color: var(--clr-white);
-    border-radius: 5px;
-    width: 100%;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+/* Navigation styling */
 .navd {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
-    margin-top: 20px;
     background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
 }
-.nav-btnd {
+
+.nav-btnddd {
     padding: 10px 20px;
     margin: 10px;
+    width: 100%;
     border: none;
-    border-radius: 25px;
-    background: linear-gradient(90deg, #7380ec 0%, #007bff 100%);
-    color: white;
+    border-radius: 9px;
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
@@ -200,20 +217,17 @@ export default {
     }
 }
 
-.nav-btnd:hover {
+.nav-btnddd:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transition: 0.3s ease;
 }
-
 .recent_orders {
     width: 100%;
-    overflow-x: auto;
-    margin-top: 20px;
 }
 .spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
+    border: 4px solid var(--clr-light);
+    border-left-color: var(--clr-primary);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -224,54 +238,48 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30vh; /* تجعل الـ spinner يأخذ كامل الشاشة */
+    height: 30vh;
+}
+
+/* Add this part for the spinner rotation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 .table-container {
     width: 100%;
     overflow-x: auto;
 }
-.nav-btnddd:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-.nav-btnddd {
-    padding: 10px 20px;
-    margin: 0 10px; /* مسافة صغيرة بين الأزرار */
-    border: none;
-    border-radius: 5px; /* تقليل نصف القطر */
-    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
-    color: var(--clr-white);
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: transform 0.2s, box-shadow 0.2s;
-    background-size: 200% 200%;
-    animation: gradientAnimation 5s ease infinite;
-    flex-grow: 1;
-    text-align: center;
-}
+
 .no-data-message {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 150px; /* Adjust as needed */
     font-size: 1.2rem;
-    color: #677483;
+    color: var(--clr-dark-variant);
     text-align: center;
-    border: 1px solid #ddd;
+    border: 1px solid var(--clr-dark-variant);
     border-radius: var(--border-radius-2);
-    background-color: #f6f6f9;
+    background-color: var(--clr-color-background);
 }
+
 .recent_orders th,
 .recent_orders td {
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--clr-dark-variant);
 }
+
 @media (max-width: 1200px) {
     .recent_orders table {
         font-size: 0.75rem;
     }
 }
+
 @media (max-width: 768px) {
     .recent_orders table,
     .recent_orders thead,
@@ -289,7 +297,7 @@ export default {
     }
 
     .recent_orders tr {
-        border: 1px solid #ddd;
+        border: 1px solid var(--clr-dark-variant);
         margin-bottom: 10px;
         display: flex;
         flex-direction: column;
@@ -313,18 +321,22 @@ export default {
         color: var(--clr-primary);
     }
 }
+
 .recent_orders tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: var(--clr-info-light);
 }
+
 .recent_orders td {
     text-align: center;
 }
+
 .recent_orders thead {
     background-color: var(--clr-primary);
-    color: #fff;
+    color: var(--clr-white);
 }
+
 .recent_orders table {
-    background-color: #fff;
+    background-color: var(--clr-white);
     width: 100%;
     border-radius: var(--border-radius-2);
     padding: 1rem;
@@ -340,6 +352,7 @@ export default {
     overflow-x: auto;
     margin-top: 20px;
 }
+
 table thead tr th {
     padding: 10px;
     font-size: 0.9rem;
@@ -347,19 +360,19 @@ table thead tr th {
 
 table tbody tr {
     height: 3rem;
-    border-bottom: 1px solid #fff;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-white);
+    color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
 }
 
 table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: var(--clr-info-light);
 }
 
 table tbody td {
     height: 3rem;
-    border-bottom: 1px solid #363949;
-    color: #677483;
+    border-bottom: 1px solid var(--clr-dark);
+    color: var(--clr-dark-variant);
 }
 
 table tbody tr:last-child td {
@@ -385,8 +398,9 @@ table tbody tr:last-child td {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
+
 .modal-content {
-    background: #fff;
+    background: var(--clr-white);
     padding: 20px;
     border-radius: var(--border-radius-2);
     max-width: 90%;
@@ -404,14 +418,16 @@ table tbody tr:last-child td {
     padding-bottom: 10px;
     border-bottom: 2px solid var(--clr-primary);
 }
+
 .modal-body th {
     background-color: var(--clr-primary);
-    color: #fff;
+    color: var(--clr-white);
 }
 
 .modal-body td {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--clr-dark-variant);
 }
+
 @media (max-width: 768px) {
     .modal-content {
         width: 95%;
@@ -432,20 +448,24 @@ table tbody tr:last-child td {
     max-width: 100%;
     border-radius: 10px;
 }
+
 .modal-body th,
 .modal-body td {
     padding: 12px;
     text-align: left;
 }
+
 .modal-header,
 .modal-body,
 .modal-footer {
     margin-bottom: 15px;
 }
+
 .modal-body table {
     width: 100%;
     border-collapse: collapse;
 }
+
 .modal-footer {
     display: flex;
     justify-content: center;
@@ -453,8 +473,8 @@ table tbody tr:last-child td {
 
 .close-modal {
     padding: 8px 16px;
-    background-color: #d9534f;
-    color: white;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
     border: none;
     border-radius: 5px;
     cursor: pointer;

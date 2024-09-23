@@ -54,6 +54,7 @@ class PivoitController extends Controller
     {
         //
     }
+
     /**
      * Remove the specified resource from storage.
      */

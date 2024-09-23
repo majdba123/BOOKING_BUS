@@ -26,6 +26,9 @@
             <div class="chart-container">
                 <canvas id="privateTripsChart"></canvas>
             </div>
+            <div class="chart-container">
+                <canvas id="reservationProfitChart"></canvas>
+            </div>
         </div>
         <div class="recent-orders">
             <h1>Trips Overview</h1>
@@ -83,13 +86,33 @@ export default {
         };
     },
     mounted() {
-        this.fetchTripsData();
-        this.fetchDashboardData();
+        this.checkCachedData();
     },
     beforeUnmount() {
         this.destroyCharts();
     },
     methods: {
+        checkCachedData() {
+            const cachedDashboardData = JSON.parse(
+                localStorage.getItem("dashboardData")
+            );
+            const lastUpdated = localStorage.getItem("lastUpdated");
+            const now = new Date().getTime();
+
+            if (
+                cachedDashboardData &&
+                lastUpdated &&
+                now - lastUpdated < 1800000
+            ) {
+                this.dashboardData = cachedDashboardData;
+                this.processProfitsData();
+                this.createCharts();
+            } else {
+                this.fetchTripsData();
+                this.fetchDashboardData();
+            }
+        },
+
         fetchTripsData() {
             const accessToken = window.localStorage.getItem("access_token");
             axios
@@ -124,6 +147,7 @@ export default {
                 })
                 .then((response) => {
                     this.dashboardData = response.data;
+                    this.cacheDashboardData();
                     this.processProfitsData();
                     this.createCharts();
                 })
@@ -131,13 +155,34 @@ export default {
                     console.error("Error fetching dashboard data:", error);
                 });
         },
+
+        cacheDashboardData() {
+            localStorage.setItem(
+                "dashboardData",
+                JSON.stringify(this.dashboardData)
+            );
+            localStorage.setItem("lastUpdated", new Date().getTime());
+        },
+
         processProfitsData() {
             this.dailyProfits = [100, 200, 150, 300, 250, 400, 350];
             this.weeklyProfits = [1500, 2000, 1800, 2200, 1700];
             this.monthlyProfits = [6000, 8000, 7000, 9000, 8500];
         },
+
         createCharts() {
             if (this.dashboardData) {
+                this.createChart(
+                    "reservationProfitChart",
+                    ["Pending Profit", "Completed Profit", "Out Profit"],
+                    [
+                        this.dashboardData.total_profit_pending,
+                        this.dashboardData.total_profit_completed,
+                        this.dashboardData.total_profit_out,
+                    ], // Data from API
+                    "bar",
+                    "#ff4d4d"
+                );
                 this.createChart(
                     "tripStatusChart",
                     ["Pending Trip", "Finished Trip", "Finished Going Trip"],
@@ -231,6 +276,7 @@ export default {
                 );
             }
         },
+
         destroyCharts() {
             if (this.tripStatusChart) this.tripStatusChart.destroy();
             if (this.busStatusChart) this.busStatusChart.destroy();
@@ -241,6 +287,7 @@ export default {
             if (this.weeklyProfitsChart) this.weeklyProfitsChart.destroy();
             if (this.monthlyProfitsChart) this.monthlyProfitsChart.destroy();
         },
+
         createChart(chartId, labels, data, type, borderColor = null) {
             const ctx = document.getElementById(chartId).getContext("2d");
             new Chart(ctx, {
@@ -253,7 +300,9 @@ export default {
                                 .replace("Chart", "")
                                 .replace(/([A-Z])/g, " $1")
                                 .trim(),
-                            data: data.map((val) => val || 1), // To handle all zero cases
+                            data: data.map((val) =>
+                                val !== null && val !== undefined ? val : 0
+                            ),
                             backgroundColor: ["#007bff", "#28a745", "#ffc107"],
                             borderColor: borderColor ? borderColor : "#333",
                             fill: type === "line" ? false : true,
@@ -266,7 +315,9 @@ export default {
                     scales:
                         type !== "pie"
                             ? {
-                                  y: { beginAtZero: true },
+                                  y: {
+                                      beginAtZero: true,
+                                  },
                               }
                             : undefined,
                     plugins: {
@@ -280,6 +331,7 @@ export default {
     },
 };
 </script>
+
 <style scoped>
 :root {
     --clr-primary: #7380ec;
@@ -329,8 +381,12 @@ export default {
 }
 
 h2 {
-    margin-bottom: var(--padding-1);
-    text-align: center;
+    font-weight: 450;
+    font-size: 2rem;
+    margin-bottom: 18px;
+    color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .charts-grid {

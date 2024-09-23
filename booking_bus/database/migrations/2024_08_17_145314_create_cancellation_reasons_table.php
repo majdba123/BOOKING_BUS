@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('canceled_trip_id')->constrained('canceled_trips')->onDelete('cascade');
             $table->string('reason');
-            $table->softDeletes();
             $table->timestamps();
         });
     }

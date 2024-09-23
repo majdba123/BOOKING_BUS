@@ -19,7 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>Driver</h1>
+                <h1>Trip</h1>
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -50,15 +50,12 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -89,25 +86,10 @@
                 </div>
             </div>
 
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!--end driver_status-->
             <div class="driver_chart">
-                <h2>Driver Workload Status</h2>
-                <DriverChart :chartData="chartData" />
+                <h2>Trip Workload Status</h2>
+                <pathchart :chartData="chartData" />
             </div>
         </div>
         <!-- Right section end -->
@@ -116,14 +98,16 @@
 
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import DriverChart from "@/components/DriverChart.vue";
+import pathchart from "@/components/pathchart.vue";
 import AddTrip from "@/components/AddTrip.vue";
+import photo from "@/components/photo.vue";
 import router from "@/router";
 import store from "@/store";
+import { mapGetters } from "vuex";
 
 export default {
     name: "AllTrip",
-    components: { SidebarCompany, DriverChart, AddTrip },
+    components: { SidebarCompany, pathchart, AddTrip, photo },
     data() {
         return {
             x: store.state.x,
@@ -160,6 +144,9 @@ export default {
             store.commit("updateSearchQuery", newQuery);
             console.log(store.state.searchQuery);
         },
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     methods: {
         handleResize() {
@@ -357,10 +344,12 @@ a {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-weight: 450;
+    font-size: 2rem;
     margin-top: 20px;
     color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
@@ -387,16 +376,27 @@ small {
     font-size: 0.75rem;
     color: var(--clr-dark);
 }
+@keyframes borderColorShift {
+    0% {
+        border-color: yellow;
+    }
+    50% {
+        border-color: blue;
+    }
+    100% {
+        border-color: yellow;
+    }
+}
+
 .profile-photo {
     position: relative;
     display: flex;
     align-items: center;
-}
-.profile-photo img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid var(--clr-primary);
+    border: 2px solid yellow;
+    animation: borderColorShift 3s infinite;
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -425,15 +425,37 @@ small {
 }
 
 /* aside */
+
+@keyframes colorShift {
+    0% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+    50% {
+        border-top-color: rgb(255, 255, 0);
+        border-bottom-color: rgb(0, 0, 255);
+        border-right-color: rgb(255, 105, 180);
+    }
+    100% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+}
+
 aside {
     height: 100vh;
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
-    border-radius: 0 2rem 2rem 0;
+    border-radius: 0 2.5rem 2.5rem 0;
     padding: 1rem;
+    border-bottom: 3px solid rgb(255, 0, 0);
+    border-top: 3px solid rgb(0, 0, 255);
+    border-left: 3px solid transparent;
+    animation: colorShift 5s infinite;
 }
-
 aside .top {
     display: flex;
     justify-content: space-between;
@@ -626,6 +648,17 @@ aside .logo {
     color: var(--clr-dark);
 }
 /* Styling for datetime container */
+@keyframes borderShift {
+    0% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+    50% {
+        border-image-source: linear-gradient(to left, yellow, blue);
+    }
+    100% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+}
 .datetime-container {
     text-align: center;
     font-family: "Arial", sans-serif;
@@ -637,12 +670,11 @@ aside .logo {
     font-weight: bold;
     color: #72c3ff;
     background: linear-gradient(90deg, #72c3ff, #ff4d4d);
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
-
 .time {
     display: flex;
     gap: 1rem;
@@ -651,7 +683,10 @@ aside .logo {
 
 .time-box {
     background: #111111;
-    border-radius: 0.5rem;
+    border-radius: 50% 20% / 10% 40%;
+    border-bottom: 1px solid yellow;
+    border-top: 1px solid yellow;
+    animation: borderColorShift 3s infinite;
     padding: 1rem 1.5rem;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;

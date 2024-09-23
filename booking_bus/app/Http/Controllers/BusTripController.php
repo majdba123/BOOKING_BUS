@@ -122,7 +122,6 @@ class BusTripController extends Controller
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
                 'seats' => $busTrip->bus->seat->count()
-
             ];
 
             $breaksData = [];
@@ -194,19 +193,11 @@ class BusTripController extends Controller
         $busTrips = Bus_Trip::query();
 
         if ($fromTime) {
-            $busTrips->where('from_time_going', $fromTime);
+            $busTrips->where('from_time', $fromTime);
         }
 
         if ($toTime) {
-            $busTrips->where('to_time_going', $toTime);
-        }
-
-        if ($fromTime_return) {
-            $busTrips->where('from_time_return', $toTime);
-        }
-
-        if ($toTime_return) {
-            $busTrips->where('to_time_return', $toTime);
+            $busTrips->where('to_time', $toTime);
         }
 
         if ($type) {
@@ -276,9 +267,6 @@ class BusTripController extends Controller
         return response()->json($busTripsData);
     }
 
-
-
-
     public function get_fillter_bus_trip(Request $request)
     {
         $company = Auth::user()->Company->id;
@@ -302,33 +290,22 @@ class BusTripController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 422);
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
         }
-        $fromTime = $request->input('from_time_going');
-        $toTime = $request->input('to_time_going');
-
-
-        $fromTime_return = $request->input('from_time_return');
-        $toTime_return = $request->input('to_time_return');
-
+        $fromTime = $request->input('from_time');
+        $toTime = $request->input('to_time');
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
-
         $busTrips = Bus_Trip::whereHas('bus', function ($query) use ($company) {
             $query->where('company_id', $company);
         });
         if ($fromTime) {
-            $busTrips->where('from_time_going', $fromTime);
+            $busTrips->where('from_time', $fromTime);
         }
         if ($toTime) {
-            $busTrips->where('to_time_going', $toTime);
-        }
-        if ($fromTime_return) {
-            $busTrips->where('from_time_return', $fromTime);
-        }
-        if ($toTime_return) {
-            $busTrips->where('to_time_return', $toTime);
+            $busTrips->where('to_time', $toTime);
         }
         if ($type) {
             $busTrips->where('type', $type);

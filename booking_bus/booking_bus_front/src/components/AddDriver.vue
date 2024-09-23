@@ -19,32 +19,45 @@
         <!-- Form to add/edit driver -->
         <div v-if="showForm" class="form-containerd">
             <form @submit.prevent="handleSubmit">
-                <div class="form-groupd">
-                    <label for="driverName">Driver Name</label>
-                    <input
-                        type="text"
-                        id="driverName"
-                        v-model="name"
-                        required
-                    />
+                <div class="form-row">
+                    <div class="form-groupd">
+                        <label for="driverName">Driver Name</label>
+                        <input
+                            type="text"
+                            id="driverName"
+                            v-model="name"
+                            required
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="driverEmail">Email</label>
+                        <input
+                            type="email"
+                            id="driverEmail"
+                            v-model="email"
+                            required
+                        />
+                    </div>
                 </div>
-                <div class="form-groupd">
-                    <label for="driverEmail">Email</label>
-                    <input
-                        type="email"
-                        id="driverEmail"
-                        v-model="email"
-                        required
-                    />
-                </div>
-                <div class="form-groupd">
-                    <label for="driverPassword">Password</label>
-                    <input
-                        type="password"
-                        id="driverPassword"
-                        v-model="password"
-                        required
-                    />
+                <div class="form-row">
+                    <div class="form-groupd">
+                        <label for="driverHeight">Wages</label>
+                        <input
+                            type="number"
+                            id="driverHeight"
+                            v-model="wages"
+                            required
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="driverPassword">Password</label>
+                        <input
+                            type="password"
+                            id="driverPassword"
+                            v-model="password"
+                            required
+                        />
+                    </div>
                 </div>
                 <div class="submit-btnnd">
                     <button
@@ -52,7 +65,7 @@
                         @click="CreateDriver"
                         class="submit-btnd"
                     >
-                        Submit
+                        ADD
                     </button>
                 </div>
             </form>
@@ -79,6 +92,7 @@
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Email</th>
+                                    <th>Wages</th>
                                     <th>Status</th>
                                     <th>Select Driver To Bus</th>
                                     <th>Actions</th>
@@ -86,12 +100,13 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="(user, index) in paginatedDrivers"
+                                    v-for="(user, index) in filteredDrivers"
                                     :key="index"
                                 >
                                     <td>{{ user.id }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email_driver }}</td>
+                                    <td>{{ user.Wages }}</td>
                                     <td>{{ user.status }}</td>
                                     <td>
                                         <select
@@ -209,6 +224,7 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
+                                        <th>Wages</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -222,6 +238,7 @@
                                         <td>{{ index }}</td>
                                         <td>{{ driver.name }}</td>
                                         <td>{{ driver.email_driver }}</td>
+                                        <td>{{ driver.Wages }}</td>
                                         <td>{{ driver.status }}</td>
                                     </tr>
                                 </tbody>
@@ -370,6 +387,7 @@ export default {
     name: "AddDriver",
     data() {
         return {
+            wages: "",
             loading: true,
             loading1: false,
             loading2: true,
@@ -434,6 +452,7 @@ export default {
                     name: this.name,
                     email: this.email,
                     password: this.password,
+                    Wages: this.wages,
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
@@ -447,8 +466,15 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    this.toast.error("Email is already registered.");
-                    console.log(error);
+                    if (this.name.length == 0)
+                        this.toast.error(error.response.data.error.name[0]);
+
+                    if (this.email.length == 0)
+                        this.toast.error(error.response.data.error.email[0]);
+
+                    if (this.password.length <= 0)
+                        this.toast.error(error.response.data.error.password[0]);
+                    this.toast.error(error.response.data.error.email[0]);
                 });
         },
         CancelDriver(driverId) {
@@ -463,10 +489,11 @@ export default {
                     this.AllDriver();
                 })
                 .catch((error) => {
-                    this.toast.error("Error cancelling driver.");
+                    this.toast.error(error.response.data.error);
                     console.error(error);
                 });
         },
+
         AllDriver() {
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -475,9 +502,18 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.Driver = response.data;
-                    store.state.Driver = response.data;
-                    console.log(response.data);
+                    store.state.Driver = response.data.sort((a, b) => {
+                        if (a.name < b.name) return -1;
+                        if (a.name > b.name) return 1;
+                        return 0;
+                    });
+
+                    this.Driver = response.data.sort((a, b) => {
+                        if (a.name < b.name) return -1;
+                        if (a.name > b.name) return 1;
+                        return 0;
+                    });
+                    console.log(this.Driver);
                     this.loading = false;
                 })
                 .catch((error) => {
@@ -533,11 +569,9 @@ export default {
                 .then(() => {
                     console.log("Selection Complete for Bus ID:", busId);
                     this.toast.success("Driver assigned to bus successfully!");
-
-                    localStorage.setItem(`driver_${userId}_busId`, busId);
                 })
                 .catch((error) => {
-                    this.toast.error("Error assigning driver to bus.");
+                    this.toast.error(error.response.data.error);
                     console.error("Error for Bus ID:", busId, error);
                 });
         },
@@ -666,7 +700,7 @@ export default {
         paginatedDrivers() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
             const end = start + this.itemsPerPage;
-            return this.Driver.slice(start, end);
+            return store.state.Driver.slice(start, end);
         },
         totalPages() {
             return Math.ceil(this.Driver.length / this.itemsPerPage);
@@ -692,6 +726,22 @@ export default {
 </script>
 
 <style scoped>
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* المسافة بين كل عنصرين */
+}
+
+.form-groupd {
+    flex: 1; /* لتوزيع المساحة بالتساوي بين الحقول */
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+}
+
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 :root {
@@ -732,6 +782,11 @@ export default {
     --clr-primary-variant: #3700b3;
     --clr-dark-variant: #1f1f1f;
     --clr-color-background: #121212;
+}
+h1 {
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
 }
 
 * {
@@ -987,15 +1042,16 @@ select:focus {
     background-color: #f44336;
 }
 /* Navigation styling */
+
 .navd {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
+    margin-top: 20px;
     background-color: var(--clr-white);
-    border-radius: var(--border-radius-3);
+    border-radius: 10px;
     width: 100%;
-    max-width: 800px;
 }
 
 .nav-btnd {
@@ -1034,17 +1090,13 @@ select:focus {
 /* Form styling */
 .form-containerd {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    justify-content: center;
     padding: 20px;
-    background-color: rgba(var(--clr-white), 0.9);
-    box-shadow: 0 2rem 3rem var(--clr-light);
+    background-color: var(--clr-white);
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
-    max-width: 500px;
     width: 100%;
-    margin-top: 50px;
-    transition: background-color 0.3s ease;
 }
 
 .form-groupd {
@@ -1113,9 +1165,10 @@ input:focus {
     border-radius: 10px;
     max-width: 500px;
     width: 80%;
-    height: 86%;
+    height: 50%;
     overflow-y: scroll;
     scrollbar-width: none;
+    margin: 10px;
 }
 
 .modal-content::-webkit-scrollbar {

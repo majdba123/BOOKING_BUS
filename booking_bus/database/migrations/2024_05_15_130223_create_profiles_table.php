@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('phone');
             $table->string('image')->default('null');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

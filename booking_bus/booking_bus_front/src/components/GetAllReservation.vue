@@ -18,7 +18,7 @@
 
         <!-- Start all trips table -->
         <div v-if="showAllReservationTheBus" class="recent_orders">
-            <h1>All Reservation The Bus</h1>
+            <h2>All Reservation The Bus</h2>
             <div class="table-container">
                 <div v-if="loading" class="spinner-container">
                     <div class="spinner"></div>
@@ -89,7 +89,7 @@
 
         <!-- Start all drivers table -->
         <div v-if="showAllDrivers" class="recent_orders">
-            <h1>All Drivers</h1>
+            <h2>All Drivers</h2>
             <div class="table-container">
                 <div v-if="loading1" class="spinner-container">
                     <div class="spinner"></div>
@@ -158,7 +158,7 @@
 
         <!-- Start ratings tables -->
         <div v-if="showTripRatings" class="recent_orders">
-            <h1>All Reservation</h1>
+            <h2>All Reservation</h2>
             <div class="table-container">
                 <div v-if="loading2" class="spinner-container">
                     <div class="spinner"></div>
@@ -688,6 +688,9 @@ export default {
             this.showDriverRatingsModal = false;
         },
     },
+    mounted() {
+        this.fetchReservation();
+    },
     computed: {
         paginatedReservations() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
@@ -757,9 +760,11 @@ h1 {
 }
 
 h2 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    color: var(--clr-dark);
+    margin-bottom: 5px;
+    margin-left: 15px;
 }
-
 .recent_orders {
     width: 100%;
     overflow-x: auto;
@@ -900,24 +905,19 @@ select:focus {
 
 /* Navigation styling */
 .navd {
-    margin-left: 4rem;
-
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
     background-color: var(--clr-white);
-    border-radius: var(--border-radius-3);
+    border-radius: 10px;
     width: 100%;
-    max-width: 800px;
 }
 
 .nav-btnd {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 9px;
+    border-radius: var(--border-radius-2);
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;

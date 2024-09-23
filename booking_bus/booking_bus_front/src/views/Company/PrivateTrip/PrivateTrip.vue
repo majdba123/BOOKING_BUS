@@ -48,17 +48,37 @@
                     <span class="material-icons active">light_mode</span>
                     <span class="material-icons">dark_mode</span>
                 </div>
+                <div class="notification-icon" @click="toggleNotificationsMenu">
+                    <span class="material-icons">notifications</span>
+                    <!-- Notification count badge -->
+                    <span
+                        v-if="notifications.length"
+                        class="notification-badge"
+                    >
+                        {{ notifications.length }}
+                    </span>
+                    <div
+                        v-if="showNotificationsMenu"
+                        class="notifications-dropdown"
+                    >
+                        <ul>
+                            <li
+                                v-for="notification in notifications"
+                                :key="notification.id"
+                            >
+                                {{ this.messages }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -89,25 +109,10 @@
                 </div>
             </div>
 
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!--end driver_status-->
             <div class="driver_chart">
-                <h2>Driver Workload Status</h2>
-                <DriverChart :chartData="chartData" />
+                <h2>PrivateTrips Status</h2>
+                <privatetripchart :chartData="chartData" />
             </div>
         </div>
         <!-- Right section end -->
@@ -115,17 +120,25 @@
 </template>
 
 <script>
+import Pusher from "pusher-js";
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import privatetrip from "@/components/privatetrip.vue";
-import DriverChart from "@/components/DriverChart.vue";
+import privatetripchart from "@/components/privatetripchart.vue";
+import photo from "@/components/photo.vue";
+import { mapGetters } from "vuex";
 import store from "@/store";
 import router from "@/router";
 
 export default {
     name: "AllPrivate",
-    components: { SidebarCompany, privatetrip, DriverChart },
+    components: { SidebarCompany, privatetrip, privatetripchart, photo },
     data() {
         return {
+            messages: "",
+            id: null,
+
+            showNotificationsMenu: false,
+            notifications: [],
             x: store.state.x,
             searchQuery: "",
             showProfileMenu: false,
@@ -156,12 +169,62 @@ export default {
         };
     },
     watch: {
+        message(newMessage) {
+            this.messages = newMessage;
+        },
         searchQuery(newQuery) {
             store.commit("updateSearchQuery", newQuery);
             console.log(store.state.searchQuery);
         },
     },
     methods: {
+        initializePusher() {
+            Pusher.logToConsole = true;
+            const pusher = new Pusher("7342c00647f26084d14f", {
+                cluster: "ap2",
+                authEndpoint: "/pusher/auth",
+                auth: {
+                    params: {
+                        userId: this.id,
+                    },
+                },
+            });
+
+            const channel = pusher.subscribe(
+                `notification-private-channel-${this.id}`
+            );
+            console.log("Pusher Channel:", channel);
+
+            channel.bind("PrivateNotification", (data) => {
+                const notification = data.message;
+                this.$store.commit("ADD_NOTIFICATION", notification);
+                this.messages = notification;
+                console.log("Notification:", this.messages);
+                if (this.messages != null) {
+                    this.notifications = ["1"];
+                }
+            });
+        },
+        toggleNotificationsMenu() {
+            this.showNotificationsMenu = !this.showNotificationsMenu;
+            if (this.showNotificationsMenu) {
+                setTimeout(() => {
+                    const dropdownMenu = this.$el.querySelector(
+                        ".notifications-dropdown"
+                    );
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.add("show");
+                    }
+                }, 10);
+            } else {
+                const dropdownMenu = this.$el.querySelector(
+                    ".notifications-dropdown"
+                );
+                if (dropdownMenu) {
+                    dropdownMenu.classList.remove("show");
+                }
+            }
+        },
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {
@@ -252,6 +315,9 @@ export default {
             console.log("Searching for:", this.searchQuery);
             // Add your search logic here
         },
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     mounted() {
         this.checkToken();
@@ -356,10 +422,12 @@ a {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-weight: 450;
+    font-size: 2rem;
     margin-top: 20px;
     color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
@@ -386,16 +454,27 @@ small {
     font-size: 0.75rem;
     color: var(--clr-dark);
 }
+@keyframes borderColorShift {
+    0% {
+        border-color: yellow;
+    }
+    50% {
+        border-color: blue;
+    }
+    100% {
+        border-color: yellow;
+    }
+}
+
 .profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
+    position: relative;
     display: flex;
     align-items: center;
-}
-.profile-photo img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid var(--clr-primary);
+    border: 2px solid yellow;
+    animation: borderColorShift 3s infinite;
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
@@ -424,13 +503,36 @@ small {
 }
 
 /* aside */
+
+@keyframes colorShift {
+    0% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+    50% {
+        border-top-color: rgb(255, 255, 0);
+        border-bottom-color: rgb(0, 0, 255);
+        border-right-color: rgb(255, 105, 180);
+    }
+    100% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+}
+
 aside {
     height: 100vh;
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
-    border-radius: 0 2rem 2rem 0;
+    border-radius: 0 2.5rem 2.5rem 0;
     padding: 1rem;
+    border-bottom: 3px solid rgb(255, 0, 0);
+    border-top: 3px solid rgb(0, 0, 255);
+    border-left: 3px solid transparent;
+    animation: colorShift 5s infinite;
 }
 
 aside .top {
@@ -626,6 +728,17 @@ aside .logo {
     color: var(--clr-dark);
 }
 /* Styling for datetime container */
+@keyframes borderShift {
+    0% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+    50% {
+        border-image-source: linear-gradient(to left, yellow, blue);
+    }
+    100% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+}
 .datetime-container {
     text-align: center;
     font-family: "Arial", sans-serif;
@@ -637,12 +750,11 @@ aside .logo {
     font-weight: bold;
     color: #72c3ff;
     background: linear-gradient(90deg, #72c3ff, #ff4d4d);
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
-
 .time {
     display: flex;
     gap: 1rem;
@@ -651,7 +763,10 @@ aside .logo {
 
 .time-box {
     background: #111111;
-    border-radius: 0.5rem;
+    border-radius: 50% 20% / 10% 40%;
+    border-bottom: 1px solid yellow;
+    border-top: 1px solid yellow;
+    animation: borderColorShift 3s infinite;
     padding: 1rem 1.5rem;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;
@@ -660,10 +775,88 @@ aside .logo {
     text-align: center;
     background: linear-gradient(135deg, #ff4d4d, #72c3ff);
     color: transparent;
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+.notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 1.2rem;
+    position: relative;
+    color: var(--clr-dark);
 }
 
+.notification-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-weight: bold;
+    z-index: 100;
+}
+.notification-icon .material-icons {
+    font-size: 1.4rem;
+    color: var(--clr-dark);
+    transition: color 0.3s ease;
+}
+
+.notification-icon .material-icons:hover {
+    color: var(--clr-primary);
+}
+.notifications-dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: var(--clr-white);
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 10px 0;
+    z-index: 1000;
+    width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.notifications-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notifications-dropdown ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.notifications-dropdown li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.notifications-dropdown li:hover {
+    background-color: var(--clr-light);
+}
+.theme-notification-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 .time-box span {
     display: block;
     font-size: 0.8rem;

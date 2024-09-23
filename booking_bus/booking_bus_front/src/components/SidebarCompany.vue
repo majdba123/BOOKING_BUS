@@ -14,9 +14,7 @@
             @click="selectOption('Driver')"
             :class="{ active: selectedOption === 'Driver' }"
         >
-            <span class="material-icons" aria-label="Customers"
-                >person_outline</span
-            >
+            <span class="material-icons" aria-label="Customers">groups</span>
             <h3>Driver</h3>
         </RouterLink>
 
@@ -58,7 +56,11 @@
             <span class="msg_count">14</span>
         </router-link>
 
-        <router-link to="AllBreak">
+        <router-link
+            to="AllBreak"
+            @click="selectOption('Break')"
+            :class="{ active: selectedOption === 'Break' }"
+        >
             <span class="material-icons" aria-label="Analytics">pin_drop</span>
             <h3>Break</h3>
         </router-link>
@@ -98,13 +100,25 @@
             >
             <h3>Polices</h3>
         </router-link>
+        <router-link
+            to="TrackingBus"
+            @click="selectOption('Tracking')"
+            :class="{ active: selectedOption === 'Tracking' }"
+        >
+            <span class="material-icons" aria-label="Analytics"
+                >location_searching</span
+            >
+            <h3>Tracking</h3>
+        </router-link>
 
         <router-link
             to="AllReservation"
             @click="selectOption('Reservation')"
             :class="{ active: selectedOption === 'Reservation' }"
         >
-            <span class="material-icons" aria-label="Products">person</span>
+            <span class="material-icons" aria-label="Products"
+                >library_books</span
+            >
             <h3>Reservation</h3>
         </router-link>
 

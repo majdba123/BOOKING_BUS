@@ -18,54 +18,34 @@
                     </div>
                 </div>
             </div>
-            <div class="profile-menu">
-                <div
-                    class="theme-toggler"
-                    ref="themeToggler"
-                    @click="toggleTheme"
-                >
-                    <span class="material-icons active">light_mode</span>
-                    <span class="material-icons">dark_mode</span>
-                </div>
-                <div class="profile">
-                    <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
-                    </div>
-                    <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            class="profile-picture"
-                            @click="toggleProfileMenu"
-                        />
-                        <ul v-if="showProfileMenu" class="dropdown-menu">
-                            <li @click="goToProfile">Go to Profile</li>
-                            <li @click="logout">Logout</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <div class="profile-menu"></div>
         </div>
     </main>
 </template>
 
 <script>
 import store from "@/store";
+import { mapGetters } from "vuex";
 
 export default {
     name: "HeaderCompany",
+    components: {},
     data() {
         return {
             x: store.state.x,
             showProfileMenu: false,
             profileImage: "",
             isDarkMode: false,
+            showNotificationsMenu: false,
+            notifications: [],
             currentDateTime: {
                 date: "",
                 time: "",
             },
         };
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     methods: {
         toggleProfileMenu() {
@@ -122,10 +102,37 @@ export default {
                 .querySelector("span:nth-child(2)")
                 .classList.toggle("active", this.isDarkMode);
         },
+        toggleNotificationsMenu() {
+            this.showNotificationsMenu = !this.showNotificationsMenu;
+            if (this.showNotificationsMenu) {
+                setTimeout(() => {
+                    const dropdownMenu = this.$el.querySelector(
+                        ".notifications-dropdown"
+                    );
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.add("show");
+                    }
+                }, 10);
+            } else {
+                const dropdownMenu = this.$el.querySelector(
+                    ".notifications-dropdown"
+                );
+                if (dropdownMenu) {
+                    dropdownMenu.classList.remove("show");
+                }
+            }
+        },
+        fetchNotifications() {
+            this.notifications = [
+                { id: 1, message: "New user registered" },
+                { id: 2, message: "System update available" },
+            ];
+        },
     },
     mounted() {
         this.updateDateTime();
         this.fetchProfileInfo();
+        this.fetchNotifications(); // Fetch notifications on mount
         if (document.body.classList.contains("dark-theme-variables")) {
             this.isDarkMode = true;
             const themeToggler = this.$refs.themeToggler;
@@ -269,6 +276,11 @@ small {
     align-items: center;
 }
 
+.theme-notification-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 .theme-toggler {
     display: flex;
     align-items: center;
@@ -277,7 +289,16 @@ small {
     padding: 0.5rem;
     border-radius: 1rem;
     cursor: pointer;
-    margin-right: 4rem;
+}
+
+.theme-toggler {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--clr-light);
+    padding: 0.5rem;
+    border-radius: 1rem;
+    cursor: pointer;
 }
 
 .theme-toggler span {
@@ -290,6 +311,80 @@ small {
     color: var(--clr-primary);
 }
 
+.notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 1.2rem;
+    position: relative;
+    color: var(--clr-dark);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-weight: bold;
+    z-index: 100;
+}
+.notification-icon .material-icons {
+    font-size: 1.4rem;
+    color: var(--clr-dark);
+    transition: color 0.3s ease;
+}
+
+.notification-icon .material-icons:hover {
+    color: var(--clr-primary);
+}
+.notifications-dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: var(--clr-white);
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 10px 0;
+    z-index: 1000;
+    width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.notifications-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notifications-dropdown ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.notifications-dropdown li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.notifications-dropdown li:hover {
+    background-color: var(--clr-light);
+}
 .profile {
     display: flex;
     align-items: center;
@@ -307,6 +402,12 @@ small {
     position: relative;
     display: flex;
     align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid var(--clr-primary);
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .profile-photo img {
@@ -322,7 +423,6 @@ small {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
 }
-
 .dropdown-menu {
     position: absolute;
     top: 60px;
@@ -335,7 +435,6 @@ small {
     padding: 10px 0;
     z-index: 1000;
     width: 150px;
-    animation: fadeIn 0.3s ease;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
@@ -360,14 +459,16 @@ small {
 }
 
 /* Adding a subtle fade-in animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
+
+@keyframes borderShift {
+    0% {
+        border-image-source: linear-gradient(to right, yellow, blue);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    50% {
+        border-image-source: linear-gradient(to left, yellow, blue);
+    }
+    100% {
+        border-image-source: linear-gradient(to right, yellow, blue);
     }
 }
 .datetime-container {
@@ -384,9 +485,8 @@ small {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
-
 .time {
     display: flex;
     gap: 1rem;
@@ -394,10 +494,9 @@ small {
 }
 
 .time-box {
-    background: #111111;
-    border-radius: 0.5rem;
+    border-radius: 50% 20% / 10% 40%;
     padding: 1rem 1.5rem;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
     font-size: 1.5rem;
     position: relative;
     color: #ffffff;

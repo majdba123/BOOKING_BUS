@@ -30,6 +30,51 @@
                         required
                     />
                 </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Purshase Date</label>
+                    <input
+                        type="date"
+                        id="purshasedate"
+                        v-model="purshasedate"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Purshase Price</label>
+                    <input
+                        type="number"
+                        id="purshaseprice"
+                        v-model="purshaseprice"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Lifespan Years</label>
+                    <input
+                        type="number"
+                        id="lifespanyears"
+                        v-model="lifespanyears"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Bus Consumption</label>
+                    <input
+                        type="number"
+                        id="busconsumption"
+                        v-model="busconsumption"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Fuel Consumption</label>
+                    <input
+                        type="number"
+                        id="fuelconsumption"
+                        v-model="fuelconsumption"
+                        required
+                    />
+                </div>
 
                 <div class="submit-btnnd">
                     <button type="submit" @click="AddBus" class="submit-btnd">
@@ -56,6 +101,12 @@
                                 <tr>
                                     <th>Number Bus</th>
                                     <th>Number Passenger</th>
+                                    <th>Purshase Date</th>
+                                    <th>Purshase Price</th>
+                                    <th>Lifespan Years</th>
+                                    <th>Bus Consumption</th>
+                                    <th>Fuel Consumption</th>
+
                                     <th>Actions</th>
                                     <th>Seats</th>
                                 </tr>
@@ -67,6 +118,12 @@
                                 >
                                     <td>{{ bus.number_bus }}</td>
                                     <td>{{ bus.number_passenger }}</td>
+                                    <td>{{ bus.purshase_data }}</td>
+                                    <td>{{ bus.purshase_price }}</td>
+                                    <td>{{ bus.lifespan_years }}</td>
+                                    <td>{{ bus.bus_consumption }}</td>
+                                    <td>{{ bus.fuel_consumption }}</td>
+
                                     <td>
                                         <button
                                             class="edit-btn"
@@ -138,8 +195,11 @@
                 >
                     Available
                 </button>
-                <button class="status-btns" @click="fetchBusStatus('finished')">
-                    Finished
+                <button
+                    class="status-btns"
+                    @click="fetchBusStatus('completed')"
+                >
+                    Completed
                 </button>
                 <div class="modal-body">
                     <div v-if="loading1" class="spinner-container">
@@ -158,36 +218,31 @@
                                     <tr>
                                         <th>Number Bus</th>
                                         <th>Number Passenger</th>
+                                        <th>Purshase Date</th>
+                                        <th>Purshase Price</th>
+                                        <th>Lifespan Years</th>
+                                        <th>Bus Consumption</th>
+                                        <th>Fuel Consumption</th>
+
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr
-                                        v-for="(
-                                            bus, index
-                                        ) in paginatedBusStatusData"
+                                        v-for="(bus, index) in Bus"
                                         :key="index"
                                     >
                                         <td>{{ bus.number_bus }}</td>
                                         <td>{{ bus.number_passenger }}</td>
+                                        <td>{{ bus.purshase_data }}</td>
+                                        <td>{{ bus.purshase_price }}</td>
+                                        <td>{{ bus.lifespan_years }}</td>
+                                        <td>{{ bus.bus_consumption }}</td>
+                                        <td>{{ bus.fuel_consumption }}</td>
                                         <td>{{ bus.status }}</td>
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="pagination">
-                            <button @click="prevPage('busStatus')">
-                                <span class="material-icons"
-                                    >skip_previous</span
-                                >
-                            </button>
-                            <span
-                                >Page {{ currentPageBusStatus }} of
-                                {{ totalPagesBusStatus }}</span
-                            >
-                            <button @click="nextPage('busStatus')">
-                                <span class="material-icons">skip_next</span>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -297,6 +352,11 @@ import { debounce } from "lodash";
 export default {
     data() {
         return {
+            fuelconsumption: "",
+            busconsumption: "",
+            lifespanyears: "",
+            purshaseprice: "",
+            purshasedate: "",
             loading: true,
             loading1: false,
             showForm: true,
@@ -354,6 +414,11 @@ export default {
                     {
                         number_bus: this.number_bus.toString(),
                         number_passenger: this.number_passenger.toString(),
+                        purchase_date: this.purshasedate,
+                        purchase_price: this.purshaseprice.toString(),
+                        lifespan_years: this.lifespanyears.toString(),
+                        bus_consumption: this.busconsumption.toString(),
+                        fuel_consumption: this.fuelconsumption.toString(),
                     },
                     {
                         headers: { Authorization: `Bearer ${token}` },
@@ -660,9 +725,9 @@ body {
 }
 
 h1 {
-    font-weight: 700;
-    font-size: 2rem;
+    font-size: 1.2rem;
     color: var(--clr-dark);
+    margin-bottom: 5px;
 }
 
 h2 {
@@ -958,17 +1023,13 @@ select:focus {
 /* Form and Map styling */
 .form-containerd {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    justify-content: center;
     padding: 20px;
-    background-color: rgba(var(--clr-white), 0.9);
-    box-shadow: 0 2rem 3rem var(--clr-light);
+    background-color: var(--clr-white);
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
-    max-width: 400px;
     width: 100%;
-    margin-top: 50px;
-    margin: 40px auto;
 }
 
 .form-groupd {
@@ -1029,32 +1090,47 @@ input:focus {
     background: rgba(0, 0, 0, 0.5);
 }
 .modal-content {
-    background: var(--clr-white);
+    background-color: var(--clr-color-background);
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
-    height: 86%;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    margin: 10px;
-}
-
-.modal-content::-webkit-scrollbar {
-    display: none;
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
 }
 
 .modal-header,
-.modal-body div div {
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: center;
+.modal-body div,
+.modal-footer {
+    margin-bottom: 15px;
 }
 
 .modal-header {
-    font-size: 1.2rem;
-    font-weight: bold;
     color: var(--clr-dark);
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
+}
+
+.modal-body div div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-body div table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body div th,
+.modal-body div td {
+    padding: 12px;
+    text-align: left;
 }
 
 .modal-footer {
@@ -1062,55 +1138,14 @@ input:focus {
     justify-content: flex-end;
 }
 
-.modal-body div div table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.modal-body div div table th,
-.modal-body div div table td {
-    text-align: center;
-    vertical-align: middle;
-    padding: 8px;
-}
-
-.modal-body div div table tbody tr {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-body div div table thead {
-    display: flex;
-    justify-content: center;
-}
-
-.modal-body div div table tbody {
-    display: flex;
-    flex-direction: column;
-}
-
-.modal-body div div table tr {
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.modal-body div div table td {
-    flex: 1;
-}
-
 .close-modal {
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: var(--clr-danger);
-    color: var(--clr-white);
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
-}
-
-.close-modal:hover {
-    background-color: #c9302c;
+    transition: background-color 0.3s;
 }
 
 .update-btn {

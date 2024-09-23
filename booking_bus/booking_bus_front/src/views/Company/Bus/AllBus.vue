@@ -50,15 +50,12 @@
                 </div>
                 <div class="profile">
                     <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
+                        <p>
+                            <b>{{ getCompanyName }}</b>
+                        </p>
                     </div>
                     <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
+                        <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
                             <li @click="goToProfile">Go to Profile</li>
                             <li @click="logout">Logout</li>
@@ -89,25 +86,10 @@
                 </div>
             </div>
 
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!--end driver_status-->
             <div class="driver_chart">
-                <h2>Driver Workload Status</h2>
-                <DriverChart :chartData="chartData" />
+                <h2>Bus Workload Status</h2>
+                <buschart :chartData="chartData" />
             </div>
         </div>
         <!-- Right section end -->
@@ -117,13 +99,15 @@
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AddBus from "@/components/AddBus.vue";
-import DriverChart from "@/components/DriverChart.vue";
+import photo from "@/components/photo.vue";
+import buschart from "@/components/buschart.vue";
 import store from "@/store";
 import router from "@/router";
+import { mapGetters } from "vuex";
 
 export default {
-    name: "AllDriver",
-    components: { SidebarCompany, AddBus, DriverChart },
+    name: "AllBus",
+    components: { SidebarCompany, AddBus, buschart, photo },
     data() {
         return {
             x: store.state.x,
@@ -160,6 +144,9 @@ export default {
             store.commit("updateSearchQuery", newQuery);
             console.log(store.state.searchQuery);
         },
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     methods: {
         handleResize() {
@@ -356,12 +343,13 @@ a {
 }
 
 h1 {
-    margin-top: 13px;
-    font-weight: 700;
+    font-weight: 450;
     font-size: 2rem;
+    margin-top: 20px;
     color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
-
 h2 {
     font-size: 1.4rem;
     color: var(--clr-dark);
@@ -387,26 +375,30 @@ small {
     color: var(--clr-dark);
 }
 
-.profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
-    display: flex;
-    align-items: center;
+@keyframes borderColorShift {
+    0% {
+        border-color: yellow;
+    }
+    50% {
+        border-color: blue;
+    }
+    100% {
+        border-color: yellow;
+    }
 }
 
-.profile-photo img {
+.profile-photo {
+    position: relative;
+    display: flex;
+    align-items: center;
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid var(--clr-primary);
+    border: 2px solid yellow;
+    animation: borderColorShift 3s infinite;
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-
-.profile-photo img:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.05);
-}
-
 .text-muted {
     color: #7d8da1;
 }
@@ -428,15 +420,36 @@ small {
 }
 
 /* aside */
+@keyframes colorShift {
+    0% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+    50% {
+        border-top-color: rgb(255, 255, 0);
+        border-bottom-color: rgb(0, 0, 255);
+        border-right-color: rgb(255, 105, 180);
+    }
+    100% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+}
+
 aside {
     height: 100vh;
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
-    border-radius: 0 2rem 2rem 0;
+    border-radius: 0 2.5rem 2.5rem 0;
     padding: 1rem;
+    border-bottom: 3px solid rgb(255, 0, 0);
+    border-top: 3px solid rgb(0, 0, 255);
+    border-left: 3px solid transparent;
+    animation: colorShift 5s infinite;
 }
-
 aside .top {
     display: flex;
     justify-content: space-between;
@@ -472,6 +485,7 @@ aside .logo {
 
 .date input {
     flex: 1;
+    width: 773px;
 }
 
 .date button {
@@ -635,6 +649,17 @@ aside .logo {
 }
 
 /* Styling for datetime container */
+@keyframes borderShift {
+    0% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+    50% {
+        border-image-source: linear-gradient(to left, yellow, blue);
+    }
+    100% {
+        border-image-source: linear-gradient(to right, yellow, blue);
+    }
+}
 .datetime-container {
     text-align: center;
     font-family: "Arial", sans-serif;
@@ -647,10 +672,10 @@ aside .logo {
     color: #72c3ff;
     background: linear-gradient(90deg, #72c3ff, #ff4d4d);
     -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
-
 .time {
     display: flex;
     gap: 1rem;
@@ -659,7 +684,10 @@ aside .logo {
 
 .time-box {
     background: #111111;
-    border-radius: 0.5rem;
+    border-radius: 50% 20% / 10% 40%;
+    border-bottom: 1px solid yellow;
+    border-top: 1px solid yellow;
+    animation: borderColorShift 3s infinite;
     padding: 1rem 1.5rem;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;
@@ -669,6 +697,7 @@ aside .logo {
     background: linear-gradient(135deg, #ff4d4d, #72c3ff);
     color: transparent;
     -webkit-background-clip: text;
+    background-clip: text;
 }
 
 .time-box span {

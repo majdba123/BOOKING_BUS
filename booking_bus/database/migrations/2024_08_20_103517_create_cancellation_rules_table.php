@@ -19,7 +19,6 @@ return new class extends Migration
             $table->integer('hours_before');
             $table->decimal('discount_percentage', 5, 2);
             $table->text('description');
-            $table->softDeletes();
             $table->timestamps();
         });
     }

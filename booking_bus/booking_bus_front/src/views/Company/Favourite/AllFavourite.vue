@@ -19,18 +19,9 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>{{ x }}</h1>
-                <div class="top-bar">
-                    <div class="date">
-                        <input
-                            type="text"
-                            placeholder="Search In..."
-                            aria-label="Search"
-                            v-model="searchQuery"
-                        />
-                        <button @click="search">Search</button>
-                    </div>
-                </div>
+                <HeaderCompany2 />
+
+                <div class="top-bar"></div>
                 <AllFavourite1 ref="AllFavourite1" />
             </main>
         </div>
@@ -40,75 +31,14 @@
                 <button id="menu_bar" @click="openMenu">
                     <span class="material-icons">menu</span>
                 </button>
-                <div
-                    class="theme-toggler"
-                    ref="themeToggler"
-                    @click="toggleTheme"
-                >
-                    <span class="material-icons active">light_mode</span>
-                    <span class="material-icons">dark_mode</span>
-                </div>
-                <div class="profile">
-                    <div class="info">
-                        <p><b>Babar</b></p>
-                        <p>Admin</p>
-                    </div>
-                    <div class="profile-photo">
-                        <img
-                            :src="profileImage"
-                            alt="Profile"
-                            @click="toggleProfileMenu"
-                        />
-                        <ul v-if="showProfileMenu" class="dropdown-menu">
-                            <li @click="goToProfile">Go to Profile</li>
-                            <li @click="logout">Logout</li>
-                        </ul>
-                    </div>
-                </div>
             </div>
             <!--end top-->
 
             <!--start driver_chart-->
 
             <!--start driver_status-->
-            <div class="datetime-container">
-                <div class="dateright">{{ currentDateTime.date }}</div>
-                <div class="time">
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[0] }}
-                        <span>hour</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[1] }}
-                        <span>minutes</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[2] }}
-                        <span>seconds</span>
-                    </div>
-                </div>
-            </div>
 
-            <div class="driver_status">
-                <h2>Driver Status</h2>
-                <div class="statuses">
-                    <div class="status">
-                        <div class="info">
-                            <p><b>Name:</b></p>
-                            <p class="p">ali mohamad</p>
-                        </div>
-                        <div class="info">
-                            <p><b>Status:</b></p>
-                            <p class="p">موجود</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!--end driver_status-->
-            <div class="driver_chart">
-                <h2>Driver Workload Status</h2>
-                <DriverChart :chartData="chartData" />
-            </div>
         </div>
         <!-- Right section end -->
     </div>
@@ -117,13 +47,14 @@
 <script>
 import SidebarCompany from "@/components/SidebarCompany.vue";
 import AllFavourite1 from "@/components/AllFavourite.vue";
-import DriverChart from "@/components/DriverChart.vue";
 import store from "@/store";
 import router from "@/router";
+import { mapGetters } from "vuex";
+import HeaderCompany2 from "@/components/HeaderCompany2.vue";
 
 export default {
-    name: "AllAllFavourit",
-    components: { SidebarCompany, AllFavourite1, DriverChart },
+    name: "AllPath2",
+    components: { SidebarCompany, AllFavourite1, HeaderCompany2 },
     data() {
         return {
             x: store.state.x,
@@ -161,13 +92,16 @@ export default {
             console.log(store.state.searchQuery);
         },
     },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
+    },
     methods: {
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {
-                sideMenu.style.display = "block"; // Show sidebar on large screens
+                sideMenu.style.display = "block";
             } else {
-                sideMenu.style.display = "none"; // Hide sidebar on small screens
+                sideMenu.style.display = "none";
             }
         },
         openMenu() {
@@ -250,7 +184,6 @@ export default {
         },
         search() {
             console.log("Searching for:", this.searchQuery);
-            // Add your search logic here
         },
     },
     mounted() {
@@ -259,30 +192,13 @@ export default {
         window.addEventListener("resize", this.handleResize);
 
         this.updateDateTime();
-
-        setInterval(this.updateDateTime, 1000);
-        const savedTheme = localStorage.getItem("darkMode");
-        if (savedTheme === "enabled") {
-            this.isDarkMode = true;
-            document.body.classList.add("dark-theme-variables");
-        } else {
-            this.isDarkMode = false;
-            document.body.classList.remove("dark-theme-variables");
-        }
-
-        const themeToggler = this.$refs.themeToggler;
-        themeToggler
-            .querySelector("span:nth-child(1)")
-            .classList.toggle("active", !this.isDarkMode);
-        themeToggler
-            .querySelector("span:nth-child(2)")
-            .classList.toggle("active", this.isDarkMode);
     },
     beforeUnmount() {
         window.removeEventListener("resize", this.handleResize);
     },
 };
 </script>
+
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -345,7 +261,7 @@ body {
     display: grid;
     width: 100%;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 19rem;
+    grid-template-columns: 14rem auto 0rem;
     margin-left: 0;
     height: 100vh;
     overflow-y: auto;
@@ -386,23 +302,14 @@ small {
     font-size: 0.75rem;
     color: var(--clr-dark);
 }
-.profile-photo {
-    position: relative; /* Allows absolute positioning for the dropdown menu */
-    display: flex;
-    align-items: center;
-}
+
 .profile-photo img {
-    width: 50px;
-    height: 50px;
+    width: 2.8rem;
+    height: 2.8rem;
     border-radius: 50%;
-    border: 2px solid var(--clr-primary);
-    cursor: pointer;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    overflow: hidden;
 }
-.profile-photo img:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.05);
-}
+
 .text-muted {
     color: #7d8da1;
 }
@@ -429,7 +336,6 @@ aside {
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
-    border-radius: 0 2rem 2rem 0;
     padding: 1rem;
 }
 
@@ -444,6 +350,7 @@ aside .logo {
     display: flex;
     gap: 1rem;
 }
+
 #menu_bar {
     display: none;
 }
@@ -452,6 +359,7 @@ aside .logo {
     display: flex;
     gap: 1rem;
     align-items: center;
+    justify-content: space-between;
 }
 
 .date {
@@ -462,11 +370,13 @@ aside .logo {
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 15px;
-    margin-left: 10px;
+    margin-bottom: 15px;
+    margin-left: 47px;
 }
 
 .date input {
     flex: 1;
+    width: 985px;
 }
 
 .date button {
@@ -476,6 +386,12 @@ aside .logo {
     color: var(--clr-white);
     border-radius: 9px;
     cursor: pointer;
+}
+@media screen and (max-width: 768px) {
+    .date input {
+        flex: 1;
+        width: 190px;
+    }
 }
 @keyframes gradientAnimation {
     0% {
@@ -494,12 +410,12 @@ aside .logo {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transition: 0.3s ease;
 }
+
 /* Main section styles */
 /*
           start right side
   ***************************** */
 .right {
-    padding: 1rem;
     border-radius: 2rem 0 0 2rem;
     display: flex;
     flex-direction: column;
@@ -528,7 +444,7 @@ aside .logo {
     background-color: var(--clr-primary-variant);
 }
 
-.right .theme-toggler {
+.top-bar .theme-toggler {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -538,15 +454,16 @@ aside .logo {
     cursor: pointer;
 }
 
-.right .theme-toggler span {
+.top-bar .theme-toggler span {
     font-size: 1.4rem;
     color: var(--clr-warning);
     cursor: pointer;
 }
 
-.right .theme-toggler span.active {
+.top-bar .theme-toggler span.active {
     color: var(--clr-primary);
 }
+
 .right .profile {
     position: relative;
     display: flex;
@@ -559,117 +476,107 @@ aside .logo {
     color: var(--clr-dark);
 }
 
-.right .driver_chart {
+.right .driver_status {
+    margin-top: 4rem;
     background: var(--clr-white);
-    padding: 1.5rem;
-    border-radius: 0.8rem;
-    box-shadow: 0 1rem 2rem rgba(132, 139, 200, 0.15);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
 }
 
-.right .driver_chart h2 {
+.right .driver_status h2 {
+    color: var(--clr-dark);
+    margin-bottom: 14px;
+    margin-left: 42px;
+}
+
+.right .driver_status .statuses {
+    padding: 1rem;
+}
+
+.right .driver_status .status {
     display: flex;
     justify-content: center;
-    color: var(--clr-dark);
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.right .driver_status .status .info {
+    margin-left: 10px;
     align-items: center;
 }
 
-.right .driver_chart {
-    padding: 0.5rem;
+.right .driver_status .status .info p {
+    margin: 10px;
 }
 
 .p {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-weight: bold;
-    color: var(--clr-primary);
 }
-.driver_status {
+
+.driver_chart {
+    margin-top: 3rem;
     background: var(--clr-white);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
-    text-align: center;
 }
 
-.driver_status h2 {
+.driver_chart h2 {
     color: var(--clr-dark);
     margin-bottom: 14px;
+    margin-left: 42px;
 }
 
-.driver_status .statuses {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+.table-container {
+    width: 100%;
+    overflow-x: auto;
 }
 
-.driver_status .status {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.driver_status .status .info {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.driver_status .status .info p {
-    margin: 0;
+.recent_orders table {
+    background-color: var(--clr-white);
+    width: 100%;
+    border-radius: 2rem;
+    padding: 1.8rem;
+    text-align: center;
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    transition: all 0.3s ease;
     color: var(--clr-dark);
+    max-width: 100px;
 }
-/* Styling for datetime container */
-.datetime-container {
+
+.recent_orders table:hover {
+    box-shadow: none;
+}
+
+table thead tr th {
+    padding: 15px;
+}
+
+table tbody tr {
+    height: 3.8rem;
+    border-bottom: 1px solid var(--clr-white);
+    color: #677483;
+}
+
+table tbody td {
+    height: 3.8rem;
+    border-bottom: 1px solid var(--clr-dark);
+    color: #677483;
+}
+
+table tbody tr:last-child td {
+    border: none;
+}
+
+.recent_orders a {
     text-align: center;
-    font-family: "Arial", sans-serif;
-    color: #ffffff;
-}
-
-.dateright {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #72c3ff;
-    background: linear-gradient(90deg, #72c3ff, #ff4d4d);
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
-    color: transparent;
-    margin-bottom: 10px;
-}
-
-.time {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.time-box {
-    background: #111111;
-    border-radius: 0.5rem;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-    font-size: 1.5rem;
-    position: relative;
-    color: #ffffff;
-    text-align: center;
-    background: linear-gradient(135deg, #ff4d4d, #72c3ff);
-    color: transparent;
-    -webkit-background-clip: text; /* Vendor prefix for WebKit browsers */
-    background-clip: text; /* Standard property (currently not supported widely) */
-}
-
-.time-box span {
     display: block;
-    font-size: 0.8rem;
-    font-weight: normal;
-    margin-top: 0.5rem;
-    color: #c0c0c0;
+    margin: 1rem;
 }
+
 /* Select styling */
 select {
     padding: 10px;
@@ -684,52 +591,6 @@ select {
 
 select:focus {
     border-color: var(--clr-primary-variant);
-}
-.dropdown-menu {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    background-color: var(--clr-white);
-    border: 1px solid var(--clr-info-light);
-    border-radius: 0.5rem;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    list-style: none;
-    padding: 10px 0;
-    z-index: 1000;
-    width: 150px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-}
-
-.dropdown-menu.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.dropdown-menu li {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.dropdown-menu li:hover {
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-}
-
-/* Adding a subtle fade-in animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* Delete button styling */
@@ -751,6 +612,46 @@ select:focus {
 /**********
   media query
   ********** */
+@media screen and (max-width: 768px) {
+    .date input {
+        flex: 1;
+        width: 190px;
+    }
+}
+@media screen and (max-width: 1200px) {
+    .container {
+        width: 94%;
+        grid-template-columns: 7rem auto 18rem;
+    }
+    aside .sidebar h3 {
+        display: none;
+    }
+    aside .sidebar a span.msg_count {
+        padding: 1px 4px;
+        font-size: 10px;
+        border-radius: 0.2rem;
+    }
+    aside .sidebar a:hover span {
+        margin: 0;
+    }
+    aside .top .close span {
+        display: none;
+    }
+    aside .sidebar a:last-child {
+        position: relative;
+        margin-top: 1.8rem;
+    }
+
+    main .insights {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 1.6rem;
+        padding: 40px;
+    }
+}
+
+/* Mobile Responsive */
+
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
@@ -902,6 +803,7 @@ select:focus {
         color: var(--clr-white);
         border-radius: 10px;
     }
+
     #menu_bar {
         display: block;
         background: var(--clr-primary);

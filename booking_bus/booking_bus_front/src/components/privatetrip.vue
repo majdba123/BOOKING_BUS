@@ -163,7 +163,7 @@ export default {
             privateTrips: [],
             myOrders: [],
             currentPage: 1,
-            currentOrderPage: 1, // Page number for orders
+            currentOrderPage: 1,
             itemsPerPage: 14,
             showAcceptModal: false,
             price: 0,
@@ -205,8 +205,8 @@ export default {
                     this.loading = false;
                     console.log(this.privateTrips);
 
-                    this.showOrders = false; // Hide orders and show private trips
-                    this.showForm = true; // Show private trips form
+                    this.showOrders = false;
+                    this.showForm = true;
                 })
                 .catch((error) => {
                     this.toast.error("Error fetching private trips.");
@@ -223,8 +223,8 @@ export default {
             })
                 .then((response) => {
                     this.myOrders = response.data;
-                    this.showOrders = true; // Show orders and hide private trips
-                    this.showForm = false; // Hide private trips form
+                    this.showOrders = true;
+                    this.showForm = false;
                 })
                 .catch((error) => {
                     this.toast.error("Error fetching orders.");
@@ -606,13 +606,12 @@ select:focus {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
-    max-width: 500px;
     flex-wrap: wrap;
 }
 
 .nav-btnd {
-    padding: 10px 20px;
-    margin: 10px;
+    padding: 10px 1px;
+    margin: 12px;
     border: none;
     border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
@@ -623,7 +622,7 @@ select:focus {
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
     width: 100%;
-    max-width: 200px;
+    max-width: 300px;
 }
 @keyframes gradientAnimation {
     0% {

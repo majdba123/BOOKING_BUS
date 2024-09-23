@@ -241,7 +241,7 @@ class ReservationController extends Controller
                 'reservation_id' => $bookink->id,
                 'break' => $bookink->pivoit->break_trip->break->name,
                 'bus_trip_id' => $bus_trip_id,
-                'seats' => $bookink->seat_reservation->where('status', 'pending')->all(),
+                'seats' => $bookink->seat_reservation->where('status', 'padding')->all(),
                 'price' => $bookink->price,
                 'user_name' => $bookink->user->name,
             ];

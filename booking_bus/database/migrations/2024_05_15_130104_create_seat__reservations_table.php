@@ -16,8 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignIdFor(Seat::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Reservation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('status')->default('pending');
-            $table->softDeletes();
+            $table->string('status')->default('padding');
 
             $table->timestamps();
         });

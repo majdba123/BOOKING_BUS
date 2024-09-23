@@ -66,6 +66,7 @@ class RateDriverController extends Controller
         $ratingInstance->driver_id = $driver_id;
         // Save the rating instance
         $ratingInstance->save();
+
         $massage = "You have been rated $rating by $user->name";
         $driver = Driver::find($driver_id);
         event(new PrivateNotification($driver->user->id, $massage));

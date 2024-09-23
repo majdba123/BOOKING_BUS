@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignIdFor(Reservation::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(CancellationRule::class)->constrained()->cascadeOnDelete();
             $table->decimal('refund_amount', 10, 2);
-            $table->softDeletes();
             $table->timestamps();
         });
     }
