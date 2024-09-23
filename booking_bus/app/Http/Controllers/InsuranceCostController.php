@@ -23,9 +23,9 @@ class InsuranceCostController extends Controller
             })
                 ->get();
 
-            if ($insuranceCosts->isEmpty()) {
-                return response()->json(['message' => 'No insurance costs found for the company\'s buses.'], 404);
-            }
+            // if ($insuranceCosts->isEmpty()) {
+            //     return response()->json(['message' => 'No insurance costs found for the company\'s buses.'],);
+            // }
 
             return response()->json($insuranceCosts, 200);
         } catch (\Exception $e) {
@@ -59,7 +59,7 @@ class InsuranceCostController extends Controller
                     }
                 ],
                 'insurance_cost' => 'required|numeric',
-                'insurance_date' => 'required|date',
+                'insurance_date' => 'required',
             ]);
 
             // Check if the bus belongs to the authenticated company
