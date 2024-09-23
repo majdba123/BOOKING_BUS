@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('buses', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('Brand');
             $table->char('number_bus', 6)->unique();
             $table->integer('number_passenger')->default(0);
             $table->string('status')->default('pending');

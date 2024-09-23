@@ -207,6 +207,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     //hamza
 
     Route::get('/allBusCompleteorAavaliable', [BusController::class, 'getBusAvailableBus']);
+    Route::get('/bus/{id}', [BusController::class, 'show']);
 });
 
 

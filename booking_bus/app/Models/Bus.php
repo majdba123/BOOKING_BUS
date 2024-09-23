@@ -22,6 +22,7 @@ class Bus extends Model
     }
     protected $fillable = [
         'company_id',
+        'Brand',
         'number_bus',
         'number_passenger',
         'status',

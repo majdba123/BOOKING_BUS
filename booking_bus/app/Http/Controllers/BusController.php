@@ -53,6 +53,7 @@ class BusController extends Controller
             $validator = Validator::make($request->all(), [
                 'number_bus' => 'required|string|unique:buses,number_bus',
                 'number_passenger' => 'required|string',
+                'Brand' => 'required|string',
                 'purchase_date' => 'required|date',
                 'purchase_price' => 'required|integer|min:1',
                 'lifespan_years' => 'required|integer|min:1|max:100',
@@ -70,11 +71,13 @@ class BusController extends Controller
             $bus->number_bus = $request->input('number_bus');
             $bus->number_passenger = $request->input('number_passenger');
             $bus->company_id = $company;
+            $bus->Brand = $request->input('Brand');
             $bus->purchase_date = $request->input('purchase_date');
             $bus->purchase_price = $request->input('purchase_price');
             $bus->lifespan_years = $request->input('lifespan_years');
             $bus->bus_consumption = $request->input('bus_consumption');
             $bus->fuel_consumption = $request->input('fuel_consumption');
+
             $bus->save();
 
 
@@ -122,9 +125,20 @@ class BusController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Bus $bus)
+    public function show($id)
     {
-        //
+        $company = Auth::user()->Company->id;
+
+        // Find the bus by its ID
+        $bus = Bus::find($id);
+
+        // Check if the bus exists and belongs to the authenticated user's company
+        if (!$bus || $bus->company_id !== $company) {
+            return response()->json(['error' => 'Bus not found or unauthorized access'], 404);
+        }
+
+        // Return the bus details
+        return response()->json($bus, 200);
     }
 
     /**
@@ -145,6 +159,7 @@ class BusController extends Controller
         $validator = Validator::make($request->all(), [
             // 'number_bus' => 'sometimes|string',
             // 'number_passenger' => 'sometimes|string',
+            'Brand' => 'required|string',
             'purchase_date' => 'required|date',
             'purchase_price' => 'required|integer|min:1',
             'lifespan_years' => 'required|integer|min:1|max:100',
@@ -170,6 +185,7 @@ class BusController extends Controller
             $bus->seat()->delete();
             $bus->number_passenger = $request->input('number_passenger');
             $bus->purchase_date = $request->input('purchase_date');
+            $bus->Brand = $request->input('Brand');
             $bus->purchase_price = $request->input('purchase_price');
             $bus->lifespan_years = $request->input('lifespan_years');
             $bus->bus_consumption = $request->input('bus_consumption');
@@ -238,5 +254,4 @@ class BusController extends Controller
 
         return response()->json($bus, 200);
     }
-
 }
