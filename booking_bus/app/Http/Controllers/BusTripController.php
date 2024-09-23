@@ -110,7 +110,7 @@ class BusTripController extends Controller
                 'nameCompany' => $trip->company->name_company,
                 'from' => $trip->path->from,
                 'to' => $trip->path->to,
-                'price' => (int) $trip->price,
+                'price' => (int) $busTrip->trip->pricing->cost,
                 'goingfromTime' => $GoingformattedFromTime,
                 'goingtoTime' => $GoingformattedToTime,
                 'ReturnfromTime' => $RetuenformattedFromTime,
@@ -161,7 +161,6 @@ class BusTripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-
             'from_time_going' => 'nullable|date_format:H:i',
 
             'to_time_going' => 'nullable|date_format:H:i',
@@ -176,6 +175,9 @@ class BusTripController extends Controller
 
             'to' => 'nullable|string',
 
+            'date_start' => 'nullable|date_format:Y-m-d',
+            'date_end' => 'nullable|date_format:Y-m-d',
+
         ]);
 
         if ($validator->fails()) {
@@ -186,6 +188,8 @@ class BusTripController extends Controller
 
         $fromTime_return = $request->input('from_time_return');
         $toTime_return = $request->input('to_time_return');
+        $date_start = $request->input('date_start');
+        $date_end = $request->input('date_end');
         $type = $request->input('type');
         $from = $request->input('from');
         $to = $request->input('to');
@@ -193,15 +197,31 @@ class BusTripController extends Controller
         $busTrips = Bus_Trip::query();
 
         if ($fromTime) {
-            $busTrips->where('from_time', $fromTime);
+            $busTrips->where('from_time_going', 'like', '%' . $fromTime . '%');
         }
 
         if ($toTime) {
-            $busTrips->where('to_time', $toTime);
+            $busTrips->where('to_time_going', 'like', '%' . $toTime . '%');
+        }
+
+        if ($fromTime_return) {
+            $busTrips->where('from_time_return', 'like', '%' . $fromTime_return . '%');
+        }
+
+        if ($toTime_return) {
+            $busTrips->where('to_time_return', 'like', '%' . $toTime_return . '%');
         }
 
         if ($type) {
             $busTrips->where('type', $type);
+        }
+
+        if ($date_start) {
+            $busTrips->where('date_start', 'like', '%' . $date_start . '%');
+        }
+
+        if ($date_end) {
+            $busTrips->where('date_end', 'like', '%' . $date_end . '%');
         }
 
         if ($from) {
@@ -227,8 +247,14 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
+                'price_trip' => $busTrip->trip->pricing->cost,
+                'from_time_going' => $busTrip->from_time_going,
+                'to_time_going' => $busTrip->to_time_going,
+                'from_time_return' => $busTrip->from_time_return,
+                'to_time_return' => $busTrip->to_time_return,
+                'date_end' => $busTrip->date_end,
+                'date_start' => $busTrip->date_start,
+                'status' => $busTrip->status,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];
@@ -319,8 +345,14 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
+                'price_trip' => $busTrip->trip->pricing->cost,
+                'from_time_going' => $busTrip->from_time_going,
+                'to_time_going' => $busTrip->to_time_going,
+                'from_time_return' => $busTrip->from_time_return,
+                'to_time_return' => $busTrip->to_time_return,
+                'date_end' => $busTrip->date_end,
+                'date_start' => $busTrip->date_start,
+                'status' => $busTrip->status,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];

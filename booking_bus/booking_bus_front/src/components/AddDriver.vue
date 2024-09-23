@@ -19,32 +19,45 @@
         <!-- Form to add/edit driver -->
         <div v-if="showForm" class="form-containerd">
             <form @submit.prevent="handleSubmit">
-                <div class="form-groupd">
-                    <label for="driverName">Driver Name</label>
-                    <input
-                        type="text"
-                        id="driverName"
-                        v-model="name"
-                        required
-                    />
+                <div class="form-row">
+                    <div class="form-groupd">
+                        <label for="driverName">Driver Name</label>
+                        <input
+                            type="text"
+                            id="driverName"
+                            v-model="name"
+                            required
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="driverEmail">Email</label>
+                        <input
+                            type="email"
+                            id="driverEmail"
+                            v-model="email"
+                            required
+                        />
+                    </div>
                 </div>
-                <div class="form-groupd">
-                    <label for="driverEmail">Email</label>
-                    <input
-                        type="email"
-                        id="driverEmail"
-                        v-model="email"
-                        required
-                    />
-                </div>
-                <div class="form-groupd">
-                    <label for="driverPassword">Password</label>
-                    <input
-                        type="password"
-                        id="driverPassword"
-                        v-model="password"
-                        required
-                    />
+                <div class="form-row">
+                    <div class="form-groupd">
+                        <label for="driverHeight">Wages</label>
+                        <input
+                            type="number"
+                            id="driverHeight"
+                            v-model="wages"
+                            required
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="driverPassword">Password</label>
+                        <input
+                            type="password"
+                            id="driverPassword"
+                            v-model="password"
+                            required
+                        />
+                    </div>
                 </div>
                 <div class="submit-btnnd">
                     <button
@@ -79,6 +92,7 @@
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Email</th>
+                                    <th>Wages</th>
                                     <th>Status</th>
                                     <th>Select Driver To Bus</th>
                                     <th>Actions</th>
@@ -92,6 +106,7 @@
                                     <td>{{ user.id }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email_driver }}</td>
+                                    <td>{{ user.Wages }}</td>
                                     <td>{{ user.status }}</td>
                                     <td>
                                         <select
@@ -137,6 +152,14 @@
                                         >
                                             <span class="material-icons"
                                                 >close_small</span
+                                            >
+                                        </button>
+                                        <button
+                                            class="edit-btn"
+                                            @click="openEditModal(user, index)"
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
                                             >
                                         </button>
                                     </td>
@@ -209,6 +232,7 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
+                                        <th>Wages</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -222,6 +246,7 @@
                                         <td>{{ index }}</td>
                                         <td>{{ driver.name }}</td>
                                         <td>{{ driver.email_driver }}</td>
+                                        <td>{{ driver.Wages }}</td>
                                         <td>{{ driver.status }}</td>
                                     </tr>
                                 </tbody>
@@ -358,6 +383,45 @@
                 </div>
             </div>
         </div>
+        <div v-if="showEditModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Edit Driver</div>
+                <div class="modal-body">
+                    <div class="form-groupd">
+                        <label for="numberBus">Driver Name</label>
+                        <input
+                            type="text"
+                            id="purshasedate"
+                            v-model="editedDriver.name"
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberBus">Driver Email</label>
+                        <input
+                            type="text"
+                            id="purshaseprice"
+                            v-model="editedDriver.email"
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberBus">Driver Wages</label>
+                        <input
+                            type="number"
+                            id="lifespanyears"
+                            v-model="editedDriver.Wages"
+                        />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="UpdateDriver" class="update-btn">
+                        Save
+                    </button>
+                    <button @click="closeEditModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -370,6 +434,7 @@ export default {
     name: "AddDriver",
     data() {
         return {
+            wages: "",
             loading: true,
             loading1: false,
             loading2: true,
@@ -378,6 +443,15 @@ export default {
             Bus: [],
             driverStatusData: [],
             driverWithBusData: [],
+            showEditModal: false,
+            editedDriver: {
+                driver_id: "",
+                name: "",
+                email: "",
+                Wages: "",
+            },
+            editingIndex: null,
+
             name: "",
             email: "",
             password: "",
@@ -403,6 +477,9 @@ export default {
         }
     },
     methods: {
+        closeEditModal() {
+            this.showEditModal = false;
+        },
         closeDriverStatusModal() {
             this.showDriverStatusModal = false;
         },
@@ -423,6 +500,43 @@ export default {
         closeDeleteConfirmModal() {
             this.showDeleteConfirmModal = false;
         },
+        UpdateDriver() {
+            const access_token = window.localStorage.getItem("access_token");
+            const busId = this.editedDriver.driver_id;
+
+            axios
+                .put(
+                    `http://127.0.0.1:8000/api/company/update_driver/${busId}`,
+                    {
+                        name: this.editedDriver.name,
+                        email: this.editedDriver.email,
+                        Wages: this.editedDriver.Wages,
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
+                .then((response) => {
+                    this.editingIndex = null;
+
+                    this.editedDriver = {
+                        id: "",
+                        name: "",
+                        email: "",
+                        wages: "",
+                    };
+                    console.log(response);
+
+                    this.toast.success("Driver updated successfully!");
+                    this.showEditModal = false;
+                })
+                .catch((error) => {
+                    console.log(this.editedDriver);
+
+                    this.toast.error("Error updating Driver.");
+                    console.error(error);
+                });
+        },
 
         CreateDriver() {
             const token = window.localStorage.getItem("access_token");
@@ -434,6 +548,7 @@ export default {
                     name: this.name,
                     email: this.email,
                     password: this.password,
+                    Wages: this.wages,
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
@@ -447,16 +562,24 @@ export default {
                     }
                 })
                 .catch((error) => {
+                    if (this.wages.length == 0)
+                        this.toast.error(error.response.data.error.Wages[0]);
                     if (this.name.length == 0)
                         this.toast.error(error.response.data.error.name[0]);
 
                     if (this.email.length == 0)
                         this.toast.error(error.response.data.error.email[0]);
 
-                    if (this.password.length <= 0)
+                    if (this.password.length <= 8)
                         this.toast.error(error.response.data.error.password[0]);
+                    console.log(error);
                     this.toast.error(error.response.data.error.email[0]);
                 });
+        },
+        openEditModal(bus, index) {
+            this.editedDriver = { ...bus };
+            this.editingIndex = index;
+            this.showEditModal = true;
         },
         CancelDriver(driverId) {
             const access_token = window.localStorage.getItem("access_token");
@@ -707,6 +830,22 @@ export default {
 </script>
 
 <style scoped>
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* المسافة بين كل عنصرين */
+}
+
+.form-groupd {
+    flex: 1; /* لتوزيع المساحة بالتساوي بين الحقول */
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+}
+
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 :root {
@@ -955,7 +1094,33 @@ select:focus {
         transform: rotate(360deg);
     }
 }
-
+.edit-btn {
+    color: #4caf50;
+    background-color: var(--clr-white);
+    border-radius: 9px;
+    padding: 3px;
+    margin: 5px;
+}
+.edit-btn:hover {
+    color: var(--clr-white);
+    background-color: var(--clr-success);
+}
+.edit-btn.material-icons,
+.delete-btn.material-icons,
+.status-btn.material-icons {
+    padding: 2px 6px;
+    border: none;
+    margin: 8px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15px;
+    width: 15px;
+}
 /* Add this part for the spinner rotation */
 @keyframes spin {
     0% {
@@ -1002,6 +1167,19 @@ select:focus {
     background-color: var(--clr-white);
 }
 
+.update-btn {
+    padding: 8px 16px;
+    background-color: var(--clr-success);
+    color: var(--clr-white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.update-btn:hover {
+    background-color: #4cae4c;
+}
 .delete-btn:hover {
     color: #fff;
     background-color: #f44336;
@@ -1012,6 +1190,8 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
     background-color: var(--clr-white);
     border-radius: 10px;
     width: 100%;
@@ -1053,19 +1233,13 @@ select:focus {
 /* Form styling */
 .form-containerd {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    justify-content: center;
     padding: 20px;
-    background-color: rgba(var(--clr-white), 0.9);
-    box-shadow: 0 2rem 3rem var(--clr-light);
+    background-color: var(--clr-white);
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
-    max-width: 500px;
     width: 100%;
-    margin-top: 50px;
-    margin-bottom: 0px !important;
-
-    transition: background-color 0.3s ease;
 }
 
 .form-groupd {

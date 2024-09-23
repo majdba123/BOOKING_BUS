@@ -11,20 +11,7 @@
         </header>
         <div class="form-map-container" v-if="showaddbreack">
             <div class="form-containerd">
-                <form
-                    @submit.prevent="handleSubmit(Idgovernment)"
-                    class="break-form"
-                >
-                    <div class="form-group">
-                        <label for="breakName">Name Break</label>
-                        <input
-                            type="text"
-                            id="breakName"
-                            placeholder="Enter Name Break"
-                            v-model="name"
-                            required
-                        />
-                    </div>
+                <div class="break-form">
                     <div class="form-group">
                         <label for="government"> Select Path </label>
                         <select
@@ -57,9 +44,9 @@
                         />
                     </div>
                     <div class="submit-btn">
-                        <button type="submit">ADD</button>
+                        <button @click="handleSubmit(Idgovernment)">ADD</button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
 
@@ -77,7 +64,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(breack, index) in governments" :key="index">
+                        <tr
+                            v-for="(breack, index) in filteredDrivers"
+                            :key="index"
+                        >
                             <td>{{ index }}</td>
                             <td>{{ breack.from }}</td>
                             <td>{{ breack.to }}</td>
@@ -105,7 +95,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>ID</th>
                         <th>Name</th>
                         <th>Action</th>
                     </tr>
@@ -117,7 +107,7 @@
                         <td>
                             <button
                                 class="edit-btn"
-                                @click="openEditConfirmModal(bus.id)"
+                                @click="openEditModal(bus.id, bus.path_id)"
                             >
                                 <span class="material-icons">edit</span>
                             </button>
@@ -142,16 +132,6 @@
         <div class="modal-content">
             <div class="modal-header">Edit Break</div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="editBreakName">Name Break</label>
-                    <input
-                        type="text"
-                        id="editBreakName"
-                        v-model="name"
-                        required
-                    />
-                </div>
-
                 <div class="map-container">
                     <MapBreack
                         :fromlat="frommapLatt"
@@ -316,25 +296,17 @@ export default {
             const government = this.governments.find(
                 (breack) => breack.id === path
             );
-            console.log(this.governments);
             if (government) {
                 this.frommapLat = government.from_latitude;
                 this.frommapLog = government.from_longitude;
                 this.tomapLat = government.to_latitude;
                 this.tomapLog = government.to_longitude;
                 this.showMapModal = true;
-                console.log(
-                    this.tomapLog,
-                    this.frommapLat,
-                    this.frommapLog,
-                    this.tomapLat
-                );
             }
             const breaks = this.breaks.find((breack) => breack.id === id);
             if (breaks) {
                 this.lat = breaks.latitude;
                 this.long = breaks.longitude;
-                console.log(this.long, this.lat);
             }
         },
         closeMapModal() {
@@ -350,7 +322,6 @@ export default {
             })
                 .then((response) => {
                     this.governments = response.data;
-                    console.log(this.governments);
                 })
                 .catch((error) => {
                     this.toast.error("Error getting Path");
@@ -366,48 +337,47 @@ export default {
             })
                 .then((response) => {
                     this.breaks = response.data;
-                    console.log(this.breaks);
                 })
                 .catch((error) => {
                     this.toast.error("Error getting Breaks");
                     console.error(error);
                 });
         },
-        handleSubmit() {
-            console.log(store.state.breacklat, store.state.breacklong);
+        async handleSubmit() {
             const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "post",
-                url:
-                    "http://127.0.0.1:8000/api/company/store_breaks/" +
-                    this.Idgovernment,
-                headers: { Authorization: `Bearer ${access_token}` },
-                data: {
-                    name: this.name,
-                    lat: store.state.selectedLat,
-                    long: store.state.selectedLng,
-                },
-            })
-                .then(() => {
-                    this.toast.success("Added Complete");
-                    this.fetchBreaks();
-                    this.resetForm();
+            for (
+                let index = 0;
+                index < store.state.breakpoints.length;
+                index++
+            ) {
+                await axios({
+                    method: "post",
+                    url:
+                        "http://127.0.0.1:8000/api/company/store_breaks/" +
+                        this.Idgovernment,
+                    headers: { Authorization: `Bearer ${access_token}` },
+                    data: {
+                        name: store.state.breakpoints[index].name,
+                        lat: store.state.breakpoints[index].lat,
+                        long: store.state.breakpoints[index].lng,
+                    },
                 })
-                .catch((error) => {
-                    console.log(
-                        store.state.selectedLat,
-                        store.state.selectedLng
-                    );
-                    this.toast.error("Error adding Break");
-                    console.error(error);
-                });
+                    .then(() => {
+                        this.toast.success("Added Complete");
+                        this.fetchBreaks();
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error Add Break");
+
+                        console.error(error);
+                    });
+            }
         },
         openEditModal(id, path) {
             this.showEditModal = true;
             this.areaid = id;
             this.pathid = path;
-            this.fetchBreaks();
-            this.updateMapLocation();
+            this.updateMapLocation(path);
             this.updateMapbreackLocation();
         },
         openbreackmodel(id) {
@@ -423,7 +393,6 @@ export default {
             })
                 .then((response) => {
                     this.breakbypath = response.data;
-                    console.log(this.breakbypath);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -436,8 +405,9 @@ export default {
                 url: `http://127.0.0.1:8000/api/company/update_breaks/${this.areaid}`,
                 headers: { Authorization: `Bearer ${access_token}` },
                 data: {
-                    name: this.name,
-                    pathid: this.Idgovernment,
+                    name: store.state.breakpoints[0].name,
+                    lat: store.state.breakpoints[0].lat,
+                    long: store.state.breakpoints[0].lng,
                 },
             })
                 .then(() => {
@@ -461,43 +431,27 @@ export default {
             if (selectedbreack) {
                 this.lat = selectedbreack.latitude;
                 this.long = selectedbreack.longitude;
-
-                console.log(`Latitude: ${this.lat}, Longitude: ${this.long}`);
-            } else {
-                console.error(`ID: ${this.areaid} not found in breaks`);
             }
         },
 
-        updateMapLocation() {
+        updateMapLocation(path) {
             const selectedGovernment = this.governments.find(
-                (gov) => gov.id === this.Idgovernment
+                (gov) => gov.id === path
             );
             if (selectedGovernment) {
                 this.frommapLat = selectedGovernment.from_latitude;
                 this.frommapLng = selectedGovernment.from_longitude;
                 this.tomapLat = selectedGovernment.to_latitude;
                 this.tomapLng = selectedGovernment.to_longitude;
-                console.log(
-                    this.tomapLng,
-                    this.tomapLat,
-                    this.frommapLng,
-                    this.frommapLat
-                );
             }
             const selectedGovernmet = this.governments.find(
-                (gov) => gov.id === this.pathid
+                (gov) => gov.id === path
             );
             if (selectedGovernmet) {
                 this.frommapLatt = selectedGovernmet.from_latitude;
                 this.frommapLngt = selectedGovernmet.from_longitude;
                 this.tomapLatt = selectedGovernmet.to_latitude;
                 this.tomapLngt = selectedGovernmet.to_longitude;
-                console.log(
-                    this.tomapLngt,
-                    this.tomapLatt,
-                    this.frommapLngt,
-                    this.frommapLatt
-                );
             }
         },
 
@@ -506,6 +460,20 @@ export default {
             this.Idgovernment = "";
             this.mapLat = 30.033333;
             this.mapLng = 31.233334;
+        },
+    },
+    computed: {
+        filteredDrivers() {
+            return this.governments.filter((driver) => {
+                return (
+                    driver.from
+                        .toLowerCase()
+                        .includes(store.state.searchQuery.toLowerCase()) ||
+                    driver.to
+                        .toLowerCase()
+                        .includes(store.state.searchQuery.toLowerCase())
+                );
+            });
         },
     },
     mounted() {
@@ -579,7 +547,6 @@ h2 {
 .nav-btnd {
     padding: 10px 20px;
     margin: 10px;
-    width: 100%;
     border: none;
     border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
@@ -589,6 +556,7 @@ h2 {
     transition: transform 0.2s, box-shadow 0.2s;
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
+    width: 100%;
 }
 
 @keyframes gradientAnimation {
@@ -981,12 +949,12 @@ table tbody tr:last-child td {
     }
 
     .navd {
-        flex-direction: column;
+        align-items: center;
     }
 
     .nav-btnd {
-        width: 100%;
-        margin: 5px 0;
+        padding: 6px 8px;
+        font-size: 10px;
     }
 
     .map-container {

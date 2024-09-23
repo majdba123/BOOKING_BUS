@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserApiController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CompanyController;
+use Illuminate\Support\Facades\Validator;
+
 use App\Http\Controllers\BusController;
 use App\Http\Controllers\PathController;
 use App\Http\Controllers\DriverController;
@@ -32,8 +34,9 @@ use App\Http\Controllers\CancellationRuleController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\UserNotificationController;
 use App\Events\tripgeolocationEvent;
-
-
+use App\Http\Controllers\DaynmicPricingController;
+use App\Http\Controllers\InsuranceCostController;
+use App\Http\Controllers\MaintenanceCostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +54,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('get_geolocation/{id}' ,[AreaController::class , 'get_geolocation']);
+Route::post('get_geolocation/{id}', [AreaController::class, 'get_geolocation']);
 
 Route::post('register', [UserApiController::class, 'register']);
 Route::post('login', [UserApiController::class, 'login']);
@@ -78,7 +81,7 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     Route::get('/all_driver', [DriverController::class, 'index']);
     Route::post('register/driver', [DriverController::class, 'register_driver']);
     Route::delete('/delete_driver/{id}', [DriverController::class, 'destroy']);
-
+    Route::put('update_driver/{id}', [DriverController::class, 'update_driver']); //hamza
 
     Route::get('/all_breaks/{path_id}', [BreaksController::class, 'index']);
     Route::get('/all_breaks', [BreaksController::class, 'allbreaks']);
@@ -165,7 +168,9 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     Route::post('/get_profit_trip/{bus_trip_id}', [DashboardController::class, 'get_profit_trip']);
     Route::post('/user_infomation_id/{user_id}', [DashboardController::class, 'user_info']);
 
-    Route::prefix('rewards')->group(function () {   //hamza
+
+    //hamza
+    Route::prefix('rewards')->group(function () {
         Route::get('/', [RewardController::class, 'index']);
         Route::get('/{id}', [RewardController::class, 'show']);
         Route::post('/store', [RewardController::class, 'store']);
@@ -181,6 +186,28 @@ Route::group(['prefix' => 'company', 'middleware' => ['company', 'auth:sanctum',
     });
 
     Route::post('/get_profit_1', [DashboardController::class, 'getPriceData']);
+    //hamza
+    Route::post('/calculateKm', action: [DaynmicPricingController::class, 'calculateKm']);
+    Route::post('/pricingMethod', action: [DaynmicPricingController::class, 'pricingMethod']);
+    Route::prefix('insurance-costs')->group(function () {
+        Route::get('/', [InsuranceCostController::class, 'index']); // List all insurance costs
+        Route::post('/store', [InsuranceCostController::class, 'store']); // Create a new insurance cost
+        Route::get('/{id}', [InsuranceCostController::class, 'show']); // Show a specific insurance cost by ID
+        Route::put('/{id}', [InsuranceCostController::class, 'update']); // Update an insurance cost by ID
+        Route::delete('/{id}', [InsuranceCostController::class, 'destroy']); // Delete an insurance cost by ID
+    });
+    Route::prefix('maintenance-costs')->group(function () {
+        Route::get('/', [MaintenanceCostController::class, 'index']); // List all maintenance costs
+        Route::post('/store', [MaintenanceCostController::class, 'store']); // Create a new maintenance cost
+        Route::get('/{id}', [MaintenanceCostController::class, 'show']); // Show a specific maintenance cost by ID
+        Route::put('/{id}', [MaintenanceCostController::class, 'update']); // Update a maintenance cost by ID
+        Route::delete('/{id}', [MaintenanceCostController::class, 'destroy']); // Delete a maintenance cost by ID
+    });
+
+    //hamza
+
+    Route::get('/allBusCompleteorAavaliable', [BusController::class, 'getBusAvailableBus']);
+    Route::get('/bus/{id}', [BusController::class, 'show']);
 });
 
 
@@ -367,6 +394,16 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:sanctum', 'throttle:3
 
 
     Route::post('/geolocation/{bus_trip_id}', function (Request $request, $busTripId) {
+        $validator = Validator::make($request->all(), [
+            'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'lang' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return response()->json(['error' => $errors], 422);
+        }
 
         $lang = $request->input('lang');
         $lat = $request->input('lat');

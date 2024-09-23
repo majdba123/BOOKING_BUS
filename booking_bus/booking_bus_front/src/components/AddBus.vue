@@ -2,15 +2,105 @@
     <div class="containerd">
         <!-- Header with buttons -->
         <header class="navd">
-            <button class="nav-btnd" @click="showForm = true">Add Bus</button>
-            <button class="nav-btnd" @click="showForm = false">Edit Bus</button>
+            <button class="nav-btnd" @click="showaddmodel()">Add Bus</button>
+            <button class="nav-btnd" @click="showmodel()">Edit Bus</button>
             <button class="nav-btnd" @click="showBusStatusModal = true">
                 Bus Status
             </button>
+            <button class="nav-btnd" @click="showinsurancemodel()">
+                Add Insurance
+            </button>
         </header>
+        <!-- Add Insurance Form -->
+        <div v-if="showinsurancemodell" class="form-containerd">
+            <form @submit.prevent="handleSubmit">
+                <div class="form-groupd">
+                    <label for="numberBus">Insurance Cost</label>
+                    <input
+                        type="text"
+                        id="numberBus"
+                        v-model="insurancecost"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberPassenger">Insurance Date</label>
+                    <input
+                        type="number"
+                        id="numberPassenger"
+                        v-model="insurancedate"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="path">Bus</label>
+                    <div class="select-container">
+                        <select v-model="BusIDD" id="path">
+                            <option
+                                v-for="(pathItem, index) in Bus"
+                                :key="index"
+                                :value="pathItem.id"
+                            >
+                                {{ pathItem.number_bus }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="submit-btnnd">
+                    <button
+                        type="submit"
+                        @click="AddInsurance"
+                        class="submit-btnd"
+                    >
+                        ADD
+                    </button>
+                </div>
+            </form>
+            <div class="table-container">
+                <div v-if="loading10" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!INC.length" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Number Bus</th>
+                                    <th>Insurance Cost</th>
+                                    <th>Insurance Date</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(bus, index) in INC" :key="index">
+                                    <th>{{ index }}</th>
+                                    <td>{{ bus.number_bus }}</td>
+                                    <td>{{ bus.insurance_cost }}</td>
+                                    <td>{{ bus.insurance_date }}</td>
 
+                                    <td>
+                                        <button
+                                            class="delete-btn"
+                                            @click="confirmDeleteBus1(bus)"
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Add Bus Form -->
-        <div v-if="showForm" class="form-containerd">
+        <div v-if="showaddmodell" class="form-containerd">
             <form @submit.prevent="handleSubmit">
                 <div class="form-groupd">
                     <label for="numberBus">Number Bus</label>
@@ -30,17 +120,71 @@
                         required
                     />
                 </div>
+                <div class="form-groupd">
+                    <label for="numberPassenger">Brand</label>
+                    <input
+                        type="text"
+                        id="numberPassenger"
+                        v-model="brand"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Purshase Date</label>
+                    <input
+                        type="date"
+                        id="purshasedate"
+                        v-model="purshasedate"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Purshase Price</label>
+                    <input
+                        type="number"
+                        id="purshaseprice"
+                        v-model="purshaseprice"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Lifespan Years</label>
+                    <input
+                        type="number"
+                        id="lifespanyears"
+                        v-model="lifespanyears"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Bus Consumption</label>
+                    <input
+                        type="number"
+                        id="busconsumption"
+                        v-model="busconsumption"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Fuel Consumption</label>
+                    <input
+                        type="number"
+                        id="fuelconsumption"
+                        v-model="fuelconsumption"
+                        required
+                    />
+                </div>
 
                 <div class="submit-btnnd">
                     <button type="submit" @click="AddBus" class="submit-btnd">
-                        Submit
+                        ADD
                     </button>
                 </div>
             </form>
         </div>
 
         <!-- Bus Table -->
-        <div v-else class="recent_orders">
+        <div v-if="showmodell" class="recent_orders">
             <h1>All Bus</h1>
             <div class="table-container">
                 <div v-if="loading" class="spinner-container">
@@ -56,6 +200,14 @@
                                 <tr>
                                     <th>Number Bus</th>
                                     <th>Number Passenger</th>
+                                    <th>Brand</th>
+
+                                    <th>Purshase Date</th>
+                                    <th>Purshase Price</th>
+                                    <th>Lifespan Years</th>
+                                    <th>Bus Consumption</th>
+                                    <th>Fuel Consumption</th>
+
                                     <th>Actions</th>
                                     <th>Seats</th>
                                 </tr>
@@ -67,6 +219,13 @@
                                 >
                                     <td>{{ bus.number_bus }}</td>
                                     <td>{{ bus.number_passenger }}</td>
+                                    <td>{{ bus.Brand }}</td>
+                                    <td>{{ bus.purchase_date }}</td>
+                                    <td>{{ bus.purchase_price }}</td>
+                                    <td>{{ bus.lifespan_years }}</td>
+                                    <td>{{ bus.bus_consumption }}</td>
+                                    <td>{{ bus.fuel_consumption }}</td>
+
                                     <td>
                                         <button
                                             class="edit-btn"
@@ -138,8 +297,11 @@
                 >
                     Available
                 </button>
-                <button class="status-btns" @click="fetchBusStatus('finished')">
-                    Finished
+                <button
+                    class="status-btns"
+                    @click="fetchBusStatus('completed')"
+                >
+                    Completed
                 </button>
                 <div class="modal-body">
                     <div v-if="loading1" class="spinner-container">
@@ -158,36 +320,35 @@
                                     <tr>
                                         <th>Number Bus</th>
                                         <th>Number Passenger</th>
+                                        <th>Brand</th>
+
+                                        <th>Purshase Date</th>
+                                        <th>Purshase Price</th>
+                                        <th>Lifespan Years</th>
+                                        <th>Bus Consumption</th>
+                                        <th>Fuel Consumption</th>
+
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr
-                                        v-for="(
-                                            bus, index
-                                        ) in paginatedBusStatusData"
+                                        v-for="(bus, index) in Bus"
                                         :key="index"
                                     >
                                         <td>{{ bus.number_bus }}</td>
                                         <td>{{ bus.number_passenger }}</td>
+                                        <td>{{ bus.Brand }}</td>
+
+                                        <td>{{ bus.purchase_date }}</td>
+                                        <td>{{ bus.purchase_price }}</td>
+                                        <td>{{ bus.lifespan_years }}</td>
+                                        <td>{{ bus.bus_consumption }}</td>
+                                        <td>{{ bus.fuel_consumption }}</td>
                                         <td>{{ bus.status }}</td>
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="pagination">
-                            <button @click="prevPage('busStatus')">
-                                <span class="material-icons"
-                                    >skip_previous</span
-                                >
-                            </button>
-                            <span
-                                >Page {{ currentPageBusStatus }} of
-                                {{ totalPagesBusStatus }}</span
-                            >
-                            <button @click="nextPage('busStatus')">
-                                <span class="material-icons">skip_next</span>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -237,23 +398,43 @@
                 <div class="modal-header">Edit Bus</div>
                 <div class="modal-body">
                     <div class="form-groupd">
-                        <label for="editNumberBus">Number Bus</label>
+                        <label for="numberBus">Purshase Date</label>
                         <input
-                            type="text"
-                            id="editNumberBus"
-                            v-model="editedBus.number_bus"
-                            required
+                            type="date"
+                            id="purshasedate"
+                            v-model="editedBus.purshasedate"
                         />
                     </div>
                     <div class="form-groupd">
-                        <label for="editNumberPassenger"
-                            >Number Passenger</label
-                        >
+                        <label for="numberBus">Purshase Price</label>
                         <input
-                            type="text"
-                            id="editNumberPassenger"
-                            v-model="editedBus.number_passenger"
-                            required
+                            type="number"
+                            id="purshaseprice"
+                            v-model="editedBus.purshaseprice"
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberBus">Lifespan Years</label>
+                        <input
+                            type="number"
+                            id="lifespanyears"
+                            v-model="editedBus.lifespanyears"
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberBus">Bus Consumption</label>
+                        <input
+                            type="number"
+                            id="busconsumption"
+                            v-model="editedBus.busconsumption"
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberBus">Fuel Consumption</label>
+                        <input
+                            type="number"
+                            id="fuelconsumption"
+                            v-model="editedBus.fuelconsumption"
                         />
                     </div>
                 </div>
@@ -286,6 +467,25 @@
                 </div>
             </div>
         </div>
+        <div v-if="showDeleteConfirmModal1" class="modals">
+            <div class="modals-content">
+                <div class="modals-header">Confirm Delete</div>
+                <div class="modals-body">
+                    Are you sure about the deletion process?
+                </div>
+                <div class="modals-footer">
+                    <button @click="deleteConfirmedBus1" class="updates-btn">
+                        Yes
+                    </button>
+                    <button
+                        @click="closeDeleteConfirmModal1"
+                        class="closes-modal"
+                    >
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -297,8 +497,22 @@ import { debounce } from "lodash";
 export default {
     data() {
         return {
+            INC: [],
+            BusIDD: "",
+            insurancedate: "",
+            insurancecost: "",
+            brand: "",
+            showaddmodell: true,
+            showmodell: false,
+            showinsurancemodell: false,
+            fuelconsumption: "",
+            busconsumption: "",
+            lifespanyears: "",
+            purshaseprice: "",
+            purshasedate: "",
             loading: true,
             loading1: false,
+            loading10: true,
             showForm: true,
             Bus: [],
             busStatusData: [],
@@ -309,11 +523,16 @@ export default {
             showSeatsModal: false,
             showEditModal: false,
             showDeleteConfirmModal: false,
+            showDeleteConfirmModal1: false,
+
             busToDelete: null,
             editedBus: {
                 id: "",
-                number_bus: "",
-                number_passenger: "",
+                fuelconsumption: "",
+                busconsumption: "",
+                lifespanyears: "",
+                purshaseprice: "",
+                purshasedate: "",
             },
             editingIndex: null,
             toast: useToast(),
@@ -326,8 +545,24 @@ export default {
     },
     mounted() {
         this.AllBus();
+        this.ALLINC();
     },
     methods: {
+        showaddmodel() {
+            this.showaddmodell = true;
+            this.showmodell = false;
+            this.showinsurancemodell = false;
+        },
+        showmodel() {
+            this.showaddmodell = false;
+            this.showmodell = true;
+            this.showinsurancemodell = false;
+        },
+        showinsurancemodel() {
+            this.showaddmodell = false;
+            this.showmodell = false;
+            this.showinsurancemodell = true;
+        },
         closeBusStatusModal() {
             this.showBusStatusModal = false;
         },
@@ -345,6 +580,31 @@ export default {
                 this.number_passenger
             );
         },
+        AddInsurance() {
+            const token = window.localStorage.getItem("access_token");
+
+            axios
+                .post(
+                    "http://127.0.0.1:8000/api/company/insurance-costs/store",
+                    {
+                        bus_id: this.BusIDD,
+                        insurance_date: this.insurancedate,
+                        insurance_cost: this.insurancecost,
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                )
+                .then((response) => {
+                    console.log(response);
+                    this.toast.success("Insurance added successfully!");
+                    this.AllBus();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    this.toast.error("Error ADD");
+                });
+        },
         AddBus() {
             const token = window.localStorage.getItem("access_token");
 
@@ -352,8 +612,14 @@ export default {
                 .post(
                     "http://127.0.0.1:8000/api/company/store_bus",
                     {
+                        Brand: this.brand.toString(),
                         number_bus: this.number_bus.toString(),
                         number_passenger: this.number_passenger.toString(),
+                        purchase_date: this.purshasedate,
+                        purchase_price: this.purshaseprice.toString(),
+                        lifespan_years: this.lifespanyears.toString(),
+                        bus_consumption: this.busconsumption.toString(),
+                        fuel_consumption: this.fuelconsumption.toString(),
                     },
                     {
                         headers: { Authorization: `Bearer ${token}` },
@@ -365,8 +631,8 @@ export default {
                     this.AllBus();
                 })
                 .catch((error) => {
-                    this.toast.error("Error adding bus.");
                     console.log(error);
+                    this.toast.error("Error ADD");
                 });
         },
         updateBus() {
@@ -377,9 +643,11 @@ export default {
                 .put(
                     `http://127.0.0.1:8000/api/company/update_bus/${busId}`,
                     {
-                        number_bus: this.editedBus.number_bus.toString(),
-                        number_passenger:
-                            this.editedBus.number_passenger.toString(),
+                        purchase_date: this.editedBus.purshasedate,
+                        purchase_price: this.editedBus.purshaseprice,
+                        lifespan_years: this.editedBus.lifespanyears,
+                        bus_consumption: this.editedBus.busconsumption,
+                        fuel_consumption: this.editedBus.fuelconsumption,
                     },
                     {
                         headers: { Authorization: `Bearer ${access_token}` },
@@ -390,8 +658,11 @@ export default {
                     this.editingIndex = null;
                     this.editedBus = {
                         id: "",
-                        number_bus: "",
-                        number_passenger: "",
+                        fuelconsumption: "",
+                        busconsumption: "",
+                        lifespanyears: "",
+                        purshaseprice: "",
+                        purshasedate: "",
                     };
                     console.log(response);
 
@@ -416,12 +687,30 @@ export default {
                     this.Bus = response.data;
                     store.state.Bus = response.data;
                     this.loading = false;
+                    console.log(response.data);
                 })
                 .catch((error) => {
                     window.alert("Error Getting Bus");
                     console.error(error);
                 });
             this.loading = true;
+        },
+        ALLINC() {
+            const access_token = window.localStorage.getItem("access_token");
+
+            axios
+                .get("http://127.0.0.1:8000/api/company/insurance-costs", {
+                    headers: { Authorization: `Bearer ${access_token}` },
+                })
+                .then((response) => {
+                    this.INC = response.data;
+                    this.loading10 = false;
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+            this.loading10 = true;
         },
         fetchBusStatus(status) {
             const access_token = window.localStorage.getItem("access_token");
@@ -453,6 +742,11 @@ export default {
             this.busToDelete = bus;
             this.showDeleteConfirmModal = true;
         },
+        confirmDeleteBus1(bus) {
+            console.log("insurance selected for deletion:", bus);
+            this.busToDelete = bus;
+            this.showDeleteConfirmModal1 = true;
+        },
         deleteConfirmedBus() {
             if (this.busToDelete && this.busToDelete.id) {
                 console.log("Deleting bus:", this.busToDelete);
@@ -461,6 +755,11 @@ export default {
                 console.error("No bus selected for deletion.");
             }
             this.closeDeleteConfirmModal();
+        },
+        deleteConfirmedBus1() {
+            this.DeleteBus1(this.busToDelete.id);
+
+            this.closeDeleteConfirmModal1();
         },
         DeleteBus(id) {
             const access_token = window.localStorage.getItem("access_token");
@@ -479,9 +778,33 @@ export default {
                     this.toast.error("Error deleting bus");
                 });
         },
+        DeleteBus1(id) {
+            const access_token = window.localStorage.getItem("access_token");
+
+            axios
+                .delete(
+                    `http://127.0.0.1:8000/api/company/insurance-costs/${id}`,
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
+                .then(() => {
+                    this.toast.success("insurance deleted successfully");
+                    this.ALLINC();
+                })
+                .catch((error) => {
+                    console.error("Error during deletion:", error);
+                    this.toast.error("Error deleting insurance");
+                });
+        },
         closeDeleteConfirmModal() {
             this.showDeleteConfirmModal = false;
             this.busToDelete = null;
+        },
+        closeDeleteConfirmModal1() {
+            this.showDeleteConfirmModal1 = false;
+            this.busToDelete = null;
+            this.ALLINC;
         },
         openSeatsModal(busId, index) {
             console.log(
@@ -625,6 +948,46 @@ export default {
     --padding-1: 1.2rem;
 
     box-shadow: 0 2rem 3rem var(--clr-light);
+}
+.select-container {
+    position: relative;
+    width: 100%;
+}
+
+.select-container select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--clr-primary);
+    border-radius: 5px;
+    font-size: 16px;
+    color: #007bff;
+    background-color: var(--clr-white);
+    box-sizing: border-box;
+    appearance: none;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.select-container select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.select-container select:hover {
+    background-color: var(--clr-white);
+    border-color: #007bff;
+}
+
+.select-container::after {
+    content: "▼";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #007bff;
+    pointer-events: none;
 }
 
 .dark-theme-variables {
@@ -958,17 +1321,13 @@ select:focus {
 /* Form and Map styling */
 .form-containerd {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    justify-content: center;
     padding: 20px;
-    background-color: rgba(var(--clr-white), 0.9);
-    box-shadow: 0 2rem 3rem var(--clr-light);
+    background-color: var(--clr-white);
+    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
     border-radius: 10px;
-    max-width: 400px;
     width: 100%;
-    margin-top: 50px;
-    margin: 40px auto;
 }
 
 .form-groupd {
@@ -1029,32 +1388,47 @@ input:focus {
     background: rgba(0, 0, 0, 0.5);
 }
 .modal-content {
-    background: var(--clr-white);
+    background-color: var(--clr-color-background);
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
-    height: 50%;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    margin: 10px;
-}
-
-.modal-content::-webkit-scrollbar {
-    display: none;
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
 }
 
 .modal-header,
-.modal-body div div {
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: center;
+.modal-body div,
+.modal-footer {
+    margin-bottom: 15px;
 }
 
 .modal-header {
-    font-size: 1.2rem;
-    font-weight: bold;
     color: var(--clr-dark);
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
+}
+
+.modal-body div div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-body div table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body div th,
+.modal-body div td {
+    padding: 12px;
+    text-align: left;
 }
 
 .modal-footer {
@@ -1062,55 +1436,14 @@ input:focus {
     justify-content: flex-end;
 }
 
-.modal-body div div table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.modal-body div div table th,
-.modal-body div div table td {
-    text-align: center;
-    vertical-align: middle;
-    padding: 8px;
-}
-
-.modal-body div div table tbody tr {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-body div div table thead {
-    display: flex;
-    justify-content: center;
-}
-
-.modal-body div div table tbody {
-    display: flex;
-    flex-direction: column;
-}
-
-.modal-body div div table tr {
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.modal-body div div table td {
-    flex: 1;
-}
-
 .close-modal {
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: var(--clr-danger);
-    color: var(--clr-white);
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-2);
     cursor: pointer;
-}
-
-.close-modal:hover {
-    background-color: #c9302c;
+    transition: background-color 0.3s;
 }
 
 .update-btn {

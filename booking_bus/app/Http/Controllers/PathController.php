@@ -6,6 +6,7 @@ use App\Events\PrivateNotification;
 use App\Models\Breaks;
 use App\Models\Geolocation;
 use App\Models\Path;
+use App\Models\Trip;
 use App\Models\User;
 use App\Models\UserNotification;
 use Illuminate\Http\Request;
@@ -179,13 +180,17 @@ class PathController extends Controller
         try {
             $company = Auth::user()->Company->id;
             $validator = Validator::make($request->all(), [
-                'from' => 'required|string',
-                'to' => 'required|string',
-                'lat_from' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
-                'long_from' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
-                'lat_to' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
-                'long_to' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
-                'Distance' => 'required|numeric',
+            'from' => 'nullable|string',
+            'to' => 'nullable|string',
+            'lat_from' => ['nullable', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'long_from' => ['nullable', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+            'lat_to' => ['nullable', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'long_to' => ['nullable', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+            'Distance' => 'nullable|numeric',
+            'lat_start' => ['nullable', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'long_start' => ['nullable', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+            'lat_end' => ['nullable', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'long_end' => ['nullable', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
             ]);
             if ($validator->fails()) {
                 DB::rollBack();
@@ -197,6 +202,18 @@ class PathController extends Controller
                 DB::rollBack();
                 return response()->json(['error' => 'you are not owner to update path'], 403);
             }
+
+            $trips = Trip::where('path_id', $path->id)
+            ->where(function ($query) {
+                $query->where('status', 'pending')
+                      ->orWhere('status', 'finished_going');
+            })
+            ->exists();
+            if ($trips) {
+                     return response()->json(['error' => 'Cannot delete path because it has associated pending or finished trips.'], 422);
+            }
+
+            
             if ($request->has('from')) {
                 $path->from = $request->input('from');
             }
@@ -224,6 +241,24 @@ class PathController extends Controller
             if ($request->has('Distance')) {
                 $path->Distance = $request->input('Distance');
             }
+            if ($request->has('lat_start') && $request->has('long_start')) {
+                $latFrom = $request->input('lat_start');
+                $longFrom = $request->input('long_start');
+                $fromLocation = geolocation::updateOrCreate(
+                    ['id' => $path->from_location],
+                    ['latitude' => $latFrom, 'longitude' => $longFrom]
+                );
+                $path->from_location = $fromLocation->id;
+            }
+            if ($request->has('lat_end') && $request->has('long_end')) {
+                $latFrom = $request->input('lat_end');
+                $longFrom = $request->input('long_end');
+                $fromLocation = geolocation::updateOrCreate(
+                    ['id' => $path->from_location],
+                    ['latitude' => $latFrom, 'longitude' => $longFrom]
+                );
+                $path->from_location = $fromLocation->id;
+            }
             $path->save();
             DB::commit();
             return response()->json($path);
@@ -241,6 +276,15 @@ class PathController extends Controller
         $path = Path::findOrfail($path);
         if ($path->company_id !== $company) {
             return response()->json(['error' => 'you are not owner to update path'], 403);
+        }
+        $trips = Trip::where('path_id', $path->id)
+        ->where(function ($query) {
+            $query->where('status', 'pending')
+                  ->orWhere('status', 'finished_going');
+        })
+        ->exists();
+        if ($trips) {
+                 return response()->json(['error' => 'Cannot delete path because it has associated pending or finished trips.'], 422);
         }
         $path->delete();
         return response()->json([
