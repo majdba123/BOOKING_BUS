@@ -32,10 +32,13 @@ class AddressController extends Controller
         } else {
             // If not, retrieve the data from the database and cache it
             $addresses = Address::where('user_id', $user)->get();
+
             Cache::put($key, $addresses, now()->addMinutes(30)); // Cache for 30 minutes
         }
         if ($addresses->count() == 0) {
+
             return response()->json(['message' => 'No addresses found'], 404);
+
         }
         return response()->json($addresses);
     }
@@ -65,6 +68,15 @@ class AddressController extends Controller
         $address->city = $request->input('city');
         $address->area = $request->input('area');
         $address->save();
+        $key = 'user_addresses_' . Auth::user()->id;
+        if (Cache::has($key)) {
+            $cachedAddresses = Cache::get($key);
+            $cachedAddresses->push($address);
+            Cache::put($key, $cachedAddresses, now()->addMinutes(30)); // Update cache with new data
+        } else {
+            Cache::put($key, collect([$address]), now()->addMinutes(30)); // Create new cache with single address
+        }
+
         return response()->json([
             'message' => "Address saved",
             'address' => $address,

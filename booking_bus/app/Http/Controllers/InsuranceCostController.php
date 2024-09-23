@@ -23,9 +23,9 @@ class InsuranceCostController extends Controller
             })
                 ->get();
 
-            if ($insuranceCosts->isEmpty()) {
-                return response()->json(['message' => 'No insurance costs found for the company\'s buses.'], 404);
-            }
+            // if ($insuranceCosts->isEmpty()) {
+            //     return response()->json(['message' => 'No insurance costs found for the company\'s buses.'],);
+            // }
 
             return response()->json($insuranceCosts, 200);
         } catch (\Exception $e) {
@@ -45,7 +45,19 @@ class InsuranceCostController extends Controller
 
             // Validate request data
             $validatedData = $request->validate([
-                'bus_id' => 'required|exists:buses,id',
+                'bus_id' => [
+                    'required',
+                    'exists:buses,id',
+                    function ($attribute, $value, $fail) use ($request) {
+                        $existingInsurance = InsuranceCost::where('bus_id', $value)
+                            ->where('insurance_date', $request->insurance_date)
+                            ->first();
+
+                        if ($existingInsurance) {
+                            $fail('An insurance record for this bus already exists for the selected date.');
+                        }
+                    }
+                ],
                 'insurance_cost' => 'required|numeric',
                 'insurance_date' => 'required',
             ]);
