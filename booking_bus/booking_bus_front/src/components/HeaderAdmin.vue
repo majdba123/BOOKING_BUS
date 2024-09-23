@@ -221,8 +221,12 @@ export default {
             }
         });
         this.updateDateTime();
+        setInterval(() => {
+            this.updateDateTime();
+        }, 1000);
+
         this.fetchProfileInfo();
-        this.fetchNotifications(); // Fetch notifications on mount
+        this.fetchNotifications();
         if (document.body.classList.contains("dark-theme-variables")) {
             this.isDarkMode = true;
             const themeToggler = this.$refs.themeToggler;
@@ -559,15 +563,16 @@ main {
     color: var(--clr-white);
 }
 
-/* Adding a subtle fade-in animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
+/* Styling for datetime container */
+@keyframes borderShift {
+    0% {
+        border-image-source: linear-gradient(to right, yellow, blue);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    50% {
+        border-image-source: linear-gradient(to left, yellow, blue);
+    }
+    100% {
+        border-image-source: linear-gradient(to right, yellow, blue);
     }
 }
 .datetime-container {
@@ -584,9 +589,8 @@ main {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
-
 .time {
     display: flex;
     gap: 1rem;
@@ -594,9 +598,13 @@ main {
 }
 
 .time-box {
+    background: #111111;
     border-radius: 50% 20% / 10% 40%;
+    border-bottom: 1px solid yellow;
+    border-top: 1px solid #50a8eb;
+    animation: borderColorShift 3s infinite;
     padding: 1rem 1.5rem;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;
     position: relative;
     color: #ffffff;
@@ -614,6 +622,7 @@ main {
     margin-top: 0.5rem;
     color: #c0c0c0;
 }
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .container {
