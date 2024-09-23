@@ -107,20 +107,35 @@ export default {
                 }
             }
         },
+        handleResize() {
+            const sideMenu = this.$refs.sideMenu;
+            if (window.innerWidth > 768) {
+                sideMenu.style.display = "block";
+            } else {
+                sideMenu.style.display = "none";
+            }
+        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
-                sideMenu.style.display = "block";
+                if (window.innerWidth > 768) {
+                    sideMenu.style.display = "block";
+                } else {
+                    sideMenu.style.display = "block";
+                }
             }
         },
         closeMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
-                sideMenu.style.display = "none";
+                if (window.innerWidth <= 768) {
+                    sideMenu.style.display = "none";
+                }
             }
         },
+
         toggleTheme() {
-            this.isDarkMode = !this.isDarkMode; // تغيير حالة الوضع الداكن
+            this.isDarkMode = !this.isDarkMode;
             document.body.classList.toggle(
                 "dark-theme-variables",
                 this.isDarkMode
@@ -128,7 +143,7 @@ export default {
             localStorage.setItem(
                 "darkMode",
                 this.isDarkMode ? "enabled" : "disabled"
-            ); // حفظ الحالة في localStorage
+            );
 
             const themeToggler = this.$refs.themeToggler;
             themeToggler
@@ -138,12 +153,12 @@ export default {
                 .querySelector("span:nth-child(2)")
                 .classList.toggle("active", this.isDarkMode);
         },
-        search() {
-            // هنا يمكنك تنفيذ وظيفة البحث
-        },
+        search() {},
     },
     mounted() {
         this.checkToken();
+        window.addEventListener("resize", this.handleResize);
+        this.handleResize();
     },
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <!-- Aside section start -->
-        <aside ref="sideMenu">
+        <aside ref="sideMenu" v-show="isMenuOpen">
             <!-- Start top -->
             <div class="top">
                 <div class="logo">
@@ -48,15 +48,14 @@ import router from "@/router";
 
 export default {
     data() {
-        return { messages: "", id: null };
+        return { messages: "", id: null, isMenuOpen: false };
     },
-
     mounted() {
-        this.handleResize();
         this.checkToken();
-
         window.addEventListener("resize", this.handleResize);
+        this.handleResize();
     },
+
     beforeUnmount() {
         window.removeEventListener("resize", this.handleResize);
     },
@@ -75,12 +74,16 @@ export default {
             }
         },
         handleResize() {
-            const sideMenu = this.$refs.sideMenu;
-            if (window.innerWidth > 768) {
-                sideMenu.style.display = "block";
-            } else {
-                sideMenu.style.display = "none";
-            }
+            this.$nextTick(() => {
+                const sideMenu = this.$refs.sideMenu;
+                if (sideMenu) {
+                    if (window.innerWidth > 768) {
+                        sideMenu.style.display = "block";
+                    } else {
+                        sideMenu.style.display = "none";
+                    }
+                }
+            });
         },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -94,6 +97,8 @@ export default {
                 sideMenu.style.display = "none";
             }
         },
+
+        search() {},
         toggleTheme() {
             const themeToggler = this.$refs.themeToggler;
             if (themeToggler) {

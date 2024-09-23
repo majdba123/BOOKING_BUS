@@ -105,6 +105,14 @@ export default {
                 }
             }
         },
+        handleResize() {
+            const sideMenu = this.$refs.sideMenu;
+            if (window.innerWidth > 768) {
+                sideMenu.style.display = "block";
+            } else {
+                sideMenu.style.display = "none";
+            }
+        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
@@ -122,6 +130,8 @@ export default {
     },
     mounted() {
         this.checkToken();
+        window.addEventListener("resize", this.handleResize);
+        this.handleResize();
     },
 };
 </script>

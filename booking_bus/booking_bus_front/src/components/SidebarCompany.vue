@@ -180,7 +180,6 @@ export default {
             }).then((response) => {
                 if (response.status == 200) {
                     console.log(response);
-                    this.showAlertWithLottie("Logout successful");
                     window.localStorage.removeItem("access_token");
                     window.localStorage.removeItem("type_user");
                     router.push("/");

@@ -564,16 +564,48 @@ main {
 }
 
 /* Styling for datetime container */
-@keyframes borderShift {
+
+@keyframes borderColorShiftTop {
     0% {
-        border-image-source: linear-gradient(to right, yellow, blue);
+        border-top-color: yellow;
     }
     50% {
-        border-image-source: linear-gradient(to left, yellow, blue);
+        border-top-color: blue;
     }
     100% {
-        border-image-source: linear-gradient(to right, yellow, blue);
+        border-top-color: yellow;
     }
+}
+
+@keyframes borderColorShiftBottom {
+    0% {
+        border-bottom-color: yellow;
+    }
+    50% {
+        border-bottom-color: blue;
+    }
+    100% {
+        border-bottom-color: yellow;
+    }
+}
+
+.time-box {
+    background: #111111;
+    border-radius: 50% 20% / 10% 40%;
+    border-bottom: 1px solid yellow; /* This will use the animation */
+    border-top: 1px solid yellow; /* This will use the animation */
+    animation: borderColorShiftTop 3s infinite alternate,
+        borderColorShiftBottom 3s infinite alternate;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    font-size: 1.5rem;
+    position: relative;
+    color: #ffffff;
+    text-align: center;
+    background: linear-gradient(135deg, #ff4d4d, #72c3ff);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 .datetime-container {
     text-align: center;
@@ -597,24 +629,6 @@ main {
     justify-content: center;
 }
 
-.time-box {
-    background: #111111;
-    border-radius: 50% 20% / 10% 40%;
-    border-bottom: 1px solid yellow;
-    border-top: 1px solid #50a8eb;
-    animation: borderColorShift 3s infinite;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-    font-size: 1.5rem;
-    position: relative;
-    color: #ffffff;
-    text-align: center;
-    background: linear-gradient(135deg, #ff4d4d, #72c3ff);
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
-}
-
 .time-box span {
     display: block;
     font-size: 0.8rem;
@@ -636,7 +650,7 @@ main {
         flex-direction: column;
         align-items: stretch;
         gap: 0.5rem;
-        margin-top: 0.9rem;
+        margin-top: 3rem;
     }
 
     .profile-menu {
