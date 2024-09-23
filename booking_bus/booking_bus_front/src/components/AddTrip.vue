@@ -77,20 +77,23 @@
                 <div class="form-groupd">
                     <label for="path">Path</label>
                     <div class="select-container">
-                        <select v-model="path" id="path" @change="fetchBreak">
+                        <select
+                            v-model="selectedPath"
+                            id="path"
+                            @change="fetchBreak() && handleBusSelection"
+                        >
                             <option
                                 v-for="(pathItem, index) in paths"
                                 :key="index"
-                                :value="pathItem.id"
+                                :value="{
+                                    id: pathItem.id,
+                                    distance: pathItem.Distance,
+                                }"
                             >
                                 {{ pathItem.from }} >> {{ pathItem.to }}
                             </option>
                         </select>
                     </div>
-                </div>
-                <div class="form-groupd">
-                    <label for="price">Price</label>
-                    <input type="text" id="price" v-model="price" required />
                 </div>
 
                 <div class="form-groupd">
@@ -171,13 +174,160 @@
                         Add Another Bus
                     </button>
                 </div>
-
+                <div class="form-groupd">
+                    <label for="price">Price</label>
+                    <button
+                        @click="displaymodel()"
+                        class="button"
+                        type="button"
+                    >
+                        Select Method Price
+                    </button>
+                    <span v-if="price != ``"> Price: {{ price }} </span>
+                </div>
                 <div class="submit-btnnd">
                     <button type="submit" @click="AddTrip" class="submit-btnd">
                         Submit
                     </button>
                 </div>
             </form>
+        </div>
+        <div v-if="showpricemodel" class="modal1">
+            <div class="modal-content1">
+                <div class="modal-header1">Method Price</div>
+                <div class="modal-body1">
+                    <!-- أزرار التنقل -->
+                    <div class="button-container1">
+                        <button
+                            @click="activeSection = 'section1'"
+                            :class="{ active: activeSection === 'section1' }"
+                        >
+                            Fixed
+                        </button>
+                        <button
+                            @click="handleButtonClick('section2')"
+                            :class="{ active: activeSection === 'section2' }"
+                        >
+                            Proportional
+                        </button>
+                        <button
+                            @click="handleButtonClick('section3')"
+                            :class="{ active: activeSection === 'section3' }"
+                        >
+                            Decreasing
+                        </button>
+                        <button
+                            @click="handleButtonClick('section4')"
+                            :class="{ active: activeSection === 'section4' }"
+                        >
+                            Capping
+                        </button>
+                    </div>
+
+                    <!-- المحتوى المتغير بناءً على الزر النشط -->
+                    <div
+                        v-if="activeSection === 'section1'"
+                        class="section-content"
+                    >
+                        <h3>Price</h3>
+                        <!-- المحتوى الخاص بـ Method 1 -->
+                        <input type="number" v-model="price" />
+                        <div class="modal-footer">
+                            <button @click="handleOk()" class="ok-button">
+                                OK
+                            </button>
+                            <button @click="handleCancel" class="cancel-button">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="activeSection === 'section2'"
+                        class="section-content"
+                    >
+                        <h3>
+                            In this form the price is calculated based on the
+                            distance of the road. Do you agree to use it?
+                        </h3>
+                        <div class="modal-footer">
+                            <button @click="handleOk()" class="ok-button">
+                                OK
+                            </button>
+                            <button @click="handleCancel" class="cancel-button">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="activeSection === 'section3'"
+                        class="section-content"
+                    >
+                        <h3>Price Min</h3>
+                        <input type="number" required v-model="pricemin" />
+                        <h3>Number Of Stations</h3>
+                        <input
+                            type="number"
+                            required
+                            v-model="numberofstations"
+                        />
+                        <div class="modal-footer">
+                            <button @click="handleOk()" class="ok-button">
+                                OK
+                            </button>
+                            <button @click="handleCancel" class="cancel-button">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="activeSection === 'section4'"
+                        class="section-content"
+                    >
+                        <h3>Price Max</h3>
+                        <input type="number" required v-model="pricemax" />
+                        <h3>Number Of Stations</h3>
+                        <input
+                            type="number"
+                            required
+                            v-model="numberofstations"
+                        />
+                        <div class="modal-footer">
+                            <button @click="handleOk()" class="ok-button">
+                                OK
+                            </button>
+                            <button @click="handleCancel" class="cancel-button">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="showLiterModal" class="modal-overlay">
+                    <div class="modal-content">
+                        <h2>
+                            Enter the price litre to calcathe the price per
+                            kilometre of the path used
+                        </h2>
+
+                        <h3>Price Of Liter</h3>
+                        <input type="number" v-model="priceleiter" />
+                        <div class="modal-footer">
+                            <button @click="handleLiterOk" class="ok-button">
+                                OK
+                            </button>
+                            <button
+                                @click="handleCancel1"
+                                class="cancel-button"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div v-else class="recent_orders">
@@ -312,7 +462,7 @@
                 <h2>Edit Trip</h2>
                 <div class="form-groupd">
                     <label for="path">Path</label>
-                    <select v-model="path" class="input" required>
+                    <select v-model="selectedPath.id" class="input" required>
                         <option
                             v-for="(pathItem, index) in paths"
                             :key="index"
@@ -451,9 +601,19 @@ export default {
     name: "AddTrip",
     data() {
         return {
+            selectedPath: null,
+            numberofstations: "",
+            pricemax: "",
+            pricemin: "",
+            isLiterModalShown: false,
+            showLiterModal: false,
+            selectedBusIds: [],
+            price_type: "",
+            priceleiter: "",
+            activeSection: "section1",
             loading1: false,
             loading: true,
-
+            showpricemodel: false,
             x: "",
             showForm: true,
             Trips: [],
@@ -508,6 +668,7 @@ export default {
             tripStatusData: [],
             showDeleteConfirmModal: false,
             tripToDelete: null,
+            dispath: "",
         };
     },
     mounted() {
@@ -515,7 +676,157 @@ export default {
         this.fetchAvailableBuses();
         this.AllTrips();
     },
+    watch: {
+        buses: {
+            handler() {
+                this.handleBusSelection();
+            },
+            deep: true,
+        },
+    },
     methods: {
+        pricingMethod1() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/company/pricingMethod",
+                headers: { Authorization: `Bearer ${access_token}` },
+                data: {
+                    Threshold: this.pricemax,
+                    priceOfKm: 120,
+                    numberOfStations: this.numberofstations,
+                    Distance: this.selectedPath.distance,
+                },
+            })
+                .then((response) => {
+                    console.log(response.data);
+                    this.price = response.data.price;
+                })
+                .catch((error) => {
+                    window.alert("Error getting paths");
+                    console.error(error);
+                    console.log(this.priceleiter);
+                });
+        },
+        pricingMethod() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/company/pricingMethod",
+                headers: { Authorization: `Bearer ${access_token}` },
+                data: {
+                    Threshold: this.pricemin,
+                    priceOfKm: 120,
+                    numberOfStations: this.numberofstations,
+                    Distance: this.selectedPath.distance,
+                },
+            })
+                .then((response) => {
+                    console.log(response.data);
+                    this.price = response.data.price;
+                })
+                .catch((error) => {
+                    window.alert("Error getting paths");
+                    console.error(error);
+                    console.log(this.priceleiter);
+                });
+        },
+
+        handleButtonClick(section) {
+            this.activeSection = section;
+
+            if (
+                (section === "section2" ||
+                    section === "section3" ||
+                    section === "section4") &&
+                !this.isLiterModalShown
+            ) {
+                this.showLiterModal = true;
+            }
+        },
+        handleLiterOk() {
+            if (this.selectedPath != null || this.selectedBusIds.length == 0) {
+                this.calculateKm();
+                this.showLiterModal = false;
+                this.isLiterModalShown = true;
+            } else
+                this.toast.warning("Please Select Path And Select Bus", {
+                    transition: "Vue-Toastification__shake",
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                });
+        },
+        handleCancel1() {
+            this.showLiterModal = false;
+        },
+        calculateKm() {
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/company/calculateKm",
+                headers: { Authorization: `Bearer ${access_token}` },
+                data: {
+                    pathId: this.selectedPath.id,
+                    priceOfLiter: this.priceleiter,
+                    bus_ids: this.selectedBusIds,
+                },
+            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    this.toast.error(
+                        "You do not have any previous trips to process the calculation!",
+                        {
+                            transition: "Vue-Toastification__shake",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        }
+                    );
+                    console.error(error);
+                    console.log(this.priceleiter);
+                });
+        },
+        handleOk() {
+            switch (this.activeSection) {
+                case "section1":
+                    this.price_type = "fixed";
+                    break;
+                case "section2":
+                    this.calculateKm();
+                    this.price_type = "proportional";
+                    this.selectedPath.distance;
+                    break;
+                case "section3":
+                    this.price_type = "decreasing";
+                    this.pricingMethod();
+                    break;
+                case "section4":
+                    this.price_type = "capping";
+                    this.pricingMethod1();
+                    break;
+            }
+            console.log("Selected price type:", this.price_type);
+            // إغلاق الـ modal
+            this.showpricemodel = false;
+        },
+        handleCancel() {
+            console.log("Cancel clicked");
+            this.price = "";
+            // إغلاق الـ modal
+            this.showpricemodel = false;
+        },
+        displaymodel() {
+            this.showpricemodel = true;
+        },
         handleSubmit() {
             console.log(
                 "Form Submitted",
@@ -556,11 +867,11 @@ export default {
                     console.error(error);
                 });
         },
-        fetchBreak() {
+        fetchBreak(x) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: `http://127.0.0.1:8000/api/company/all_breaks/${this.path}`,
+                url: `http://127.0.0.1:8000/api/company/all_breaks/${this.selectedPath.id}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
@@ -579,6 +890,8 @@ export default {
                     });
                     console.error(error);
                 });
+            this.dispath = x;
+            console.log(this.dispath);
         },
         addBus() {
             this.buses.push({
@@ -612,57 +925,215 @@ export default {
         },
         removeBus(index) {
             this.buses.splice(index, 1);
+            this.selectedBusIds.splice(index, 1);
+        },
+        handleBusSelection() {
+            this.selectedBusIds = this.buses.map((bus) => bus.bus_id);
+            console.log("Selected bus ids:", this.selectedBusIds);
         },
         AddTrip() {
             const token = window.localStorage.getItem("access_token");
+            if (this.price_type == "decreasing") {
+                const busIds = this.buses.map((bus) => ({
+                    bus_id: bus.bus_id,
+                    type: "All",
+                    from_time_going: bus.start_time_going,
+                    to_time_going: bus.end_time_going,
+                    from_time_return: bus.start_time_return,
+                    to_time_return: bus.end_time_return,
+                    date_start: this.start_date,
+                    date_end: this.end_date,
+                }));
 
-            const busIds = this.buses.map((bus) => ({
-                bus_id: bus.bus_id,
-                type: bus.type,
-                from_time_going: bus.start_time_going,
-                to_time_going: bus.end_time_going,
-                from_time_return: bus.start_time_return,
-                to_time_return: bus.end_time_return,
-                date_start: this.start_date,
-                date_end: this.end_date,
-            }));
-
-            axios({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/company/store_trip",
-                data: {
-                    path_id: this.path,
-                    price: this.price,
-                    bus_ids: busIds,
-                },
-                headers: { Authorization: `Bearer ${token}` },
-            })
-                .then((response) => {
-                    console.log(response);
-                    this.toast.success("Trip Added Successfully", {
-                        transition: "Vue-Toastification__bounce",
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                    });
-                    this.AllTrips();
+                axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/company/store_trip",
+                    data: {
+                        path_id: this.selectedPath.id,
+                        bus_ids: busIds,
+                        price_type: this.price_type,
+                        number_of_station: this.numberofstations,
+                        min_price_for_km: this.pricemin,
+                        cost: this.price,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 })
-                .catch((error) => {
-                    this.toast.error("Error Adding Trip", {
-                        transition: "Vue-Toastification__shake",
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
+                    .then((response) => {
+                        console.log(response);
+                        this.toast.success("Trip Added Successfully", {
+                            transition: "Vue-Toastification__bounce",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        this.AllTrips();
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error Adding Trip", {
+                            transition: "Vue-Toastification__shake",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        console.error(error);
+                        console.log(this.date);
                     });
-                    console.error(error);
-                    console.log(this.date);
-                });
+            } else if (this.price_type == "capping") {
+                const busIds = this.buses.map((bus) => ({
+                    bus_id: bus.bus_id,
+                    type: "All",
+                    from_time_going: bus.start_time_going,
+                    to_time_going: bus.end_time_going,
+                    from_time_return: bus.start_time_return,
+                    to_time_return: bus.end_time_return,
+                    date_start: this.start_date,
+                    date_end: this.end_date,
+                }));
+
+                axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/company/store_trip",
+                    data: {
+                        path_id: this.selectedPath.id,
+                        bus_ids: busIds,
+                        price_type: this.price_type,
+                        number_of_station: this.numberofstations,
+                        max_price_for_km: this.pricemax,
+                        cost: this.price,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                    .then((response) => {
+                        console.log(response);
+                        this.toast.success("Trip Added Successfully", {
+                            transition: "Vue-Toastification__bounce",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        this.AllTrips();
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error Adding Trip", {
+                            transition: "Vue-Toastification__shake",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        console.error(error);
+                        console.log(this.date);
+                    });
+            } else if (this.price_type == "proportional") {
+                const busIds = this.buses.map((bus) => ({
+                    bus_id: bus.bus_id,
+                    type: "All",
+                    from_time_going: bus.start_time_going,
+                    to_time_going: bus.end_time_going,
+                    from_time_return: bus.start_time_return,
+                    to_time_return: bus.end_time_return,
+                    date_start: this.start_date,
+                    date_end: this.end_date,
+                }));
+
+                axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/company/store_trip",
+                    data: {
+                        path_id: this.selectedPath.id,
+                        bus_ids: busIds,
+                        price_type: this.price_type,
+                        cost: this.price,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                    .then((response) => {
+                        console.log(response);
+                        this.toast.success("Trip Added Successfully", {
+                            transition: "Vue-Toastification__bounce",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        this.AllTrips();
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error Adding Trip", {
+                            transition: "Vue-Toastification__shake",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        console.error(error);
+                        console.log(this.date);
+                    });
+            } else if (this.price_type == "fixed") {
+                const busIds = this.buses.map((bus) => ({
+                    bus_id: bus.bus_id,
+                    type: "All",
+                    from_time_going: bus.start_time_going,
+                    to_time_going: bus.end_time_going,
+                    from_time_return: bus.start_time_return,
+                    to_time_return: bus.end_time_return,
+                    date_start: this.start_date,
+                    date_end: this.end_date,
+                }));
+
+                axios({
+                    method: "post",
+                    url: "http://127.0.0.1:8000/api/company/store_trip",
+                    data: {
+                        path_id: this.selectedPath.id,
+                        bus_ids: busIds,
+                        price_type: this.price_type,
+                        cost: this.price,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                    .then((response) => {
+                        console.log(response);
+                        this.toast.success("Trip Added Successfully", {
+                            transition: "Vue-Toastification__bounce",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        this.AllTrips();
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error Adding Trip", {
+                            transition: "Vue-Toastification__shake",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        console.error(error);
+                        console.log(this.date);
+                    });
+            }
         },
         fetchAllDriverWithBus() {
             const access_token = window.localStorage.getItem("access_token");
@@ -808,7 +1279,7 @@ export default {
                 url: "http://127.0.0.1:8000/api/company/update_trip/" + this.x,
                 headers: { Authorization: `Bearer ${token}` },
                 data: {
-                    path_id: this.path,
+                    path_id: this.selectedPath.id,
                     price: this.price,
                     area: this.area,
                     bus_ids: busIds,
@@ -1269,7 +1740,18 @@ select:focus {
     animation: gradientAnimation 5s ease infinite;
     width: 100%;
 }
-
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* تأثير التعتيم الخلفي */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* لضمان أن النافذة فوق كل العناصر */
+}
 @keyframes gradientAnimation {
     0% {
         background-position: 0% 50%;
@@ -1280,6 +1762,35 @@ select:focus {
     100% {
         background-position: 0% 50%;
     }
+}
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.ok-button,
+.cancel-button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.ok-button {
+    background-color: #4caf50; /* لون أخضر */
+    color: white;
+}
+
+.cancel-button {
+    background-color: #f44336; /* لون أحمر */
+    color: white;
+}
+
+.ok-button:hover,
+.cancel-button:hover {
+    opacity: 0.8;
 }
 
 .nav-btnd:hover {
@@ -1358,7 +1869,7 @@ label {
     color: #007bff;
     font-size: 16px;
 }
-
+.button,
 input {
     width: 100%;
     padding: 10px;
@@ -1465,6 +1976,58 @@ input:focus {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
+}
+.modal1 {
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content1 {
+    background-color: white;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+}
+
+.modal-header1 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.button-container1 {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.button-container1 button {
+    width: 24%;
+    padding: 10px;
+    background-color: lightgray;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.button-container1 button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.section-content {
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    margin-top: 20px;
 }
 
 .modal-content {
