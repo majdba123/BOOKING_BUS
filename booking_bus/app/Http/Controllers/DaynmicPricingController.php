@@ -24,7 +24,8 @@ class DaynmicPricingController extends Controller
 
         $validator = Validator::make($request->all(), [
             'pathId' => 'required|exists:paths,id',
-            'busId' => 'required|exists:buses,id',
+            'bus_ids' => 'required|array', // Ensure bus_ids is an array
+            'bus_ids.*' => 'required|exists:buses,id', // Validate each bus ID in the array
             'priceOfLiter' => 'required|numeric|min:0',
         ]);
 
@@ -47,16 +48,15 @@ class DaynmicPricingController extends Controller
             return response()->json(['error' => 'You do not have any previous trips to process the calculation!'], 400);
         }
         $fixedCost = ($InsuranceCost + $wages + $Depreciation) / $expectedKm;
-        $fuelCost = $this->calculateFuelCostForTrip($request->input('pathId'), $request->input('busId'), $request->input('priceOfLiter'));
+        $fuelCost = $this->calculateFuelCostForTrip($request->input('pathId'), $request->input('bus_ids'), $request->input('priceOfLiter'));
 
-        $MaintenanceCost = $this->calculateMaintenanceCost($request->input('busId'), $request->input('pathId'));
+        $MaintenanceCost = $this->calculateMaintenanceCost($request->input('bus_ids'), $request->input('pathId'));
         $variableCost = $fuelCost + $MaintenanceCost;
         $totalPriceForKm = $fixedCost + $variableCost;
 
         $roundedPriceForKm = round($totalPriceForKm, 2);
         return response()->json(['priceForKm' => $roundedPriceForKm]);
 
-        // $this->calculateFuelCostForTrip();
     }
 
 
@@ -124,8 +124,8 @@ class DaynmicPricingController extends Controller
             ->whereHas('trip.path', function ($query) use ($companyId) {
                 $query->where('company_id', $companyId);
             })
-            ->join('trips', 'bus__trips.trip_id', '=', 'trips.id') // Ensure you are joining correctly
-            ->sum('trips.path_id'); // Assuming 'path_id' is the column holding distance; adjust if needed.
+            ->join('trips', 'bus__trips.trip_id', '=', 'trips.id')
+            ->sum('trips.path_id');
 
 
 
@@ -134,16 +134,21 @@ class DaynmicPricingController extends Controller
 
 
 
-    public function calculateFuelCostForTrip($pathId, $busId, $priceForLiter)
+    public function calculateFuelCostForTrip($pathId, array $busIds, $priceForLiter)
     {
-        $bus = Bus::where('id', $busId)->firstOrFail();
+        $buses = Bus::whereIn('id', $busIds)->get();
+
+        if ($buses->isEmpty()) {
+            return response()->json(['error' => 'No buses found'], 404);
+        }
+        $maxConsumptionBus = $buses->sortByDesc('fuel_consumption')->first();
 
         $path = Path::where('id', $pathId)->firstOrFail();
         $distance = $path->Distance;
 
 
-        $fuelConsumptionRate = $bus->fuel_consumption;
-        $bus_consumption = $bus->bus_consumption;
+        $fuelConsumptionRate = $maxConsumptionBus->fuel_consumption;
+        $bus_consumption = $maxConsumptionBus->bus_consumption;
         $fuelPricePerLiter = $priceForLiter;
 
         if ($distance > 0 && $fuelConsumptionRate > 0) {
@@ -157,33 +162,41 @@ class DaynmicPricingController extends Controller
         return $fuelCost;
     }
 
-    public function calculateMaintenanceCost($busId, $pathId)
+    public function calculateMaintenanceCost(array $busIds, $pathId)
     {
         $companyId = Auth::user()->Company->id;
 
         $startDate = Carbon::now()->subMonth()->startOfMonth();
         $endDate = Carbon::now()->subMonth()->endOfMonth();
+        $totalMaintenanceCost = 0;
+        $totalDistance = 0;
+        foreach ($busIds as $busId) {
+            $maintenanceCostTotal = Bus::where('id', $busId)
+                ->where('company_id', $companyId)
+                ->firstOrFail()
+                ->maintenanceCosts()
+                ->whereBetween('maintenance_date', [$startDate, $endDate])
+                ->sum('cost');
 
-        $maintenanceCostTotal = Bus::where('id', $busId)
-            ->where('company_id', $companyId)
-            ->firstOrFail()
-            ->maintenanceCosts()
-            ->whereBetween('maintenance_date', [$startDate, $endDate])
-            ->sum('cost');
+            // Get the completed trips for the bus
+            $completedTrips = Bus_Trip::where('bus_id', $busId)
+                ->where('status', 'completed')
+                ->whereBetween('date_start', [$startDate, $endDate])
+                ->get();
+
+            $distanceForBus = $completedTrips->sum('path.Distance');
 
 
+            $totalMaintenanceCost += $maintenanceCostTotal;
+            $totalDistance += $distanceForBus;
+        }
 
-        $completedTrips = Bus_Trip::where('bus_id', $busId)
-            ->where('status', 'completed')
-            ->whereBetween('date_start', [$startDate, $endDate])
-            ->get();
+        $maintenanceCostPerKm = $totalDistance > 0 ? $totalMaintenanceCost / $totalDistance : 0;
 
-        $totalDistance = $completedTrips->sum('path.Distance');
-
-        $maintenanceCostPerKm = $totalDistance > 0 ? $maintenanceCostTotal / $totalDistance : 0;
         $path = Path::find($pathId);
-        $total = $maintenanceCostPerKm * $path->Distance;
-        return $total;
+        $totalMaintenanceCostForPath = $maintenanceCostPerKm * $path->Distance;
+
+        return $totalMaintenanceCostForPath;
     }
 
     public function pricingMethod(Request $request)
