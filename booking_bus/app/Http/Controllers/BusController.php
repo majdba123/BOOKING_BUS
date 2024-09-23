@@ -233,7 +233,7 @@ class BusController extends Controller
         $company = Auth::user()->Company->id;
 
         $bus = Bus::where('company_id', $company)
-            ->whereIn('status', ['pending', 'available'])
+            ->whereIn('status', ['available', 'completed'])
             ->get();
 
         return response()->json($bus, 200);
