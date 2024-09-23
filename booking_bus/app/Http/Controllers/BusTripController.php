@@ -110,7 +110,7 @@ class BusTripController extends Controller
                 'nameCompany' => $trip->company->name_company,
                 'from' => $trip->path->from,
                 'to' => $trip->path->to,
-                'price' => (int) $trip->price,
+                'price' => (int) $busTrip->trip->pricing->cost,
                 'goingfromTime' => $GoingformattedFromTime,
                 'goingtoTime' => $GoingformattedToTime,
                 'ReturnfromTime' => $RetuenformattedFromTime,
@@ -227,8 +227,14 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
+                'price_trip' => $busTrip->trip->pricing->cost,
+                'from_time_going' => $busTrip->from_time_going,
+                'to_time_going' => $busTrip->to_time_going,
+                'from_time_return' => $busTrip->from_time_return,
+                'to_time_return' => $busTrip->to_time_return,
+                'date_end' => $busTrip->date_end,
+                'date_start' => $busTrip->date_start,
+                'status' => $busTrip->status,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];
@@ -319,8 +325,14 @@ class BusTripController extends Controller
         foreach ($busTrips as $busTrip) {
             $busTripData = [
                 'bus_id' => $busTrip->bus_id,
-                'from_time' => $busTrip->from_time,
-                'to_time' => $busTrip->to_time,
+                'price_trip' => $busTrip->trip->pricing->cost,
+                'from_time_going' => $busTrip->from_time_going,
+                'to_time_going' => $busTrip->to_time_going,
+                'from_time_return' => $busTrip->from_time_return,
+                'to_time_return' => $busTrip->to_time_return,
+                'date_end' => $busTrip->date_end,
+                'date_start' => $busTrip->date_start,
+                'status' => $busTrip->status,
                 'type' => $busTrip->type,
                 'event' => $busTrip->event,
             ];

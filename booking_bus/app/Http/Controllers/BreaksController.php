@@ -90,7 +90,7 @@ class BreaksController extends Controller
 
 
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'unique:breaks,name,'],
+            'name' => ['required', 'string', ],
         ], [
             'name.required' => 'Name is required',
             'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],

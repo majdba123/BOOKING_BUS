@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Bus;
 use App\Models\Trip;
+
 return new class extends Migration
 {
     /**

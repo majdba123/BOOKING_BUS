@@ -9,10 +9,19 @@ use Illuminate\Support\Str;
 class Order_Private_trip extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    protected $dates = [
+        'deleted_at'
+    ];
+    protected $hidden = [
+        'pricing_id',
+        'pricing_type'
+    ];
     protected $keyType = 'string'; // Set the key type to UUID
     public $incrementing = false; // Disable auto-incrementing
 
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
         // Auto generate UUID when creating data User
         static::creating(function ($model) {
@@ -22,17 +31,32 @@ class Order_Private_trip extends Model
     protected $fillable = [
         'private_trip_id',
         'company_id',
-        'price',
+        'pricing_id',
+        'pricing_type',
         'status',
 
     ];
     public function private_trip()
     {
-        return $this->belongsTo(Private_trip::class , 'private_trip_id');
+        return $this->belongsTo(Private_trip::class, 'private_trip_id');
     }
     public function company()
     {
-        return $this->belongsTo(Company::class , 'company_id');
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+    public function pricing()
+    {
+        return $this->morphTo();
     }
 
+    public function getPriceAttribute()
+    {
+        $pricingModel = $this->pricing_type::find($this->pricing_id);
+
+        if ($pricingModel) {
+            return $pricingModel->cost;
+        }
+
+        return null;
+    }
 }

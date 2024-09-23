@@ -9,11 +9,22 @@ use Illuminate\Database\Eloquent\Model;
 class Trip extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    protected $dates = [
+        'deleted_at'
+    ];
+    protected $hidden = [
+        'pricing_id',
+        'pricing_type',
+        // 'pricing',
+    ];
     protected $fillable = [
         'company_id',
         'path_id',
         'status',
         'price',
+        'pricing_id',
+        'pricing_type',
     ];
     public function company()
     {
@@ -40,5 +51,23 @@ class Trip extends Model
     public function canceledTrip()
     {
         return $this->hasOne(CanceledTrip::class);
+    }
+
+    //hamza
+    //polymorphic Reation
+
+    public function pricing()
+    {
+        return $this->morphTo();
+    }
+    public function getPriceAttribute()
+    {
+        $pricingModel = $this->pricing_type::find($this->pricing_id);
+
+        if ($pricingModel) {
+            return $pricingModel->cost;
+        }
+
+        return null;
     }
 }

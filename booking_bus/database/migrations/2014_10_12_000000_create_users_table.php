@@ -2,7 +2,10 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -16,14 +19,32 @@ return new class extends Migration
             $table->string('name');
             $table->string('type')->default(0);
             $table->string('email')->unique();
-            $table->string('lang')->default("null");
-            $table->string('lat')->default("null");
             $table->string('point')->default(200);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
+        DB::table('users')->insert([
+            [
+                'id' => Str::uuid(),
+                'name' => 'hamza',
+                'type' => 0,
+                'email' => 'user@gmail.com',
+                'password' => Hash::make('123456789'),
+                'email_verified_at' => now()
+            ]
+        ]);
+        DB::table('users')->insert([
+            [
+                'id' => Str::uuid(),
+                'name' => 'robert',
+                'type' => 1,
+                'email' => 'a@info.com',
+                'password' => Hash::make('123456789'),
+                'email_verified_at' => now()
+            ]
+        ]);
     }
 
     /**

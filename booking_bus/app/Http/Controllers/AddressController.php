@@ -15,7 +15,7 @@ class AddressController extends Controller
     /**
      * Display a listing of the resource.
      */
- /*   public function index()
+    /*   public function index()
     {
         $user = Auth::user()->id;
         $addresses = Address::where('user_id', $user)->get();
@@ -24,6 +24,7 @@ class AddressController extends Controller
     public function index()
     {
         $user = Auth::user()->id;
+
         $key = 'user_addresses_' . $user; // Create a unique cache key for each user
         // Check if the data is already cached
         if (Cache::has($key)) {
@@ -33,7 +34,7 @@ class AddressController extends Controller
             $addresses = Address::where('user_id', $user)->get();
             Cache::put($key, $addresses, now()->addMinutes(30)); // Cache for 30 minutes
         }
-        if ($addresses->isEmpty()) {
+        if ($addresses->count() == 0) {
             return response()->json(['message' => 'No addresses found'], 404);
         }
         return response()->json($addresses);

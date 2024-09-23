@@ -10,6 +10,7 @@ class Bus_Trip extends Model
     use HasFactory;
     protected $table = 'bus__trips';
 
+
     protected $fillable = [
         'id',
         'trip_id',
@@ -22,6 +23,8 @@ class Bus_Trip extends Model
         'type',
         'date_start',
         'date_end',
+        'pricing_id',
+        'pricing_type',
         'event',
     ];
     public function Reservation()
@@ -41,4 +44,6 @@ class Bus_Trip extends Model
     {
         return $this->belongsTo(Trip::class, 'trip_id');
     }
+    
+
 }

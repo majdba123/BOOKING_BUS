@@ -21,8 +21,8 @@ class BusController extends Controller
      */
     public function index()
     {
-        $company=Auth::user()->Company->id;
-        $bus = Bus::where('company_id', $company )->get();
+        $company = Auth::user()->Company->id;
+        $bus = Bus::where('company_id', $company)->get();
         return response()->json($bus, 200);
     }
 
@@ -31,11 +31,11 @@ class BusController extends Controller
      */
     public function get_bus_by_status(Request $request)
     {
-        $company=Auth::user()->Company->id;
+        $company = Auth::user()->Company->id;
 
-        $bus = Bus::where('company_id', $company )
-               ->where('status' , $request->input('status'))
-               ->get();
+        $bus = Bus::where('company_id', $company)
+            ->where('status', $request->input('status'))
+            ->get();
 
         return response()->json($bus, 200);
     }
@@ -46,28 +46,38 @@ class BusController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-    
+
         try {
             $company = Auth::user()->Company->id;
-    
+
             $validator = Validator::make($request->all(), [
                 'number_bus' => 'required|string',
                 'number_passenger' => 'required|string',
+                'purchase_date' => 'required|date',
+                'purchase_price' => 'required|integer|min:1',
+                'lifespan_years' => 'required|integer|min:1|max:100',
+                'bus_consumption' => 'required|integer|min:1',
+                'fuel_consumption' => 'required|integer|min:1'
             ]);
-    
+
             if ($validator->fails()) {
                 DB::rollBack();
                 $errors = $validator->errors()->first();
                 return response()->json(['error' => $errors], 422);
             }
-    
+
             $bus = new Bus();
             $bus->number_bus = $request->input('number_bus');
             $bus->number_passenger = $request->input('number_passenger');
             $bus->company_id = $company;
+            $bus->purchase_date = $request->input('purchase_date');
+            $bus->purchase_price = $request->input('purchase_price');
+            $bus->lifespan_years = $request->input('lifespan_years');
+            $bus->bus_consumption = $request->input('bus_consumption');
+            $bus->fuel_consumption = $request->input('fuel_consumption');
             $bus->save();
 
-    
+
             $massage = "  created new BUS  : $bus->id";
             event(new PrivateNotification(Auth::user()->id, $massage));
             UserNotification::create([
@@ -87,19 +97,19 @@ class BusController extends Controller
                     'notification' => $massage,
                 ]);
             }
-    
+
             $number_passenger = $bus->number_passenger;
-    
+
             // Create seats equal to the number of passengers
-    
+
             for ($i = 0; $i < $number_passenger; $i++) {
                 $seat = new Seat();
                 $seat->bus_id = $bus->id;
                 $seat->save();
             }
-    
+
             DB::commit();
-    
+
             return response()->json([
                 'message' => 'bus Created ',
             ]);
@@ -133,8 +143,13 @@ class BusController extends Controller
         $company = Auth::user()->Company->id;
 
         $validator = Validator::make($request->all(), [
-            'number_bus' => 'sometimes|string',
-            'number_passenger' => 'sometimes|string',
+            // 'number_bus' => 'sometimes|string',
+            // 'number_passenger' => 'sometimes|string',
+            'purchase_date' => 'required|date',
+            'purchase_price' => 'required|integer|min:1',
+            'lifespan_years' => 'required|integer|min:1|max:100',
+            'bus_consumption' => 'required|integer|min:1',
+            'fuel_consumption' => 'required|integer|min:1'
         ]);
 
         if ($validator->fails()) {
@@ -145,24 +160,27 @@ class BusController extends Controller
         $bus = Bus::find($id);
 
         // Check if the bus belongs to the same company as the authenticated user
-        if ($bus->company_id!== $company) {
+        if ($bus->company_id !== $company) {
             return response()->json(['error' => 'Unauthorized to update bus'], 403);
         }
-        if($request->has('number_bus'))
-        {
+        if ($request->has('number_bus')) {
             $bus->number_bus = $request->input('number_bus');
-
         }
-        if($request->has('number_passenger'))
-        {
+        if ($request->has('number_passenger')) {
             $bus->seat()->delete();
             $bus->number_passenger = $request->input('number_passenger');
-            $number_passenger = $request->input('number_passenger');
-            for ($i = 0; $i < $number_passenger; $i++) {
-                $seat = new Seat();
-                $seat->bus_id = $bus->id;
-                $seat->save();
-            }
+            $bus->purchase_date = $request->input('purchase_date');
+            $bus->purchase_price = $request->input('purchase_price');
+            $bus->lifespan_years = $request->input('lifespan_years');
+            $bus->bus_consumption = $request->input('bus_consumption');
+            $bus->fuel_consumption = $request->input('fuel_consumption');
+            // $number_passenger = $request->input('number_passenger');
+
+            // for ($i = 0; $i < $number_passenger; $i++) {
+            //     $seat = new Seat();
+            //     $seat->bus_id = $bus->id;
+            //     $seat->save();
+            // }
 
             $bus->save();
         }
@@ -190,17 +208,16 @@ class BusController extends Controller
         $bus->delete();
 
         $pendingBusDrivers = Bus_Driver::where('bus_id', $id)
-        ->where('status', 'pending')
-        ->first();
-        if($pendingBusDrivers)
-        {
+            ->where('status', 'pending')
+            ->first();
+        if ($pendingBusDrivers) {
             $pendingBusDrivers->status = 'cancelled';
             $pendingBusDrivers->save();
             $driver = $pendingBusDrivers->driver;
             $driver->status = 'available';
             $driver->save();
             $bus->delete();
-        }else{
+        } else {
             $bus->delete();
         }
 
@@ -208,4 +225,18 @@ class BusController extends Controller
             'message' => 'bus deleted',
         ]);
     }
+
+
+
+    public function getBusAvailableBus(Request $request)
+    {
+        $company = Auth::user()->Company->id;
+
+        $bus = Bus::where('company_id', $company)
+            ->whereIn('status', ['pending', 'available'])
+            ->get();
+
+        return response()->json($bus, 200);
+    }
+
 }

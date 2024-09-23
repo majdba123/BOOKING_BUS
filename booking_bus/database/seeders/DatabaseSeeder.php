@@ -21,23 +21,41 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        $this->call(geolocationseeder::class);
-        $this->call(UserSeedres::class);
-        $this->call(AreaSeedres::class);
-        $this->call(CompanySeedres::class);
-        $this->call(DriverSeedres::class);
-        $this->call(Private_tripseeder::class);
+        $this->call([
+            geolocationseeder::class,
+            UserSeedres::class,
+            AreaSeedres::class,
 
-        $this->call(BusSeedres::class);
-        $this->call(SeatSeedres::class);
-        $this->call(PathSeedres::class);
-        $this->call(TripSeedres::class);
-        $this->call(BreaksSeedres::class);
-        $this->call(Bus_DriverSeedres::class);
-        $this->call(Bus_TTripSeedres::class);
-        $this->call(Breaks_TripSeedres::class);
-        $this->call(PiSeedres::class);
-        $this->call(ReservationSeedres::class);
-        $this->call(Seat_ReservationSeedres::class);
+            CompanySeedres::class,
+            DriverSeedres::class,
+            Private_tripseeder::class,
+            BusSeedres::class,
+            SeatSeedres::class,
+            PathSeedres::class,
+            TripSeedres::class,
+            BreaksSeedres::class,
+            Bus_DriverSeedres::class,
+            ProfileSeeder::class,
+            AddressSeeder::class,
+            FavouriteSeeder::class,
+            InquiresSeeder::class,
+            ChargeBalanceSeeder::class,
+            Breaks_TripSeedres::class,
+            // CancellationRuleSeeder::class,
+            // CanceledTripSeeder::class,
+
+            PiSeedres::class,
+            // RateTripSeeder::class,
+            // RateDriverSeeder::class,
+            ReservationSeedres::class,
+            Seat_ReservationSeedres::class,
+            InsuranceCostSeeder::class,
+            MaintenanceCostSeeder::class,
+            FixedPricingModelSeeder::class,
+            ProportionalPricingModelSeeder::class,
+            DecreasingProportionalModelSeeder::class,
+            CappingPricingModelSeeder::class,
+            Bus_TTripSeedres::class,
+        ]);
     }
 }

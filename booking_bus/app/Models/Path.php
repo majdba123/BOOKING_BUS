@@ -12,6 +12,7 @@ class Path extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'company_id',
         'from',
         'from_location',

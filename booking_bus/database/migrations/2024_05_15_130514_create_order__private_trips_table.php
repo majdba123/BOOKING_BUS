@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Private_trip;
 use App\Models\Company;
+
 return new class extends Migration
 {
     /**
@@ -16,8 +17,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Private_trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('price');
-            $table->string('status')->default('padding');
+            $table->unsignedBigInteger('pricing_id');
+            $table->string('pricing_type');
+            $table->string('status')->default('pending');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
