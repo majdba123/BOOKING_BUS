@@ -10,7 +10,121 @@
             <button class="nav-btnd" @click="showinsurancemodel()">
                 Add Insurance
             </button>
+            <button class="nav-btnd" @click="showmaintenancemodel()">
+                Maintenance
+            </button>
         </header>
+        <div v-if="showmaintenancemodell" class="form-containerd">
+            <form @submit.prevent="handleSubmit">
+                <div class="form-groupd">
+                    <label for="path">Bus</label>
+                    <div class="select-container">
+                        <select v-model="BusIDD" id="path">
+                            <option
+                                v-for="(pathItem, index) in Bus"
+                                :key="index"
+                                :value="pathItem.id"
+                            >
+                                {{ pathItem.number_bus }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-groupd">
+                    <label for="numberBus">Cost</label>
+                    <input
+                        type="number"
+                        id="numberBus"
+                        v-model="cost"
+                        required
+                    />
+                </div>
+                <div class="form-groupd">
+                    <label for="numberPassenger">Maintenance Date</label>
+                    <input
+                        type="date"
+                        id="numberPassenger"
+                        v-model="maintenancedate"
+                        required
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        v-model="description"
+                        placeholder="Enter your description here"
+                        class="description-input"
+                    ></textarea>
+                </div>
+
+                <div class="submit-btnnd">
+                    <button
+                        type="submit"
+                        @click="Addmaintenance"
+                        class="submit-btnd"
+                    >
+                        ADD
+                    </button>
+                </div>
+            </form>
+            <div class="table-container">
+                <div v-if="loading10" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div v-if="!Maintenance.length" class="no-data-message">
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Number Bus</th>
+                                    <th>Cost</th>
+                                    <th>Maintenance Date</th>
+                                    <th>Description</th>
+
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(bus, index) in Maintenance"
+                                    :key="index"
+                                >
+                                    <th>{{ index }}</th>
+                                    <td>{{ bus.number_bus }}</td>
+                                    <td>{{ bus.cost }}</td>
+                                    <td>{{ bus.maintenance_date }}</td>
+                                    <td>{{ bus.description }}</td>
+
+                                    <td>
+                                        <button
+                                            class="edit-btn"
+                                            @click="openEditModal1(bus, index)"
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
+                                        </button>
+                                        <button
+                                            class="delete-btn"
+                                            @click="confirmDeleteBus1(bus)"
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Add Insurance Form -->
         <div v-if="showinsurancemodell" class="form-containerd">
             <form @submit.prevent="handleSubmit">
@@ -85,7 +199,7 @@
                                     <td>
                                         <button
                                             class="delete-btn"
-                                            @click="confirmDeleteBus1(bus)"
+                                            @click="confirmDeleteBus2(bus)"
                                         >
                                             <span class="material-icons"
                                                 >delete</span
@@ -446,6 +560,60 @@
                 </div>
             </div>
         </div>
+        <div v-if="showEditModal1" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Edit Maintenance</div>
+                <div class="modal-body">
+                    <div class="form-groupd">
+                        <label for="path">Bus</label>
+                        <div class="select-container">
+                            <select v-model="editedBus1.idBus" id="path">
+                                <option
+                                    v-for="(pathItem, index) in Bus"
+                                    :key="index"
+                                    :value="pathItem.id"
+                                >
+                                    {{ pathItem.number_bus }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberBus">Cost</label>
+                        <input
+                            type="number"
+                            id="numberBus"
+                            v-model="editedBus1.cost"
+                            required
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberPassenger">Maintenance Date</label>
+                        <input
+                            type="date"
+                            id="numberPassenger"
+                            v-model="editedBus1.maintenancedate"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea
+                            id="description"
+                            v-model="editedBus1.description"
+                            placeholder="Enter your description here"
+                            class="description-input"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="updateBus1" class="update-btn">Save</button>
+                    <button @click="closeEditModal1" class="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Confirm Delete Modal -->
         <div v-if="showDeleteConfirmModal" class="modals">
@@ -486,6 +654,25 @@
                 </div>
             </div>
         </div>
+        <div v-if="showDeleteConfirmModal2" class="modals">
+            <div class="modals-content">
+                <div class="modals-header">Confirm Delete</div>
+                <div class="modals-body">
+                    Are you sure about the deletion process?
+                </div>
+                <div class="modals-footer">
+                    <button @click="deleteConfirmedBus2" class="updates-btn">
+                        Yes
+                    </button>
+                    <button
+                        @click="closeDeleteConfirmModal2"
+                        class="closes-modal"
+                    >
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -497,6 +684,17 @@ import { debounce } from "lodash";
 export default {
     data() {
         return {
+            editedBus1: {
+                id: "",
+                idBus: "",
+                maintenancedate: "",
+                description: "",
+                cost: "",
+            },
+            maintenancedate: "",
+            description: "",
+            cost: "",
+            Maintenance: [],
             INC: [],
             BusIDD: "",
             insurancedate: "",
@@ -504,6 +702,7 @@ export default {
             brand: "",
             showaddmodell: true,
             showmodell: false,
+            showmaintenancemodell: false,
             showinsurancemodell: false,
             fuelconsumption: "",
             busconsumption: "",
@@ -522,8 +721,11 @@ export default {
             showBusStatusModal: false,
             showSeatsModal: false,
             showEditModal: false,
+            showEditModal1: false,
+
             showDeleteConfirmModal: false,
             showDeleteConfirmModal1: false,
+            showDeleteConfirmModal2: false,
 
             busToDelete: null,
             editedBus: {
@@ -535,6 +737,8 @@ export default {
                 purshasedate: "",
             },
             editingIndex: null,
+            editingIndex1: null,
+
             toast: useToast(),
             refreshInterval: null,
             currentPage: 1,
@@ -546,22 +750,32 @@ export default {
     mounted() {
         this.AllBus();
         this.ALLINC();
+        this.Allmaintenance();
     },
     methods: {
         showaddmodel() {
             this.showaddmodell = true;
             this.showmodell = false;
             this.showinsurancemodell = false;
+            this.showmaintenancemodell = false;
         },
         showmodel() {
             this.showaddmodell = false;
             this.showmodell = true;
             this.showinsurancemodell = false;
+            this.showmaintenancemodell = false;
         },
         showinsurancemodel() {
             this.showaddmodell = false;
             this.showmodell = false;
             this.showinsurancemodell = true;
+            this.showmaintenancemodell = false;
+        },
+        showmaintenancemodel() {
+            this.showaddmodell = false;
+            this.showmodell = false;
+            this.showinsurancemodell = false;
+            this.showmaintenancemodell = true;
         },
         closeBusStatusModal() {
             this.showBusStatusModal = false;
@@ -573,12 +787,41 @@ export default {
         closeEditModal() {
             this.showEditModal = false;
         },
+        closeEditModal1() {
+            this.showEditModal1 = false;
+        },
         handleSubmit() {
             console.log(
                 "Form Submitted",
                 this.number_bus,
                 this.number_passenger
             );
+        },
+        Addmaintenance() {
+            const token = window.localStorage.getItem("access_token");
+
+            axios
+                .post(
+                    "http://127.0.0.1:8000/api/company/maintenance-costs/store",
+                    {
+                        bus_id: this.BusIDD,
+                        cost: this.cost,
+                        maintenance_date: this.maintenancedate,
+                        description: this.description,
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                )
+                .then((response) => {
+                    console.log(response);
+                    this.toast.success("Maintenance added successfully!");
+                    this.Allmaintenance();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    this.toast.error("Error ADD");
+                });
         },
         AddInsurance() {
             const token = window.localStorage.getItem("access_token");
@@ -676,6 +919,44 @@ export default {
                     console.error(error);
                 });
         },
+        updateBus1() {
+            const access_token = window.localStorage.getItem("access_token");
+            const busId = this.editedBus1.id;
+
+            axios
+                .put(
+                    `http://127.0.0.1:8000/api/company/maintenance-costs/${busId}`,
+                    {
+                        bus_id: this.editedBus1.idBus,
+                        cost: this.editedBus1.cost,
+                        maintenance_date: this.editedBus1.maintenancedate,
+                        description: this.editedBus1.description,
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
+                .then((response) => {
+                    this.editingIndex1 = null;
+                    (this.editedBus1 = {
+                        id: "",
+                        idBus: "",
+                        maintenancedate: "",
+                        description: "",
+                        cost: "",
+                    }),
+                        console.log(response);
+
+                    this.toast.success("Maintenance updated successfully!");
+                    this.showEditModal1 = false;
+                })
+                .catch((error) => {
+                    console.log(this.editedBus1);
+
+                    this.toast.error("Error updating Maintenance.");
+                    console.error(error);
+                });
+        },
         AllBus() {
             const access_token = window.localStorage.getItem("access_token");
 
@@ -712,6 +993,23 @@ export default {
                 });
             this.loading10 = true;
         },
+        Allmaintenance() {
+            const access_token = window.localStorage.getItem("access_token");
+
+            axios
+                .get("http://127.0.0.1:8000/api/company/maintenance-costs", {
+                    headers: { Authorization: `Bearer ${access_token}` },
+                })
+                .then((response) => {
+                    this.Maintenance = response.data;
+                    this.loading10 = false;
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+            this.loading10 = true;
+        },
         fetchBusStatus(status) {
             const access_token = window.localStorage.getItem("access_token");
 
@@ -737,6 +1035,11 @@ export default {
             this.editingIndex = index;
             this.showEditModal = true;
         },
+        openEditModal1(bus, index) {
+            this.editedBus1 = { ...bus };
+            this.editingIndex1 = index;
+            this.showEditModal1 = true;
+        },
         confirmDeleteBus(bus) {
             console.log("Bus selected for deletion:", bus);
             this.busToDelete = bus;
@@ -746,6 +1049,12 @@ export default {
             console.log("insurance selected for deletion:", bus);
             this.busToDelete = bus;
             this.showDeleteConfirmModal1 = true;
+        },
+
+        confirmDeleteBus2(bus) {
+            console.log("insurance selected for deletion:", bus);
+            this.busToDelete = bus;
+            this.showDeleteConfirmModal2 = true;
         },
         deleteConfirmedBus() {
             if (this.busToDelete && this.busToDelete.id) {
@@ -760,6 +1069,11 @@ export default {
             this.DeleteBus1(this.busToDelete.id);
 
             this.closeDeleteConfirmModal1();
+        },
+        deleteConfirmedBus2() {
+            this.DeleteBus2(this.busToDelete.id);
+
+            this.closeDeleteConfirmModal2();
         },
         DeleteBus(id) {
             const access_token = window.localStorage.getItem("access_token");
@@ -776,6 +1090,25 @@ export default {
                 .catch((error) => {
                     console.error("Error during deletion:", error);
                     this.toast.error("Error deleting bus");
+                });
+        },
+        DeleteBus2(id) {
+            const access_token = window.localStorage.getItem("access_token");
+
+            axios
+                .delete(
+                    `http://127.0.0.1:8000/api/company/maintenance-costs/${id}`,
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
+                .then(() => {
+                    this.toast.success("maintenance deleted successfully");
+                    this.Allmaintenance();
+                })
+                .catch((error) => {
+                    console.error("Error during deletion:", error);
+                    this.toast.error("Error deleting maintenance");
                 });
         },
         DeleteBus1(id) {
@@ -805,6 +1138,11 @@ export default {
             this.showDeleteConfirmModal1 = false;
             this.busToDelete = null;
             this.ALLINC;
+        },
+        closeDeleteConfirmModal2() {
+            this.showDeleteConfirmModal2 = false;
+            this.busToDelete = null;
+            this.Maintenance;
         },
         openSeatsModal(busId, index) {
             console.log(
@@ -1102,6 +1440,34 @@ small {
 .pagination button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+}
+input::placeholder,
+textarea::placeholder {
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+    color: var(--clr-info-dark);
+    opacity: 1;
+}
+
+/* Input and Textarea styles to ensure consistency */
+input,
+textarea {
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+}
+textarea {
+    padding: 10px;
+    border: 1px solid var(--clr-info-dark);
+    border-radius: var(--border-radius-1);
+    transition: border-color 0.3s;
+    width: 100%;
+    font-size: 1rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--clr-primary);
 }
 
 .pagination span {
