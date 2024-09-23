@@ -154,6 +154,14 @@
                                                 >close_small</span
                                             >
                                         </button>
+                                        <button
+                                            class="edit-btn"
+                                            @click="openEditModal(user, index)"
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -375,6 +383,45 @@
                 </div>
             </div>
         </div>
+        <div v-if="showEditModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Edit Driver</div>
+                <div class="modal-body">
+                    <div class="form-groupd">
+                        <label for="numberBus">Driver Name</label>
+                        <input
+                            type="text"
+                            id="purshasedate"
+                            v-model="editedDriver.name"
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberBus">Driver Email</label>
+                        <input
+                            type="text"
+                            id="purshaseprice"
+                            v-model="editedDriver.email"
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberBus">Driver Wages</label>
+                        <input
+                            type="number"
+                            id="lifespanyears"
+                            v-model="editedDriver.Wages"
+                        />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="UpdateDriver" class="update-btn">
+                        Save
+                    </button>
+                    <button @click="closeEditModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -396,6 +443,15 @@ export default {
             Bus: [],
             driverStatusData: [],
             driverWithBusData: [],
+            showEditModal: false,
+            editedDriver: {
+                driver_id: "",
+                name: "",
+                email: "",
+                Wages: "",
+            },
+            editingIndex: null,
+
             name: "",
             email: "",
             password: "",
@@ -421,6 +477,9 @@ export default {
         }
     },
     methods: {
+        closeEditModal() {
+            this.showEditModal = false;
+        },
         closeDriverStatusModal() {
             this.showDriverStatusModal = false;
         },
@@ -440,6 +499,43 @@ export default {
         },
         closeDeleteConfirmModal() {
             this.showDeleteConfirmModal = false;
+        },
+        UpdateDriver() {
+            const access_token = window.localStorage.getItem("access_token");
+            const busId = this.editedDriver.driver_id;
+
+            axios
+                .put(
+                    `http://127.0.0.1:8000/api/company/update_driver/${busId}`,
+                    {
+                        name: this.editedDriver.name,
+                        email: this.editedDriver.email,
+                        Wages: this.editedDriver.Wages,
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${access_token}` },
+                    }
+                )
+                .then((response) => {
+                    this.editingIndex = null;
+
+                    this.editedDriver = {
+                        id: "",
+                        name: "",
+                        email: "",
+                        wages: "",
+                    };
+                    console.log(response);
+
+                    this.toast.success("Driver updated successfully!");
+                    this.showEditModal = false;
+                })
+                .catch((error) => {
+                    console.log(this.editedDriver);
+
+                    this.toast.error("Error updating Driver.");
+                    console.error(error);
+                });
         },
 
         CreateDriver() {
@@ -466,16 +562,24 @@ export default {
                     }
                 })
                 .catch((error) => {
+                    if (this.wages.length == 0)
+                        this.toast.error(error.response.data.error.Wages[0]);
                     if (this.name.length == 0)
                         this.toast.error(error.response.data.error.name[0]);
 
                     if (this.email.length == 0)
                         this.toast.error(error.response.data.error.email[0]);
 
-                    if (this.password.length <= 0)
+                    if (this.password.length <= 8)
                         this.toast.error(error.response.data.error.password[0]);
+                    console.log(error);
                     this.toast.error(error.response.data.error.email[0]);
                 });
+        },
+        openEditModal(bus, index) {
+            this.editedDriver = { ...bus };
+            this.editingIndex = index;
+            this.showEditModal = true;
         },
         CancelDriver(driverId) {
             const access_token = window.localStorage.getItem("access_token");
@@ -990,7 +1094,33 @@ select:focus {
         transform: rotate(360deg);
     }
 }
-
+.edit-btn {
+    color: #4caf50;
+    background-color: var(--clr-white);
+    border-radius: 9px;
+    padding: 3px;
+    margin: 5px;
+}
+.edit-btn:hover {
+    color: var(--clr-white);
+    background-color: var(--clr-success);
+}
+.edit-btn.material-icons,
+.delete-btn.material-icons,
+.status-btn.material-icons {
+    padding: 2px 6px;
+    border: none;
+    margin: 8px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15px;
+    width: 15px;
+}
 /* Add this part for the spinner rotation */
 @keyframes spin {
     0% {
@@ -1037,6 +1167,19 @@ select:focus {
     background-color: var(--clr-white);
 }
 
+.update-btn {
+    padding: 8px 16px;
+    background-color: var(--clr-success);
+    color: var(--clr-white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.update-btn:hover {
+    background-color: #4cae4c;
+}
 .delete-btn:hover {
     color: #fff;
     background-color: #f44336;

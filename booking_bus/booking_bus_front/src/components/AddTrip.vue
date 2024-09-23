@@ -545,7 +545,7 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/get_bus_status?status=available",
+                url: "http://127.0.0.1:8000/api/company/allBusCompleteorAavaliable",
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
