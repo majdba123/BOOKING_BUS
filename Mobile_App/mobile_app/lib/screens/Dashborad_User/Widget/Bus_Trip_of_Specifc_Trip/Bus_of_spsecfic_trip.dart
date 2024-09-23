@@ -19,10 +19,12 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<BussofSpsccifTripProvider>(context, listen: false);
       final authprovider = Provider.of<AuthProvider>(context, listen: false);
+      provider.clearData();
       provider.getBussofSpecicTrip(provider.tripid, authprovider.accessToken);
     });
   }

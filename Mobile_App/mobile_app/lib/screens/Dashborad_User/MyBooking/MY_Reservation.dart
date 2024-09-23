@@ -46,10 +46,10 @@ class _BookingsScreenState extends State<BookingsScreen> {
                   children: [
                     FilterButton(
                       text: 'Active',
-                      isSelected: reservationProvider.status == 'padding',
+                      isSelected: reservationProvider.status == 'pending',
                       onPressed: () async {
                         await reservationProvider.fetchReservations(
-                            'padding', accessToken);
+                            'pending', accessToken);
                       },
                     ),
                     FilterButton(
@@ -57,7 +57,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                       isSelected: reservationProvider.status == 'completed',
                       onPressed: () async {
                         await reservationProvider.fetchReservations(
-                            'finished', accessToken);
+                            'completed', accessToken);
                       },
                     ),
                     FilterButton(

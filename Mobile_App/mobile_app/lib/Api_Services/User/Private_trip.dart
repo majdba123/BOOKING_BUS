@@ -70,6 +70,7 @@ class PrivateTrip {
   Future<List<PrivateTripAccpetedBycompanyModel>>
       getPrivateTripsRequsetAcceptedByCompany(
           int privateTripId, String accessToken) async {
+    print('in get acceperte comapny ');
     final response = await http.get(
         headers: {
           'Authorization': 'Bearer $accessToken',
@@ -77,7 +78,7 @@ class PrivateTrip {
         },
         Uri.parse(name_domain_server +
             'user/OrderPrivateTripController/$privateTripId'));
-    // print(response.body);
+    print(response.body);
     print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
