@@ -6,7 +6,7 @@ export default {
     data() {
         return {
             Notification: [],
-            company_id: null, // تأكد من الحصول على company_id
+            company_id: null,
         };
     },
     methods: {
