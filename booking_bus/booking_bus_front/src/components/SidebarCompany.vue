@@ -121,6 +121,16 @@
             >
             <h3>Reservation</h3>
         </router-link>
+        <router-link
+            to="NotificationC"
+            @click="selectOption('NotificationC')"
+            :class="{ active: selectedOption === 'NotificationC' }"
+        >
+            <span class="material-icons" aria-label="Products"
+                >library_books</span
+            >
+            <h3>Notification</h3>
+        </router-link>
 
         <a @click="logout()" :class="{ active: selectedOption === 'Logout' }">
             <span class="material-icons" aria-label="Logout">logout</span>

@@ -24,6 +24,7 @@ import AllChargebalnce from "../views/Admin/Chargebalnce/AllChargebalnce.vue";
 import AllInquires from "../views/Admin/Inquires/AllInquires.vue";
 import AllUser from "../views/Admin/Users/AllUser.vue";
 import TrackingBus from "../views/Company/Tracking/TrackingBus.vue";
+import NotificationC from "../views/Company/NotificationPage/NotificationC.vue";
 import NotificationPage from "../views/Admin/Notification/NotificationPage.vue";
 
 const routes = [
@@ -31,6 +32,11 @@ const routes = [
         path: "/",
         name: "home",
         component: HomeView,
+    },
+    {
+        path: "/NotificationC",
+        name: "NotificationC",
+        component: NotificationC,
     },
     {
         path: "/NotificationPage",
