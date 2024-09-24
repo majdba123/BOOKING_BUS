@@ -224,13 +224,11 @@
                         </button>
                     </div>
 
-                    <!-- المحتوى المتغير بناءً على الزر النشط -->
                     <div
                         v-if="activeSection === 'section1'"
                         class="section-content"
                     >
                         <h3>Price</h3>
-                        <!-- المحتوى الخاص بـ Method 1 -->
                         <input type="number" v-model="price" />
                         <div class="modal-footer">
                             <button @click="handleOk()" class="ok-button">
@@ -649,6 +647,7 @@ export default {
                     end_date: "",
                 },
             ],
+            kilo: null,
             start_date: "",
             end_date: "",
             showEditModal: false,
@@ -693,7 +692,7 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
                 data: {
                     Threshold: this.pricemax,
-                    priceOfKm: 120,
+                    priceOfKm: this.kilo,
                     numberOfStations: this.numberofstations,
                     Distance: this.selectedPath.distance,
                 },
@@ -776,6 +775,7 @@ export default {
                 },
             })
                 .then((response) => {
+                    this.kilo = response.data.priceForKm;
                     console.log(response.data);
                 })
                 .catch((error) => {
@@ -801,9 +801,9 @@ export default {
                     this.price_type = "fixed";
                     break;
                 case "section2":
-                    this.calculateKm();
                     this.price_type = "proportional";
-                    this.selectedPath.distance;
+                    this.price = this.kilo * this.selectedPath.distance;
+
                     break;
                 case "section3":
                     this.price_type = "decreasing";
@@ -949,9 +949,10 @@ export default {
                     method: "post",
                     url: "http://127.0.0.1:8000/api/company/store_trip",
                     data: {
+                        rate_of_km: this.kilo,
                         path_id: this.selectedPath.id,
                         bus_ids: busIds,
-                        price_type: this.price_type,
+                        pricing_type: this.price_type,
                         number_of_station: this.numberofstations,
                         min_price_for_km: this.pricemin,
                         cost: this.price,
@@ -1000,9 +1001,11 @@ export default {
                     method: "post",
                     url: "http://127.0.0.1:8000/api/company/store_trip",
                     data: {
+                        rate_of_Km: this.kilo,
+
                         path_id: this.selectedPath.id,
                         bus_ids: busIds,
-                        price_type: this.price_type,
+                        pricing_type: this.price_type,
                         number_of_station: this.numberofstations,
                         max_price_for_km: this.pricemax,
                         cost: this.price,
@@ -1051,9 +1054,10 @@ export default {
                     method: "post",
                     url: "http://127.0.0.1:8000/api/company/store_trip",
                     data: {
+                        rate_of_km: this.kilo,
                         path_id: this.selectedPath.id,
                         bus_ids: busIds,
-                        price_type: this.price_type,
+                        pricing_type: this.price_type,
                         cost: this.price,
                     },
                     headers: { Authorization: `Bearer ${token}` },
@@ -1102,7 +1106,7 @@ export default {
                     data: {
                         path_id: this.selectedPath.id,
                         bus_ids: busIds,
-                        price_type: this.price_type,
+                        pricing_type: this.price_type,
                         cost: this.price,
                     },
                     headers: { Authorization: `Bearer ${token}` },
@@ -1121,6 +1125,16 @@ export default {
                         this.AllTrips();
                     })
                     .catch((error) => {
+                        console.log(
+                            "bus_ids:",
+                            busIds,
+                            "path_id:",
+                            this.selectedPath.id,
+                            "price_type",
+                            this.price_type,
+                            "cost",
+                            this.price
+                        );
                         this.toast.error("Error Adding Trip", {
                             transition: "Vue-Toastification__shake",
                             hideProgressBar: true,
