@@ -107,35 +107,20 @@ export default {
                 }
             }
         },
-        handleResize() {
-            const sideMenu = this.$refs.sideMenu;
-            if (window.innerWidth > 768) {
-                sideMenu.style.display = "block";
-            } else {
-                sideMenu.style.display = "none";
-            }
-        },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
-                if (window.innerWidth > 768) {
-                    sideMenu.style.display = "block";
-                } else {
-                    sideMenu.style.display = "block";
-                }
+                sideMenu.style.display = "block";
             }
         },
         closeMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
-                if (window.innerWidth <= 768) {
-                    sideMenu.style.display = "none";
-                }
+                sideMenu.style.display = "none";
             }
         },
-
         toggleTheme() {
-            this.isDarkMode = !this.isDarkMode;
+            this.isDarkMode = !this.isDarkMode; // تغيير حالة الوضع الداكن
             document.body.classList.toggle(
                 "dark-theme-variables",
                 this.isDarkMode
@@ -143,7 +128,7 @@ export default {
             localStorage.setItem(
                 "darkMode",
                 this.isDarkMode ? "enabled" : "disabled"
-            );
+            ); // حفظ الحالة في localStorage
 
             const themeToggler = this.$refs.themeToggler;
             themeToggler
@@ -153,12 +138,12 @@ export default {
                 .querySelector("span:nth-child(2)")
                 .classList.toggle("active", this.isDarkMode);
         },
-        search() {},
+        search() {
+            // هنا يمكنك تنفيذ وظيفة البحث
+        },
     },
     mounted() {
         this.checkToken();
-        window.addEventListener("resize", this.handleResize);
-        this.handleResize();
     },
 };
 </script>
@@ -297,36 +282,14 @@ small {
 }
 
 /* aside */
-@keyframes colorShift {
-    0% {
-        border-top-color: rgb(0, 0, 255);
-        border-bottom-color: rgb(255, 255, 0);
-        border-right-color: rgb(128, 0, 128);
-    }
-    50% {
-        border-top-color: rgb(255, 255, 0);
-        border-bottom-color: rgb(0, 0, 255);
-        border-right-color: rgb(255, 105, 180);
-    }
-    100% {
-        border-top-color: rgb(0, 0, 255);
-        border-bottom-color: rgb(255, 255, 0);
-        border-right-color: rgb(128, 0, 128);
-    }
-}
-
 aside {
     height: 100vh;
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
-    border-radius: 0 2.5rem 2.5rem 0;
     padding: 1rem;
-    border-bottom: 3px solid rgb(255, 0, 0);
-    border-top: 3px solid rgb(0, 0, 255);
-    border-left: 3px solid transparent;
-    animation: colorShift 5s infinite;
 }
+
 aside .top {
     display: flex;
     justify-content: space-between;

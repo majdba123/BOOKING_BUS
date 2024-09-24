@@ -12,7 +12,8 @@ class Bus extends Model
     protected $keyType = 'string'; // Set the key type to UUID
     public $incrementing = false; // Disable auto-incrementing
 
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
         // Auto generate UUID when creating data User
         static::creating(function ($model) {
@@ -25,6 +26,11 @@ class Bus extends Model
         'number_bus',
         'number_passenger',
         'status',
+        'purchase_date',
+        'purchase_price',
+        'lifespan_years',
+        'bus_consumption',
+        'fuel_consumption',
     ];
     public function bus_trip()
     {
@@ -51,5 +57,13 @@ class Bus extends Model
     public function getNumberOfReservationsAttribute()
     {
         return $this->reservations()->count();
+    }
+    public function insuranceCosts()
+    {
+        return $this->hasMany(InsuranceCost::class);
+    }
+    public function maintenanceCosts()
+    {
+        return $this->hasMany(MaintenanceCost::class);
     }
 }

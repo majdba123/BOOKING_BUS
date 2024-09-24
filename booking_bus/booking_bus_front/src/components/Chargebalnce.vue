@@ -32,7 +32,6 @@
                                                 :src="item.image"
                                                 alt="Image"
                                                 class="item-image"
-                                                @click="viewImage(item.image)"
                                             />
                                         </td>
                                         <td>{{ item.point }}</td>
@@ -59,10 +58,24 @@
                 </div>
             </div>
         </div>
-
-        <div v-if="showImageModal" class="image-modal" @click="closeImageModal">
-            <div class="image-modal-content">
-                <img :src="selectedImage" alt="Large Image" />
+        <div v-if="showItemModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Item Details</div>
+                <div class="modal-body">
+                    <p><strong>User ID:</strong> {{ index }}</p>
+                    <p><strong>Point:</strong> {{ selectedItem.point }}</p>
+                    <p><strong>Status:</strong> {{ selectedItem.status }}</p>
+                    <img
+                        :src="selectedItem.image"
+                        alt="Image"
+                        class="item-image"
+                    />
+                </div>
+                <div class="modal-footer">
+                    <button @click="closeItemModal" class="close-modal">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -81,8 +94,6 @@ export default {
             items: [],
             showItemModal: false,
             selectedItem: {},
-            showImageModal: false,
-            selectedImage: "",
         };
     },
     methods: {
@@ -147,14 +158,6 @@ export default {
             this.showItemModal = false;
             this.selectedItem = {};
         },
-        viewImage(image) {
-            this.selectedImage = image;
-            this.showImageModal = true;
-        },
-        closeImageModal() {
-            this.showImageModal = false;
-            this.selectedImage = "";
-        },
     },
     mounted() {
         this.fetchData();
@@ -218,30 +221,6 @@ export default {
     flex-direction: column;
     align-items: center;
 }
-.image-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.image-modal-content img {
-    max-width: 80%;
-    max-height: 80%;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-}
-
-.image-modal-content {
-    position: relative;
-    text-align: center;
-}
 
 .navd {
     display: flex;
@@ -258,7 +237,7 @@ export default {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 9px;
+    border-radius: 25px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;
@@ -339,14 +318,14 @@ export default {
 
 .recent_orders {
     width: 100%;
+    overflow-x: auto;
     margin-top: 20px;
-    margin-left: 1.2rem;
 }
 
 .recent_orders table {
-    background: var(--clr-color-background);
+    background-color: var(--clr-white);
     width: 100%;
-    border-radius: var(--border-radius-2);
+    border-radius: 10px;
     padding: 1rem;
     text-align: center;
     box-shadow: var(--box-shadow);
@@ -425,8 +404,6 @@ export default {
 table thead tr th {
     padding: 10px;
     font-size: 0.9rem;
-    background: var(--clr-color-background);
-    color: var(--clr-dark-variant);
 }
 
 table tbody tr {

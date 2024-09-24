@@ -61,14 +61,9 @@ class AccpetedPrivateTripByCompany extends StatelessWidget {
         Provider.of<AuthProvider>(context, listen: false).accessToken;
     final tripId =
         Provider.of<PrivateTripuserProvider>(context, listen: false).tripId;
-    var privateTripprovider =
-        Provider.of<PrivateTripuserProvider>(context, listen: false);
-
-    print('in fetch trip !!!');
-    // await context
-    //     .read<PrivateTripuserProvider>()
-    await privateTripprovider.fetchPrivateTripsAccepetedRequsetByComapny(
-        tripId!, accessToken);
+    await context
+        .read<PrivateTripuserProvider>()
+        .fetchPrivateTripsAccepetedRequsetByComapny(tripId!, accessToken);
   }
 }
 

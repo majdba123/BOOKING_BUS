@@ -603,13 +603,15 @@ select:focus {
     align-items: center;
     justify-content: center;
     background-color: var(--clr-white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
+    flex-wrap: wrap;
 }
 
 .nav-btnd {
-    padding: 10px 20px;
-    margin: 10px;
+    padding: 10px 1px;
+    margin: 12px;
     border: none;
     border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
@@ -620,8 +622,8 @@ select:focus {
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
     width: 100%;
+    max-width: 300px;
 }
-
 @keyframes gradientAnimation {
     0% {
         background-position: 0% 50%;

@@ -505,10 +505,10 @@ class ReservationController extends Controller
 
 
             $user_id = Auth::user()->id;
-            $price1 = $bus_trip->trip->price;
+            $price1 = $bus_trip->trip->pricing->cost;
             $count_seat_of_user = count($request->input('seat'));
             $price = $this->calculatePrice($price1, $count_seat_of_user);
-            $user = auth()->user();
+            $user = auth()->user()->id; // check if work or not to remove the error in code !!!! hamza
 
             if ($user->point < $price) {
                 DB::rollBack();
@@ -565,7 +565,7 @@ class ReservationController extends Controller
                 $seat_reservation->seat_id = $seat_id;
                 $seat_reservation->status = $request->input('type');
                 $seat_reservation->save();
-                //   event(new SeatEvent($bus_trip, $seat_reservation));
+                event(new SeatEvent($bus_trip, $seat_reservation));
             }
 
 

@@ -221,12 +221,8 @@ export default {
             }
         });
         this.updateDateTime();
-        setInterval(() => {
-            this.updateDateTime();
-        }, 1000);
-
         this.fetchProfileInfo();
-        this.fetchNotifications();
+        this.fetchNotifications(); // Fetch notifications on mount
         if (document.body.classList.contains("dark-theme-variables")) {
             this.isDarkMode = true;
             const themeToggler = this.$refs.themeToggler;
@@ -563,49 +559,16 @@ main {
     color: var(--clr-white);
 }
 
-/* Styling for datetime container */
-
-@keyframes borderColorShiftTop {
-    0% {
-        border-top-color: yellow;
+/* Adding a subtle fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
     }
-    50% {
-        border-top-color: blue;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    100% {
-        border-top-color: yellow;
-    }
-}
-
-@keyframes borderColorShiftBottom {
-    0% {
-        border-bottom-color: yellow;
-    }
-    50% {
-        border-bottom-color: blue;
-    }
-    100% {
-        border-bottom-color: yellow;
-    }
-}
-
-.time-box {
-    background: #111111;
-    border-radius: 50% 20% / 10% 40%;
-    border-bottom: 1px solid yellow; /* This will use the animation */
-    border-top: 1px solid yellow; /* This will use the animation */
-    animation: borderColorShiftTop 3s infinite alternate,
-        borderColorShiftBottom 3s infinite alternate;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-    font-size: 1.5rem;
-    position: relative;
-    color: #ffffff;
-    text-align: center;
-    background: linear-gradient(135deg, #ff4d4d, #72c3ff);
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
 }
 .datetime-container {
     text-align: center;
@@ -621,12 +584,27 @@ main {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
+
 .time {
     display: flex;
     gap: 1rem;
     justify-content: center;
+}
+
+.time-box {
+    border-radius: 50% 20% / 10% 40%;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    font-size: 1.5rem;
+    position: relative;
+    color: #ffffff;
+    text-align: center;
+    background: linear-gradient(135deg, #ff4d4d, #72c3ff);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 .time-box span {
@@ -636,7 +614,6 @@ main {
     margin-top: 0.5rem;
     color: #c0c0c0;
 }
-
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .container {
@@ -650,7 +627,7 @@ main {
         flex-direction: column;
         align-items: stretch;
         gap: 0.5rem;
-        margin-top: 3rem;
+        margin-top: 0.9rem;
     }
 
     .profile-menu {

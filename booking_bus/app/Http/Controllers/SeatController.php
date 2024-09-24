@@ -191,7 +191,17 @@ class SeatController extends Controller
 
     //hamza
 
+    /*public function seatOfBus($bus_id)
+    {
+        $bus = Bus::find($bus_id);
+        if (!$bus) {
+            return response()->json(['error' => 'Bus not found.'], 404);
+        }
 
+        $seats = Seat::where('bus_id', $bus_id)->get(['id', 'status']);
+
+        return response()->json($seats);
+    }*/
 
     public function seatOfBus($bus_trip_id)
     {

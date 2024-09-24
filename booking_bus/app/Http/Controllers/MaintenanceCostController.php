@@ -97,7 +97,6 @@ class MaintenanceCostController extends Controller
                 'bus_id' => 'required|exists:buses,id',
                 'cost' => 'required|numeric',
                 'maintenance_date' => 'required|date',
-                'description' => 'required|String',
             ]);
 
             $bus = Bus::where('id', $validatedData['bus_id'])

@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <!-- Aside section start -->
-        <aside ref="sideMenu" v-show="isMenuOpen">
+        <aside ref="sideMenu">
             <!-- Start top -->
             <div class="top">
                 <div class="logo">
@@ -48,14 +48,15 @@ import router from "@/router";
 
 export default {
     data() {
-        return { messages: "", id: null, isMenuOpen: false };
-    },
-    mounted() {
-        this.checkToken();
-        window.addEventListener("resize", this.handleResize);
-        this.handleResize();
+        return { messages: "", id: null };
     },
 
+    mounted() {
+        this.handleResize();
+        this.checkToken();
+
+        window.addEventListener("resize", this.handleResize);
+    },
     beforeUnmount() {
         window.removeEventListener("resize", this.handleResize);
     },
@@ -74,16 +75,12 @@ export default {
             }
         },
         handleResize() {
-            this.$nextTick(() => {
-                const sideMenu = this.$refs.sideMenu;
-                if (sideMenu) {
-                    if (window.innerWidth > 768) {
-                        sideMenu.style.display = "block";
-                    } else {
-                        sideMenu.style.display = "none";
-                    }
-                }
-            });
+            const sideMenu = this.$refs.sideMenu;
+            if (window.innerWidth > 768) {
+                sideMenu.style.display = "block";
+            } else {
+                sideMenu.style.display = "none";
+            }
         },
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
@@ -97,8 +94,6 @@ export default {
                 sideMenu.style.display = "none";
             }
         },
-
-        search() {},
         toggleTheme() {
             const themeToggler = this.$refs.themeToggler;
             if (themeToggler) {
@@ -211,37 +206,14 @@ a {
     width: 100%;
 }
 
-/* aside */
-@keyframes colorShift {
-    0% {
-        border-top-color: rgb(0, 0, 255);
-        border-bottom-color: rgb(255, 255, 0);
-        border-right-color: rgb(128, 0, 128);
-    }
-    50% {
-        border-top-color: rgb(255, 255, 0);
-        border-bottom-color: rgb(0, 0, 255);
-        border-right-color: rgb(255, 105, 180);
-    }
-    100% {
-        border-top-color: rgb(0, 0, 255);
-        border-bottom-color: rgb(255, 255, 0);
-        border-right-color: rgb(128, 0, 128);
-    }
-}
-
 aside {
     height: 100vh;
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
-    border-radius: 0 2.5rem 2.5rem 0;
     padding: 1rem;
-    border-bottom: 3px solid rgb(255, 0, 0);
-    border-top: 3px solid rgb(0, 0, 255);
-    border-left: 3px solid transparent;
-    animation: colorShift 5s infinite;
 }
+
 aside .top {
     display: flex;
     justify-content: space-between;

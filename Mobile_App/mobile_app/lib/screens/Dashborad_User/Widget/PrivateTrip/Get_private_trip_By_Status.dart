@@ -80,8 +80,9 @@ class _PrivateTripByStatusState extends State<PrivateTripByStatus> {
                     child: DropdownButton<String>(
                       value: context.watch<PrivateTripuserProvider>().status,
                       items:
-                          <String>['pending', 'completed'].map((String value) {
+                          <String>['padding', 'completed'].map((String value) {
                         return DropdownMenuItem<String>(
+                          
                           value: value,
                           child: Text(value),
                         );
@@ -136,7 +137,7 @@ class _PrivateTripByStatusState extends State<PrivateTripByStatus> {
                         itemBuilder: (context, index) {
                           // return TripCard(index: index);
                           return TripCardPrivateTrip(
-                              tripProvider.privatetrips[index], index);
+                              tripProvider.privatetrips[index]);
                         },
                       );
                     },

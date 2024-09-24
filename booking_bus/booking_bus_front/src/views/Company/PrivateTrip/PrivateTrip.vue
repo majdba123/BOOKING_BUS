@@ -639,7 +639,6 @@ aside .logo {
     padding: 0.5rem;
     border-radius: 1rem;
     cursor: pointer;
-    margin-right: 1.2rem;
 }
 
 .right .theme-toggler span {

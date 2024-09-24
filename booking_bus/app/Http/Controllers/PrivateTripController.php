@@ -40,7 +40,7 @@ class PrivateTripController extends Controller
     {
         try {
             DB::beginTransaction();
-
+    
             $validator = Validator::make($request->all(), [
                 'from' => 'required',
                 'to' => 'required',
@@ -52,28 +52,28 @@ class PrivateTripController extends Controller
                 'long_to' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                 'Distance' => 'required|numeric',
             ]);
-
+    
             if ($validator->fails()) {
                 $errors = $validator->errors()->first();
                 return response()->json(['error' => $errors], 422);
             }
-
+    
             $user = Auth::user();
             $lat_from = $request->input('lat_from');
             $long_from = $request->input('long_from');
             $lat_to = $request->input('lat_to');
             $long_to = $request->input('long_to');
-
+    
             $fromLocation = geolocation::create([
                 'latitude' => $lat_from,
                 'longitude' => $long_from
             ]);
-
+    
             $toLocation = geolocation::create([
                 'latitude' => $lat_to,
                 'longitude' => $long_to
             ]);
-
+    
             $private = new Private_trip();
             $private->user_id = $user->id;
             $private->from = $request->input('from');
@@ -84,15 +84,15 @@ class PrivateTripController extends Controller
             $private->start_time = $request->input('start_time');
             $private->Distance = $request->input('Distance');
             $private->save();
-
-
+    
+            
             $massage = "Private trip created successfully:  $$private->id  user_id : $user->id ";
             event(new PrivateNotification( $user->id , $massage));
             UserNotification::create([
                 'user_id' =>  $user->id,
                 'notification' => $massage,
             ]);
-
+            
 
             $admins = User::where('type', 1)->get();
 
@@ -148,26 +148,26 @@ class PrivateTripController extends Controller
     {
         try {
             DB::beginTransaction();
-
+    
             $privateTrip = Private_trip::findOrfail($id);
-
+    
             // Check if the authenticated user is the owner of the private trip
             if ($privateTrip->user_id !== Auth::user()->id) {
                 return response()->json(['error' => 'You are not authorized to update this private trip'], 403);
             }
-
+    
             $validator = Validator::make($request->all(), [
                 'from' => 'sometimes|required',
                 'to' => 'sometimes|required',
                 'date' => 'sometimes|required',
                 'start_time' => 'sometimes|required',
             ]);
-
+    
             if ($validator->fails()) {
                 $errors = $validator->errors()->first();
                 return response()->json(['error' => $errors], 422);
             }
-
+    
             if ($request->has('from')) {
                 $privateTrip->from = $request->input('from');
             }
@@ -180,9 +180,9 @@ class PrivateTripController extends Controller
             if ($request->has('start_time')) {
                 $privateTrip->start_time = $request->input('start_time');
             }
-
+    
             $privateTrip->save();
-
+    
             DB::commit();
             return response()->json($privateTrip);
         } catch (\Exception $e) {
@@ -208,7 +208,7 @@ class PrivateTripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:completed,pending',
+            'status' => 'required|in:completed,padding',
         ]);
 
         if ($validator->fails()) {

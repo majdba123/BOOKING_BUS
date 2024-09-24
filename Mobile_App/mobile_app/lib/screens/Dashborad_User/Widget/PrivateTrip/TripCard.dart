@@ -8,8 +8,7 @@ import 'package:mobile_app/screens/Dashborad_User/Widget/PrivateTrip/Map_in_priv
 
 class TripCardPrivateTrip extends StatelessWidget {
   late PrivateTripModel privatetrip;
-  late var index;
-  TripCardPrivateTrip(this.privatetrip, this.index);
+  TripCardPrivateTrip(this.privatetrip);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -68,7 +67,7 @@ class TripCardPrivateTrip extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Text(
-                      'N. ${index + 1 ?? 'ID not available'}',
+                      'N. ${privatetrip.id ?? 'ID not available'}',
                       style: TextStyle(color: Colors.green[800]),
                     ),
                   ),
@@ -78,12 +77,10 @@ class TripCardPrivateTrip extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(margin: EdgeInsets.only(left: 8.0),
-                    child: buildTimeLocationColumn(
-                        privatetrip.from ?? 'Time not available',
-                        privatetrip.time ?? 'Date not available',
-                        context),
-                  ),
+                  buildTimeLocationColumn(
+                      privatetrip.from ?? 'Time not available',
+                      privatetrip.date ?? 'Date not available',
+                      context),
                   Row(
                     children: [
                       Image.asset(

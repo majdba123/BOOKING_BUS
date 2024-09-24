@@ -97,6 +97,7 @@ class ChargeBalanceController extends Controller
                 'message' => "Post successfully created."
             ], 200);
         } catch (\Exception $e) {
+            // print($e);
             // Return Json Response
             return response()->json([
                 'message' => "Something went really wrong!"
@@ -192,7 +193,7 @@ class ChargeBalanceController extends Controller
 
         event(new PrivateNotification($user_id, $massage));
         UserNotification::create([
-            'user_id' =>$user_id,
+            'user_id' => $user_id,
             'notification' => $massage,
         ]);
         return response()->json(['message' => 'Charge balance status updated to completed and points added to user'], 200);
@@ -215,7 +216,7 @@ class ChargeBalanceController extends Controller
         $massage = "your status of charage balance update to  : $chargeBalance->status";
         event(new PrivateNotification($user_id, $massage));
         UserNotification::create([
-            'user_id' =>$user_id,
+            'user_id' => $user_id,
             'notification' => $massage,
         ]);
         return response()->json(['message' => 'Charge balance status updated to cancelled'], 200);

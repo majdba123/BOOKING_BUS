@@ -21,7 +21,6 @@ class UserProfile {
 
     var response = await request.send();
     print(response.statusCode);
-    // print(response.headers);
     // print(response.body);
     if (response.statusCode == 200) {
       var responseBody = await response.stream.bytesToString();
@@ -29,10 +28,6 @@ class UserProfile {
       print(jsonResponse);
       return jsonResponse;
     } else {
-      var errorData = await http.Response.fromStream(response);
-
-      print('Error: ${errorData.body}');
-
       throw Exception('Failed to charge balance');
     }
   }
