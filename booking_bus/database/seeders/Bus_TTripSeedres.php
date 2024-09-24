@@ -3,10 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Bus_Trip;
-use App\Models\CappingPricingModel;
-use App\Models\DecreasingProportionalModel;
-use App\Models\FixedPricingModel;
-use App\Models\ProportionalPricingModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

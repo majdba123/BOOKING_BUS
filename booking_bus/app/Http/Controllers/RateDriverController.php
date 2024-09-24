@@ -51,7 +51,6 @@ class RateDriverController extends Controller
         $user = auth()->user();
         // Get the rating value from the request (1-5)
         $rating = $request->input('num');
-        $rating_speed = $request->input('rating_speed');
         // Validate the rating value
         if (!in_array($rating, range(1, 5))) {
             return response()->json(['error' => 'Invalid rating value'], 400);
@@ -61,7 +60,6 @@ class RateDriverController extends Controller
         $ratingInstance = new Rate_Driver();
         // Set the rating value, user ID, and trip ID
         $ratingInstance->rating = $rating;
-        $ratingInstance->rating_speed = $rating_speed;
         $ratingInstance->user_id = $user->id;
         $ratingInstance->driver_id = $driver_id;
         // Save the rating instance

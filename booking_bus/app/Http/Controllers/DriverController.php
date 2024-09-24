@@ -37,7 +37,6 @@ class DriverController extends Controller
                 'driver_id' => $driver->id,
                 'company_id' => $driver->company->id,
                 'status' =>  $driver->status,
-                'Wages' => $driver->Wages,
                 'email_driver' => $driver->user->email,
             ];
             $info[] = $data;
@@ -55,7 +54,6 @@ class DriverController extends Controller
             'name' => ['required', 'string'],
             'email' => ['required', 'string', 'email', 'unique:users'],
             'password' => ['required', 'min:8'],
-            'Wages' => ['required'],
         ], [
             'name.required' => 'Name is required',
             'email.required' => 'Email is required',
@@ -63,7 +61,6 @@ class DriverController extends Controller
             'email.unique' => 'Email has already been taken',
             'password.required' => 'Password is required',
             'password.min' => 'Password must be at least 8 characters long',
-            'Wages.required' => 'Wages filed required'
         ]);
 
         if ($validator->fails()) {
@@ -84,7 +81,6 @@ class DriverController extends Controller
         $driver = Driver::create([
             'user_id' => $id,
             'company_id' => $company_id->id,
-            'Wages' => $request->input('Wages'),
         ]);
         $drivaer_name = $driver->user->name;
 
@@ -155,74 +151,9 @@ class DriverController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update_driver(Request $request, $driver_id)
+    public function update(Request $request, Driver $driver)
     {
-        // Validate the incoming request data
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string'],
-            'email' => ['required', 'string', 'email',], // اختياري اذا حتاجت الشركة تعدل
-            'password' => ['nullable', 'min:8'], // اختياري اذا حبت الشركة تعدل الكلمة
-            'Wages' => ['required', 'numeric'],
-        ], [
-            'name.required' => 'Name is required',
-            'email.required' => 'Email is required',
-            'email.email' => 'Email is invalid',
-            'email.unique' => 'Email has already been taken',
-            'password.min' => 'Password must be at least 8 characters long',
-            'Wages.required' => 'Wages field is required',
-            'Wages.numeric' => 'Wages must be a numeric value',
-        ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 422);
-        }
-
-        // Find the driver and related user
-        $driver = Driver::findOrFail($driver_id);
-        $user = $driver->user;
-
-        // Update the user details
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-
-        // Only update the password if it's provided
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->input('password'));
-        }
-        $user->save();
-
-        // Update driver details
-        $driver->Wages = $request->input('Wages');
-        $driver->save();
-
-        // Get the company id from the authenticated user
-        $company_id = Auth::user()->Company;
-
-        // Notify the company about the update
-        $driver_name = $driver->user->name;
-        $message = "Driver updated: $driver_name";
-        event(new PrivateNotification($company_id->user->id, $message));
-        UserNotification::create([
-            'user_id' => $company_id->user->id,
-            'notification' => $message,
-        ]);
-
-        // Notify admins about the update
-        $admins = User::where('type', 1)->get();
-        foreach ($admins as $admin) {
-            $admin_id = $admin->id;
-            $admin_message = "Driver Updated: $driver->id by company: $company_id";
-            event(new PrivateNotification($admin_id, $admin_message));
-            UserNotification::create([
-                'user_id' => $admin_id,
-                'notification' => $admin_message,
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'Driver updated successfully',
-        ]);
+        //
     }
 
     /**

@@ -1755,8 +1755,8 @@ label {
 .submit-btnd {
     padding: 10px 20px;
     border: none;
-    background-color: var(--clr-primary);
-    color: var(--clr-dark);
+    background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
+    color: var(--clr-white);
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s, transform 0.2s;

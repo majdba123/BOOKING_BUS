@@ -1,7 +1,6 @@
 <?php
 
 namespace Database\Factories;
-
 use App\Models\Driver;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,8 +22,8 @@ class DriverFactory extends Factory
         return [
             'user_id' => $user->id,
             'company_id' => $company->id,
-            'status' => $this->faker->randomElement(['completed', 'pending', 'available']),
-            'Wages' => $this->faker->numberBetween(1000, 100000),
+            'status' => $this->faker->randomElement(['completed', 'pending' , 'available']),
         ];
+
     }
 }

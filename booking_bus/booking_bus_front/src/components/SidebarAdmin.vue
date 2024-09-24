@@ -131,6 +131,26 @@ export default {
             window.localStorage.setItem("selectedOption", option);
             store.state.x = this.selectedOption;
         },
+        handleResize() {
+            const sideMenu = this.$refs.sideMenu;
+            if (window.innerWidth > 768) {
+                sideMenu.style.display = "block";
+            } else {
+                sideMenu.style.display = "none";
+            }
+        },
+        openMenu() {
+            const sideMenu = this.$refs.sideMenu;
+            if (sideMenu) {
+                sideMenu.style.display = "block";
+            }
+        },
+        closeMenu() {
+            const sideMenu = this.$refs.sideMenu;
+            if (sideMenu) {
+                sideMenu.style.display = "none";
+            }
+        },
     },
 };
 </script>
