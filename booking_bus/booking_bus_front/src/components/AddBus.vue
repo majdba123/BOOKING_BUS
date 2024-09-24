@@ -1416,7 +1416,6 @@ small {
     text-align: center;
     box-shadow: 0 1rem 1.5rem var(--clr-light);
     color: var(--clr-dark);
-    max-width: none;
     font-size: 0.85rem;
 }
 .pagination {

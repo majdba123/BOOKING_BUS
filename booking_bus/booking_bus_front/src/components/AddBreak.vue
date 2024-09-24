@@ -512,6 +512,7 @@ h2 {
     color: var(--clr-dark);
     margin-bottom: 5px;
     margin-left: 15px;
+    margin-top: 5px;
 }
 
 .header {
@@ -714,7 +715,6 @@ textarea:focus {
     text-align: center;
     box-shadow: var(--box-shadow);
     color: var(--clr-dark);
-    max-width: none;
     font-size: 0.85rem;
 }
 
@@ -898,7 +898,15 @@ table tbody tr:last-child td {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
-
+.modal table {
+    width: 100%;
+}
+.modal table th,
+.modal table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+}
 .modal-header,
 .modal-body,
 .modal-footer {
