@@ -15,7 +15,7 @@ use App\Models\Favourite;
 use App\Models\Bus;
 use App\Models\Order_Private_trip;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {

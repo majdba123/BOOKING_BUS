@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class TripController extends Controller
@@ -338,10 +339,6 @@ class TripController extends Controller
             'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i',
             'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i',
             'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i',
-            'bus_ids.*.from_time_going' => 'sometimes|date_format:H:i',
-            'bus_ids.*.to_time_going' => 'sometimes|date_format:H:i',
-            'bus_ids.*.from_time_return' => 'sometimes|date_format:H:i',
-            'bus_ids.*.to_time_return' => 'sometimes|date_format:H:i',
             'bus_ids.*.date_start' => 'sometimes|date',
             'bus_ids.*.date_end' => 'sometimes|date',
 
@@ -413,7 +410,7 @@ class TripController extends Controller
                                     }
                                 }
                             }
-                        }else{
+                        } else {
                             return response()->json([
                                 'message' => 'bus active on trip ',
                             ]);
@@ -517,10 +514,9 @@ class TripController extends Controller
         if ($bus_trips->count() > 0) {
             foreach ($bus_trips as $bus_trip) {
                 $bus = $bus_trip->bus;
-                $re=Reservation::where('status' , 'pending')
-                ->where('bus__trip_id' ,$bus_trip->id)->first();
-                if($re)
-                {
+                $re = Reservation::where('status', 'pending')
+                    ->where('bus__trip_id', $bus_trip->id)->first();
+                if ($re) {
                     return response()->json([
                         'message' => 'bus has reservation ',
                     ]);
