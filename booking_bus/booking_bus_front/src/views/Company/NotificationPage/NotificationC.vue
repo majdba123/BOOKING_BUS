@@ -87,10 +87,10 @@ export default {
             const userType = window.localStorage.getItem("type_user");
 
             if (token && userType) {
-                if (userType === "company") {
-                    router.push("/HomeView");
+                if (userType === "admin") {
+                    router.push("/");
                 } else if (userType === "user") {
-                    router.push("/HomeView");
+                    router.push("/");
                 }
             }
         },
