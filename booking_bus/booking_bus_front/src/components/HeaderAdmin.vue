@@ -222,7 +222,7 @@ export default {
         });
         this.updateDateTime();
         this.fetchProfileInfo();
-        this.fetchNotifications();
+        this.fetchNotifications(); // Fetch notifications on mount
         if (document.body.classList.contains("dark-theme-variables")) {
             this.isDarkMode = true;
             const themeToggler = this.$refs.themeToggler;
