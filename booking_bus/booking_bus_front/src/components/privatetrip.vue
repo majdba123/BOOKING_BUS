@@ -243,7 +243,8 @@ export default {
                 url: `http://127.0.0.1:8000/api/company/accept_private_order/${this.selectedTripId}`,
                 headers: { Authorization: `Bearer ${token}` },
                 data: {
-                    price: this.price,
+                    cost: this.price,
+                    pricing_type: "fixed",
                 },
             })
                 .then(() => {

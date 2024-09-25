@@ -56,11 +56,7 @@
                     </div>
                 </div>
                 <div class="profile">
-                    <div class="info">
-                        <p>
-                            <b>{{ getCompanyName }}</b>
-                        </p>
-                    </div>
+                    <div class="info"></div>
                     <div class="profile-photo">
                         <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu show">
@@ -75,6 +71,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import photo from "@/components/photo.vue";
 import store from "@/store";
 import Pusher from "pusher-js";
@@ -125,7 +122,23 @@ export default {
                 }
             });
         },
-
+        AllUsers() {
+            const access_token = window.localStorage.getItem("access_token");
+            this.loading = true;
+            return axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/company/my_info",
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.id = response.data.id;
+                    console.log("User ID:", this.id);
+                })
+                .catch((error) => {
+                    this.toast.error("Error getting user info.");
+                    console.error(error);
+                });
+        },
         toggleProfileMenu() {
             this.showProfileMenu = !this.showProfileMenu;
             if (this.showProfileMenu) {
@@ -206,6 +219,11 @@ export default {
         this.messages;
     },
     mounted() {
+        this.AllUsers().then(() => {
+            if (this.id) {
+                this.initializePusher();
+            }
+        });
         this.updateDateTime();
         this.fetchProfileInfo();
         this.fetchNotifications(); // Fetch notifications on mount
