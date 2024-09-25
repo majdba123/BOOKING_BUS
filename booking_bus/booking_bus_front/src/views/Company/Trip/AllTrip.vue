@@ -19,7 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>Trip</h1>
+                <HeaderCompany />
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -48,12 +48,36 @@
                     <span class="material-icons active">light_mode</span>
                     <span class="material-icons">dark_mode</span>
                 </div>
+                <div class="notification-icon" @click="toggleNotificationsMenu">
+                    <span class="material-icons">notifications</span>
+                    <!-- Notification count badge -->
+                    <span
+                        v-if="notifications.length"
+                        class="notification-badge"
+                    >
+                        {{ notifications.length }}
+                    </span>
+                    <div
+                        v-if="showNotificationsMenu"
+                        class="notifications-dropdown"
+                    >
+                        <ul>
+                            <li
+                                v-for="notification in notifications"
+                                :key="notification.id"
+                            >
+                                {{ this.messages }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
                 <div class="profile">
                     <div class="info">
                         <p>
                             <b>{{ getCompanyName }}</b>
                         </p>
                     </div>
+
                     <div class="profile-photo">
                         <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
@@ -70,46 +94,44 @@
             <!--start driver_status-->
             <div class="datetime-container">
                 <div class="dateright">{{ currentDateTime.date }}</div>
-                <div class="time">
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[0] }}
-                        <span>hour</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[1] }}
-                        <span>minutes</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[2] }}
-                        <span>seconds</span>
-                    </div>
-                </div>
+                <div class="time"></div>
             </div>
 
-            <!--end driver_status-->
             <div class="driver_chart">
                 <h2>Trip Workload Status</h2>
                 <pathchart :chartData="chartData" />
             </div>
+            <!-- Right section end -->
         </div>
-        <!-- Right section end -->
     </div>
 </template>
 
 <script>
+import Pusher from "pusher-js";
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import pathchart from "@/components/pathchart.vue";
 import AddTrip from "@/components/AddTrip.vue";
+import pathchart from "@/components/pathchart.vue";
 import photo from "@/components/photo.vue";
-import router from "@/router";
 import store from "@/store";
+import router from "@/router";
 import { mapGetters } from "vuex";
+import HeaderCompany from "@/components/HeaderCompany.vue";
 
 export default {
-    name: "AllTrip",
-    components: { SidebarCompany, pathchart, AddTrip, photo },
+    name: "AllDriver",
+    components: {
+        SidebarCompany,
+        AddTrip,
+        pathchart,
+        photo,
+        HeaderCompany,
+    },
     data() {
         return {
+            showNotificationsMenu: false,
+            notifications: [],
+            messages: "",
+
             x: store.state.x,
             searchQuery: "",
             showProfileMenu: false,
@@ -139,7 +161,11 @@ export default {
             },
         };
     },
+
     watch: {
+        message(newMessage) {
+            this.messages = newMessage;
+        },
         searchQuery(newQuery) {
             store.commit("updateSearchQuery", newQuery);
             console.log(store.state.searchQuery);
@@ -149,12 +175,59 @@ export default {
         ...mapGetters(["getCompanyName"]),
     },
     methods: {
+        initializePusher() {
+            Pusher.logToConsole = true;
+            const pusher = new Pusher("7342c00647f26084d14f", {
+                cluster: "ap2",
+                authEndpoint: "/pusher/auth",
+                auth: {
+                    params: {
+                        userId: this.id,
+                    },
+                },
+            });
+
+            const channel = pusher.subscribe(
+                `notification-private-channel-${this.id}`
+            );
+            console.log("Pusher Channel:", channel);
+
+            channel.bind("PrivateNotification", (data) => {
+                const notification = data.message;
+                this.$store.commit("ADD_NOTIFICATION", notification);
+                this.messages = notification;
+                console.log("Notification:", this.messages);
+                if (this.messages != null) {
+                    this.notifications = ["1"];
+                }
+            });
+        },
         handleResize() {
             const sideMenu = this.$refs.sideMenu;
             if (window.innerWidth > 768) {
                 sideMenu.style.display = "block"; // Show sidebar on large screens
             } else {
                 sideMenu.style.display = "none"; // Hide sidebar on small screens
+            }
+        },
+        toggleNotificationsMenu() {
+            this.showNotificationsMenu = !this.showNotificationsMenu;
+            if (this.showNotificationsMenu) {
+                setTimeout(() => {
+                    const dropdownMenu = this.$el.querySelector(
+                        ".notifications-dropdown"
+                    );
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.add("show");
+                    }
+                }, 10);
+            } else {
+                const dropdownMenu = this.$el.querySelector(
+                    ".notifications-dropdown"
+                );
+                if (dropdownMenu) {
+                    dropdownMenu.classList.remove("show");
+                }
             }
         },
         openMenu() {
@@ -270,7 +343,6 @@ export default {
     },
 };
 </script>
-
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
@@ -376,6 +448,7 @@ small {
     font-size: 0.75rem;
     color: var(--clr-dark);
 }
+
 @keyframes borderColorShift {
     0% {
         border-color: yellow;
@@ -456,6 +529,7 @@ aside {
     border-left: 3px solid transparent;
     animation: colorShift 5s infinite;
 }
+
 aside .top {
     display: flex;
     justify-content: space-between;
@@ -485,12 +559,15 @@ aside .logo {
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 15px;
-    margin-left: 10px;
+    margin-bottom: 15px;
+    margin-left: 47px;
 }
 
 .date input {
     flex: 1;
+    width: 773px;
 }
+
 .date button {
     padding: 0.5rem 1rem;
     border: none;
@@ -498,6 +575,12 @@ aside .logo {
     color: var(--clr-white);
     border-radius: 9px;
     cursor: pointer;
+}
+@media screen and (max-width: 768px) {
+    .date input {
+        flex: 1;
+        width: 190px;
+    }
 }
 @keyframes gradientAnimation {
     0% {
@@ -617,6 +700,85 @@ aside .logo {
     text-align: center;
 }
 
+.notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 1.2rem;
+    position: relative;
+    color: var(--clr-dark);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-weight: bold;
+    z-index: 100;
+}
+.notification-icon .material-icons {
+    font-size: 1.4rem;
+    color: var(--clr-dark);
+    transition: color 0.3s ease;
+}
+
+.notification-icon .material-icons:hover {
+    color: var(--clr-primary);
+}
+.notifications-dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: var(--clr-white);
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 10px 0;
+    z-index: 1000;
+    width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.notifications-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notifications-dropdown ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.notifications-dropdown li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.notifications-dropdown li:hover {
+    background-color: var(--clr-light);
+}
+.theme-notification-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 .driver_status h2 {
     color: var(--clr-dark);
     margin-bottom: 14px;

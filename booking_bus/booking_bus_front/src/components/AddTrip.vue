@@ -1733,11 +1733,11 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
     background-color: var(--clr-white);
-    border-radius: var(--border-radius-3);
+    border-radius: 10px;
     width: 100%;
-    max-width: 800px;
-    margin-top: 1.1rem;
 }
 
 .nav-btnd {
@@ -1754,6 +1754,7 @@ select:focus {
     animation: gradientAnimation 5s ease infinite;
     width: 100%;
 }
+
 .modal-overlay {
     position: fixed;
     top: 0;
