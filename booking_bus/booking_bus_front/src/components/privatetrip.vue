@@ -33,7 +33,7 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="order in paginatedOrders"
+                                    v-for="(order, index) in paginatedOrders"
                                     :key="order.id"
                                 >
                                     <td>{{ index }}</td>
@@ -84,7 +84,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="trip in paginatedTrips" :key="trip.id">
+                        <tr
+                            v-for="(trip, index) in paginatedTrips"
+                            :key="trip.id"
+                        >
                             <td>{{ index }}</td>
                             <td>{{ trip.from }}</td>
                             <td>{{ trip.to }}</td>
@@ -243,7 +246,8 @@ export default {
                 url: `http://127.0.0.1:8000/api/company/accept_private_order/${this.selectedTripId}`,
                 headers: { Authorization: `Bearer ${token}` },
                 data: {
-                    price: this.price,
+                    cost: this.price,
+                    pricing_type: "fixed",
                 },
             })
                 .then(() => {
@@ -598,20 +602,21 @@ select:focus {
 }
 
 /* Navigation styling */
+
 .navd {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
     background-color: var(--clr-white);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 100%;
-    flex-wrap: wrap;
 }
 
 .nav-btnd {
-    padding: 10px 1px;
-    margin: 12px;
+    padding: 10px 20px;
+    margin: 10px;
     border: none;
     border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
@@ -622,8 +627,8 @@ select:focus {
     background-size: 200% 200%;
     animation: gradientAnimation 5s ease infinite;
     width: 100%;
-    max-width: 300px;
 }
+
 @keyframes gradientAnimation {
     0% {
         background-position: 0% 50%;

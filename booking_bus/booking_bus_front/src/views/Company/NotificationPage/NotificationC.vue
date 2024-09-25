@@ -14,15 +14,14 @@
             <!-- End top -->
 
             <!-- Start sidebar -->
-            <SidebarAdmin />
+            <SidebarCompany />
             <!-- End sidebar -->
         </aside>
         <div class="main-content">
             <main>
-                <HeaderAdmin />
+                <HeaderCompany2 />
 
-                <div class="top-bar"></div>
-                <Chargebalnce ref="chargebalnce" />
+                <NotificationCo ref="NotificationCo" />
             </main>
         </div>
         <!-- Right section start -->
@@ -41,14 +40,14 @@
 
 <script>
 import store from "@/store";
-import SidebarAdmin from "@/components/SidebarAdmin.vue";
+import SidebarCompany from "@/components/SidebarCompany.vue";
 import router from "@/router";
-import HeaderAdmin from "@/components/HeaderAdmin.vue";
-import Chargebalnce from "@/components/Chargebalnce.vue";
+import HeaderCompany2 from "@/components/HeaderCompany2.vue";
+import NotificationCo from "@/components/NotificationCo.vue";
 
 export default {
     name: "AllCompany",
-    components: { SidebarAdmin, HeaderAdmin, Chargebalnce },
+    components: { SidebarCompany, HeaderCompany2, NotificationCo },
     data() {
         return {
             x: store.state.x,
@@ -88,13 +87,14 @@ export default {
             const userType = window.localStorage.getItem("type_user");
 
             if (token && userType) {
-                if (userType === "company") {
-                    router.push("/HomeView");
+                if (userType === "admin") {
+                    router.push("/");
                 } else if (userType === "user") {
-                    router.push("/HomeView");
+                    router.push("/");
                 }
             }
         },
+
         openMenu() {
             const sideMenu = this.$refs.sideMenu;
             if (sideMenu) {
@@ -107,8 +107,6 @@ export default {
                 sideMenu.style.display = "none";
             }
         },
-
-        search() {},
     },
     mounted() {
         this.checkToken();
@@ -201,6 +199,7 @@ h2 {
     font-size: 1.4rem;
     color: var(--clr-dark);
 }
+
 h3 {
     font-size: 0.87rem;
     color: var(--clr-dark);
@@ -249,35 +248,12 @@ small {
 }
 
 /* aside */
-@keyframes colorShift {
-    0% {
-        border-top-color: rgb(0, 0, 255);
-        border-bottom-color: rgb(255, 255, 0);
-        border-right-color: rgb(128, 0, 128);
-    }
-    50% {
-        border-top-color: rgb(255, 255, 0);
-        border-bottom-color: rgb(0, 0, 255);
-        border-right-color: rgb(255, 105, 180);
-    }
-    100% {
-        border-top-color: rgb(0, 0, 255);
-        border-bottom-color: rgb(255, 255, 0);
-        border-right-color: rgb(128, 0, 128);
-    }
-}
-
 aside {
     height: 100vh;
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
-    border-radius: 0 2.5rem 2.5rem 0;
     padding: 1rem;
-    border-bottom: 3px solid rgb(255, 0, 0);
-    border-top: 3px solid rgb(0, 0, 255);
-    border-left: 3px solid transparent;
-    animation: colorShift 5s infinite;
 }
 
 aside .top {

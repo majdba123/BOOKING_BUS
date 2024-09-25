@@ -486,9 +486,7 @@ export default {
         closeDriverWithBusModal() {
             this.showDriverWithBusModal = false;
         },
-        handleSubmit() {
-            console.log("Form Submitted", this.name, this.email, this.password);
-        },
+        handleSubmit() {},
         showDeleteConfirmation(driverId) {
             this.driverIdToDelete = driverId;
             this.showDeleteConfirmModal = true;
@@ -516,7 +514,7 @@ export default {
                         headers: { Authorization: `Bearer ${access_token}` },
                     }
                 )
-                .then((response) => {
+                .then(() => {
                     this.editingIndex = null;
 
                     this.editedDriver = {
@@ -525,7 +523,6 @@ export default {
                         email: "",
                         wages: "",
                     };
-                    console.log(response);
 
                     this.toast.success("Driver updated successfully!");
                     this.showEditModal = false;
@@ -554,7 +551,6 @@ export default {
             })
                 .then((response) => {
                     if (response.status == 200) {
-                        console.log(response);
                         this.toast.success(
                             "Driver account created successfully!"
                         );
@@ -617,7 +613,6 @@ export default {
                         if (a.name > b.name) return 1;
                         return 0;
                     });
-                    console.log(this.Driver);
                     this.loading = false;
                 })
                 .catch((error) => {
@@ -652,7 +647,6 @@ export default {
             })
                 .then((response) => {
                     this.Bus = response.data;
-                    console.log(this.Bus);
                 })
                 .catch((error) => {
                     this.toast.error("Error getting buses.");
@@ -662,7 +656,6 @@ export default {
         SelectDriver(event, userId) {
             const busId = event.target.value;
             const access_token = window.localStorage.getItem("access_token");
-            console.log("Selected Bus ID:", busId);
 
             axios({
                 method: "post",
@@ -671,7 +664,6 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then(() => {
-                    console.log("Selection Complete for Bus ID:", busId);
                     this.toast.success("Driver assigned to bus successfully!");
                 })
                 .catch((error) => {
@@ -689,7 +681,6 @@ export default {
             })
                 .then((response) => {
                     this.driverStatusData = response.data;
-                    console.log(response.data);
                     this.loading1 = false;
                 })
                 .catch((error) => {
@@ -709,7 +700,6 @@ export default {
             })
                 .then((response) => {
                     this.driverWithBusData = response.data;
-                    console.log(this.driverWithBusData);
                     this.loading2 = false;
                 })
                 .catch((error) => {

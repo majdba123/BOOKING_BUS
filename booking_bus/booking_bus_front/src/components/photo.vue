@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="profile-photo">
         <img v-if="company.logoURL" :src="company.logoURL" alt="Company Logo" />
     </div>
 </template>
@@ -43,4 +43,11 @@ export default {
     },
 };
 </script>
-<style></style>
+<style>
+.profile-photo img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+</style>

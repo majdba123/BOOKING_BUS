@@ -19,7 +19,7 @@
         </aside>
         <div class="main-content">
             <main>
-                <h1>{{ x }}</h1>
+                <HeaderCompany />
                 <div class="top-bar">
                     <div class="date">
                         <input
@@ -77,6 +77,7 @@
                             <b>{{ getCompanyName }}</b>
                         </p>
                     </div>
+
                     <div class="profile-photo">
                         <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu">
@@ -93,23 +94,9 @@
             <!--start driver_status-->
             <div class="datetime-container">
                 <div class="dateright">{{ currentDateTime.date }}</div>
-                <div class="time">
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[0] }}
-                        <span>hour</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[1] }}
-                        <span>minutes</span>
-                    </div>
-                    <div class="time-box">
-                        {{ currentDateTime.time.split(":")[2] }}
-                        <span>seconds</span>
-                    </div>
-                </div>
+                <div class="time"></div>
             </div>
 
-            <!--end driver_status-->
             <div class="driver_chart">
                 <h2>PrivateTrips Status</h2>
                 <privatetripchart :chartData="chartData" />
@@ -125,20 +112,26 @@ import SidebarCompany from "@/components/SidebarCompany.vue";
 import privatetrip from "@/components/privatetrip.vue";
 import privatetripchart from "@/components/privatetripchart.vue";
 import photo from "@/components/photo.vue";
-import { mapGetters } from "vuex";
 import store from "@/store";
 import router from "@/router";
+import { mapGetters } from "vuex";
+import HeaderCompany from "@/components/HeaderCompany.vue";
 
 export default {
-    name: "AllPrivate",
-    components: { SidebarCompany, privatetrip, privatetripchart, photo },
+    name: "AllDriver",
+    components: {
+        SidebarCompany,
+        privatetrip,
+        privatetripchart,
+        photo,
+        HeaderCompany,
+    },
     data() {
         return {
-            messages: "",
-            id: null,
-
             showNotificationsMenu: false,
             notifications: [],
+            messages: "",
+
             x: store.state.x,
             searchQuery: "",
             showProfileMenu: false,
@@ -168,6 +161,7 @@ export default {
             },
         };
     },
+
     watch: {
         message(newMessage) {
             this.messages = newMessage;
@@ -176,6 +170,9 @@ export default {
             store.commit("updateSearchQuery", newQuery);
             console.log(store.state.searchQuery);
         },
+    },
+    computed: {
+        ...mapGetters(["getCompanyName"]),
     },
     methods: {
         initializePusher() {
@@ -205,6 +202,14 @@ export default {
                 }
             });
         },
+        handleResize() {
+            const sideMenu = this.$refs.sideMenu;
+            if (window.innerWidth > 768) {
+                sideMenu.style.display = "block"; // Show sidebar on large screens
+            } else {
+                sideMenu.style.display = "none"; // Hide sidebar on small screens
+            }
+        },
         toggleNotificationsMenu() {
             this.showNotificationsMenu = !this.showNotificationsMenu;
             if (this.showNotificationsMenu) {
@@ -223,14 +228,6 @@ export default {
                 if (dropdownMenu) {
                     dropdownMenu.classList.remove("show");
                 }
-            }
-        },
-        handleResize() {
-            const sideMenu = this.$refs.sideMenu;
-            if (window.innerWidth > 768) {
-                sideMenu.style.display = "block"; // Show sidebar on large screens
-            } else {
-                sideMenu.style.display = "none"; // Hide sidebar on small screens
             }
         },
         openMenu() {
@@ -315,9 +312,6 @@ export default {
             console.log("Searching for:", this.searchQuery);
             // Add your search logic here
         },
-    },
-    computed: {
-        ...mapGetters(["getCompanyName"]),
     },
     mounted() {
         this.checkToken();
@@ -454,6 +448,7 @@ small {
     font-size: 0.75rem;
     color: var(--clr-dark);
 }
+
 @keyframes borderColorShift {
     0% {
         border-color: yellow;
@@ -564,11 +559,13 @@ aside .logo {
     border-radius: 0.9rem;
     padding: 9px;
     margin-top: 15px;
-    margin-left: 10px;
+    margin-bottom: 15px;
+    margin-left: 47px;
 }
 
 .date input {
     flex: 1;
+    width: 773px;
 }
 
 .date button {
@@ -578,6 +575,12 @@ aside .logo {
     color: var(--clr-white);
     border-radius: 9px;
     cursor: pointer;
+}
+@media screen and (max-width: 768px) {
+    .date input {
+        flex: 1;
+        width: 190px;
+    }
 }
 @keyframes gradientAnimation {
     0% {
@@ -697,6 +700,85 @@ aside .logo {
     text-align: center;
 }
 
+.notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 1.2rem;
+    position: relative;
+    color: var(--clr-dark);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-weight: bold;
+    z-index: 100;
+}
+.notification-icon .material-icons {
+    font-size: 1.4rem;
+    color: var(--clr-dark);
+    transition: color 0.3s ease;
+}
+
+.notification-icon .material-icons:hover {
+    color: var(--clr-primary);
+}
+.notifications-dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: var(--clr-white);
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 10px 0;
+    z-index: 1000;
+    width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.notifications-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notifications-dropdown ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.notifications-dropdown li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.notifications-dropdown li:hover {
+    background-color: var(--clr-light);
+}
+.theme-notification-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 .driver_status h2 {
     color: var(--clr-dark);
     margin-bottom: 14px;
@@ -778,85 +860,7 @@ aside .logo {
     -webkit-background-clip: text;
     background-clip: text;
 }
-.notification-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    margin-right: 1.2rem;
-    position: relative;
-    color: var(--clr-dark);
-}
 
-.notification-badge {
-    position: absolute;
-    top: -3px;
-    right: -3px;
-    background-color: var(--clr-danger);
-    color: var(--clr-white);
-    border-radius: 50%;
-    width: 13px;
-    height: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.5rem;
-    font-weight: bold;
-    z-index: 100;
-}
-.notification-icon .material-icons {
-    font-size: 1.4rem;
-    color: var(--clr-dark);
-    transition: color 0.3s ease;
-}
-
-.notification-icon .material-icons:hover {
-    color: var(--clr-primary);
-}
-.notifications-dropdown {
-    position: absolute;
-    top: 40px;
-    right: 0;
-    background-color: var(--clr-white);
-    border: 1px solid #ddd;
-    border-radius: 0.5rem;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    list-style: none;
-    padding: 10px 0;
-    z-index: 1000;
-    width: 200px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-}
-
-.notifications-dropdown.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.notifications-dropdown ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.notifications-dropdown li {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.notifications-dropdown li:hover {
-    background-color: var(--clr-light);
-}
-.theme-notification-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
 .time-box span {
     display: block;
     font-size: 0.8rem;

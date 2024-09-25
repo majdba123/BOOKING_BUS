@@ -48,23 +48,6 @@ export default {
         ...mapGetters(["getCompanyName"]),
     },
     methods: {
-        toggleProfileMenu() {
-            this.showProfileMenu = !this.showProfileMenu;
-            if (this.showProfileMenu) {
-                setTimeout(() => {
-                    const dropdownMenu =
-                        this.$el.querySelector(".dropdown-menu");
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.add("show");
-                    }
-                }, 10);
-            } else {
-                const dropdownMenu = this.$el.querySelector(".dropdown-menu");
-                if (dropdownMenu) {
-                    dropdownMenu.classList.remove("show");
-                }
-            }
-        },
         updateDateTime() {
             const now = new Date();
             this.currentDateTime.date = now.toISOString().split("T")[0];
@@ -77,69 +60,9 @@ export default {
             store.dispatch("logout");
             this.$router.push("/");
         },
-        fetchProfileInfo() {
-            const userDataFrame = {
-                image: "path/to/profile-image.jpg",
-            };
-            this.profileImage = userDataFrame.image;
-        },
-        toggleTheme() {
-            this.isDarkMode = !this.isDarkMode;
-            document.body.classList.toggle(
-                "dark-theme-variables",
-                this.isDarkMode
-            );
-            localStorage.setItem(
-                "darkMode",
-                this.isDarkMode ? "enabled" : "disabled"
-            );
-
-            const themeToggler = this.$refs.themeToggler;
-            themeToggler
-                .querySelector("span:nth-child(1)")
-                .classList.toggle("active", !this.isDarkMode);
-            themeToggler
-                .querySelector("span:nth-child(2)")
-                .classList.toggle("active", this.isDarkMode);
-        },
-        toggleNotificationsMenu() {
-            this.showNotificationsMenu = !this.showNotificationsMenu;
-            if (this.showNotificationsMenu) {
-                setTimeout(() => {
-                    const dropdownMenu = this.$el.querySelector(
-                        ".notifications-dropdown"
-                    );
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.add("show");
-                    }
-                }, 10);
-            } else {
-                const dropdownMenu = this.$el.querySelector(
-                    ".notifications-dropdown"
-                );
-                if (dropdownMenu) {
-                    dropdownMenu.classList.remove("show");
-                }
-            }
-        },
-        fetchNotifications() {
-            this.notifications = [
-                { id: 1, message: "New user registered" },
-                { id: 2, message: "System update available" },
-            ];
-        },
     },
     mounted() {
         this.updateDateTime();
-        this.fetchProfileInfo();
-        this.fetchNotifications(); // Fetch notifications on mount
-        if (document.body.classList.contains("dark-theme-variables")) {
-            this.isDarkMode = true;
-            const themeToggler = this.$refs.themeToggler;
-            themeToggler.querySelectorAll("span").forEach((span) => {
-                span.classList.toggle("active");
-            });
-        }
     },
 };
 </script>
@@ -206,12 +129,17 @@ a {
 }
 
 h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
+    font-weight: 450;
+    font-size: 2rem;
+    margin-top: 20px;
+    color: var(--clr-dark);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
     font-size: 1.4rem;
+    color: var(--clr-dark);
 }
 
 h3 {
@@ -459,18 +387,29 @@ small {
 }
 
 /* Adding a subtle fade-in animation */
-
-@keyframes borderShift {
+@keyframes borderColorShiftBottom {
     0% {
-        border-image-source: linear-gradient(to right, yellow, blue);
+        border-bottom-color: yellow;
     }
     50% {
-        border-image-source: linear-gradient(to left, yellow, blue);
+        border-bottom-color: blue;
     }
     100% {
-        border-image-source: linear-gradient(to right, yellow, blue);
+        border-bottom-color: yellow;
     }
 }
+@keyframes borderColorShiftTop {
+    0% {
+        border-top-color: yellow;
+    }
+    50% {
+        border-top-color: blue;
+    }
+    100% {
+        border-top-color: yellow;
+    }
+}
+
 .datetime-container {
     text-align: center;
     font-family: "Arial", sans-serif;
@@ -494,9 +433,14 @@ small {
 }
 
 .time-box {
+    background: #111111;
     border-radius: 50% 20% / 10% 40%;
+    border-bottom: 1px solid yellow; /* This will use the animation */
+    border-top: 1px solid yellow; /* This will use the animation */
+    animation: borderColorShiftTop 3s infinite alternate,
+        borderColorShiftBottom 3s infinite alternate;
     padding: 1rem 1.5rem;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;
     position: relative;
     color: #ffffff;
@@ -505,8 +449,8 @@ small {
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
+    margin-top: 1.2rem;
 }
-
 .time-box span {
     display: block;
     font-size: 0.8rem;

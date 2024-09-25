@@ -56,11 +56,7 @@
                     </div>
                 </div>
                 <div class="profile">
-                    <div class="info">
-                        <p>
-                            <b>{{ getCompanyName }}</b>
-                        </p>
-                    </div>
+                    <div class="info"></div>
                     <div class="profile-photo">
                         <photo @click="toggleProfileMenu" />
                         <ul v-if="showProfileMenu" class="dropdown-menu show">
@@ -75,6 +71,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import photo from "@/components/photo.vue";
 import store from "@/store";
 import Pusher from "pusher-js";
@@ -125,7 +122,23 @@ export default {
                 }
             });
         },
-
+        AllUsers() {
+            const access_token = window.localStorage.getItem("access_token");
+            this.loading = true;
+            return axios({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/company/my_info",
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.id = response.data.id;
+                    console.log("User ID:", this.id);
+                })
+                .catch((error) => {
+                    this.toast.error("Error getting user info.");
+                    console.error(error);
+                });
+        },
         toggleProfileMenu() {
             this.showProfileMenu = !this.showProfileMenu;
             if (this.showProfileMenu) {
@@ -206,9 +219,14 @@ export default {
         this.messages;
     },
     mounted() {
+        this.AllUsers().then(() => {
+            if (this.id) {
+                this.initializePusher();
+            }
+        });
         this.updateDateTime();
         this.fetchProfileInfo();
-        this.fetchNotifications(); // Fetch notifications on mount
+        this.fetchNotifications();
         if (document.body.classList.contains("dark-theme-variables")) {
             this.isDarkMode = true;
             const themeToggler = this.$refs.themeToggler;
@@ -546,16 +564,29 @@ main {
 }
 
 /* Adding a subtle fade-in animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
+@keyframes borderColorShiftBottom {
+    0% {
+        border-bottom-color: yellow;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    50% {
+        border-bottom-color: blue;
+    }
+    100% {
+        border-bottom-color: yellow;
     }
 }
+@keyframes borderColorShiftTop {
+    0% {
+        border-top-color: yellow;
+    }
+    50% {
+        border-top-color: blue;
+    }
+    100% {
+        border-top-color: yellow;
+    }
+}
+
 .datetime-container {
     text-align: center;
     font-family: "Arial", sans-serif;
@@ -570,9 +601,8 @@ main {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
-
 .time {
     display: flex;
     gap: 1rem;
@@ -580,9 +610,14 @@ main {
 }
 
 .time-box {
+    background: #111111;
     border-radius: 50% 20% / 10% 40%;
+    border-bottom: 1px solid yellow; /* This will use the animation */
+    border-top: 1px solid yellow; /* This will use the animation */
+    animation: borderColorShiftTop 3s infinite alternate,
+        borderColorShiftBottom 3s infinite alternate;
     padding: 1rem 1.5rem;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;
     position: relative;
     color: #ffffff;
@@ -591,6 +626,7 @@ main {
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
+    margin-top: 1rem;
 }
 
 .time-box span {

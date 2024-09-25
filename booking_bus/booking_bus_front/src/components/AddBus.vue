@@ -447,7 +447,7 @@
                                 </thead>
                                 <tbody>
                                     <tr
-                                        v-for="(bus, index) in Bus"
+                                        v-for="(bus, index) in busStatusData"
                                         :key="index"
                                     >
                                         <td>{{ bus.number_bus }}</td>
@@ -517,6 +517,14 @@
                             type="date"
                             id="purshasedate"
                             v-model="editedBus.purshasedate"
+                        />
+                    </div>
+                    <div class="form-groupd">
+                        <label for="numberPassenger">Brand</label>
+                        <input
+                            type="text"
+                            id="numberPassenger"
+                            v-model="editedBus.brand"
                         />
                     </div>
                     <div class="form-groupd">
@@ -729,6 +737,7 @@ export default {
 
             busToDelete: null,
             editedBus: {
+                brand: "",
                 id: "",
                 fuelconsumption: "",
                 busconsumption: "",
@@ -891,6 +900,7 @@ export default {
                         lifespan_years: this.editedBus.lifespanyears,
                         bus_consumption: this.editedBus.busconsumption,
                         fuel_consumption: this.editedBus.fuelconsumption,
+                        rand: this.editedBus.brand,
                     },
                     {
                         headers: { Authorization: `Bearer ${access_token}` },
@@ -1408,6 +1418,16 @@ small {
     overflow-x: auto;
 }
 
+table {
+    width: 100%;
+    overflow-x: auto;
+}
+table th td {
+    vertical-align: middle;
+    text-align: center;
+    padding: 10px;
+}
+
 .recent_orders table {
     background-color: var(--clr-white);
     width: 100%;
@@ -1416,7 +1436,6 @@ small {
     text-align: center;
     box-shadow: 0 1rem 1.5rem var(--clr-light);
     color: var(--clr-dark);
-    max-width: none;
     font-size: 0.85rem;
 }
 .pagination {
@@ -1528,6 +1547,7 @@ table tbody tr {
     border-bottom: 1px solid var(--clr-white);
     color: var(--clr-dark-variant);
     transition: background-color 0.3s ease;
+    text-align: center;
 }
 
 table tbody td {
