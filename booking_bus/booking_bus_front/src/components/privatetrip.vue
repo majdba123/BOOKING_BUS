@@ -33,7 +33,7 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="order in paginatedOrders"
+                                    v-for="(order, index) in paginatedOrders"
                                     :key="order.id"
                                 >
                                     <td>{{ index }}</td>
@@ -84,7 +84,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="trip in paginatedTrips" :key="trip.id">
+                        <tr
+                            v-for="(trip, index) in paginatedTrips"
+                            :key="trip.id"
+                        >
                             <td>{{ index }}</td>
                             <td>{{ trip.from }}</td>
                             <td>{{ trip.to }}</td>

@@ -32,11 +32,6 @@
                     </select>
                 </div>
             </div>
-            <div class="submit-btnnd">
-                <button type="submit" @click="CreatePath" class="submit-btnd">
-                    Submit
-                </button>
-            </div>
         </form>
         <div class="map-container">
             <TrackingMap
@@ -107,7 +102,7 @@ export default {
             });
 
             const channel = pusher.subscribe(
-                "trip-geolocation-private-channel-1"
+                "trip-geolocation-private-channel-" + this.bus_id
             );
             console.log("Pusher Channel:", channel);
 

@@ -366,7 +366,7 @@ aside .sidebar a {
     align-items: center;
     margin-left: 2rem;
     color: #7d8da1;
-    height: 2.7rem;
+    height: 2.4rem;
     text-decoration: none;
     gap: 1rem;
     transition: all 0.1s ease-in;

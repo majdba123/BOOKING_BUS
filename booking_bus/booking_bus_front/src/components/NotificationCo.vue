@@ -68,8 +68,41 @@ export default {
 };
 </script>
 <style scoped>
+:root {
+    --clr-primary: #7380ec;
+    --clr-danger: #ff7782;
+    --clr-success: #41f1b6;
+    --clr-white: #fff;
+    --clr-info-dark: #7d8da1;
+    --clr-info-light: #e4e9f7;
+    --clr-dark: #363949;
+    --clr-warning: #ffbb55;
+    --clr-light: rgba(132, 139, 200, 0.18);
+    --clr-primary-variant: #111e88;
+    --clr-dark-variant: #677483;
+    --clr-color-background: #f6f6f9;
+
+    --card-border-radius: 2rem;
+    --border-radius-1: 0.4rem;
+    --border-radius-2: 0.8rem;
+    --border-radius-3: 1.2rem;
+
+    --card-padding: 1.8rem;
+    --padding-1: 1.2rem;
+
+    box-shadow: 0 2rem 3rem var(--clr-light);
+}
+
+.dark-theme-variables {
+    --clr-color-background: #181a1e;
+    --clr-white: #202528;
+    --clr-light: rgba(0, 0, 0, 0.4);
+    --clr-dark: #edeffd;
+    --clr-dark-variant: #677483;
+    --box-shadow: 0 2rem 3rem var(--clr-light);
+}
 body {
-    background-color: #f1f5f9;
+    background-color: var(--clr-color-background);
     font-family: Arial, sans-serif;
 }
 
@@ -80,7 +113,7 @@ body {
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
-    color: #6b7280;
+    color: var(--clr-dark);
 }
 
 .post-container {
@@ -90,12 +123,13 @@ body {
 }
 
 .post {
-    background-color: #ffffff;
+    background-color: var(--clr-color-background);
+    color: var(--clr-dark);
     border-radius: 8px;
     width: 100%;
     max-width: 1200px;
     padding: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2rem 3rem var(--clr-light);
 }
 
 .post-header {
@@ -120,13 +154,13 @@ body {
 
 .user-details h4 {
     font-weight: bold;
-    color: #000;
+    color: var(--clr-dark);
     margin: 0;
 }
 
 .user-details span {
     font-size: 0.9rem;
-    color: #6b7280;
+    color: var(--clr-dark);
 }
 
 .report-button {
@@ -136,7 +170,7 @@ body {
     padding: 5px 10px;
     border: 1px solid #d1d5db;
     border-radius: 4px;
-    color: #6b7280;
+    color: var(--clr-dark);
     text-decoration: none;
     font-size: 0.9rem;
 }
@@ -148,7 +182,7 @@ body {
 
 .post-content {
     padding: 20px 0;
-    color: #000;
+    color: var(--clr-dark);
 }
 
 .post-footer {
@@ -165,7 +199,7 @@ body {
     padding: 5px 10px;
     border: 1px solid #d1d5db;
     border-radius: 4px;
-    color: #6b7280;
+    color: var(--clr-dark);
     text-decoration: none;
     font-size: 0.9rem;
 }

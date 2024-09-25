@@ -89,13 +89,13 @@ export default {
                 this.directionsService = new google.maps.DirectionsService();
                 this.directionsRenderer = new google.maps.DirectionsRenderer({
                     map: this.map,
-                    suppressMarkers: false, // لإظهار العلامات على المسار
+                    suppressMarkers: false,
                 });
 
                 const request = {
                     origin: { lat: fromLat, lng: fromLng },
                     destination: { lat: toLat, lng: toLng },
-                    travelMode: google.maps.TravelMode.DRIVING, // يمكن تغيير نوع النقل هنا (قيادة، مشي، دراجة، ...)
+                    travelMode: google.maps.TravelMode.DRIVING,
                 };
 
                 this.directionsService.route(request, (result, status) => {

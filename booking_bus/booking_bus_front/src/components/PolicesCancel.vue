@@ -10,9 +10,6 @@
             <button class="nav-btnd" @click="showDriverStatusModal">
                 Rule
             </button>
-            <button class="nav-btnd" @click="fetchAllDriverWithBus">
-                ______
-            </button>
         </header>
 
         <!-- Cancel Trip Form -->
