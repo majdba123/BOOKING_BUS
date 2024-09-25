@@ -609,6 +609,7 @@ main {
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
+    margin-top: 1rem;
 }
 
 .time-box span {

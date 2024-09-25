@@ -16,7 +16,7 @@
                 <div class="modal-body">
                     <button
                         class="status-btns"
-                        @click="fetchTripStatus('padding')"
+                        @click="fetchTripStatus('pending')"
                     >
                         Pending
                     </button>
@@ -28,9 +28,9 @@
                     </button>
                     <button
                         class="status-btns"
-                        @click="fetchTripStatus('finished')"
+                        @click="fetchTripStatus('completed')"
                     >
-                        Finished
+                        Completed
                     </button>
                     <div v-if="loading1" class="spinner-container">
                         <div class="spinner"></div>
@@ -114,13 +114,7 @@
                                 </option>
                             </select>
                         </div>
-                        <span>Type</span>
-                        <div class="select-container">
-                            <select v-model="bus.type">
-                                <option value="all">All</option>
-                                <option value="going">Going</option>
-                            </select>
-                        </div>
+
                         <span>Start Time Going</span>
                         <input
                             v-model="bus.start_time_going"
@@ -191,6 +185,83 @@
                     </button>
                 </div>
             </form>
+        </div>
+        <div v-else class="recent_orders">
+            <h2>All Trips</h2>
+            <div class="table-container">
+                <div v-if="loading" class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+                <div v-else>
+                    <div
+                        v-if="!filteredTrips.length > 0"
+                        class="no-data-message"
+                    >
+                        No Data Available
+                    </div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Trip ID</th>
+                                    <th>Status</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Price</th>
+                                    <th>Details</th>
+                                    <th>Delete</th>
+                                    <th>Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(trip, index) in filteredTrips"
+                                    :key="index"
+                                >
+                                    <td>{{ index }}</td>
+                                    <td>{{ trip.status }}</td>
+                                    <td>{{ trip.path?.from }}</td>
+                                    <td>{{ trip.path?.to }}</td>
+                                    <td>{{ trip.price }}</td>
+                                    <td>
+                                        <button
+                                            class="details-btn"
+                                            @click="fetchTripDetails(trip.id)"
+                                        >
+                                            <span class="material-icons">
+                                                info
+                                            </span>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            class="delete-btn"
+                                            @click="
+                                                openDeleteConfirmModal(trip)
+                                            "
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
+                                        </button>
+                                    </td>
+
+                                    <td>
+                                        <button
+                                            class="edit-btn"
+                                            @click="editTrip(index, trip.id)"
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
         <div v-if="showpricemodel" class="modal1">
             <div class="modal-content1">
@@ -328,84 +399,6 @@
             </div>
         </div>
 
-        <div v-else class="recent_orders">
-            <h2>All Trips</h2>
-            <div class="table-container">
-                <div v-if="loading" class="spinner-container">
-                    <div class="spinner"></div>
-                </div>
-                <div v-else>
-                    <div
-                        v-if="!filteredTrips.length > 0"
-                        class="no-data-message"
-                    >
-                        No Data Available
-                    </div>
-                    <div v-else>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Trip ID</th>
-                                    <th>Status</th>
-                                    <th>From</th>
-                                    <th>To</th>
-                                    <th>Price</th>
-                                    <th>Details</th>
-                                    <th>Delete</th>
-                                    <th>Edit</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="(trip, index) in filteredTrips"
-                                    :key="index"
-                                >
-                                    <td>{{ index }}</td>
-                                    <td>{{ trip.status }}</td>
-                                    <td>{{ trip.path?.from }}</td>
-                                    <td>{{ trip.path?.to }}</td>
-                                    <td>{{ trip.price }}</td>
-                                    <td>
-                                        <button
-                                            class="details-btn"
-                                            @click="fetchTripDetails(trip.id)"
-                                        >
-                                            <span class="material-icons">
-                                                info
-                                            </span>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button
-                                            class="delete-btn"
-                                            @click="
-                                                openDeleteConfirmModal(trip)
-                                            "
-                                        >
-                                            <span class="material-icons"
-                                                >delete</span
-                                            >
-                                        </button>
-                                    </td>
-
-                                    <td>
-                                        <button
-                                            class="edit-btn"
-                                            @click="editTrip(index, trip.id)"
-                                        >
-                                            <span class="material-icons"
-                                                >edit</span
-                                            >
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div v-if="selectedTrip" class="modal">
             <div class="modal-content">
                 <span class="close" @click="closeDetails">&times;</span>
@@ -460,19 +453,18 @@
                 <h2>Edit Trip</h2>
                 <div class="form-groupd">
                     <label for="path">Path</label>
-                    <select v-model="selectedPath.id" class="input" required>
+                    <select v-model="selectedPath" class="input" required>
                         <option
                             v-for="(pathItem, index) in paths"
                             :key="index"
-                            :value="pathItem.id"
+                            :value="{
+                                id: pathItem.id,
+                                distance: pathItem.Distance,
+                            }"
                         >
                             {{ pathItem.from }} >> {{ pathItem.to }}
                         </option>
                     </select>
-                </div>
-                <div class="form-groupd">
-                    <label for="price">Price</label>
-                    <input type="text" id="price" v-model="price" required />
                 </div>
 
                 <div class="form-groupd">
@@ -491,11 +483,7 @@
                                 {{ busItem.number_bus }}
                             </option>
                         </select>
-                        <label>Type</label>
-                        <select v-model="bus.type" class="input">
-                            <option value="all">All</option>
-                            <option value="going">Going</option>
-                        </select>
+
                         <label>Start Time Going</label>
                         <input
                             v-model="bus.start_time_going"
@@ -539,6 +527,17 @@
                                 required
                             />
                         </div>
+                        <div class="form-groupd">
+                            <label for="price">Price</label>
+                            <button
+                                @click="displaymodel()"
+                                class="button"
+                                type="button"
+                            >
+                                Select Method Price
+                            </button>
+                            <span v-if="price != ``"> Price: {{ price }} </span>
+                        </div>
                         <button
                             @click="removeBus(index)"
                             class="Button remove-bus-button"
@@ -565,6 +564,206 @@
                         >
                             Cancel
                         </button>
+                        <div v-if="showpricemodel" class="modal1">
+                            <div class="modal-content1">
+                                <div class="modal-header1">Method Price</div>
+                                <div class="modal-body1">
+                                    <!-- أزرار التنقل -->
+                                    <div class="button-container1">
+                                        <button
+                                            @click="activeSection = 'section1'"
+                                            :class="{
+                                                active:
+                                                    activeSection ===
+                                                    'section1',
+                                            }"
+                                        >
+                                            Fixed
+                                        </button>
+                                        <button
+                                            @click="
+                                                handleButtonClick('section2')
+                                            "
+                                            :class="{
+                                                active:
+                                                    activeSection ===
+                                                    'section2',
+                                            }"
+                                        >
+                                            Proportional
+                                        </button>
+                                        <button
+                                            @click="
+                                                handleButtonClick('section3')
+                                            "
+                                            :class="{
+                                                active:
+                                                    activeSection ===
+                                                    'section3',
+                                            }"
+                                        >
+                                            Decreasing
+                                        </button>
+                                        <button
+                                            @click="
+                                                handleButtonClick('section4')
+                                            "
+                                            :class="{
+                                                active:
+                                                    activeSection ===
+                                                    'section4',
+                                            }"
+                                        >
+                                            Capping
+                                        </button>
+                                    </div>
+
+                                    <div
+                                        v-if="activeSection === 'section1'"
+                                        class="section-content"
+                                    >
+                                        <h3>Price</h3>
+                                        <input type="number" v-model="price" />
+                                        <div class="modal-footer">
+                                            <button
+                                                @click="handleOk()"
+                                                class="ok-button"
+                                            >
+                                                OK
+                                            </button>
+                                            <button
+                                                @click="handleCancel"
+                                                class="cancel-button"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        v-if="activeSection === 'section2'"
+                                        class="section-content"
+                                    >
+                                        <h3>
+                                            In this form the price is calculated
+                                            based on the distance of the road.
+                                            Do you agree to use it?
+                                        </h3>
+                                        <div class="modal-footer">
+                                            <button
+                                                @click="handleOk()"
+                                                class="ok-button"
+                                            >
+                                                OK
+                                            </button>
+                                            <button
+                                                @click="handleCancel"
+                                                class="cancel-button"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        v-if="activeSection === 'section3'"
+                                        class="section-content"
+                                    >
+                                        <h3>Price Min</h3>
+                                        <input
+                                            type="number"
+                                            required
+                                            v-model="pricemin"
+                                        />
+                                        <h3>Number Of Stations</h3>
+                                        <input
+                                            type="number"
+                                            required
+                                            v-model="numberofstations"
+                                        />
+                                        <div class="modal-footer">
+                                            <button
+                                                @click="handleOk()"
+                                                class="ok-button"
+                                            >
+                                                OK
+                                            </button>
+                                            <button
+                                                @click="handleCancel"
+                                                class="cancel-button"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        v-if="activeSection === 'section4'"
+                                        class="section-content"
+                                    >
+                                        <h3>Price Max</h3>
+                                        <input
+                                            type="number"
+                                            required
+                                            v-model="pricemax"
+                                        />
+                                        <h3>Number Of Stations</h3>
+                                        <input
+                                            type="number"
+                                            required
+                                            v-model="numberofstations"
+                                        />
+                                        <div class="modal-footer">
+                                            <button
+                                                @click="handleOk()"
+                                                class="ok-button"
+                                            >
+                                                OK
+                                            </button>
+                                            <button
+                                                @click="handleCancel"
+                                                class="cancel-button"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    v-if="showLiterModal"
+                                    class="modal-overlay"
+                                >
+                                    <div class="modal-content">
+                                        <h2>
+                                            Enter the price litre to calcathe
+                                            the price per kilometre of the path
+                                            used
+                                        </h2>
+
+                                        <h3>Price Of Liter</h3>
+                                        <input
+                                            type="number"
+                                            v-model="priceleiter"
+                                        />
+                                        <div class="modal-footer">
+                                            <button
+                                                @click="handleLiterOk"
+                                                class="ok-button"
+                                            >
+                                                OK
+                                            </button>
+                                            <button
+                                                @click="handleCancel1"
+                                                class="cancel-button"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -896,7 +1095,6 @@ export default {
         addBus() {
             this.buses.push({
                 bus_id: "",
-                type: "",
                 start_time_going: "",
                 start_time_return: "",
                 end_time_going: "",
@@ -930,6 +1128,242 @@ export default {
         handleBusSelection() {
             this.selectedBusIds = this.buses.map((bus) => bus.bus_id);
             console.log("Selected bus ids:", this.selectedBusIds);
+        },
+        saveChanges() {
+            const token = window.localStorage.getItem("access_token");
+            if (this.price_type == "decreasing") {
+                const busIds = this.buses.map((bus) => ({
+                    bus_id: bus.bus_id,
+                    type: "All",
+                    from_time_going: bus.start_time_going,
+                    to_time_going: bus.end_time_going,
+                    from_time_return: bus.start_time_return,
+                    to_time_return: bus.end_time_return,
+                    date_start: this.start_date,
+                    date_end: this.end_date,
+                }));
+
+                axios({
+                    method: "put",
+                    url:
+                        "http://127.0.0.1:8000/api/company/update_trip/" +
+                        this.x,
+                    data: {
+                        rate_of_km: this.kilo,
+                        path_id: this.selectedPath.id,
+                        bus_ids: busIds,
+                        pricing_type: this.price_type,
+                        number_of_station: this.numberofstations,
+                        min_price_for_km: this.pricemin,
+                        cost: this.price,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                    .then((response) => {
+                        console.log(response);
+                        this.toast.success("Trip Added Successfully", {
+                            transition: "Vue-Toastification__bounce",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        this.AllTrips();
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error Adding Trip", {
+                            transition: "Vue-Toastification__shake",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        console.error(error);
+                        console.log(this.date);
+                    });
+            } else if (this.price_type == "capping") {
+                const busIds = this.buses.map((bus) => ({
+                    bus_id: bus.bus_id,
+                    type: "All",
+                    from_time_going: bus.start_time_going,
+                    to_time_going: bus.end_time_going,
+                    from_time_return: bus.start_time_return,
+                    to_time_return: bus.end_time_return,
+                    date_start: this.start_date,
+                    date_end: this.end_date,
+                }));
+
+                axios({
+                    method: "put",
+                    url:
+                        "http://127.0.0.1:8000/api/company/update_trip/" +
+                        this.x,
+                    data: {
+                        rate_of_km: this.kilo,
+
+                        path_id: this.selectedPath.id,
+                        bus_ids: busIds,
+                        pricing_type: this.price_type,
+                        number_of_station: this.numberofstations,
+                        max_price_for_km: this.pricemax,
+                        cost: this.price,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                    .then((response) => {
+                        console.log(response);
+                        this.toast.success("Trip Added Successfully", {
+                            transition: "Vue-Toastification__bounce",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        this.AllTrips();
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error Adding Trip", {
+                            transition: "Vue-Toastification__shake",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        console.error(error);
+                        console.log(this.date);
+                    });
+            } else if (this.price_type == "proportional") {
+                const busIds = this.buses.map((bus) => ({
+                    bus_id: bus.bus_id,
+                    type: "All",
+                    from_time_going: bus.start_time_going,
+                    to_time_going: bus.end_time_going,
+                    from_time_return: bus.start_time_return,
+                    to_time_return: bus.end_time_return,
+                    date_start: this.start_date,
+                    date_end: this.end_date,
+                }));
+
+                axios({
+                    method: "put",
+                    url:
+                        "http://127.0.0.1:8000/api/company/update_trip/" +
+                        this.x,
+                    data: {
+                        rate_of_km: this.kilo,
+                        path_id: this.selectedPath.id,
+                        bus_ids: busIds,
+                        pricing_type: this.price_type,
+                        cost: this.price,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                    .then((response) => {
+                        console.log(response);
+                        this.toast.success("Trip Added Successfully", {
+                            transition: "Vue-Toastification__bounce",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        this.AllTrips();
+                    })
+                    .catch((error) => {
+                        this.toast.error("Error Adding Trip", {
+                            transition: "Vue-Toastification__shake",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        console.error(error);
+                        console.log(this.date);
+                    });
+            } else if (this.price_type == "fixed") {
+                const busIds = this.buses.map((bus) => ({
+                    bus_id: bus.bus_id,
+                    type: "All",
+                    from_time_going: bus.start_time_going,
+                    to_time_going: bus.end_time_going,
+                    from_time_return: bus.start_time_return,
+                    to_time_return: bus.end_time_return,
+                    date_start: this.start_date,
+                    date_end: this.end_date,
+                }));
+
+                axios({
+                    method: "put",
+                    url:
+                        "http://127.0.0.1:8000/api/company/update_trip/" +
+                        this.x,
+                    data: {
+                        path_id: this.selectedPath.id,
+                        bus_ids: busIds,
+                        pricing_type: this.price_type,
+                        cost: this.price,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                    .then((response) => {
+                        console.log(response);
+                        this.toast.success("Trip Added Successfully", {
+                            transition: "Vue-Toastification__bounce",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        console.log(
+                            "bus_ids:",
+                            busIds,
+                            "path_id:",
+                            this.selectedPath.id,
+                            "price_type",
+                            this.price_type,
+                            "cost",
+                            this.price
+                        );
+                        this.AllTrips();
+                    })
+                    .catch((error) => {
+                        console.log(
+                            "bus_ids:",
+                            busIds,
+                            "path_id:",
+                            this.selectedPath.id,
+                            "price_type",
+                            this.price_type,
+                            "cost",
+                            this.price
+                        );
+                        this.toast.error("Error Adding Trip", {
+                            transition: "Vue-Toastification__shake",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                        });
+                        console.error(error);
+                        console.log(this.date);
+                    });
+            }
         },
         AddTrip() {
             const token = window.localStorage.getItem("access_token");
@@ -1001,7 +1435,7 @@ export default {
                     method: "post",
                     url: "http://127.0.0.1:8000/api/company/store_trip",
                     data: {
-                        rate_of_Km: this.kilo,
+                        rate_of_km: this.kilo,
 
                         path_id: this.selectedPath.id,
                         bus_ids: busIds,
@@ -1273,60 +1707,6 @@ export default {
         cancelEdit() {
             this.editingIndex = null;
             this.resetEditedTrip();
-        },
-        saveChanges() {
-            const token = window.localStorage.getItem("access_token");
-
-            const busIds = this.buses.map((bus) => ({
-                bus_id: bus.bus_id,
-                type: bus.type,
-                from_time_going: bus.start_time_going,
-                to_time_going: bus.end_time_going,
-                from_time_return: bus.start_time_return,
-                to_time_return: bus.end_time_return,
-                date_start: this.start_date,
-                date_end: this.end_date,
-            }));
-
-            axios({
-                method: "put",
-                url: "http://127.0.0.1:8000/api/company/update_trip/" + this.x,
-                headers: { Authorization: `Bearer ${token}` },
-                data: {
-                    path_id: this.selectedPath.id,
-                    price: this.price,
-                    area: this.area,
-                    bus_ids: busIds,
-                },
-            })
-                .then((response) => {
-                    console.log(response);
-
-                    this.Trips.splice(this.editingIndex, 1, this.editedTrip);
-                    this.editingIndex = null;
-                    this.resetEditedTrip();
-                    this.toast.success("Trip Updated Successfully", {
-                        transition: "Vue-Toastification__bounce",
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                    });
-                })
-                .catch((error) => {
-                    this.toast.error("Error Updating Trip", {
-                        transition: "Vue-Toastification__shake",
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                    });
-                    console.error(error);
-                });
         },
         fetchTripStatus(status) {
             const access_token = window.localStorage.getItem("access_token");
