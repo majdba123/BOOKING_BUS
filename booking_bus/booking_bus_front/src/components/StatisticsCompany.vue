@@ -1,103 +1,36 @@
 <template>
-    <div class="insights">
-        <!-- Start Buses -->
-        <div class="sales">
-            <span class="material-icons" aria-label="Drivers"
-                >directions_bus</span
-            >
-            <div class="middle">
-                <div class="left">
-                    <h3>Buses</h3>
-                    <h1>\${{ allBuses }}</h1>
+    <div>
+        <div class="container">
+            <div class="portfolio">
+                <div class="card" id="storageCard">
+                    <div class="card-title">Bus</div>
+                    <div class="card-icon">
+                        <i class="material-icons">storage</i>
+                    </div>
+                    <div class="card-data">{{ allBuses }}</div>
+                    <hr />
                 </div>
-                <div class="progress">
-                    <svg>
-                        <circle
-                            class="background-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                        ></circle>
-                        <circle
-                            class="sales-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                            :stroke-dashoffset="salesOffset"
-                        ></circle>
-                    </svg>
-
-                    <div class="number">{{ allBuses }}%</div>
+                <div class="card" id="loveCard">
+                    <div class="card-title">Favourite</div>
+                    <div class="card-icon">
+                        <i class="material-icons">favorite</i>
+                    </div>
+                    <div class="card-data">{{ count_favourite }}</div>
+                    <hr />
+                </div>
+                <div class="card" id="gameCard">
+                    <div class="card-title">Driver</div>
+                    <div class="card-icon">
+                        <i class="material-icons">videogame_asset</i>
+                    </div>
+                    <div class="card-data">{{ all_drivers }}</div>
+                    <div class="card-hint"></div>
                 </div>
             </div>
-            <small>Last 24 Hours</small>
         </div>
-        <!-- End Buses -->
-
-        <!-- Start Favourites -->
-        <div class="expenses">
-            <span class="material-icons" aria-label="Favourites">favorite</span>
-            <div class="middle">
-                <div class="left">
-                    <h3>Favourites</h3>
-                    <h1>\${{ count_favourite }}</h1>
-                </div>
-                <div class="progress">
-                    <svg>
-                        <circle
-                            class="background-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                        ></circle>
-                        <circle
-                            class="expenses-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                            :stroke-dashoffset="expensesOffset"
-                        ></circle>
-                    </svg>
-                    <div class="number">{{ count_favourite }}%</div>
-                </div>
-            </div>
-            <small>Last 24 Hours</small>
-        </div>
-        <!-- End Favourites -->
-
-        <!-- Start Drivers -->
-        <div class="income">
-            <span class="material-icons" aria-label="Drivers">group</span>
-            <div class="middle">
-                <div class="left">
-                    <h3>Drivers</h3>
-                    <h1>\${{ all_drivers }}</h1>
-                </div>
-                <div class="progress">
-                    <svg>
-                        <circle
-                            class="background-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                        ></circle>
-                        <circle
-                            class="income-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                            :stroke-dashoffset="incomeOffset"
-                        ></circle>
-                    </svg>
-                    <div class="number">{{ all_drivers }}%</div>
-                </div>
-            </div>
-            <small>Last 24 Hours</small>
-        </div>
-        <!-- End Drivers -->
     </div>
-    <!-- End insights -->
 </template>
+
 <script>
 import axios from "axios";
 
@@ -194,237 +127,148 @@ export default {
 };
 </script>
 
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
-
-:root {
-    --clr-primary: #7380ec;
-    --clr-danger: #ff7782;
-    --clr-success: #41f1b6;
-    --clr-white: #fff;
-    --clr-info-dark: #7d8da1;
-    --clr-info-light: #e4e9f7;
-    --clr-dark: #363949;
-    --clr-warning: #ffbb55;
-    --clr-light: rgba(132, 139, 200, 0.18);
-    --clr-primary-variant: #111e88;
-    --clr-dark-variant: #677483;
-    --clr-color-background: #f6f6f9;
-
-    --card-border-radius: 2rem;
-    --border-radius-1: 0.4rem;
-    --border-radius-2: 0.8rem;
-    --border-radius-3: 1.2rem;
-
-    --card-padding: 1.8rem;
-    --padding-1: 1.2rem;
-
-    --box-shadow: 0 2rem 3rem var(--clr-light);
-    --circle-radius: 30px;
-    --circle-diameter: calc(var(--circle-radius) * 2);
-    --circle-circumference: calc(2 * var(--circle-radius) * 3.14159);
-
-    --font-size-small: 0.88rem;
-    --font-size-medium: 1.2rem;
-    --font-size-large: 1.6rem;
-
-    --padding-small: 0.5rem;
-    --padding-medium: 1.8rem;
-    --padding-large: 40px;
-
-    --transition-duration: 0.3s;
-    --transition-ease: ease;
+<style scoped>
+body {
+    padding: 32px;
+    background: #ddd;
+    font-family: "Roboto", sans-serif;
+    margin: 0;
 }
 
-body {
-    font-family: "Roboto", sans-serif;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-size: var(--font-size-small);
-    user-select: none;
-    overflow-x: hidden;
-    background: var(--clr-color-background);
+h1 {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0px 12px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    margin: 50px 0;
 }
 
 .container {
-    display: grid;
     width: 100%;
-    gap: var(--padding-medium);
-    grid-template-columns: 14rem auto 14rem;
-    margin-left: 0;
 }
 
-.insights {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--padding-small);
-    padding: var(--card-padding);
-}
-
-.insights > div {
-    background-color: var(--clr-white);
-    padding: var(--card-padding);
-    border-radius: var(--card-border-radius);
-    margin-top: var(--padding-small);
-    box-shadow: var(--box-shadow);
-    transition: box-shadow var(--transition-duration) var(--transition-ease);
-}
-
-.insights > div:hover {
-    box-shadow: none;
-}
-
-.insights > div span {
-    background: var(--clr-primary);
-    padding: var(--padding-small);
-    border-radius: 50%;
-    color: var(--clr-white);
-    font-size: 2rem;
-}
-
-.insights > div.expenses span {
-    background: var(--clr-danger);
-}
-
-.insights > div.income span {
-    background: var(--clr-success);
-}
-
-.insights > div .middle {
+.portfolio {
+    width: 1200px;
     display: flex;
-    align-items: center;
+    gap: 1;
     justify-content: space-between;
 }
 
-.insights > div .middle h1 {
-    font-size: var(--font-size-large);
-    color: var(--clr-dark);
-}
-
-.insights .progress {
-    position: relative;
-    height: var(--circle-diameter);
-    width: var(--circle-diameter);
-    border-radius: 50%;
-}
-
-.insights svg {
-    height: 100%;
+.card {
+    border-radius: 9px;
     width: 100%;
+    background: white;
+    margin: 16px;
+    padding: 24px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    box-sizing: border-box;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 1.3rem;
+    text-align: left;
+}
+
+.card-icon {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -24px;
+    right: 16px;
+    background: linear-gradient(60deg, #ffa726, #ef6c00);
+    color: white;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25%;
+    box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.15);
 }
 
-.insights svg circle {
-    fill: none;
-    stroke-width: 5;
-    stroke-dasharray: var(--circle-circumference);
-    transform: rotate(-90deg);
-    transform-origin: 50% 59.5%;
+.card-icon i {
+    font-size: 4rem;
 }
 
-.insights svg circle.background-circle {
-    stroke: var(--clr-info-light);
+.card-data {
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-align: left;
+    padding-right: 16px;
 }
 
-.insights svg circle.sales-circle {
-    stroke: var(--clr-primary);
+hr {
+    width: 90%;
+    margin: 16px auto;
 }
 
-.insights svg circle.expenses-circle {
-    stroke: var(--clr-danger);
+.card-hint {
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
 }
 
-.insights svg circle.income-circle {
-    stroke: var(--clr-success);
+.card-hint i {
+    font-size: 1.3rem;
+    margin-right: 8px;
 }
 
-.insights .progress .number {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: var(--font-size-medium);
-    color: var(--clr-dark);
+.card-hint a {
+    font-size: 0.9rem;
+    font-weight: 300;
 }
 
+#storageCard .card-icon {
+    background: linear-gradient(60deg, #5e35b1, #039be5);
+}
+
+#loveCard .card-icon {
+    background: linear-gradient(60deg, #f50057, #ff8a80);
+}
+
+#pizzaCard .card-icon {
+    background: linear-gradient(60deg, #fb8c00, #ffca29);
+}
+
+#gameCard .card-icon {
+    background: linear-gradient(60deg, #43a047, #ffeb3b);
+}
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
         grid-template-columns: 7rem auto 14rem;
     }
-
-    .insights {
-        padding: var(--padding-large);
-        grid-template-columns: repeat(1, 1fr);
-    }
 }
 
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
-    .container {
+    .portfolio {
         width: 100%;
+        display: block;
         grid-template-columns: repeat(1, 1fr);
     }
-
-    aside {
-        position: fixed;
-        width: 18rem;
-        z-index: 3;
-        background-color: var(--clr-white);
-        display: none;
-        left: -100px;
-        animation: menuAni 1s forwards;
-    }
-
-    @keyframes menuAni {
-        to {
-            left: 0;
-        }
-    }
-
-    aside .logo {
-        display: inline;
-    }
-
-    aside .sidebar h3 {
-        display: inline;
-    }
-
-    aside .sidebar a {
-        width: 100%;
-        height: 3.4rem;
-    }
-
-    aside .top .close span {
-        display: inline;
+    .card-icon {
         position: absolute;
-        right: 0;
-        font-size: 35px;
-        margin-right: 30px;
-    }
-
-    .right .top {
-        position: fixed;
-        top: 0;
-        left: 0;
+        top: -24px;
+        right: 16px;
+        background: linear-gradient(60deg, #ffa726, #ef6c00);
+        color: white;
+        width: auto;
+        height: auto;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 0 0.8rem;
-        background-color: var(--clr-white);
-        width: 100%;
-        height: 4.6rem;
-        z-index: 2;
-        box-shadow: var(--box-shadow);
-        margin: 0;
+        border-radius: 25%;
+        box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.15);
     }
-
-    .insights {
-        padding: var(--padding-large);
-        grid-template-columns: repeat(1, 1fr);
+    .card {
+        border-radius: 9px;
+        width: 310px;
+        background: white;
+        margin: 16px;
+        padding: 24px;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        box-sizing: border-box;
     }
 }
 </style>

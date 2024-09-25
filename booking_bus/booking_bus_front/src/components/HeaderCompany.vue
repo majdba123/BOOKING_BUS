@@ -48,23 +48,6 @@ export default {
         ...mapGetters(["getCompanyName"]),
     },
     methods: {
-        toggleProfileMenu() {
-            this.showProfileMenu = !this.showProfileMenu;
-            if (this.showProfileMenu) {
-                setTimeout(() => {
-                    const dropdownMenu =
-                        this.$el.querySelector(".dropdown-menu");
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.add("show");
-                    }
-                }, 10);
-            } else {
-                const dropdownMenu = this.$el.querySelector(".dropdown-menu");
-                if (dropdownMenu) {
-                    dropdownMenu.classList.remove("show");
-                }
-            }
-        },
         updateDateTime() {
             const now = new Date();
             this.currentDateTime.date = now.toISOString().split("T")[0];
@@ -77,69 +60,9 @@ export default {
             store.dispatch("logout");
             this.$router.push("/");
         },
-        fetchProfileInfo() {
-            const userDataFrame = {
-                image: "path/to/profile-image.jpg",
-            };
-            this.profileImage = userDataFrame.image;
-        },
-        toggleTheme() {
-            this.isDarkMode = !this.isDarkMode;
-            document.body.classList.toggle(
-                "dark-theme-variables",
-                this.isDarkMode
-            );
-            localStorage.setItem(
-                "darkMode",
-                this.isDarkMode ? "enabled" : "disabled"
-            );
-
-            const themeToggler = this.$refs.themeToggler;
-            themeToggler
-                .querySelector("span:nth-child(1)")
-                .classList.toggle("active", !this.isDarkMode);
-            themeToggler
-                .querySelector("span:nth-child(2)")
-                .classList.toggle("active", this.isDarkMode);
-        },
-        toggleNotificationsMenu() {
-            this.showNotificationsMenu = !this.showNotificationsMenu;
-            if (this.showNotificationsMenu) {
-                setTimeout(() => {
-                    const dropdownMenu = this.$el.querySelector(
-                        ".notifications-dropdown"
-                    );
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.add("show");
-                    }
-                }, 10);
-            } else {
-                const dropdownMenu = this.$el.querySelector(
-                    ".notifications-dropdown"
-                );
-                if (dropdownMenu) {
-                    dropdownMenu.classList.remove("show");
-                }
-            }
-        },
-        fetchNotifications() {
-            this.notifications = [
-                { id: 1, message: "New user registered" },
-                { id: 2, message: "System update available" },
-            ];
-        },
     },
     mounted() {
         this.updateDateTime();
-        this.fetchProfileInfo();
-        this.fetchNotifications(); // Fetch notifications on mount
-        if (document.body.classList.contains("dark-theme-variables")) {
-            this.isDarkMode = true;
-            const themeToggler = this.$refs.themeToggler;
-            themeToggler.querySelectorAll("span").forEach((span) => {
-                span.classList.toggle("active");
-            });
-        }
     },
 };
 </script>

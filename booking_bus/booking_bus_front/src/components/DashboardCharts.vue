@@ -30,36 +30,6 @@
                 <canvas id="reservationProfitChart"></canvas>
             </div>
         </div>
-        <div class="recent-orders">
-            <h1>Trips Overview</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Trip Name</th>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="trip in trips" :key="trip.name">
-                        <td>{{ trip.name }}</td>
-                        <td>{{ trip.from }}</td>
-                        <td>{{ trip.to }}</td>
-                        <td>{{ trip.price }}</td>
-                        <td
-                            :class="{
-                                warning: trip.status === 'Pending',
-                                primary: trip.status === 'Completed',
-                            }"
-                        >
-                            {{ trip.status }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </div>
 </template>
 <script>
