@@ -5,7 +5,7 @@
                 <div class="card" id="storageCard">
                     <div class="card-title">Bus</div>
                     <div class="card-icon">
-                        <i class="material-icons">storage</i>
+                        <i class="material-icons">directions_bus</i>
                     </div>
                     <div class="card-data">{{ allBuses }}</div>
                     <hr />
@@ -21,7 +21,7 @@
                 <div class="card" id="gameCard">
                     <div class="card-title">Driver</div>
                     <div class="card-icon">
-                        <i class="material-icons">videogame_asset</i>
+                        <i class="material-icons">supervisor_account</i>
                     </div>
                     <div class="card-data">{{ all_drivers }}</div>
                     <div class="card-hint"></div>
@@ -151,33 +151,38 @@ h1 {
     display: flex;
     gap: 1;
     justify-content: space-between;
+    margin-top: 1rem;
 }
 
 .card {
     border-radius: 9px;
-    width: 100%;
-    background: white;
+    width: 90%;
+    color: var(--clr-dark);
     margin: 16px;
     padding: 24px;
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
     position: relative;
     box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.2);
+}
 .card-title {
     font-weight: bold;
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     text-align: left;
+    color: white;
 }
 
 .card-icon {
     position: absolute;
     top: -24px;
     right: 16px;
-    background: linear-gradient(60deg, #ffa726, #ef6c00);
     color: white;
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -190,15 +195,28 @@ h1 {
 }
 
 .card-data {
-    font-size: 1.5rem;
-    font-weight: 300;
-    text-align: left;
+    font-size: 1.8rem;
+    font-weight: 400;
+    text-align: right;
     padding-right: 16px;
+    color: white;
+}
+#storageCard {
+    background: linear-gradient(60deg, #5e35b1, #039be5); /* Same as the icon */
+}
+
+#loveCard {
+    background: linear-gradient(60deg, #f50057, #ff8a80); /* Same as the icon */
+}
+
+#gameCard {
+    background: linear-gradient(60deg, #43a047, #ffeb3b); /* Same as the icon */
 }
 
 hr {
     width: 90%;
     margin: 16px auto;
+    border-color: white;
 }
 
 .card-hint {

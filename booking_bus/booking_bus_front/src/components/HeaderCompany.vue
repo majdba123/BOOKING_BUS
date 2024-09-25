@@ -387,17 +387,29 @@ small {
 }
 
 /* Adding a subtle fade-in animation */
-@keyframes borderShift {
+@keyframes borderColorShiftBottom {
     0% {
-        border-image-source: linear-gradient(to right, yellow, blue);
+        border-bottom-color: yellow;
     }
     50% {
-        border-image-source: linear-gradient(to left, yellow, blue);
+        border-bottom-color: blue;
     }
     100% {
-        border-image-source: linear-gradient(to right, yellow, blue);
+        border-bottom-color: yellow;
     }
 }
+@keyframes borderColorShiftTop {
+    0% {
+        border-top-color: yellow;
+    }
+    50% {
+        border-top-color: blue;
+    }
+    100% {
+        border-top-color: yellow;
+    }
+}
+
 .datetime-container {
     text-align: center;
     font-family: "Arial", sans-serif;
@@ -423,9 +435,10 @@ small {
 .time-box {
     background: #111111;
     border-radius: 50% 20% / 10% 40%;
-    border-bottom: 1px solid yellow;
-    border-top: 1px solid yellow;
-    animation: borderColorShift 3s infinite;
+    border-bottom: 1px solid yellow; /* This will use the animation */
+    border-top: 1px solid yellow; /* This will use the animation */
+    animation: borderColorShiftTop 3s infinite alternate,
+        borderColorShiftBottom 3s infinite alternate;
     padding: 1rem 1.5rem;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     font-size: 1.5rem;
@@ -436,7 +449,6 @@ small {
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
-    margin-top: 1rem;
 }
 .time-box span {
     display: block;
