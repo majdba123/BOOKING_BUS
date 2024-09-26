@@ -742,7 +742,7 @@ class TripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'trip_id' => 'required|exists:bus__trips,id',
+            'trip_id' => 'required|exists:bus__trips,id,deleted_at,NULL',
             'description' => 'required|string|max:100',
             'reasons' => 'required|array',
             'reasons.*' => 'string|max:50',
