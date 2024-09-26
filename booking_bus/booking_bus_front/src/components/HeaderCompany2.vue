@@ -134,9 +134,8 @@ export default {
                     this.id = response.data.id;
                     console.log("User ID:", this.id);
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting user info.");
-                    console.error(error);
                 });
         },
         toggleProfileMenu() {
