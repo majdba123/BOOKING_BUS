@@ -98,8 +98,8 @@
             </div>
 
             <div class="driver_chart">
-                <h2>PrivateTrips Status</h2>
-                <privatetripchart :chartData="chartData" />
+                <h2>Bus Workload Status</h2>
+                <buschart :chartData="chartData" />
             </div>
         </div>
         <!-- Right section end -->
@@ -116,8 +116,6 @@ import store from "@/store";
 import router from "@/router";
 import { mapGetters } from "vuex";
 import HeaderCompany from "@/components/HeaderCompany.vue";
-import buschart from "@/components/buschart.vue";
-import AddBus from "@/components/AddBus.vue";
 
 export default {
     name: "AllDriver",
