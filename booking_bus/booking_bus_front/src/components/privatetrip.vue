@@ -118,9 +118,6 @@
                         <span class="material-icons"> skip_next </span>
                     </button>
                 </div>
-                <div v-else>
-                    <p>No private trips available.</p>
-                </div>
             </div>
         </div>
         <!-- Modal for accepting order -->
@@ -167,7 +164,7 @@ export default {
             myOrders: [],
             currentPage: 1,
             currentOrderPage: 1,
-            itemsPerPage: 14,
+            itemsPerPage: 7,
             showAcceptModal: false,
             price: 0,
             selectedTripId: null,
