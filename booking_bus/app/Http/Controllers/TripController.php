@@ -371,7 +371,7 @@ class TripController extends Controller
 
         if ($trip->path->company->id !== Auth::user()->Company->id) {
 
-            return response()->json(['error' => 'You are not authorized to update this trip.'], 403);
+            return response()->json(['error' => 'You are not authorized to update this break.'], 403);
         }
 
         DB::beginTransaction();
@@ -412,7 +412,7 @@ class TripController extends Controller
                             }
                         } else {
                             return response()->json([
-                                'message' => 'bus active on trip ',404
+                                'message' => 'bus active on trip ',
                             ]);
                         }
                     }
@@ -742,7 +742,7 @@ class TripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'trip_id' => 'required',
+            'trip_id' => 'required|exists:bus__trips,id,deleted_at,NULL',
             'description' => 'required|string|max:100',
             'reasons' => 'required|array',
             'reasons.*' => 'string|max:50',
