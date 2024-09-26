@@ -778,7 +778,7 @@ export default {
             }
 
             const payload = {
-                trip_id: this.formData.id,
+                trip_id: this.formData.trip_id,
                 description: this.formData.description,
                 reasons: this.formData.reasons.map((field) => field.value),
                 rate: this.compensationData.rate,
