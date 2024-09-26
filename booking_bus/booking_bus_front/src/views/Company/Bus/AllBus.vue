@@ -31,7 +31,7 @@
                         <button @click="search">Search</button>
                     </div>
                 </div>
-                <AddBus ref="addBus" />
+                <privatetrip ref="privatetrip" />
             </main>
         </div>
         <div class="right">
@@ -98,8 +98,8 @@
             </div>
 
             <div class="driver_chart">
-                <h2>Bus Workload Status</h2>
-                <buschart :chartData="chartData" />
+                <h2>PrivateTrips Status</h2>
+                <privatetripchart :chartData="chartData" />
             </div>
         </div>
         <!-- Right section end -->
@@ -109,8 +109,8 @@
 <script>
 import Pusher from "pusher-js";
 import SidebarCompany from "@/components/SidebarCompany.vue";
-import AddBus from "@/components/AddBus.vue";
-import buschart from "@/components/buschart.vue";
+import privatetrip from "@/components/privatetrip.vue";
+import privatetripchart from "@/components/privatetripchart.vue";
 import photo from "@/components/photo.vue";
 import store from "@/store";
 import router from "@/router";
@@ -121,8 +121,8 @@ export default {
     name: "AllDriver",
     components: {
         SidebarCompany,
-        AddBus,
-        buschart,
+        privatetrip,
+        privatetripchart,
         photo,
         HeaderCompany,
     },
