@@ -19,7 +19,7 @@
                     <hr />
                 </div>
                 <div class="card" id="gameCard">
-                    <div class="card-title">Driver</div>
+                    <div class="card-title">DriveF</div>
                     <div class="card-icon">
                         <i class="material-icons">group</i>
                     </div>
