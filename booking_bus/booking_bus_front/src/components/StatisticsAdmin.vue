@@ -1,35 +1,102 @@
 <template>
-    <div>
-        <div class="container">
-            <div class="portfolio">
-                <div class="card" id="storageCard">
-                    <div class="card-title">User</div>
-                    <div class="card-icon">
-                        <i class="material-icons">person</i>
-                    </div>
-                    <div class="card-data">{{ all_user }}</div>
-                    <hr />
+    <div class="insights">
+        <!-- Start selling -->
+        <div class="sales">
+            <span class="material-icons" aria-label="Sales">trending_up</span>
+            <div class="middle">
+                <div class="left">
+                    <h3>Company</h3>
+                    <h1>\${{ all_company }}</h1>
                 </div>
-                <div class="card" id="loveCard">
-                    <div class="card-title">Company</div>
-                    <div class="card-icon">
-                        <i class="material-icons">apartment</i>
-                    </div>
-                    <div class="card-data">{{ all_company }}</div>
-                    <hr />
-                </div>
-                <div class="card" id="gameCard">
-                    <div class="card-title">DriveF</div>
-                    <div class="card-icon">
-                        <i class="material-icons">group</i>
-                    </div>
-                    <div class="card-data">{{ all_drivers }}</div>
-                    <div class="card-hint"></div>
+                <div class="progress">
+                    <svg>
+                        <circle
+                            class="background-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                        ></circle>
+                        <circle
+                            class="sales-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                            :stroke-dashoffset="salesOffset"
+                        ></circle>
+                    </svg>
+
+                    <div class="number">{{ all_company }}%</div>
                 </div>
             </div>
             <small>Last 24 Hours</small>
         </div>
+        <!-- End selling -->
+
+        <!-- Start expenses -->
+        <div class="expenses">
+            <span class="material-icons" aria-label="Expenses">local_mall</span>
+            <div class="middle">
+                <div class="left">
+                    <h3>User</h3>
+                    <h1>\${{ all_user }}</h1>
+                </div>
+                <div class="progress">
+                    <svg>
+                        <circle
+                            class="background-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                        ></circle>
+                        <circle
+                            class="expenses-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                            :stroke-dashoffset="expensesOffset"
+                        ></circle>
+                    </svg>
+                    <div class="number">{{ all_user }}%</div>
+                </div>
+            </div>
+            <small>Last 24 Hours</small>
+        </div>
+        <!-- End expenses -->
+
+        <!-- Start income -->
+        <div class="income">
+            <span class="material-icons" aria-label="Income"
+                >stacked_line_chart</span
+            >
+            <div class="middle">
+                <div class="left">
+                    <h3>Drivers</h3>
+                    <h1>\${{ all_drivers }}</h1>
+                </div>
+                <div class="progress">
+                    <svg>
+                        <circle
+                            class="background-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                        ></circle>
+                        <circle
+                            class="income-circle"
+                            r="30"
+                            cy="40"
+                            cx="40"
+                            :stroke-dashoffset="incomeOffset"
+                        ></circle>
+                    </svg>
+                    <div class="number">{{ all_drivers }}%</div>
+                </div>
+            </div>
+            <small>Last 24 Hours</small>
+        </div>
+        <!-- End income -->
     </div>
+    <!-- End insights -->
 </template>
 
 <script>
