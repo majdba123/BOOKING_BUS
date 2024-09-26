@@ -164,14 +164,16 @@ class TripTest extends TestCase
         $response = $this->postJson('/api/company/store_trip', [
             'path_id' => 'invalid_path_id',
             'price' => 'invalid_price',
-            'breaks_ids' => ['invalid_break_id'],
             'bus_ids' => [
                 [
                     'bus_id' => 'invalid_bus_id',
-                    'type' => 'invalid_type',
-                    'start_time' => 'invalid_start_time',
-                    'end_time' => 'invalid_end_time',
-                    'date' => 'invalid_date',
+                    'type' => 'invalid',
+                    "from_time_going" => "invalid",
+                    "to_time_going" => "invalid",
+                    "from_time_return" => "invalid",
+                    "to_time_return" => "invalid",
+                    "date_start" => "invalid",
+                    "date_end"=> "invalid",
                 ],
             ],
         ]);
@@ -195,10 +197,13 @@ class TripTest extends TestCase
             'bus_ids' => [
                 [
                     'bus_id' => 'invalid_bus_id',
-                    'type' => 'invalid_type',
-                    'start_time' => 'invalid_start_time',
-                    'end_time' => 'invalid_end_time',
-                    'date' => 'invalid_date',
+                    'type' => 'invalid',
+                    "from_time_going" => "invalid",
+                    "to_time_going" => "invalid",
+                    "from_time_return" => "invalid",
+                    "to_time_return" => "invalid",
+                    "date_start" => "invalid",
+                    "date_end"=> "invalid",
                 ],
             ],
         ];
@@ -223,6 +228,16 @@ class TripTest extends TestCase
             "company_id" => $company->id
         ]);
 
+        $break1 = Breaks::factory()->create([
+            
+            "path_id"  =>$path->id
+        ]);
+
+        $break2 = Breaks::factory()->create([
+            
+            "path_id"  =>$path->id
+        ]);
+
         // Login as the user
         $response = $this->postJson('/api/login', [
             'email' => $user->email,
@@ -234,6 +249,7 @@ class TripTest extends TestCase
         $trip = Trip::factory()->create([
             'path_id' => $path->id,
             'company_id' => $company->id,
+            'status' => "pending",
         ]);
 
         // Create bus trips and breaks trips associated with the trip
@@ -247,26 +263,31 @@ class TripTest extends TestCase
         ]);
         $breakTrip1 = Breaks_Trip::factory()->create([
             'trip_id' => $trip->id,
-            'breaks_id' => Breaks::factory()->create()->id,
+            'breaks_id' =>$break1->id,
         ]);
         $breakTrip2 = Breaks_Trip::factory()->create([
             'trip_id' => $trip->id,
-            'breaks_id' => Breaks::factory()->create()->id,
+            'breaks_id' => $break2->id,
         ]);
 
         // Make the request to delete the trip
         $busTrips = Bus_Trip::where('trip_id',  $trip->id)->get();
         $breakTrips = Breaks_trip::where('trip_id', $trip->id)->get();
 
+
+
         $response = $this->deleteJson('/api/company/delete_trip/' . $trip->id, [], [
             'Authorization' => 'Bearer ' . $token,
         ]);
        // dd($response->json());
+
         $response->assertStatus(200);
+
 
         // Assert that the trip is deleted
         $this->assertDatabaseMissing('trips', [
             'id' => $trip->id,
+            'deleted_at' =>"NULL",
         ]);
 
 
@@ -282,6 +303,7 @@ class TripTest extends TestCase
         foreach ($busTrips as $busTrip) {
                 $this->assertDatabaseMissing('bus__trips', [
                     'id' => $busTrip->id,
+                    'deleted_at' =>"NULL",
 
                 ]);
         }

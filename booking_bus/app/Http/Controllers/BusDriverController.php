@@ -179,7 +179,7 @@ class BusDriverController extends Controller
     {
         $validator = Validator::make([], [
 
-            'driver_id' => 'required|exists:drivers,id',
+            'driver_id' => 'required|exists:drivers,id,deleted_at,NULL',
 
         ]);
 
