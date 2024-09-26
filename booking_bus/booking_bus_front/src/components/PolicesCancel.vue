@@ -804,7 +804,6 @@ export default {
                     }
                 )
                 .then(() => {
-                    this.showCancelForm = false;
                     this.toast.success("Trip cancellation successful!");
                 })
                 .catch((error) => {
