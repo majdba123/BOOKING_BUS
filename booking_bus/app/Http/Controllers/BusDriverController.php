@@ -177,17 +177,6 @@ class BusDriverController extends Controller
 
     public function getFirstTrip()
     {
-
-            'driver_id' => 'required|exists:drivers,id,deleted_at,NULL',
-
-        ]);
-
-
-        if ($validator->fails()) {
-
-            return response()->json(['error' => $validator->messages()], 422);
-
-        }
         $user = Auth::user();
 
         $busDriver = Bus_Driver::where('driver_id', $user->Driver->id)->firstOrFail();
