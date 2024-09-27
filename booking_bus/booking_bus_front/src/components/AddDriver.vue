@@ -103,7 +103,7 @@
                                     v-for="(user, index) in filteredDrivers"
                                     :key="index"
                                 >
-                                    <td>{{ user.id }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email_driver }}</td>
                                     <td>{{ user.Wages }}</td>
@@ -127,7 +127,9 @@
                                                 :key="index"
                                                 :value="bus.id"
                                             >
-                                                {{ bus.number_bus }}
+                                                {{ bus.number_bus }} Status:{{
+                                                    bus.status
+                                                }}
                                             </option>
                                         </select>
                                     </td>
@@ -233,7 +235,6 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
-                                        <th>Wages</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -244,10 +245,9 @@
                                         ) in paginatedDriverStatusData"
                                         :key="index"
                                     >
-                                        <td>{{ index }}</td>
+                                        <td>{{ index + 1 }}</td>
                                         <td>{{ driver.name }}</td>
                                         <td>{{ driver.email_driver }}</td>
-                                        <td>{{ driver.Wages }}</td>
                                         <td>{{ driver.status }}</td>
                                     </tr>
                                 </tbody>
@@ -304,28 +304,6 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="pagination">
-                                <button
-                                    @click="prevPage('bus')"
-                                    :disabled="currentPageBus === 1"
-                                >
-                                    <span class="material-icons"
-                                        >skip_previous</span
-                                    >
-                                </button>
-                                <span
-                                    >Page {{ currentPageBus }} of
-                                    {{ totalPagesBus }}</span
-                                >
-                                <button
-                                    @click="nextPage('bus')"
-                                    :disabled="currentPageBus === totalPagesBus"
-                                >
-                                    <span class="material-icons"
-                                        >skip_next</span
-                                    >
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
