@@ -17,7 +17,7 @@
                         <select
                             id="government"
                             v-model="Idgovernment"
-                            @change="updateMapLocation"
+                            @change="updateMapLocation(Idgovernment)"
                             required
                             class="custom-select"
                         >
@@ -444,6 +444,7 @@ export default {
                 this.tomapLat = selectedGovernment.to_latitude;
                 this.tomapLng = selectedGovernment.to_longitude;
             }
+
             const selectedGovernmet = this.governments.find(
                 (gov) => gov.id === path
             );
@@ -453,6 +454,12 @@ export default {
                 this.tomapLatt = selectedGovernmet.to_latitude;
                 this.tomapLngt = selectedGovernmet.to_longitude;
             }
+            console.log(
+                this.frommapLatt,
+                this.frommapLngt,
+                this.tomapLatt,
+                this.tomapLngt
+            );
         },
 
         resetForm() {

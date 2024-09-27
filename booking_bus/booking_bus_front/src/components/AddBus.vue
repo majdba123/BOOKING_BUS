@@ -850,7 +850,7 @@ export default {
                 .then((response) => {
                     console.log(response);
                     this.toast.success("Insurance added successfully!");
-                    this.AllBus();
+                    this.ALLINC();
                 })
                 .catch((error) => {
                     console.log(error);

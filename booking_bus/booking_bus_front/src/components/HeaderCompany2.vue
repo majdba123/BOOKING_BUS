@@ -71,6 +71,7 @@
 </template>
 
 <script>
+import { useToast } from "vue-toastification";
 import axios from "axios";
 import photo from "@/components/photo.vue";
 import store from "@/store";
@@ -80,6 +81,7 @@ export default {
     components: { photo },
     data() {
         return {
+            toast: useToast(),
             messages: "",
             id: null,
             x: store.state.x,
@@ -135,7 +137,15 @@ export default {
                     console.log("User ID:", this.id);
                 })
                 .catch(() => {
-                    this.toast.error("Error getting user info.");
+                    this.toast.error("Error getting user info.", {
+                        transition: "Vue-Toastification__shake",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
                 });
         },
         toggleProfileMenu() {
