@@ -110,6 +110,7 @@
                                     <td>{{ user.status }}</td>
                                     <td>
                                         <select
+                                            v-if="user.status == 'pending'"
                                             :value="user.selectedBusId || ''"
                                             @change="
                                                 SelectDriver(
@@ -251,30 +252,6 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="pagination">
-                                <button
-                                    @click="prevPage('status')"
-                                    :disabled="currentPageStatus === 1"
-                                >
-                                    <span class="material-icons"
-                                        >skip_previous</span
-                                    >
-                                </button>
-                                <span
-                                    >Page {{ currentPageStatus }} of
-                                    {{ totalPagesStatus }}</span
-                                >
-                                <button
-                                    @click="nextPage('status')"
-                                    :disabled="
-                                        currentPageStatus === totalPagesStatus
-                                    "
-                                >
-                                    <span class="material-icons"
-                                        >skip_next</span
-                                    >
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1279,6 +1256,7 @@ input:focus {
 }
 
 /* Modal styling */
+
 .modal {
     display: flex;
     justify-content: center;
@@ -1291,58 +1269,53 @@ input:focus {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
-    background: var(--clr-white);
+    background-color: var(--clr-color-background);
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
-    height: 50%;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    margin: 10px;
-}
-
-.modal-content::-webkit-scrollbar {
-    display: none;
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
 }
 
 .modal-header,
-.modal-body,
+.modal-body div,
 .modal-footer {
-    margin-bottom: 10px;
-    color: var(--clr-dark);
+    margin-bottom: 15px;
 }
 
 .modal-header {
-    font-size: 1.2rem;
+    color: var(--clr-dark);
+    font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
+}
+
+.modal-body div div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-body div table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body div th,
+.modal-body div td {
+    padding: 12px;
+    text-align: left;
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-}
-.modal-body table {
-    width: 100%;
-    border-collapse: collapse;
-    color: var(--clr-dark);
-    text-align: center;
-}
-
-.modal-body table th,
-.modal-body table td {
-    padding: 8px;
-    text-align: center;
-    border: 1px solid var(--clr-dark);
-    border-left: none;
-    border-right: none;
-    vertical-align: middle;
-}
-
-.modal-body table tbody tr {
-    border-top: 1px solid var(--clr-dark);
 }
 
 .modal-body table thead {
