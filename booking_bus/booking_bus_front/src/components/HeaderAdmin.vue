@@ -221,6 +221,9 @@ export default {
             }
         });
         this.updateDateTime();
+        this.intervalId = setInterval(() => {
+            this.updateDateTime();
+        }, 1000);
         this.fetchProfileInfo();
         this.fetchNotifications(); // Fetch notifications on mount
         if (document.body.classList.contains("dark-theme-variables")) {
@@ -229,6 +232,11 @@ export default {
             themeToggler.querySelectorAll("span").forEach((span) => {
                 span.classList.toggle("active");
             });
+        }
+    },
+    beforeUnmount() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
         }
     },
 };

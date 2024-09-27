@@ -42,6 +42,7 @@ export default {
                 date: "",
                 time: "",
             },
+            intervalId: null,
         };
     },
     computed: {
@@ -61,8 +62,18 @@ export default {
             this.$router.push("/");
         },
     },
+
     mounted() {
         this.updateDateTime();
+
+        this.intervalId = setInterval(() => {
+            this.updateDateTime();
+        }, 1000);
+    },
+    beforeUnmount() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+        }
     },
 };
 </script>

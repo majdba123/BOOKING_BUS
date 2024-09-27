@@ -15,11 +15,12 @@
                 </div>
                 <div v-else>
                     <div
-                        v-if="!privateTrips.length > 0"
+                        v-if="privateTrips.length === 0"
                         class="no-data-message"
                     >
                         No Data Available
                     </div>
+
                     <div v-else>
                         <table>
                             <thead>
@@ -118,9 +119,6 @@
                         <span class="material-icons"> skip_next </span>
                     </button>
                 </div>
-                <div v-else>
-                    <p>No private trips available.</p>
-                </div>
             </div>
         </div>
         <!-- Modal for accepting order -->
@@ -198,6 +196,7 @@ export default {
     methods: {
         fetchPrivateTrips() {
             const token = window.localStorage.getItem("access_token");
+
             axios({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/company/private_trips",
@@ -227,6 +226,8 @@ export default {
                 .then((response) => {
                     this.myOrders = response.data;
                     this.showOrders = true;
+                    this.loading = false;
+
                     this.showForm = false;
                 })
                 .catch((error) => {
