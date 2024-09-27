@@ -50,7 +50,7 @@ class TripController extends Controller
                 // If not, retrieve the trip from the database and cache it
 
                 $trip = Trip::where('id', $trip_id)
-                    ->with(['bus_trip.Pivoit', 'breaks_trip.break',  'path'])
+                    ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
                     ->first();
 
 
@@ -248,7 +248,8 @@ class TripController extends Controller
 
             foreach ($availableBuses as $busId) {
                 $bus = Bus::find($busId['bus_id']);
-                if ($bus
+                if (
+                    $bus
                     // && $bus->status == 'available'
 
                 ) {
@@ -639,8 +640,8 @@ class TripController extends Controller
                 $data = [
                     'trip_id' => $trip->id,
                     'company_name' => $trip->company->user->name,
-                    'from'  => $trip->path->from,
-                    'to'  => $trip->path->to,
+                    'from' => $trip->path->from,
+                    'to' => $trip->path->to,
                     // 'price' => $trip->price,
                     // 'bus_trips' => $busTripsData,
                 ];
@@ -727,8 +728,8 @@ class TripController extends Controller
             $data[] = [
                 'trip_id' => $trip->id,
                 'company_name' => $trip->company->user->name,
-                'from'  => $trip->path->from,
-                'to'  => $trip->path->to,
+                'from' => $trip->path->from,
+                'to' => $trip->path->to,
                 // 'price' => $trip->price,
                 // 'bus_trips' => $busTripsData,
 
@@ -742,7 +743,7 @@ class TripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'trip_id' => 'required|exists:bus__trips,id,deleted_at,NULL',
+            'trip_id' => 'required|exists:bus__trips,id',
             'description' => 'required|string|max:100',
             'reasons' => 'required|array',
             'reasons.*' => 'string|max:50',
