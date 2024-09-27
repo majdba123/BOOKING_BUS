@@ -118,9 +118,6 @@
                         <span class="material-icons"> skip_next </span>
                     </button>
                 </div>
-                <div v-else>
-                    <p>No private trips available.</p>
-                </div>
             </div>
         </div>
         <!-- Modal for accepting order -->
