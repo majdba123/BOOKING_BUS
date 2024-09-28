@@ -77,6 +77,11 @@ class BussofSpsccifTripProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void emptyTicketDetail() {
+    _selectedTicketDetails = [];
+    notifyListeners();
+  }
+
   void calculatePrice(int length, int price) {
     print('the lenght is $length');
     print('the price is $price');
@@ -86,6 +91,7 @@ class BussofSpsccifTripProvider with ChangeNotifier {
   }
 
   void selectSeat(List<String> seat) {
+    // selectedSeat = [];
     selectedSeat = seat;
     notifyListeners();
   }

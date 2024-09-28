@@ -77,7 +77,7 @@ class PrivateTrip {
         },
         Uri.parse(name_domain_server +
             'user/OrderPrivateTripController/$privateTripId'));
-    // print(response.body);
+    print(response.body);
     print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);

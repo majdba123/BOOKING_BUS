@@ -160,11 +160,11 @@ class CancellationRuleController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
         $company_id = Company::where('name_company', $companyName)->get();
-
+        // print($company_id);
         $rules = CancellationRule::where('company_id', $company_id[0]->id)->get();
 
 
-        $rule = $rules->sortBy('hours_before'.'DEC')->map(function ($rule) {
+        $rule = $rules->sortBy('hours_before' . 'DEC')->map(function ($rule) {
             return collect($rule->toArray())
                 ->only(['hours_before', 'discount_percentage', 'description'])
                 ->all();

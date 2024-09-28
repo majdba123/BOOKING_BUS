@@ -67,7 +67,7 @@ class TicketCard extends StatelessWidget {
                         child: Text(
                           '${Rservation.company_name.toUpperCase()}',
                           style: TextStyle(
-                            fontSize: 32,
+                            fontSize: 25,
                           ),
                         ),
                       ),

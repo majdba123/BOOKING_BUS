@@ -161,6 +161,7 @@ class UserProfile {
   Future<List<CancelRule>> canceltionRule(
       String accessToken, String nameCompany) async {
     print('in canceltionRule function');
+    print('the name of the company is : $nameCompany');
 
     final response = await http.get(
       Uri.parse(

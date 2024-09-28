@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(Bus_Trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('price');
             $table->string('type');
-            $table->string('status')->default('padding');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

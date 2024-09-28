@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/Data_Models/company.dart';
+import 'package:mobile_app/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_app/Provider/user/Trip_user_provider.dart';
-import 'package:mobile_app/screens/Dashborad_User/Widget/card_for_add_favorites_comapny.dart';
 import 'package:mobile_app/Colors.dart';
 import 'package:mobile_app/screens/Dashborad_User/Widget/Company_Info.dart';
 
@@ -11,6 +11,17 @@ class AllCompaniesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/mainPageUser',
+              (Route<dynamic> route) => false,
+            );
+          },
+        ),
+        centerTitle: true,
         title: Text(
           'All Companies',
           style: TextStyle(color: Colors.white),
@@ -23,7 +34,12 @@ class AllCompaniesPage extends StatelessWidget {
           if (tripProvider.compaines.isEmpty) {
             return Center(child: CircularProgressIndicator());
           }
-          return _buildCompanyGrid(tripProvider, context);
+          return Stack(
+            children: [
+              backImage(context),
+              _buildCompanyGrid(tripProvider, context),
+            ],
+          );
         },
       ),
     );
@@ -53,8 +69,7 @@ class AllCompaniesPage extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => CompanyInfoPage(
-              companyId: company
-                  .id, // Assuming company.id is the correct field for the ID
+              companyId: company.id,
             ),
           ),
         );

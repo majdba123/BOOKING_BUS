@@ -508,7 +508,7 @@ class ReservationController extends Controller
             $price1 = $bus_trip->trip->pricing->cost;
             $count_seat_of_user = count($request->input('seat'));
             $price = $this->calculatePrice($price1, $count_seat_of_user);
-            $user = auth()->user()->id; // check if work or not to remove the error in code !!!! hamza
+            $user = auth()->user();
 
             if ($user->point < $price) {
                 DB::rollBack();
@@ -545,7 +545,7 @@ class ReservationController extends Controller
                 $bookink->price = $price;
                 $bookink->save();
 
-                $massage = " your booked is done : $bookink ";
+                $massage = " your booked is done see Reservation Bookmark ";
                 event(new PrivateNotification($user_id, $massage));
                 UserNotification::create([
                     'user_id' => Auth::user()->id,

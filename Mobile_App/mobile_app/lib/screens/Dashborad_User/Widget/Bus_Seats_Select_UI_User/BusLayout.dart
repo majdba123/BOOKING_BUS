@@ -21,22 +21,24 @@ class BusLayout extends StatelessWidget {
     final provider =
         Provider.of<BussofSpsccifTripProvider>(context, listen: false);
     int totalSeats = 40;
-    int columns = 5;
-    int rows = totalSeats ~/ (columns - 1); // Adjust rows for the aisle
+    int columnsLeft = 2; // Left of the aisle
+    int columnsRight = 2; // Right of the aisle
+    int totalColumns =
+        columnsLeft + columnsRight; // Total seat columns (excluding aisle)
+    int rows = (totalSeats / totalColumns).ceil();
+    // int columns = 6;
+    // int rows = totalSeats ~/ (columns -1 ); // Adjust rows for the aisle
 
     // Create a 2D list to represent the bus seats layout
     List<List<SeatModel?>> arrangedSeats = List.generate(
       rows,
-      (_) => List.generate(columns, (_) => null),
+      (_) => List.generate(totalColumns, (_) => null),
     );
 
     // Allocate seats, skipping the aisle column (column 2)
     int seatIndex = 0;
     for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
-      for (int columnIndex = 0; columnIndex < columns; columnIndex++) {
-        if (columnIndex == 2) {
-          continue; // Skip the aisle column
-        }
+      for (int columnIndex = 0; columnIndex < totalColumns; columnIndex++) {
         if (seatIndex < seats.length) {
           arrangedSeats[rowIndex][columnIndex] = seats[seatIndex];
           seatIndex++;
@@ -85,27 +87,36 @@ class BusLayout extends StatelessWidget {
           GridView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: totalSeats,
+            itemCount:
+                rows * (totalColumns + 1), // +1 for the aisle in the middle
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: columns,
+              crossAxisCount: totalColumns + 1, // +1 for the aisle
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
               childAspectRatio: 1.0,
             ),
             itemBuilder: (context, index) {
-              int rowIndex = index ~/ columns;
-              int columnIndex = index % columns;
+              int rowIndex = index ~/ (totalColumns + 1);
+              int columnIndex = index % (totalColumns + 1);
 
               // Determine if this position should be an aisle
-              if (columnIndex == 2) {
-                return Container(); // Represents the aisle
+              if (columnIndex == columnsLeft) {
+                return Container(
+                  color: Colors.transparent, // Aisle design
+                  child: Center(
+                    child: Icon(Icons.arrow_downward), // Aisle indicator
+                  ),
+                );
               }
+              int seatColumnIndex =
+                  columnIndex < columnsLeft ? columnIndex : columnIndex - 1;
+              int actualSeatIndex = rowIndex * totalColumns + seatColumnIndex;
+              SeatModel? seat = arrangedSeats[rowIndex][seatColumnIndex];
+              bool isActualSeat = actualSeatIndex < seats.length;
 
-              SeatModel? seat = arrangedSeats[rowIndex][columnIndex];
-
-              bool isActualSeat = seat != null;
               bool isSelected =
                   isActualSeat && selectedSeats.contains(seat!.id);
+              ;
 
               return InkWell(
                 onTap: isActualSeat ? () => onSeatTap(seat!.id) : null,
@@ -139,7 +150,9 @@ class BusLayout extends StatelessWidget {
                   child: Center(
                     child: Text(
                       // isActualSeat ? '${seat!.id}' : '', // Display seat ID
-                      isActualSeat ? '${index + 1}' : '', // Display seat ID
+                      isActualSeat
+                          ? '${actualSeatIndex + 1}'
+                          : '', // Display seat ID
 
                       style: TextStyle(
                         color: isActualSeat ? Colors.white : Colors.grey[600],

@@ -20,10 +20,10 @@ class FavouriteController extends Controller
     {
         $companies = Company::with([
             'user.profile' => function ($query) {
-                $query->select('profiles.*');
+                $query->select('user_id', 'image');
             },
             'user.address' => function ($query) {
-                $query->select('addresses.*');
+                $query->select('user_id', 'city', 'area');
             },
         ])->get();
 
@@ -34,15 +34,16 @@ class FavouriteController extends Controller
         }
 
         $companies = $companies->map(function ($company) {
-            $company->profile = $company->user->profile;
-            $company->address = $company->user->address;
+            $company->image_profile = $company->user->profile->image ?? null;
+            $company->address = $company->user->address ?? [];
+
             unset($company->user);
+
             return $company;
         });
 
         return response()->json($companies);
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -78,12 +79,11 @@ class FavouriteController extends Controller
 
         // Get the authenticated user
         $user = Auth::user();
-        $recentFavourite = $user->favourite->where('company_id', $company_id)-> first();
+        $recentFavourite = $user->favourite->where('company_id', $company_id)->first();
 
         if ($recentFavourite && $recentFavourite->created_at->gt(now()->subMinutes(10))) {
 
             return response()->json(['error' => 'You have already favorited this company recently'], 422);
-
         }
 
         // Create a new Favourite instance
@@ -93,7 +93,7 @@ class FavouriteController extends Controller
         $favourite->user_id = $user->id;
         $favourite->company_id = $company_id;
 
-        $massage = " your  add this company to favourite : $company_id ";
+        $massage = " you add $company_id->name_company to Your favourite company ";
         event(new PrivateNotification($user->id, $massage));
         UserNotification::create([
             'user_id' => $user->id,
@@ -101,7 +101,7 @@ class FavouriteController extends Controller
         ]);
 
         $massage = " some user   add you  to favourite user_id : $user->id ";
-        $co=Company::findOrfail($company_id);
+        $co = Company::findOrfail($company_id);
         event(new PrivateNotification($user->id, $massage));
         UserNotification::create([
             'user_id' =>  $co->user->id,

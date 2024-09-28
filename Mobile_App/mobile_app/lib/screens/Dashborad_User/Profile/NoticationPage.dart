@@ -25,15 +25,17 @@ class NotificationInboxPage extends StatelessWidget {
             icon: Icon(Icons.arrow_back),
             color: Colors.white,
             onPressed: () {
-              if (auth.userType == "user") {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => DashboardUser()),
-                );
-              } else if (auth.userType == "driver") {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => DashboardDriver()),
-                );
-              }
+              Navigator.of(context).pop();
+              // if (auth.userType == "user") {
+              //   Navigator.of(context).pushReplacement(
+              //     MaterialPageRoute(builder: (context) => DashboardUser()),
+              //   );
+              // }
+              //  else if (auth.userType == "driver") {
+              //   Navigator.of(context).pushReplacement(
+              //     MaterialPageRoute(builder: (context) => DashboardDriver()),
+              //   );
+              // }
             },
           ),
           centerTitle: true,
