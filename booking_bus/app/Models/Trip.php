@@ -61,6 +61,7 @@ class Trip extends Model
     {
         return $this->morphTo();
     }
+
     public function getPriceAttribute()
     {
         $pricingModel = $this->pricing_type::find($this->pricing_id);
@@ -68,7 +69,6 @@ class Trip extends Model
         if ($pricingModel) {
             return $pricingModel->cost;
         }
-
         return null;
     }
 }

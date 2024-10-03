@@ -28,7 +28,7 @@ class TripFactory extends Factory
             'company_id' => Company::factory(), // create a company for each trip
             'path_id' => Path::factory(), // create a path for each trip
             'status' => 'pending',
-            'pricing_id'           => $this->faker->randomFloat(2, 50, 1000), // Random price
+            'pricing_id'           => 1, // Random price
             'pricing_type'    => $this->faker->randomElement([
                 FixedPricingModel::class,
                 ProportionalPricingModel::class,

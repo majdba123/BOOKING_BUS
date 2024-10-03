@@ -420,7 +420,7 @@ class ReservationController extends Controller
                 'type' => 'required|in:1,2',
                 'seat' => 'nullable|array',
                 'seat.*' => 'exists:seats,id',
-                'break_id' => 'nullable|exists:pivoits,id,deleted_at,NULL|in:' . implode(',', $pivoit->all())
+                'break_id' => 'nullable|exists:pivoits,id|in:' . implode(',', $pivoit->all())
             ]);
             if ($validator->fails()) {
                 DB::rollBack();

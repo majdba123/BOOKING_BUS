@@ -64,6 +64,10 @@ class TripTest extends TestCase
             'lat_to' => 0.0012,
             'long_to' => 0.0012,    // Assuming you have a factory for Geolocation
             'Distance' => 700,
+            'lat_start' => 0.0015,
+            'long_start' => 0.0018,
+            'lat_end' => 0.0014,
+            'long_end' => 0.0010
 
         ];
         $headers = [
@@ -72,14 +76,15 @@ class TripTest extends TestCase
         $response = $this->postJson('/api/company/path_store', $data1, $headers);
 
         $response->assertStatus(200);
-    //    dd($response);
+      //   dd($response);
         $break1 = Breaks::factory()->create(['path_id' =>'2' ]);
         $break2 = Breaks::factory()->create(['path_id' =>'2' ]);
 
         // Create request data
         $data = [
             'path_id' => 2,
-            'price' => '10.00',
+            'pricing_type' => 'fixed',
+            'cost' => "1987",
             'bus_ids' => [
                 [
                     'bus_id' => $bus1->id,
@@ -106,23 +111,17 @@ class TripTest extends TestCase
 
         // Make the request
         $response = $this->postJson('/api/company/store_trip', $data, $headers);
-
+       // dd($response);
         $response->assertStatus(201);
 
 
         $this->assertDatabaseHas('trips', [
             'path_id' => 2,
             'company_id' => $company->id,
-            'price' => '10.00',
         ]);
+
         $this->assertEquals(1,  Trip::count());
-  /*      foreach ($data['breaks_ids'] as $breakId) {
-            $this->assertDatabaseHas('breaks_trips', [
-                'trip_id' =>$response->json()['id'],
-                'breaks_id' => $breakId,
-            ]);
-        }*/
-        //dd($response->json());
+
         $this->assertEquals(4, Breaks_trip::where('trip_id', $response->json()['id'])->count()); // Check that two break trips were created
 
         foreach ($data['bus_ids'] as $busData) {
@@ -159,7 +158,8 @@ class TripTest extends TestCase
 
         $response = $this->postJson('/api/company/store_trip', [
             'path_id' => 'invalid_path_id',
-            'price' => 'invalid_price',
+            'pricing_type' => 'fixed',
+            'cost' => "1987",
             'bus_ids' => [
                 [
                     'bus_id' => 'invalid_bus_id',
@@ -188,7 +188,8 @@ class TripTest extends TestCase
         // Create request data
         $data = [
             'path_id' => 'invalid_path_id',
-            'price' => 'invalid_price',
+            'pricing_type' => 'fixed',
+            'cost' => "1987",
             'breaks_ids' => ['invalid_break_id'],
             'bus_ids' => [
                 [
@@ -225,12 +226,12 @@ class TripTest extends TestCase
         ]);
 
         $break1 = Breaks::factory()->create([
-            
+
             "path_id"  =>$path->id
         ]);
 
         $break2 = Breaks::factory()->create([
-            
+
             "path_id"  =>$path->id
         ]);
 
@@ -283,7 +284,6 @@ class TripTest extends TestCase
         // Assert that the trip is deleted
         $this->assertDatabaseMissing('trips', [
             'id' => $trip->id,
-            'deleted_at' =>"NULL",
         ]);
 
 
@@ -299,8 +299,6 @@ class TripTest extends TestCase
         foreach ($busTrips as $busTrip) {
                 $this->assertDatabaseMissing('bus__trips', [
                     'id' => $busTrip->id,
-                    'deleted_at' =>"NULL",
-
                 ]);
         }
 
