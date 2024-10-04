@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,10 @@ class AddressFactory extends Factory
      */
     public function definition(): array
     {
+        $companyOwner = User::where('name', 'Company Owner')->first();
+
         return [
-            'user_id' => \App\Models\User::factory(), // Assuming you have a User factory
+            'user_id' => $companyOwner ? $companyOwner->id : User::factory(),  // Link to the "Company Owner"
             'city' => $this->faker->city,
             'area' => $this->faker->streetName,
         ];

@@ -58,11 +58,15 @@ class TripTest extends TestCase
         $data1 = [
             'company_id' => $company->id,  // Assuming you have a factory for Company
             'from' => 'barzeh222',
-            'to' =>'masaken22222',
+            'to' => 'masaken22222',
             'lat_from' => 0.0012,  // Assuming you have a factory for Geolocation
             'long_from' => 0.0012,
             'lat_to' => 0.0012,
-            'long_to' => 0.0012,    // Assuming you have a factory for Geolocation
+            'long_to' => 0.0012,
+            'lat_start' => 0.0012,
+            'long_start' => 0.0012,
+            'lat_end' => 0.0012,
+            'long_end' => 0.0012,   // Assuming you have a factory for Geolocation
             'Distance' => 700,
 
         ];
@@ -72,14 +76,15 @@ class TripTest extends TestCase
         $response = $this->postJson('/api/company/path_store', $data1, $headers);
 
         $response->assertStatus(200);
-    //    dd($response);
-        $break1 = Breaks::factory()->create(['path_id' =>'2' ]);
-        $break2 = Breaks::factory()->create(['path_id' =>'2' ]);
+        //    dd($response);
+        $break1 = Breaks::factory()->create(['path_id' => '2']);
+        $break2 = Breaks::factory()->create(['path_id' => '2']);
 
         // Create request data
         $data = [
             'path_id' => 2,
-            'price' => '10.00',
+            'pricing_type' => 'fixed',
+            'cost' => '10.00',
             'bus_ids' => [
                 [
                     'bus_id' => $bus1->id,
@@ -89,7 +94,7 @@ class TripTest extends TestCase
                     "from_time_return" => "08:00",
                     "to_time_return" => "18:00",
                     "date_start" => "2022-01-10",
-                    "date_end"=> "2022-01-19",
+                    "date_end" => "2022-01-19",
                 ],
                 [
                     'bus_id' => $bus2->id,
@@ -99,24 +104,30 @@ class TripTest extends TestCase
                     "from_time_return" => "08:00",
                     "to_time_return" => "18:00",
                     "date_start" => "2022-01-10",
-                    "date_end"=> "2022-01-19",
+                    "date_end" => "2022-01-19",
                 ],
             ],
         ];
 
         // Make the request
         $response = $this->postJson('/api/company/store_trip', $data, $headers);
+        //    dd($response);
 
         $response->assertStatus(201);
-
+        $tripData = $response->json();
+        // dd($tripData);
+        $pricingType = $tripData['pricing_type'];
+        $pricingId = $tripData['pricing_id'];
 
         $this->assertDatabaseHas('trips', [
             'path_id' => 2,
             'company_id' => $company->id,
-            'price' => '10.00',
+            'pricing_type' => $pricingType,
+            'pricing_id' => $pricingId,
+            // 'cost' => '10.00',
         ]);
         $this->assertEquals(1,  Trip::count());
-  /*      foreach ($data['breaks_ids'] as $breakId) {
+        /*      foreach ($data['breaks_ids'] as $breakId) {
             $this->assertDatabaseHas('breaks_trips', [
                 'trip_id' =>$response->json()['id'],
                 'breaks_id' => $breakId,
@@ -127,7 +138,7 @@ class TripTest extends TestCase
 
         foreach ($data['bus_ids'] as $busData) {
             $this->assertDatabaseHas('bus__trips', [
-                'trip_id' =>$response->json()['id'],
+                'trip_id' => $response->json()['id'],
                 'from_time_going' => $busData['from_time_going'],
                 'to_time_going' => $busData['to_time_going'],
                 'from_time_return' => $busData['from_time_return'],
@@ -160,14 +171,16 @@ class TripTest extends TestCase
         $response = $this->postJson('/api/company/store_trip', [
             'path_id' => 'invalid_path_id',
             'price' => 'invalid_price',
-            'breaks_ids' => ['invalid_break_id'],
             'bus_ids' => [
                 [
                     'bus_id' => 'invalid_bus_id',
-                    'type' => 'invalid_type',
-                    'start_time' => 'invalid_start_time',
-                    'end_time' => 'invalid_end_time',
-                    'date' => 'invalid_date',
+                    'type' => 'invalid',
+                    "from_time_going" => "invalid",
+                    "to_time_going" => "invalid",
+                    "from_time_return" => "invalid",
+                    "to_time_return" => "invalid",
+                    "date_start" => "invalid",
+                    "date_end" => "invalid",
                 ],
             ],
         ]);
@@ -191,10 +204,13 @@ class TripTest extends TestCase
             'bus_ids' => [
                 [
                     'bus_id' => 'invalid_bus_id',
-                    'type' => 'invalid_type',
-                    'start_time' => 'invalid_start_time',
-                    'end_time' => 'invalid_end_time',
-                    'date' => 'invalid_date',
+                    'type' => 'invalid',
+                    "from_time_going" => "invalid",
+                    "to_time_going" => "invalid",
+                    "from_time_return" => "invalid",
+                    "to_time_return" => "invalid",
+                    "date_start" => "invalid",
+                    "date_end" => "invalid",
                 ],
             ],
         ];
@@ -219,6 +235,16 @@ class TripTest extends TestCase
             "company_id" => $company->id
         ]);
 
+        $break1 = Breaks::factory()->create([
+
+            "path_id"  => $path->id
+        ]);
+
+        $break2 = Breaks::factory()->create([
+
+            "path_id"  => $path->id
+        ]);
+
         // Login as the user
         $response = $this->postJson('/api/login', [
             'email' => $user->email,
@@ -230,6 +256,7 @@ class TripTest extends TestCase
         $trip = Trip::factory()->create([
             'path_id' => $path->id,
             'company_id' => $company->id,
+            'status' => "pending",
         ]);
 
         // Create bus trips and breaks trips associated with the trip
@@ -243,26 +270,31 @@ class TripTest extends TestCase
         ]);
         $breakTrip1 = Breaks_Trip::factory()->create([
             'trip_id' => $trip->id,
-            'breaks_id' => Breaks::factory()->create()->id,
+            'breaks_id' => $break1->id,
         ]);
         $breakTrip2 = Breaks_Trip::factory()->create([
             'trip_id' => $trip->id,
-            'breaks_id' => Breaks::factory()->create()->id,
+            'breaks_id' => $break2->id,
         ]);
 
         // Make the request to delete the trip
         $busTrips = Bus_Trip::where('trip_id',  $trip->id)->get();
         $breakTrips = Breaks_trip::where('trip_id', $trip->id)->get();
 
+
+
         $response = $this->deleteJson('/api/company/delete_trip/' . $trip->id, [], [
             'Authorization' => 'Bearer ' . $token,
         ]);
-       // dd($response->json());
+        // dd($response->json());
+
         $response->assertStatus(200);
+
 
         // Assert that the trip is deleted
         $this->assertDatabaseMissing('trips', [
             'id' => $trip->id,
+            'deleted_at' => "NULL",
         ]);
 
 
@@ -276,10 +308,11 @@ class TripTest extends TestCase
         }
 
         foreach ($busTrips as $busTrip) {
-                $this->assertDatabaseMissing('bus__trips', [
-                    'id' => $busTrip->id,
+            $this->assertDatabaseMissing('bus__trips', [
+                'id' => $busTrip->id,
+                'deleted_at' => "NULL",
 
-                ]);
+            ]);
         }
 
 
@@ -296,4 +329,3 @@ class TripTest extends TestCase
         }
     }
 }
-

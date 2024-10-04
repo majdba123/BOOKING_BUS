@@ -19,6 +19,7 @@ class Trip extends Model
         'pricing_type',
         // 'pricing',
     ];
+
     protected $fillable = [
         'company_id',
         'path_id',

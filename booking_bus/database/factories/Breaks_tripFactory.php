@@ -23,8 +23,8 @@ class Breaks_tripFactory extends Factory
     public function definition()
     {
         return [
-            'breaks_id' => Breaks::factory(), // create a break for each breaks trip
-            'trip_id' => Trip::factory(), // create a trip for each breaks trip
+            'breaks_id' => Breaks::factory(),
+            'trip_id' => Trip::factory(),
         ];
     }
 }

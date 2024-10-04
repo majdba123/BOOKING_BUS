@@ -29,9 +29,8 @@ class UserFactory extends Factory
             'name' => $this->faker->firstName . ' ' . $this->faker->lastName,
             'email' => $this->faker->unique()->email,
             'point' => $this->faker->randomFloat(100.00),
-
-            'password' => Hash::make('password'), // generate a hashed password
-            'type' => $this->faker->randomElement(['0', '1']), // assuming 0 and 1 are the possible values
+            'password' => Hash::make('password'),
+            'type' => $this->faker->randomElement(['0', '1']),
         ];
     }
 
