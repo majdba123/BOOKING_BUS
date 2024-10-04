@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Bus;
 use App\Models\Pivoit;
 use App\Models\Seat;
+use App\Models\Trip;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -36,6 +37,9 @@ class ResevationTest extends TestCase
             'bus_id' => $bus1->id,
             'status' => 0
         ]);
+
+
+
         $busTrip = Bus_Trip::factory()->create([
             'bus_id' => $bus1->id
         ]);
@@ -62,8 +66,8 @@ class ResevationTest extends TestCase
         // Make the request
         $response = $this->postJson('/api/user/store_reservation/' . $busTrip->id, $data, $headers);
         dd($response);
-
         $response->assertStatus(200);
+
         $this->assertDatabaseHas('reservations', [
             'user_id' => $user->id,
             'bus__trip_id' => $busTrip->id,

@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('maintenance_costs', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->decimal('cost', 10, 2);
             $table->foreignIdFor(Bus::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->date('maintenance_date');

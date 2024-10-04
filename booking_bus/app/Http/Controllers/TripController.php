@@ -285,6 +285,7 @@ class TripController extends Controller
 
             $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->find($trip->id);
             $trips1->price = $trips1->pricing ? $trips1->pricing->cost : null;
+
             $key = 'trip_' . $trips1->id;
             Cache::put($key, $trips1, now()->addMinutes(30));
 
@@ -522,7 +523,7 @@ class TripController extends Controller
                         'message' => 'bus has reservation ',
                     ]);
                 }
-                if ($bus_trip->event != 'stopped') {
+                if ($bus_trip->event == 'stopped') {
                     if ($bus) {
                         $bus->status = 'available';
                         $bus->save();
@@ -679,10 +680,10 @@ class TripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'trip_id' => 'required',
-            'description' => 'required',
-            // 'reasons' => 'required|array',
-            // 'reasons.*' => 'string|max:50',
+            'trip_id' => 'required|exists:bus__trips,id,deleted_at,NULL',
+            'description' => 'required|string|max:100',
+            'reasons' => 'required|array',
+            'reasons.*' => 'string|max:50',
             'rate' => 'numeric|min:0|max:100',
             'satisfaction_rate_description' => 'string|max:255'
         ]);

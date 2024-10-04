@@ -230,7 +230,13 @@ class BusController extends Controller
             $pendingBusDrivers->status = 'cancelled';
             $pendingBusDrivers->save();
             $driver = $pendingBusDrivers->driver;
-            $driver->status = 'available';
+            if($pendingBusDrivers->bus->status == "completed")
+            {
+                return response()->json([
+                    'message' => 'bus completed can not ',
+                ]);
+            }
+            $driver->status = 'pending';
             $driver->save();
             $bus->delete();
         } else {

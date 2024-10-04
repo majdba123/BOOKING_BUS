@@ -16,6 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('Brand');
+            $table->softDeletes();
             $table->char('number_bus', 6)->unique();
             $table->integer('number_passenger')->default(0);
             $table->string('status')->default('pending');
@@ -24,7 +25,6 @@ return new class extends Migration
             $table->integer('lifespan_years');
             $table->integer('bus_consumption');
             $table->integer('fuel_consumption');
-            $table->softDeletes();
             $table->timestamps();
         });
     }

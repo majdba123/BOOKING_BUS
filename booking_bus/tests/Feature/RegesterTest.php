@@ -22,15 +22,13 @@ class RegesterTest extends TestCase
             'password' => 'password123',
         ]);
         $response->assertStatus(200);
-        $response->assertJson(["message" => "User Created "]);
-        //  dd($response);
-        // $this->assertCount(1, User::all());
-        // dd(User::count());
-
-        $this->assertEquals(1,  User::count());
-        $name = User::where('name', 'John Doe')->first();
-        dd($name->name);
-        $this->assertEquals('John Doe', $name->name);
+        $response->assertJson([ "message" => "User Created "]);
+      //  dd($response);
+       // $this->assertCount(1, User::all());
+        $this->assertEquals(3,  User::count());
+        $name = User::where('name' ,'John Doe' )->first();
+        //dd($name->name);
+        $this->assertEquals('John Doe', $name->name  );
 
         $this->assertEquals('johndoe2@example.com',  $name->email);
     }

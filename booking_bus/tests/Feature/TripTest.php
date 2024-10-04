@@ -68,6 +68,10 @@ class TripTest extends TestCase
             'lat_end' => 0.0012,
             'long_end' => 0.0012,   // Assuming you have a factory for Geolocation
             'Distance' => 700,
+            'lat_start' => 0.0015,
+            'long_start' => 0.0018,
+            'lat_end' => 0.0014,
+            'long_end' => 0.0010
 
         ];
         $headers = [
@@ -76,9 +80,9 @@ class TripTest extends TestCase
         $response = $this->postJson('/api/company/path_store', $data1, $headers);
 
         $response->assertStatus(200);
-        //    dd($response);
-        $break1 = Breaks::factory()->create(['path_id' => '2']);
-        $break2 = Breaks::factory()->create(['path_id' => '2']);
+      //   dd($response);
+        $break1 = Breaks::factory()->create(['path_id' =>'2' ]);
+        $break2 = Breaks::factory()->create(['path_id' =>'2' ]);
 
         // Create request data
         $data = [
@@ -126,6 +130,7 @@ class TripTest extends TestCase
             'pricing_id' => $pricingId,
             // 'cost' => '10.00',
         ]);
+
         $this->assertEquals(1,  Trip::count());
         /*      foreach ($data['breaks_ids'] as $breakId) {
             $this->assertDatabaseHas('breaks_trips', [
@@ -170,7 +175,8 @@ class TripTest extends TestCase
 
         $response = $this->postJson('/api/company/store_trip', [
             'path_id' => 'invalid_path_id',
-            'price' => 'invalid_price',
+            'pricing_type' => 'fixed',
+            'cost' => "1987",
             'bus_ids' => [
                 [
                     'bus_id' => 'invalid_bus_id',
@@ -199,7 +205,8 @@ class TripTest extends TestCase
         // Create request data
         $data = [
             'path_id' => 'invalid_path_id',
-            'price' => 'invalid_price',
+            'pricing_type' => 'fixed',
+            'cost' => "1987",
             'breaks_ids' => ['invalid_break_id'],
             'bus_ids' => [
                 [
@@ -257,16 +264,19 @@ class TripTest extends TestCase
             'path_id' => $path->id,
             'company_id' => $company->id,
             'status' => "pending",
+            'status' => "pending",
         ]);
 
         // Create bus trips and breaks trips associated with the trip
         $busTrip1 = Bus_Trip::factory()->create([
             'trip_id' => $trip->id,
             'bus_id' => Bus::factory()->create(['company_id' => $company->id])->id,
+            'event'  => 'stopped'
         ]);
         $busTrip2 = Bus_Trip::factory()->create([
             'trip_id' => $trip->id,
             'bus_id' => Bus::factory()->create(['company_id' => $company->id])->id,
+            'event'  => 'stopped'
         ]);
         $breakTrip1 = Breaks_Trip::factory()->create([
             'trip_id' => $trip->id,
@@ -275,11 +285,14 @@ class TripTest extends TestCase
         $breakTrip2 = Breaks_Trip::factory()->create([
             'trip_id' => $trip->id,
             'breaks_id' => $break2->id,
+            'breaks_id' => $break2->id,
         ]);
 
         // Make the request to delete the trip
         $busTrips = Bus_Trip::where('trip_id',  $trip->id)->get();
         $breakTrips = Breaks_trip::where('trip_id', $trip->id)->get();
+
+
 
 
 
@@ -318,6 +331,7 @@ class TripTest extends TestCase
 
         // Assert that the buses are updated to available status
         $buses = Bus::whereIn('id', [$busTrip1->bus_id, $busTrip2->bus_id])->get();
+       // dd($buses);
         foreach ($buses as $bus) {
             $this->assertEquals('available', $bus->status);
         }

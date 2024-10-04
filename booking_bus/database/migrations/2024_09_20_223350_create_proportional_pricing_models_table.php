@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('proportional_pricing_models', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->decimal('RatePerKm', 8, 2);
             $table->decimal('cost', 8, 2);
             $table->timestamps();

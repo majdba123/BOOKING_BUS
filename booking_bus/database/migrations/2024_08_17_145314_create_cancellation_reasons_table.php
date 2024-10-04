@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('cancellation_reasons', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->foreignId('canceled_trip_id')->constrained('canceled_trips')->onDelete('cascade');
             $table->string('reason');
             $table->timestamps();

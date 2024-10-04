@@ -177,7 +177,6 @@ class BusDriverController extends Controller
 
     public function getFirstTrip()
     {
-
         $user = Auth::user();
 
         $busDriver = Bus_Driver::where('driver_id', $user->Driver->id)->firstOrFail();

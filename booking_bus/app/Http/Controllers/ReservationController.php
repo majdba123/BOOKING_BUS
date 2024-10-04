@@ -505,7 +505,7 @@ class ReservationController extends Controller
 
 
             $user_id = Auth::user()->id;
-            $price1 = $bus_trip->trip->pricing->cost;
+            $price1 = $bus_trip->trip->pricing->cost ?? 1;
             $count_seat_of_user = count($request->input('seat'));
             $price = $this->calculatePrice($price1, $count_seat_of_user);
             $user = auth()->user();

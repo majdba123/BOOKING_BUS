@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('satisfaction_rates', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('rate', 5, 2);
             $table->text('description');

@@ -67,7 +67,7 @@ class FavouriteController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'company_id' => 'required|exists:companies,id',
+            'company_id' => 'required|exists:companies,id,deleted_at,NULL',
         ]);
 
         if ($validator->fails()) {
@@ -175,7 +175,7 @@ class FavouriteController extends Controller
     public function destroy(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'company_id' => 'required|exists:companies,id',
+            'company_id' => 'required|exists:companies,id,deleted_at,NULL',
         ]);
 
         if ($validator->fails()) {
