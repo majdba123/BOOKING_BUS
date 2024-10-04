@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('rate__drivers', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->softDeletes();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Driver::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('rating');

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('insurance_costs', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->foreignIdFor(Bus::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('insurance_cost',);
             $table->string('insurance_date', 4);

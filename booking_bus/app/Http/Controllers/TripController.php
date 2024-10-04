@@ -522,7 +522,7 @@ class TripController extends Controller
                         'message' => 'bus has reservation ',
                     ]);
                 }
-                if ($bus_trip->event != 'stopped') {
+                if ($bus_trip->event == 'stopped') {
                     if ($bus) {
                         $bus->status = 'available';
                         $bus->save();

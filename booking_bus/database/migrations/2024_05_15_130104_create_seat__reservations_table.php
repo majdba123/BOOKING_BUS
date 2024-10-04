@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('seat__reservations', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->softDeletes();
             $table->foreignIdFor(Seat::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Reservation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('status')->default('padding');

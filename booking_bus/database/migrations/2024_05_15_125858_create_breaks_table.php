@@ -16,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('breaks', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->foreignIdFor(Path::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
             $table->foreignIdFor(Geolocation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
@@ -23,7 +24,7 @@ return new class extends Migration
         });
         DB::table('breaks')->insert([
             [
-               
+
                 'path_id' => 1,
                 'name' => 'start',
                 'geolocation_id' => 1,
@@ -32,7 +33,7 @@ return new class extends Migration
 
             ],
             [
-               
+
                 'path_id' => 1,
                 'name' => 'end',
                 'geolocation_id' => 1,

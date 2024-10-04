@@ -253,10 +253,12 @@ class TripTest extends TestCase
         $busTrip1 = Bus_Trip::factory()->create([
             'trip_id' => $trip->id,
             'bus_id' => Bus::factory()->create(['company_id' => $company->id])->id,
+            'event'  => 'stopped'
         ]);
         $busTrip2 = Bus_Trip::factory()->create([
             'trip_id' => $trip->id,
             'bus_id' => Bus::factory()->create(['company_id' => $company->id])->id,
+            'event'  => 'stopped'
         ]);
         $breakTrip1 = Breaks_Trip::factory()->create([
             'trip_id' => $trip->id,
@@ -284,6 +286,7 @@ class TripTest extends TestCase
         // Assert that the trip is deleted
         $this->assertDatabaseMissing('trips', [
             'id' => $trip->id,
+            'deleted_at' =>"NULL",
         ]);
 
 
@@ -299,12 +302,15 @@ class TripTest extends TestCase
         foreach ($busTrips as $busTrip) {
                 $this->assertDatabaseMissing('bus__trips', [
                     'id' => $busTrip->id,
+                    'deleted_at' =>"NULL",
+
                 ]);
         }
 
 
         // Assert that the buses are updated to available status
         $buses = Bus::whereIn('id', [$busTrip1->bus_id, $busTrip2->bus_id])->get();
+       // dd($buses);
         foreach ($buses as $bus) {
             $this->assertEquals('available', $bus->status);
         }

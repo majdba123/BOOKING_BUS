@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
@@ -21,8 +22,13 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    use SoftDeletes;
+    protected $dates = [
+        'deleted_at',
+    ];
     protected $keyType = 'string'; // Set the key type to UUID
     public $incrementing = false; // Disable auto-incrementing
+
 
     public static function boot() {
         parent::boot();

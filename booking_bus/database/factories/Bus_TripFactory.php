@@ -33,9 +33,8 @@ class Bus_TripFactory extends Factory
             'from_time_return' => $this->faker->time,
             'date_start' => $this->faker->date,
             'date_end' => $this->faker->date,
-
             'type' => $this->faker->randomElement(['all', 'going']),
-            'event' => $this->faker->word,
+            'event' => 'stopped',
         ];
     }
 }

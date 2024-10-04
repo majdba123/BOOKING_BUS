@@ -24,9 +24,10 @@ return new class extends Migration
             $table->unsignedBigInteger('to_location');
             $table->foreign('to_location')->references('id')->on('geolocations')->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('Distance');
+            $table->softDeletes();
             $table->timestamps();
         });
-        
+
         $company = Company::factory()->create();
         $fromLocation = Geolocation::factory()->create();
         $toLocation = Geolocation::factory()->create();

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('canceled_trips', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->foreignId('trip_id')->constrained('bus__trips')->onDelete('cascade');
             $table->text('description');
             $table->timestamps();

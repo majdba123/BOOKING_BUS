@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('fixed_pricing_models', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->decimal('cost', 8, 2);
             $table->timestamps();
         });

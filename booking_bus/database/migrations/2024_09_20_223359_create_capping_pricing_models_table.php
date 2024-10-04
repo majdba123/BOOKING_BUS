@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('capping_pricing_models', function (Blueprint $table) {
             $table->id();
             $table->integer('number_of_station');
+            $table->softDeletes();
             $table->decimal('Rate_of_Km', 8, 2);
             $table->decimal('max_price_for_Km', 8, 2);
             $table->decimal('cost', 8, 2);

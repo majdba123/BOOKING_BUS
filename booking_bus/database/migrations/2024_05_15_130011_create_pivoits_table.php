@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(Bus_Trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Breaks_trip::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('status')->default('pending');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

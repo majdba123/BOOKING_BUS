@@ -38,14 +38,12 @@ class ResevationTest extends TestCase
             'status' => 0
         ]);
 
-        $trip =Trip::factory()->create([
 
-        ]);
 
         $busTrip = Bus_Trip::factory()->create([
-            'trip_id' => $trip->id,
             'bus_id' => $bus1->id
         ]);
+
         $pivoit = Pivoit::factory()->create(['bus__trip_id' => $busTrip->id]);
        // dd($busTrip->Pivoit);
         // Login as the user
@@ -67,7 +65,7 @@ class ResevationTest extends TestCase
 
         // Make the request
         $response = $this->postJson('/api/user/store_reservation/' . $busTrip->id, $data, $headers);
-       // dd($response);
+        dd($response);
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('reservations', [

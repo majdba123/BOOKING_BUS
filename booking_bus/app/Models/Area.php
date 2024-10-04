@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\Geolocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +12,10 @@ use Illuminate\Support\Str;
 class Area extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    protected $dates = [
+        'deleted_at',
+    ];
     protected $keyType = 'string'; // Set the key type to UUID
     public $incrementing = false; // Disable auto-incrementing
 

@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Trip extends Model
 {
     use HasFactory;
+
     // use SoftDeletes;
+    use SoftDeletes;
     protected $dates = [
-        'deleted_at'
+        'deleted_at',
     ];
     protected $hidden = [
         'pricing_id',

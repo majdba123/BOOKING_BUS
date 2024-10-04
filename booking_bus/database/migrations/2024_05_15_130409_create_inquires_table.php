@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('inquires', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->softDeletes();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('email');
             $table->string('quastion');
