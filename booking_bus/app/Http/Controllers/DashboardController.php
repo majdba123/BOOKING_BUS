@@ -24,9 +24,13 @@ class DashboardController extends Controller
         $company = Auth::user()->Company;
         $reservations = [];
 
-        foreach ($company->trip as $trip1) {
+        $trips = $company->trip()->latest()->paginate(10);
+
+        foreach ($trips as $trip1) {
             foreach ($trip1->bus_trip as $busTrip) {
-                foreach ($busTrip->Reservation as $reservation) {
+                $busTripReservations = $busTrip->Reservation()->latest()->paginate(10);
+
+                foreach ($busTripReservations as $reservation) {
                     $seats = [];
                     foreach ($reservation->seat_reservation as $seatReservation) {
                         $seats[] = [
@@ -50,20 +54,43 @@ class DashboardController extends Controller
                     ];
                     $reservations[] = $customReservation;
                 }
+
+                return response()->json([
+                    'data' => $reservations,
+                    'pagination' => [
+                        'total' => $busTripReservations->total(),
+                        'per_page' => $busTripReservations->perPage(),
+                        'current_page' => $busTripReservations->currentPage(),
+                        'last_page' => $busTripReservations->lastPage(),
+                        'from' => $busTripReservations->firstItem(),
+                        'to' => $busTripReservations->lastItem(),
+                    ],
+                ]);
             }
         }
-        return response()->json($reservations);
     }
 
     public function all_reservation_by_status(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
+
         $status = $request->input('status');
         $company = Auth::user()->Company;
         $reservations = [];
 
-        foreach ($company->trip as $trip1) {
+        $trips = $company->trip()->latest()->get();
+
+        foreach ($trips as $trip1) {
             foreach ($trip1->bus_trip as $busTrip) {
-                foreach ($busTrip->Reservation as $reservation) {
+                $busTripReservations = $busTrip->Reservation()->latest()->get();
+
+                foreach ($busTripReservations as $reservation) {
                     if (str_contains($reservation->status, $status)) {
                         $customReservation = [
                             'id' => $reservation->id,
@@ -81,7 +108,20 @@ class DashboardController extends Controller
                 }
             }
         }
-        return response()->json($reservations);
+
+        $paginatedReservations = collect($reservations)->paginate(10);
+
+        return response()->json([
+            'data' => $paginatedReservations->items(),
+            'pagination' => [
+                'total' => $paginatedReservations->total(),
+                'per_page' => $paginatedReservations->perPage(),
+                'current_page' => $paginatedReservations->currentPage(),
+                'last_page' => $paginatedReservations->lastPage(),
+                'from' => $paginatedReservations->firstItem(),
+                'to' => $paginatedReservations->lastItem(),
+            ],
+        ]);
     }
 
     public function all_reservation_by_bus_trip($bus_trip_id)
@@ -92,7 +132,8 @@ class DashboardController extends Controller
             ->whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company_id) {
                 $query->where('id', $company_id->id);
             })
-            ->get();
+            ->latest()
+            ->paginate(10);
 
         $customReservations = [];
         foreach ($reservations as $reservation) {
@@ -119,7 +160,17 @@ class DashboardController extends Controller
             $customReservations[] = $customReservation;
         }
 
-        return response()->json($customReservations);
+        return response()->json([
+            'data' => $customReservations,
+            'pagination' => [
+                'total' => $reservations->total(),
+                'per_page' => $reservations->perPage(),
+                'current_page' => $reservations->currentPage(),
+                'last_page' => $reservations->lastPage(),
+                'from' => $reservations->firstItem(),
+                'to' => $reservations->lastItem(),
+            ],
+        ]);
     }
 
     public function reser_by_break($pivoit_id)

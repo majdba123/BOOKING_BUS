@@ -567,7 +567,8 @@ class TripController extends Controller
         // Retrieve all pending trips with necessary relationships in one query
         $pendingTrips = Trip::where('status', 'pending')
             ->with(['path', 'company.user', 'pricing']) // Eager load necessary relationships
-            ->get(); // Get all matching trips at once
+            ->latest() // Retrieve the latest records
+            ->paginate(10); // Paginate the results
 
         foreach ($pendingTrips as $trip) {
             $key = 'trip_' . $trip->id; // Create a unique cache key for each trip
@@ -593,7 +594,17 @@ class TripController extends Controller
             $trips[] = $data; // Collect data for response
         }
 
-        return response()->json($trips);
+        return response()->json([
+            'data' => $trips,
+            'pagination' => [
+                'total' => $pendingTrips->total(),
+                'per_page' => $pendingTrips->perPage(),
+                'current_page' => $pendingTrips->currentPage(),
+                'last_page' => $pendingTrips->lastPage(),
+                'from' => $pendingTrips->firstItem(),
+                'to' => $pendingTrips->lastItem(),
+            ],
+        ]);
     }
 
 
