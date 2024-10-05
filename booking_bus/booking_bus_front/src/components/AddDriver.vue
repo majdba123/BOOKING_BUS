@@ -389,6 +389,13 @@ export default {
     name: "AddDriver",
     data() {
         return {
+            memoryUsed: null,
+            frameRate: 0,
+            lastTimestamp: 0,
+            frameCount: 0,
+            measuring: false,
+            intervalId: null,
+            data: null,
             wages: "",
             loading: true,
             loading1: false,
@@ -424,6 +431,7 @@ export default {
         };
     },
     mounted() {
+        // this.fetch();
         this.AllDriver();
         this.fetchBus();
         this.isDarkMode = localStorage.getItem("theme") === "dark";
@@ -482,11 +490,10 @@ export default {
                     this.toast.success("Driver updated successfully!");
                     this.showEditModal = false;
                 })
-                .catch((error) => {
-                    console.log(this.editedDriver);
+                .catch(() => {
+                    // console.log(this.editedDriver);
 
                     this.toast.error("Error updating Driver.");
-                    console.error(error);
                 });
         },
 
@@ -523,7 +530,6 @@ export default {
 
                     if (this.password.length <= 8)
                         this.toast.error(error.response.data.error.password[0]);
-                    console.log(error);
                     this.toast.error(error.response.data.error.email[0]);
                 });
         },
@@ -545,7 +551,6 @@ export default {
                 })
                 .catch((error) => {
                     this.toast.error(error.response.data.error);
-                    console.error(error);
                 });
         },
 
@@ -570,9 +575,8 @@ export default {
                     });
                     this.loading = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting drivers.");
-                    console.error(error);
                 });
             this.loading = true;
         },
@@ -588,9 +592,8 @@ export default {
                     this.toast.success("Driver deleted successfully!");
                     this.AllDriver();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error deleting driver.");
-                    console.error(error);
                 });
         },
         fetchBus() {
@@ -603,9 +606,8 @@ export default {
                 .then((response) => {
                     this.Bus = response.data;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
         },
         SelectDriver(event, userId) {
@@ -623,7 +625,6 @@ export default {
                 })
                 .catch((error) => {
                     this.toast.error(error.response.data.error);
-                    console.error("Error for Bus ID:", busId, error);
                 });
         },
 
@@ -638,16 +639,19 @@ export default {
                     this.driverStatusData = response.data;
                     this.loading1 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching driver status");
-                    console.error(error);
                 });
             this.loading1 = true;
         },
         fetchAllDriverWithBus() {
             this.showDriverWithBusModal = true;
+            this.loading2 = true;
+            const memoryBefore = performance.memory.usedJSHeapSize;
 
             const access_token = window.localStorage.getItem("access_token");
+            // const startTime = performance.now(); // بدء قياس الوقت
+
             axios({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/company/all_driver_with_bus",
@@ -656,13 +660,67 @@ export default {
                 .then((response) => {
                     this.driverWithBusData = response.data;
                     this.loading2 = false;
+
+                    // const endTime = performance.now();
+                    // const duration = (endTime - startTime).toFixed(2);
+
+                    // console.log("Fetch Time:", duration / 1000, "S");
+                    // console.log(
+                    //     "Frames during fetch:",
+                    //     Math.round(duration / (1000 / 60))
+                    // );
+                    const memoryAfter = performance.memory.usedJSHeapSize;
+                    this.memoryUsed = (
+                        (memoryAfter - memoryBefore) /
+                        1024 /
+                        1024
+                    ).toFixed(2);
+                    // console.log("Memory Usage:", this.memoryUsed, "MB");
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching drivers with bus.");
-                    console.error(error);
+                    this.loading2 = false;
                 });
-            this.loading2 = true;
         },
+
+        // fetch() {
+        //     this.loading2 = true;
+        //     const memoryBefore = performance.memory.usedJSHeapSize;
+
+        //     const access_token = window.localStorage.getItem("access_token");
+        //     const startTime = performance.now(); // بدء قياس الوقت
+
+        //     axios({
+        //         method: "get",
+        //         url: "http://127.0.0.1:8000/api/company/all_driver_with_bus",
+        //         headers: { Authorization: `Bearer ${access_token}` },
+        //     })
+        //         .then((response) => {
+        //             this.driverWithBusData = response.data;
+        //             this.loading2 = false;
+
+        //             const endTime = performance.now();
+        //             const duration = (endTime - startTime).toFixed(2);
+
+        //             console.log("Fetch Time:", duration / 1000, "ms"); // عرض الوقت المستغرق
+        //             console.log(
+        //                 "Frames during fetch:",
+        //                 Math.round(duration / (1000 / 60))
+        //             );
+        //             const memoryAfter = performance.memory.usedJSHeapSize;
+        //             this.memoryUsed = (
+        //                 (memoryAfter - memoryBefore) /
+        //                 1024 /
+        //                 1024
+        //             ).toFixed(2);
+        //             console.log("Memory Usage:", this.memoryUsed, "MB");
+        //         })
+        //         .catch((error) => {
+        //             window.alert("Error fetching drivers with bus.");
+        //             console.error(error);
+        //             this.loading2 = false;
+        //         });
+        // },
         toggleTheme() {
             this.isDarkMode = !this.isDarkMode;
             document.body.classList.toggle(

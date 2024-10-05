@@ -15,7 +15,7 @@
                     <div class="card-icon">
                         <i class="material-icons">group</i>
                     </div>
-                    <div class="card-data">{{ all_user }}</div>
+                    <div class="card-data">{{ all_drivers }}</div>
                     <hr />
                 </div>
                 <div class="card" id="gameCard">
@@ -23,7 +23,7 @@
                     <div class="card-icon">
                         <i class="material-icons">groups</i>
                     </div>
-                    <div class="card-data">{{ all_drivers }}</div>
+                    <div class="card-data">{{ all_user }}</div>
                     <div class="card-hint"></div>
                 </div>
             </div>
@@ -87,9 +87,7 @@ export default {
                         this.circumference -
                         (this.circumference * this.incomePercentage) / 100;
                 })
-                .catch((error) => {
-                    console.error("Error fetching data:", error);
-                });
+                .catch(() => {});
         },
     },
     mounted() {

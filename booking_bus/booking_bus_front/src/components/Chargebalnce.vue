@@ -97,12 +97,10 @@ export default {
             })
                 .then((response) => {
                     this.items = response.data;
-                    console.log(response.data);
                     this.loading = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     toast.error("Error fetching data");
-                    console.error(error);
                 });
             this.loading = true;
         },
@@ -118,9 +116,8 @@ export default {
                     toast.success("Order accepted successfully");
                     this.fetchData();
                 })
-                .catch((error) => {
+                .catch(() => {
                     toast.error("Error accepting order");
-                    console.error(error);
                 });
         },
         cancelOrder(userId) {
@@ -135,9 +132,8 @@ export default {
                     toast.success("Order cancelled successfully");
                     this.fetchData();
                 })
-                .catch((error) => {
+                .catch(() => {
                     toast.error("Error cancelling order");
-                    console.error(error);
                 });
         },
         viewItem(item) {

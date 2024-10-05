@@ -215,7 +215,7 @@ export default {
                 this.mapLat = government.latitude;
                 this.mapLng = government.longitude;
                 this.showMapModal = true;
-                console.log(this.mapLat, this.mapLng);
+                // console.log(this.mapLat, this.mapLng);
             }
         },
         closeMapModal() {
@@ -244,7 +244,7 @@ export default {
             this.showDriverWithBusModal = false;
         },
         handleSubmit() {
-            console.log("Form Submitted", this.name, this.email, this.password);
+            // console.log("Form Submitted", this.name, this.email, this.password);
         },
         updateGovernment() {
             const access_token = window.localStorage.getItem("access_token");
@@ -259,10 +259,9 @@ export default {
                     long: store.state.lng,
                 },
             })
-                .then((response) => {
+                .then(() => {
                     this.editingIndex = null;
                     this.editedGovernment = { name: "" };
-                    console.log(response);
                     this.toast.success("Government Updated Successfully", {
                         transition: "Vue-Toastification__bounce",
                         hideProgressBar: true,
@@ -275,7 +274,7 @@ export default {
                     this.showEditModal = false;
                     this.AllGovernment();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error Updating Government", {
                         transition: "Vue-Toastification__shake",
                         hideProgressBar: true,
@@ -285,7 +284,6 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    console.error(error);
                 });
         },
         CreateDriver() {
@@ -302,7 +300,6 @@ export default {
             })
                 .then((response) => {
                     if (response.status == 200) {
-                        console.log(response);
                         this.toast.success("Government created successfully!");
                         this.AllGovernment();
                     }
@@ -322,12 +319,10 @@ export default {
                 .then((response) => {
                     this.Driver = response.data;
                     store.state.Government = response.data;
-                    console.log(response.data);
                     this.loading = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting government.");
-                    console.error(error);
                 });
             this.loading = true;
         },
@@ -342,9 +337,8 @@ export default {
                     this.toast.success("Government deleted successfully!");
                     this.AllGovernment();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error deleting Government.");
-                    console.error(error);
                 });
         },
 
@@ -357,12 +351,10 @@ export default {
             })
                 .then((response) => {
                     this.GovernmentBreack = response.data.breaks;
-                    console.log(response.data);
                     this.loading1 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching Break");
-                    console.error(error);
                 });
             this.loading1 = true;
         },

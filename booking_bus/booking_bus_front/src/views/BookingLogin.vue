@@ -118,9 +118,7 @@ export default {
                 .then((response) => {
                     this.trips = response.data; // Save trips data
                 })
-                .catch((error) => {
-                    console.error("Error fetching trips:", error);
-                });
+                .catch(() => {});
         },
     },
     components: { SidebarCompany, MainCompany, DashboardCharts },

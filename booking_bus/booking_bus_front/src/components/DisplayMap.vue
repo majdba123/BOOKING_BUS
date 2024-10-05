@@ -71,17 +71,17 @@ export default {
             document.head.appendChild(script);
 
             script.onload = () => {
-                console.log("Google Maps API loaded successfully.");
+                // console.log("Google Maps API loaded successfully.");
                 this.initMap();
             };
 
             script.onerror = () => {
-                console.error("Failed to load Google Maps API script.");
+                // console.error("Failed to load Google Maps API script.");
             };
         },
         initMap() {
             if (typeof google === "undefined") {
-                console.error("Google Maps API is not available.");
+                // console.error("Google Maps API is not available.");
                 return;
             }
 
@@ -94,14 +94,14 @@ export default {
             const lng = this.lng ? parseFloat(this.lng) : null;
 
             // Log the values to debug
-            console.log("Parsed values:", {
-                fromLat,
-                fromLng,
-                toLat,
-                toLng,
-                lat,
-                lng,
-            });
+            // console.log("Parsed values:", {
+            //     fromLat,
+            //     fromLng,
+            //     toLat,
+            //     toLng,
+            //     lat,
+            //     lng,
+            // });
 
             // Validate all latitude and longitude values
             if (
@@ -111,14 +111,14 @@ export default {
                 isNaN(toLng) ||
                 (lat !== null && isNaN(lng))
             ) {
-                console.error("Invalid latitude or longitude values");
+                // console.error("Invalid latitude or longitude values");
                 return;
             }
 
-            console.log("Initializing map with center:", {
-                lat: (fromLat + toLat) / 2,
-                lng: (fromLng + toLng) / 2,
-            });
+            // console.log("Initializing map with center:", {
+            //     lat: (fromLat + toLat) / 2,
+            //     lng: (fromLng + toLng) / 2,
+            // });
 
             this.map = new google.maps.Map(document.getElementById("map"), {
                 center: {
@@ -144,7 +144,7 @@ export default {
             }
 
             if (lat !== null && lng !== null) {
-                console.log("Adding marker at:", { lat, lng });
+                // console.log("Adding marker at:", { lat, lng });
 
                 this.marker = new google.maps.Marker({
                     position: { lat, lng },
@@ -164,18 +164,18 @@ export default {
         },
         calculateAndDisplayRoute(fromLat, fromLng, toLat, toLng) {
             if (!this.directionsService || !this.directionsRenderer) {
-                console.error(
-                    "DirectionsService or DirectionsRenderer is not available."
-                );
+                // console.error(
+                //     "DirectionsService or DirectionsRenderer is not available."
+                // );
                 return;
             }
 
-            console.log("Calculating route from:", {
-                fromLat,
-                fromLng,
-                toLat,
-                toLng,
-            });
+            // console.log("Calculating route from:", {
+            //     fromLat,
+            //     fromLng,
+            //     toLat,
+            //     toLng,
+            // });
 
             const request = {
                 origin: { lat: fromLat, lng: fromLng },
@@ -185,10 +185,10 @@ export default {
 
             this.directionsService.route(request, (result, status) => {
                 if (status === google.maps.DirectionsStatus.OK) {
-                    console.log("Route calculated successfully.");
+                    // console.log("Route calculated successfully.");
                     this.directionsRenderer.setDirections(result);
                 } else {
-                    console.error("Directions request failed due to " + status);
+                    // console.error("Directions request failed due to " + status);
                 }
             });
         },

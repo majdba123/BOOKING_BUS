@@ -30,12 +30,7 @@ export default {
                     this.company.logoURL = response.data.profile_image;
                     this.updateCompanyName(response.data.name);
                 })
-                .catch((error) => {
-                    console.error(
-                        "There was an error fetching the company logo:",
-                        error
-                    );
-                });
+                .catch(() => {});
         },
     },
     mounted() {

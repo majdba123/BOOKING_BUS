@@ -897,13 +897,10 @@ export default {
                 },
             })
                 .then((response) => {
-                    console.log(response.data);
                     this.price = response.data.price;
                 })
-                .catch((error) => {
-                    window.alert("Error getting paths");
-                    console.error(error);
-                    console.log(this.priceleiter);
+                .catch(() => {
+                    // console.log(this.priceleiter);
                 });
         },
         pricingMethod() {
@@ -920,13 +917,11 @@ export default {
                 },
             })
                 .then((response) => {
-                    console.log(response.data);
                     this.price = response.data.price;
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error getting paths");
-                    console.error(error);
-                    console.log(this.priceleiter);
+                    // console.log(this.priceleiter);
                 });
         },
 
@@ -975,9 +970,8 @@ export default {
             })
                 .then((response) => {
                     this.kilo = response.data.priceForKm;
-                    console.log(response.data);
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error(
                         "You do not have any previous trips to process the calculation!",
                         {
@@ -990,8 +984,6 @@ export default {
                             draggablePercent: 0.6,
                         }
                     );
-                    console.error(error);
-                    console.log(this.priceleiter);
                 });
         },
         handleOk() {
@@ -1013,12 +1005,12 @@ export default {
                     this.pricingMethod1();
                     break;
             }
-            console.log("Selected price type:", this.price_type);
+            // console.log("Selected price type:", this.price_type);
             // إغلاق الـ modal
             this.showpricemodel = false;
         },
         handleCancel() {
-            console.log("Cancel clicked");
+            // console.log("Cancel clicked");
             this.price = "";
             // إغلاق الـ modal
             this.showpricemodel = false;
@@ -1027,14 +1019,14 @@ export default {
             this.showpricemodel = true;
         },
         handleSubmit() {
-            console.log(
-                "Form Submitted",
-                this.path,
-                this.price,
-                this.area,
-                this.start_date,
-                this.end_date
-            );
+            // console.log(
+            //     "Form Submitted",
+            //     this.path,
+            //     this.price,
+            //     this.area,
+            //     this.start_date,
+            //     this.end_date
+            // );
         },
         fetchPaths() {
             const access_token = window.localStorage.getItem("access_token");
@@ -1046,10 +1038,7 @@ export default {
                 .then((response) => {
                     this.paths = response.data;
                 })
-                .catch((error) => {
-                    window.alert("Error getting paths");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         fetchAvailableBuses() {
             const access_token = window.localStorage.getItem("access_token");
@@ -1061,10 +1050,7 @@ export default {
                 .then((response) => {
                     this.availableBuses = response.data;
                 })
-                .catch((error) => {
-                    window.alert("Error getting buses");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         fetchBreak(x) {
             const access_token = window.localStorage.getItem("access_token");
@@ -1075,9 +1061,9 @@ export default {
             })
                 .then((response) => {
                     this.breaks = response.data;
-                    console.log(this.breaks);
+                    // console.log(this.breaks);
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.warning("This Path Have not Break ", {
                         transition: "Vue-Toastification__bounce",
                         hideProgressBar: true,
@@ -1087,10 +1073,9 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    console.error(error);
                 });
             this.dispath = x;
-            console.log(this.dispath);
+            // console.log(this.dispath);
         },
         addBus() {
             this.buses.push({
@@ -1105,7 +1090,7 @@ export default {
         },
         fetchBreakk(areaId) {
             const access_token = window.localStorage.getItem("access_token");
-            console.log("Fetching breaks for area ID:", areaId);
+            // console.log("Fetching breaks for area ID:", areaId);
 
             axios({
                 method: "get",
@@ -1114,12 +1099,9 @@ export default {
             })
                 .then((response) => {
                     this.breaks = response.data;
-                    console.log("Breaks fetched successfully:", this.breaks);
+                    // console.log("Breaks fetched successfully:", this.breaks);
                 })
-                .catch((error) => {
-                    console.error("Error getting breaks:", error);
-                    window.alert("Error getting breaks");
-                });
+                .catch(() => {});
         },
         removeBus(index) {
             this.buses.splice(index, 1);
@@ -1127,7 +1109,7 @@ export default {
         },
         handleBusSelection() {
             this.selectedBusIds = this.buses.map((bus) => bus.bus_id);
-            console.log("Selected bus ids:", this.selectedBusIds);
+            // console.log("Selected bus ids:", this.selectedBusIds);
         },
         saveChanges() {
             const token = window.localStorage.getItem("access_token");
@@ -1159,8 +1141,7 @@ export default {
                     },
                     headers: { Authorization: `Bearer ${token}` },
                 })
-                    .then((response) => {
-                        console.log(response);
+                    .then(() => {
                         this.toast.success("Trip Added Successfully", {
                             transition: "Vue-Toastification__bounce",
                             hideProgressBar: true,
@@ -1172,7 +1153,7 @@ export default {
                         });
                         this.AllTrips();
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Error Adding Trip", {
                             transition: "Vue-Toastification__shake",
                             hideProgressBar: true,
@@ -1182,8 +1163,7 @@ export default {
                             draggable: true,
                             draggablePercent: 0.6,
                         });
-                        console.error(error);
-                        console.log(this.date);
+                        // console.log(this.date);
                     });
             } else if (this.price_type == "capping") {
                 const busIds = this.buses.map((bus) => ({
@@ -1214,8 +1194,7 @@ export default {
                     },
                     headers: { Authorization: `Bearer ${token}` },
                 })
-                    .then((response) => {
-                        console.log(response);
+                    .then(() => {
                         this.toast.success("Trip Added Successfully", {
                             transition: "Vue-Toastification__bounce",
                             hideProgressBar: true,
@@ -1227,7 +1206,7 @@ export default {
                         });
                         this.AllTrips();
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Error Adding Trip", {
                             transition: "Vue-Toastification__shake",
                             hideProgressBar: true,
@@ -1237,8 +1216,7 @@ export default {
                             draggable: true,
                             draggablePercent: 0.6,
                         });
-                        console.error(error);
-                        console.log(this.date);
+                        // console.log(this.date);
                     });
             } else if (this.price_type == "proportional") {
                 const busIds = this.buses.map((bus) => ({
@@ -1266,8 +1244,7 @@ export default {
                     },
                     headers: { Authorization: `Bearer ${token}` },
                 })
-                    .then((response) => {
-                        console.log(response);
+                    .then(() => {
                         this.toast.success("Trip Added Successfully", {
                             transition: "Vue-Toastification__bounce",
                             hideProgressBar: true,
@@ -1279,7 +1256,7 @@ export default {
                         });
                         this.AllTrips();
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Error Adding Trip", {
                             transition: "Vue-Toastification__shake",
                             hideProgressBar: true,
@@ -1289,8 +1266,7 @@ export default {
                             draggable: true,
                             draggablePercent: 0.6,
                         });
-                        console.error(error);
-                        console.log(this.date);
+                        // console.log(this.date);
                     });
             } else if (this.price_type == "fixed") {
                 const busIds = this.buses.map((bus) => ({
@@ -1317,8 +1293,7 @@ export default {
                     },
                     headers: { Authorization: `Bearer ${token}` },
                 })
-                    .then((response) => {
-                        console.log(response);
+                    .then(() => {
                         this.toast.success("Trip Added Successfully", {
                             transition: "Vue-Toastification__bounce",
                             hideProgressBar: true,
@@ -1328,29 +1303,29 @@ export default {
                             draggable: true,
                             draggablePercent: 0.6,
                         });
-                        console.log(
-                            "bus_ids:",
-                            busIds,
-                            "path_id:",
-                            this.selectedPath.id,
-                            "price_type",
-                            this.price_type,
-                            "cost",
-                            this.price
-                        );
+                        // console.log(
+                        //     "bus_ids:",
+                        //     busIds,
+                        //     "path_id:",
+                        //     this.selectedPath.id,
+                        //     "price_type",
+                        //     this.price_type,
+                        //     "cost",
+                        //     this.price
+                        // );
                         this.AllTrips();
                     })
-                    .catch((error) => {
-                        console.log(
-                            "bus_ids:",
-                            busIds,
-                            "path_id:",
-                            this.selectedPath.id,
-                            "price_type",
-                            this.price_type,
-                            "cost",
-                            this.price
-                        );
+                    .catch(() => {
+                        // console.log(
+                        //     "bus_ids:",
+                        //     busIds,
+                        //     "path_id:",
+                        //     this.selectedPath.id,
+                        //     "price_type",
+                        //     this.price_type,
+                        //     "cost",
+                        //     this.price
+                        // );
                         this.toast.error("Error Adding Trip", {
                             transition: "Vue-Toastification__shake",
                             hideProgressBar: true,
@@ -1360,8 +1335,7 @@ export default {
                             draggable: true,
                             draggablePercent: 0.6,
                         });
-                        console.error(error);
-                        console.log(this.date);
+                        // console.log(this.date);
                     });
             }
         },
@@ -1393,8 +1367,7 @@ export default {
                     },
                     headers: { Authorization: `Bearer ${token}` },
                 })
-                    .then((response) => {
-                        console.log(response);
+                    .then(() => {
                         this.toast.success("Trip Added Successfully", {
                             transition: "Vue-Toastification__bounce",
                             hideProgressBar: true,
@@ -1406,7 +1379,7 @@ export default {
                         });
                         this.AllTrips();
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Error Adding Trip", {
                             transition: "Vue-Toastification__shake",
                             hideProgressBar: true,
@@ -1416,8 +1389,7 @@ export default {
                             draggable: true,
                             draggablePercent: 0.6,
                         });
-                        console.error(error);
-                        console.log(this.date);
+                        // console.log(this.date);
                     });
             } else if (this.price_type == "capping") {
                 const busIds = this.buses.map((bus) => ({
@@ -1446,8 +1418,7 @@ export default {
                     },
                     headers: { Authorization: `Bearer ${token}` },
                 })
-                    .then((response) => {
-                        console.log(response);
+                    .then(() => {
                         this.toast.success("Trip Added Successfully", {
                             transition: "Vue-Toastification__bounce",
                             hideProgressBar: true,
@@ -1459,7 +1430,7 @@ export default {
                         });
                         this.AllTrips();
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Error Adding Trip", {
                             transition: "Vue-Toastification__shake",
                             hideProgressBar: true,
@@ -1469,8 +1440,7 @@ export default {
                             draggable: true,
                             draggablePercent: 0.6,
                         });
-                        console.error(error);
-                        console.log(this.date);
+                        // console.log(this.date);
                     });
             } else if (this.price_type == "proportional") {
                 const busIds = this.buses.map((bus) => ({
@@ -1496,8 +1466,7 @@ export default {
                     },
                     headers: { Authorization: `Bearer ${token}` },
                 })
-                    .then((response) => {
-                        console.log(response);
+                    .then(() => {
                         this.toast.success("Trip Added Successfully", {
                             transition: "Vue-Toastification__bounce",
                             hideProgressBar: true,
@@ -1509,7 +1478,7 @@ export default {
                         });
                         this.AllTrips();
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Error Adding Trip", {
                             transition: "Vue-Toastification__shake",
                             hideProgressBar: true,
@@ -1519,8 +1488,7 @@ export default {
                             draggable: true,
                             draggablePercent: 0.6,
                         });
-                        console.error(error);
-                        console.log(this.date);
+                        // console.log(this.date);
                     });
             } else if (this.price_type == "fixed") {
                 const busIds = this.buses.map((bus) => ({
@@ -1545,8 +1513,7 @@ export default {
                     },
                     headers: { Authorization: `Bearer ${token}` },
                 })
-                    .then((response) => {
-                        console.log(response);
+                    .then(() => {
                         this.toast.success("Trip Added Successfully", {
                             transition: "Vue-Toastification__bounce",
                             hideProgressBar: true,
@@ -1558,17 +1525,17 @@ export default {
                         });
                         this.AllTrips();
                     })
-                    .catch((error) => {
-                        console.log(
-                            "bus_ids:",
-                            busIds,
-                            "path_id:",
-                            this.selectedPath.id,
-                            "price_type",
-                            this.price_type,
-                            "cost",
-                            this.price
-                        );
+                    .catch(() => {
+                        // console.log(
+                        //     "bus_ids:",
+                        //     busIds,
+                        //     "path_id:",
+                        //     this.selectedPath.id,
+                        //     "price_type",
+                        //     this.price_type,
+                        //     "cost",
+                        //     this.price
+                        // );
                         this.toast.error("Error Adding Trip", {
                             transition: "Vue-Toastification__shake",
                             hideProgressBar: true,
@@ -1578,8 +1545,7 @@ export default {
                             draggable: true,
                             draggablePercent: 0.6,
                         });
-                        console.error(error);
-                        console.log(this.date);
+                        // console.log(this.date);
                     });
             }
         },
@@ -1592,12 +1558,9 @@ export default {
             })
                 .then((response) => {
                     this.driverWithBusData = response.data;
-                    console.log(this.driverWithBusData);
+                    // console.log(this.driverWithBusData);
                 })
-                .catch((error) => {
-                    window.alert("Error fetching drivers with bus.");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         AllTrips() {
             const access_token = window.localStorage.getItem("access_token");
@@ -1609,10 +1572,9 @@ export default {
                 .then((response) => {
                     this.Trips = response.data;
                     store.state.Trips = response.data;
-                    console.log(response.data);
                     this.loading = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error Getting Trips", {
                         transition: "Vue-Toastification__shake",
                         hideProgressBar: true,
@@ -1622,7 +1584,6 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    console.error(error);
                 });
             this.loading = true;
         },
@@ -1639,7 +1600,7 @@ export default {
             if (this.tripToDelete && this.tripToDelete.id) {
                 this.DeleteTrip(this.tripToDelete.id);
             } else {
-                console.error("No trip selected for deletion.");
+                // console.error("No trip selected for deletion.");
             }
             this.closeDeleteConfirmModal();
         },
@@ -1665,7 +1626,7 @@ export default {
                     });
                     this.AllTrips();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error Deleting Trip", {
                         transition: "Vue-Toastification__shake",
                         hideProgressBar: true,
@@ -1675,7 +1636,6 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    console.error(error);
                 });
         },
 
@@ -1689,12 +1649,8 @@ export default {
             })
                 .then((response) => {
                     this.selectedTrip = response.data[0];
-                    console.log(response);
                 })
-                .catch((error) => {
-                    window.alert("Error fetching trip details");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         closeDetails() {
             this.selectedTrip = null;
@@ -1702,7 +1658,7 @@ export default {
         editTrip(index, x) {
             this.editingIndex = index;
             this.x = x;
-            console.log(this.x);
+            // console.log(this.x);
         },
         cancelEdit() {
             this.editingIndex = null;
@@ -1717,12 +1673,10 @@ export default {
             })
                 .then((response) => {
                     this.tripStatusData = response.data;
-                    console.log(response.data);
                     this.loading1 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching trip status");
-                    console.error(error);
                 });
             this.loading1 = true;
         },

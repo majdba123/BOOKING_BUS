@@ -66,9 +66,7 @@ export default {
                     this.users = response.data;
                     this.loading = false;
                 })
-                .catch((error) => {
-                    console.error("Error fetching users:", error);
-                });
+                .catch(() => {});
             this.loading = true;
         },
     },

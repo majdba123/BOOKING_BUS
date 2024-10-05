@@ -521,13 +521,9 @@ export default {
             })
                 .then((response) => {
                     this.ReservationStatusData = response.data;
-                    console.log(response.data);
                     this.loading3 = false;
                 })
-                .catch((error) => {
-                    window.alert("Error fetching bus status");
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading3 = true;
         },
         closeBusStatusModal() {
@@ -566,9 +562,7 @@ export default {
                     this.AllReservation = response.data;
                     this.loading2 = false;
                 })
-                .catch((error) => {
-                    console.error("Error fetching trip ratings:", error);
-                });
+                .catch(() => {});
             this.loading2 = true;
         },
         fetchBusTrip(x) {
@@ -581,9 +575,7 @@ export default {
                 .then((response) => {
                     this.AllReservation = response.data;
                 })
-                .catch((error) => {
-                    console.error("Error fetching trip ratings:", error);
-                });
+                .catch(() => {});
         },
         fetchDriverRatings() {
             const access_token = window.localStorage.getItem("access_token");
@@ -595,9 +587,7 @@ export default {
                 .then((response) => {
                     this.driverRatings = response.data;
                 })
-                .catch((error) => {
-                    console.error("Error fetching driver ratings:", error);
-                });
+                .catch(() => {});
         },
         fetchTripRatingsByTripId(trip_id) {
             this.showTripRatingsModal = true;
@@ -612,12 +602,7 @@ export default {
                     this.tripRatingsDetails = response.data;
                     this.loading5 = false;
                 })
-                .catch((error) => {
-                    console.error(
-                        "Error fetching trip ratings by trip ID:",
-                        error
-                    );
-                });
+                .catch(() => {});
             this.loading5 = true;
         },
         fetchDriverRatingsByDriverId(driver_id) {
@@ -633,12 +618,7 @@ export default {
                     this.driverRatingsDetails = response.data;
                     this.loading6 = false;
                 })
-                .catch((error) => {
-                    console.error(
-                        "Error fetching driver ratings by driver ID:",
-                        error
-                    );
-                });
+                .catch(() => {});
             this.loading6 = true;
         },
         AllTrips() {
@@ -650,12 +630,9 @@ export default {
             })
                 .then((response) => {
                     this.Trips = response.data;
-                    console.log(response.data);
                     this.loading = false;
                 })
-                .catch((error) => {
-                    console.error("Error Getting Trips:", error);
-                });
+                .catch(() => {});
             this.loading = true;
         },
         AllDriver() {
@@ -667,12 +644,9 @@ export default {
             })
                 .then((response) => {
                     this.Drivers = response.data;
-                    console.log(response.data);
                     this.loading1 = false;
                 })
-                .catch((error) => {
-                    console.error("Error getting drivers:", error);
-                });
+                .catch(() => {});
             this.loading1 = true;
         },
         openTripRatingsModal(tripId) {

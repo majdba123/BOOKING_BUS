@@ -50,7 +50,7 @@ export default {
             })
                 .then(function (response) {
                     if (response.status == 200) {
-                        console.log(response);
+                        // console.log(response);
                         window.alert("LogIn succesful");
                         window.localStorage.setItem(
                             "access_token",
@@ -58,9 +58,8 @@ export default {
                         );
                     }
                 })
-                .catch(function (error) {
+                .catch(function () {
                     alert("Email Or Password invalid");
-                    console.log(error);
                 });
         },
         logout() {
@@ -72,7 +71,7 @@ export default {
             })
                 .then(function (response) {
                     if (response.status == 200) {
-                        console.log(response);
+                        // console.log(response);
                         window.alert("LogIn succesful");
                         window.localStorage.setItem(
                             "access_token",
@@ -80,9 +79,8 @@ export default {
                         );
                     }
                 })
-                .catch(function (error) {
+                .catch(function () {
                     alert("Email Or Password invalid");
-                    console.log(error);
                 });
         },
     },

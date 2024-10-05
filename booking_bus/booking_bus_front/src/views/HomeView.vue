@@ -51,9 +51,9 @@
                 <button type="submit" :disabled="!formIsValid || isLoading">
                     {{ isLogin ? "Login" : "Register" }}
                 </button>
-                <button type="button" @click="toggleForm" class="toggle-btn">
+                <!-- <button type="button" @click="toggleForm" class="toggle-btn">
                     {{ isLogin ? "Register" : "Login" }}
-                </button>
+                </button> -->
             </form>
             <a href="#" class="forgot-password" v-if="isLogin"
                 >Forgot Password?</a
@@ -141,7 +141,7 @@ export default {
                 }
             } else {
                 // إذا لم يكن هناك توكن، ابق في صفحة تسجيل الدخول
-                console.log("No token found, staying on login page.");
+                // console.log("No token found, staying on login page.");
             }
         },
         startLoadingAnimation() {
@@ -156,12 +156,12 @@ export default {
                         animationData: require("@/assets/ani/Animation.json"),
                     });
                 } else {
-                    console.error("Lottie container is not available.");
+                    // console.error("Lottie container is not available.");
                 }
             });
         },
         stopLoadingAnimation() {
-            console.log("Stopping loading animation");
+            // console.log("Stopping loading animation");
             this.isLoading = false;
             if (this.lottieAnimation) {
                 this.lottieAnimation.stop();
@@ -257,9 +257,8 @@ export default {
                             this.login();
                         }
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Error during registration");
-                        console.log(error);
                     })
                     .finally(() => {
                         this.stopLoadingAnimation();
@@ -296,11 +295,9 @@ export default {
                                 router.push("/");
                             }
                         }
-                        console.log(response);
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Invalid email or password");
-                        console.log(error);
                     })
                     .finally(() => {
                         this.stopLoadingAnimation();

@@ -43,9 +43,9 @@ export default {
                     if (status === google.maps.DirectionsStatus.OK) {
                         this.directionsRenderer.setDirections(response);
                     } else {
-                        console.error(
-                            "Directions request failed due to " + status
-                        );
+                        // console.error(
+                        //     "Directions request failed due to " + status
+                        // );
                     }
                 }
             );

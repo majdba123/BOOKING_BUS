@@ -613,11 +613,7 @@ export default {
                     this.Rewards = response.data;
                     this.loading = false;
                 })
-                .catch((error) => {
-                    console.error(
-                        "Error Getting Rewards:",
-                        error.response?.data || error.message
-                    );
+                .catch(() => {
                     this.toast.error("Error Getting Rewards");
                 });
             this.loading = true;
@@ -671,9 +667,8 @@ export default {
                     this.AllRewards();
                     this.toast.success("Reward Updated Successfully");
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error Updating Reward");
-                    console.error(error);
                 });
         },
 
@@ -695,9 +690,8 @@ export default {
                     this.toast.success("Reward Added Successfully");
                     this.AllRewards();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error Adding Reward");
-                    console.error(error);
                 });
         },
 
@@ -723,25 +717,24 @@ export default {
                         this.toast.success("Reward Deleted Successfully");
                         this.AllRewards();
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Error Deleting Reward");
-                        console.error(error);
                     });
                 this.showDeleteConfirmModal = false;
                 this.rewardToDelete = null;
             } else {
-                console.error("No reward selected for deletion.");
+                // console.error("No reward selected for deletion.");
             }
         },
         fetchTripsData() {
-            console.log("Fetching trips data...");
+            // console.log("Fetching trips data...");
             const accessToken = window.localStorage.getItem("access_token");
             axios
                 .get("http://127.0.0.1:8000/api/company/all_trips", {
                     headers: { Authorization: `Bearer ${accessToken}` },
                 })
                 .then((response) => {
-                    console.log("Trips data fetched:", response.data);
+                    // console.log("Trips data fetched:", response.data);
                     this.trips = response.data.map((trip) => ({
                         name: `${trip.path.from} to ${trip.path.to}`,
                         from: trip.path.from,
@@ -754,11 +747,7 @@ export default {
                     }));
                     this.filteredOptions = this.options;
                 })
-                .catch((error) => {
-                    console.error(
-                        "Error fetching trips data:",
-                        error.response?.data || error.message
-                    );
+                .catch(() => {
                     this.toast.error("Error fetching trips data");
                 });
         },
@@ -785,7 +774,7 @@ export default {
                 satisfaction_rate_description:
                     this.compensationData.satisfaction_rate_description,
             };
-            console.log("Selected trip ID:", this.formData.trip_id);
+            // console.log("Selected trip ID:", this.formData.trip_id);
             if (
                 !this.options.some(
                     (option) => option.value === this.formData.trip_id
@@ -807,7 +796,6 @@ export default {
                     this.toast.success("Trip cancellation successful!");
                 })
                 .catch((error) => {
-                    console.error("Error cancelling trip:", error);
                     const errorMessage = error.response
                         ? `Error cancelling trip: ${
                               error.response.data.message || error.response.data
@@ -841,8 +829,7 @@ export default {
                     this.cancellationRules = response.data;
                     this.loading1 = false;
                 })
-                .catch((error) => {
-                    console.error("Error fetching cancellation rules:", error);
+                .catch(() => {
                     this.toast.error("Error fetching cancellation rules");
                 });
             this.loading1 = true;
@@ -865,8 +852,7 @@ export default {
                     this.loadCancellationRules();
                     this.toast.success("Cancellation Rule Added Successfully");
                 })
-                .catch((error) => {
-                    console.error("Error adding cancellation rule:", error);
+                .catch(() => {
                     this.toast.error("Error adding cancellation rule");
                 });
         },
@@ -891,8 +877,7 @@ export default {
                         "Cancellation Rule Updated Successfully"
                     );
                 })
-                .catch((error) => {
-                    console.error("Error updating cancellation rule:", error);
+                .catch(() => {
                     this.toast.error("Error updating cancellation rule");
                 });
         },
@@ -908,7 +893,7 @@ export default {
             if (this.ruleToDelete && this.ruleToDelete.id) {
                 this.deleteRule(this.ruleToDelete.id);
             } else {
-                console.error("No cancellation rule selected for deletion.");
+                // console.error("No cancellation rule selected for deletion.");
             }
             this.closeDeleteConfirmModal();
         },
@@ -927,8 +912,7 @@ export default {
                         "Cancellation Rule Deleted Successfully"
                     );
                 })
-                .catch((error) => {
-                    console.error("Error deleting cancellation rule:", error);
+                .catch(() => {
                     this.toast.error("Error deleting cancellation rule");
                 });
         },

@@ -481,7 +481,7 @@ export default {
                 this.maptoLat = government.to_lat;
                 this.maptoLng = government.to_long;
                 this.showMapModal = true;
-                console.log(this.mapfromLat, this.mapfromLng);
+                // console.log(this.mapfromLat, this.mapfromLng);
             }
         },
         openBreackModal(company_id) {
@@ -553,11 +553,9 @@ export default {
                     this.Users = response.data;
                     store.state.User = response.data;
                     this.loading = false;
-                    console.log(response.data);
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting drivers.");
-                    console.error(error);
                 });
             this.loading = true;
         },
@@ -572,12 +570,9 @@ export default {
                 .then((response) => {
                     this.Profile = response.data;
                     this.loading1 = false;
-
-                    console.log(response.data);
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching Profile");
-                    console.error(error);
                 });
             this.loading1 = true;
         },
@@ -593,12 +588,9 @@ export default {
 
                     this.Seat = response.data[x].seat;
                     this.loading6 = false;
-                    console.log(this.Seat);
+                    // console.log(this.Seat);
                 })
-                .catch((error) => {
-                    window.alert("Error fetching driver status");
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading6 = true;
         },
         fetchReservation(status) {
@@ -611,13 +603,8 @@ export default {
                 .then((response) => {
                     this.Reservation = response.data;
                     this.loading2 = false;
-
-                    console.log(response.data);
                 })
-                .catch((error) => {
-                    window.alert("Error fetching driver status");
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading2 = true;
         },
         fetchOrder(status) {
@@ -630,13 +617,8 @@ export default {
                 .then((response) => {
                     this.Order = response.data;
                     this.loading5 = false;
-
-                    console.log(response.data);
                 })
-                .catch((error) => {
-                    window.alert("Error fetching driver status");
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading5 = true;
         },
         fetchFav(status) {
@@ -649,13 +631,8 @@ export default {
                 .then((response) => {
                     this.Fav = response.data;
                     this.loading4 = false;
-
-                    console.log(response.data);
                 })
-                .catch((error) => {
-                    window.alert("Error fetching driver status");
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading4 = true;
         },
         fetchTrip(status) {
@@ -668,13 +645,8 @@ export default {
                 .then((response) => {
                     this.Trip = response.data;
                     this.loading3 = false;
-
-                    console.log(response.data);
                 })
-                .catch((error) => {
-                    window.alert("Error fetching driver status");
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading3 = true;
         },
 

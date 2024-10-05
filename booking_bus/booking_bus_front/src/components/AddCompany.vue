@@ -882,13 +882,13 @@ export default {
             // Set the current company ID
             this.showBusTripModal = true;
             this.idd = trip_id;
-            this.fetchBusTrip(trip_id, this.currentCompanyId);
+            this.fetchBusTrip(trip_id);
         },
         openProfitTripModal(trip_id) {
             // Set the current company ID
             this.showProfitTripModal = true;
             this.idd = trip_id;
-            this.fetctProfitTrip(trip_id, this.currentCompanyId);
+            this.fetctProfitTrip(trip_id);
         },
         openReservationSeatModal(trip_id) {
             this.fetchReservationSeat(trip_id, this.currentCompanyId);
@@ -901,7 +901,7 @@ export default {
         openSeatsModal(index) {
             // Set the current company ID
             this.showSeatsModal = true;
-            this.fetchPivot(index, this.idd, this.currentCompanyId);
+            this.fetchPivot(index, this.idd);
         },
         openTripModal(company_id, user_id) {
             this.user_id = user_id;
@@ -949,20 +949,20 @@ export default {
         },
 
         handleSubmit() {
-            console.log("Form Submitted", this.name, this.email, this.password);
+            // console.log("Form Submitted", this.name, this.email, this.password);
         },
 
         fetchReversationS(x) {
-            console.log(this.currentCompanyId);
-            console.log(x);
+            // console.log(this.currentCompanyId);
+            // console.log(x);
             if (x == undefined) {
                 this.fetchReservation(this.currentCompanyId);
             }
             this.fetchReversationStatus(this.currentCompanyId, x);
         },
         fetchDriverS(x) {
-            console.log(this.currentCompanyId);
-            console.log(x);
+            // console.log(this.currentCompanyId);
+            // console.log(x);
 
             this.fetchDriverStatus(this.currentCompanyId, x);
         },
@@ -982,7 +982,6 @@ export default {
             })
                 .then((response) => {
                     if (response.status == 200) {
-                        console.log(response);
                         this.toast.success(
                             "Company account created successfully!"
                         );
@@ -1011,8 +1010,6 @@ export default {
                         const x = error.response.data.error?.name[0];
                         this.toast.error(x);
                     }
-
-                    console.log(error.response.data.error);
                 });
         },
 
@@ -1030,17 +1027,16 @@ export default {
                     this.first_page = response.data.from;
                     this.last_page = response.data.last_page;
                     store.state.Company = response.data;
-                    console.log(store.state.Company);
+                    // console.log(store.state.Company);
                     this.loading = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting drivers.");
-                    console.error(error);
                 });
             this.loading = true;
         },
-        fetchPivot(x, id, company_name) {
-            console.log(company_name);
+        fetchPivot(x, id) {
+            // console.log(company_name);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -1058,14 +1054,12 @@ export default {
                     this.loading7 = false;
                     this.loading8 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
             this.loading7 = true;
         },
-        fetchBusTrip(id, company_name) {
-            console.log(company_name);
+        fetchBusTrip(id) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -1075,17 +1069,14 @@ export default {
                 .then((response) => {
                     this.BusTrip = response.data;
 
-                    console.log(response.data);
                     this.loading5 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
             this.loading5 = true;
         },
-        fetctProfitTrip(id, company_name) {
-            console.log(company_name);
+        fetctProfitTrip(id) {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -1094,18 +1085,16 @@ export default {
             })
                 .then((response) => {
                     this.profittrip = response.data.total_price;
-                    console.log(response.data);
 
                     this.loading5 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
             this.loading5 = true;
         },
         fetchTrip(company_name) {
-            console.log(company_name);
+            // console.log(company_name);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -1114,17 +1103,16 @@ export default {
             })
                 .then((response) => {
                     this.Trips = response.data;
-                    console.log(this.BusData);
+                    // console.log(this.BusData);
                     this.loading3 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
             this.loading3 = true;
         },
         fetchReservationSeat(id, company_name) {
-            console.log(company_name);
+            // console.log(company_name);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -1134,17 +1122,16 @@ export default {
                 .then((response) => {
                     // تحقق من وجود response.data[id] ووجود bus_trips
                     this.ReservationSeat = response.data[id - 1].seats;
-                    console.log(this.ReservationSeat);
+                    // console.log(this.ReservationSeat);
                     this.loading6 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
             this.loading6 = true;
         },
         fetchReservation(company_name) {
-            console.log(company_name);
+            // console.log(company_name);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -1154,17 +1141,16 @@ export default {
                 .then((response) => {
                     this.Reservation = response.data;
                     this.ReversationStatusData = response.data;
-                    console.log(this.Reservation);
+                    // console.log(this.Reservation);
                     this.loading4 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
             this.loading4 = true;
         },
         fetchInfo(company_name) {
-            console.log(company_name);
+            // console.log(company_name);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -1173,17 +1159,16 @@ export default {
             })
                 .then((response) => {
                     this.info = response.data;
-                    console.log(this.info);
+                    // console.log(this.info);
                     this.loading4 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
             this.loading4 = true;
         },
         fetchBus(company_id) {
-            console.log(company_id);
+            // console.log(company_id);
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
@@ -1192,17 +1177,16 @@ export default {
             })
                 .then((response) => {
                     this.BusData = response.data;
-                    console.log(this.BusData);
+                    // console.log(this.BusData);
                     this.loading2 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
             this.loading2 = true;
         },
         AllDriver(company_id) {
-            console.log(company_id);
+            // console.log(company_id);
 
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -1212,18 +1196,16 @@ export default {
             })
                 .then((response) => {
                     this.driverStatusData = response.data;
-                    console.log(response.data);
                     this.loading1 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching driver status");
-                    console.error(error);
                 });
             this.loading1 = true;
         },
         fetchReversationStatus(company_id, status) {
-            console.log(company_id);
-            console.log(status);
+            // console.log(company_id);
+            // console.log(status);
 
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -1233,16 +1215,14 @@ export default {
             })
                 .then((response) => {
                     this.ReversationStatusData = response.data;
-                    console.log(response.data);
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching driver status");
-                    console.error(error);
                 });
         },
         fetchDriverStatus(company_id, status) {
-            console.log(company_id);
-            console.log(status);
+            // console.log(company_id);
+            // console.log(status);
 
             const access_token = window.localStorage.getItem("access_token");
             axios({
@@ -1252,12 +1232,10 @@ export default {
             })
                 .then((response) => {
                     this.driverStatusData = response.data;
-                    console.log(response.data);
                     this.loading1 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching driver status");
-                    console.error(error);
                 });
             this.loading1 = true;
         },

@@ -168,7 +168,7 @@ export default {
         },
         searchQuery(newQuery) {
             store.commit("updateSearchQuery", newQuery);
-            console.log(store.state.searchQuery);
+            // console.log(store.state.searchQuery);
         },
     },
     computed: {
@@ -190,13 +190,13 @@ export default {
             const channel = pusher.subscribe(
                 `notification-private-channel-${this.id}`
             );
-            console.log("Pusher Channel:", channel);
+            // console.log("Pusher Channel:", channel);
 
             channel.bind("PrivateNotification", (data) => {
                 const notification = data.message;
                 this.$store.commit("ADD_NOTIFICATION", notification);
                 this.messages = notification;
-                console.log("Notification:", this.messages);
+                // console.log("Notification:", this.messages);
                 if (this.messages != null) {
                     this.notifications = ["1"];
                 }
@@ -309,7 +309,7 @@ export default {
                 .classList.toggle("active", this.isDarkMode);
         },
         search() {
-            console.log("Searching for:", this.searchQuery);
+            // console.log("Searching for:", this.searchQuery);
             // Add your search logic here
         },
     },

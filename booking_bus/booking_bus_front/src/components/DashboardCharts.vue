@@ -102,9 +102,7 @@ export default {
                         }))
                         .sort((a, b) => b.price - a.price);
                 })
-                .catch((error) => {
-                    console.error("Error fetching trips data:", error);
-                });
+                .catch(() => {});
         },
 
         fetchDashboardData() {
@@ -121,9 +119,7 @@ export default {
                     this.processProfitsData();
                     this.createCharts();
                 })
-                .catch((error) => {
-                    console.error("Error fetching dashboard data:", error);
-                });
+                .catch(() => {});
         },
 
         cacheDashboardData() {

@@ -114,9 +114,9 @@ export default {
         if (this.shouldDisplayMap) {
             this.loadGoogleMapsScript();
         } else {
-            console.error(
-                "One or more coordinates are missing or invalid. Map will not be displayed."
-            );
+            // console.error(
+            //     "One or more coordinates are missing or invalid. Map will not be displayed."
+            // );
         }
     },
     methods: {

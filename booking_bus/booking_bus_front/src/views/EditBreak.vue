@@ -106,8 +106,8 @@ export default {
                         this.fetchBreaks();
                     }
                 })
-                .catch((error) => {
-                    this.handleError("Error getting Governments", error);
+                .catch(() => {
+                    this.handleError("Error getting Governments");
                 });
         },
         fetchBreaks() {
@@ -120,8 +120,8 @@ export default {
                 .then((response) => {
                     this.breaks = response.data;
                 })
-                .catch((error) => {
-                    this.handleError("Error getting Breaks", error);
+                .catch(() => {
+                    this.handleError("Error getting Breaks");
                 });
         },
         getGovernmentName(governmentId) {
@@ -145,14 +145,13 @@ export default {
                     name: this.name,
                 },
             })
-                .then((response) => {
-                    console.log(response);
-                    window.alert("Break updated successfully");
+                .then(() => {
+                    // console.log(response);
                     window.location.reload();
                     this.cancelEdit();
                 })
-                .catch((error) => {
-                    this.handleError("Error updating Break", error);
+                .catch(() => {
+                    this.handleError("Error updating Break");
                 });
         },
         deleteBreak(id) {
@@ -166,8 +165,8 @@ export default {
                     window.alert("Break deleted successfully");
                     window.location.reload();
                 })
-                .catch((error) => {
-                    this.handleError("Error deleting Break", error);
+                .catch(() => {
+                    this.handleError("Error deleting Break");
                 });
         },
 
@@ -175,8 +174,7 @@ export default {
             this.editingIndex = null;
             this.name = "";
         },
-        handleError(message, error) {
-            console.error(error);
+        handleError(message) {
             window.alert(message);
         },
     },

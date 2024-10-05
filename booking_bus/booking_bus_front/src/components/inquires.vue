@@ -96,13 +96,11 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    console.log(response.data);
                     this.items = response.data;
                     this.loading = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     toast.error("Error fetching data");
-                    console.error(error);
                 });
             this.loading = true;
         },

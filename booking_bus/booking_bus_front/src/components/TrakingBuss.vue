@@ -92,7 +92,7 @@ export default {
     },
     methods: {
         complate() {
-            console.log(this.bus_id);
+            // console.log(this.bus_id);
         },
         initializePusher() {
             Pusher.logToConsole = true;
@@ -104,21 +104,21 @@ export default {
             const channel = pusher.subscribe(
                 "trip-geolocation-private-channel-" + this.bus_id
             );
-            console.log("Pusher Channel:", channel);
+            // console.log("Pusher Channel:", channel);
 
             channel.bind("tripgeolocationEvent", (data) => {
                 const notification = data;
                 this.lat = notification.lat;
                 this.lang = notification.lang;
 
-                console.log("Lat/Lang:", this.lang, this.lat);
+                // console.log("Lat/Lang:", this.lang, this.lat);
                 this.$store.commit(
                     "ADD_TRAKING",
                     notification.lat,
                     notification.lang
                 );
                 this.lat = notification.lat;
-                console.log("Lat/Lang:", this.lang, this.lat);
+                // console.log("Lat/Lang:", this.lang, this.lat);
             });
         },
         AllUsers() {
@@ -131,11 +131,10 @@ export default {
             })
                 .then((response) => {
                     this.trips = response.data;
-                    console.log("User ID:", this.trips);
+                    // console.log("User ID:", this.trips);
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting user info.");
-                    console.error(error);
                 });
         },
         closeMapModal() {
@@ -144,23 +143,23 @@ export default {
         openMapModal(id) {
             this.id = id;
             const government = this.Paths.find((breack) => breack.id === id);
-            console.log(this.governments);
+            // console.log(this.governments);
             if (government) {
                 this.frommapLat = government.from_latitude;
                 this.frommapLog = government.from_longitude;
                 this.tomapLat = government.to_latitude;
                 this.tomapLog = government.to_longitude;
                 this.showMapModal = true;
-                console.log(
-                    this.tomapLog,
-                    this.frommapLat,
-                    this.frommapLog,
-                    this.tomapLat
-                );
+                // console.log(
+                //     this.tomapLog,
+                //     this.frommapLat,
+                //     this.frommapLog,
+                //     this.tomapLat
+                // );
             }
         },
         handleSubmit() {
-            console.log("Form Submitted", this.StartPath, this.EndPath);
+            // console.log("Form Submitted", this.StartPath, this.EndPath);
         },
 
         AllPaths(ID) {
@@ -170,13 +169,13 @@ export default {
                     this.fromlang = this.trips[index].path.from_longitude;
                     this.tolat = this.trips[index].path.to_latitude;
                     this.tolang = this.trips[index].path.to_longitude;
-                    console.log(
-                        ID,
-                        this.fromlat,
-                        this.fromlang,
-                        this.tolang,
-                        this.tolat
-                    );
+                    // console.log(
+                    //     ID,
+                    //     this.fromlat,
+                    //     this.fromlang,
+                    //     this.tolang,
+                    //     this.tolat
+                    // );
                 }
             }
             const access_token = window.localStorage.getItem("access_token");
@@ -189,12 +188,9 @@ export default {
             })
                 .then((response) => {
                     this.Paths = response.data;
-                    console.log(response.data);
                     this.loading = false;
                 })
-                .catch((error) => {
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading = true;
         },
         openDeleteConfirmModal(path) {
@@ -227,7 +223,7 @@ export default {
                     });
                     this.AllPaths();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error Deleting Path", {
                         transition: "Vue-Toastification__shake",
                         hideProgressBar: true,
@@ -237,7 +233,6 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    console.error(error);
                 })
                 .finally(() => {
                     this.closeDeleteConfirmModal();
@@ -281,7 +276,7 @@ export default {
                     });
                     this.AllPaths();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error Updating Path", {
                         transition: "Vue-Toastification__shake",
                         hideProgressBar: true,
@@ -291,7 +286,6 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    console.error(error);
                 })
                 .finally(() => {
                     this.closeEditModal();

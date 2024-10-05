@@ -168,9 +168,9 @@ export default {
                 isNaN(busLat) ||
                 isNaN(busLng)
             ) {
-                console.error(
-                    "Invalid latitude or longitude values for path drawing."
-                );
+                // console.error(
+                //     "Invalid latitude or longitude values for path drawing."
+                // );
                 return;
             }
 
@@ -195,7 +195,7 @@ export default {
                         map: this.map,
                     });
                 } else {
-                    console.error("Directions request failed due to " + status);
+                    // console.error("Directions request failed due to " + status);
                 }
             });
         },
@@ -213,7 +213,7 @@ export default {
             };
 
             script.onerror = () => {
-                console.error("Failed to load Google Maps script");
+                // console.error("Failed to load Google Maps script");
                 setTimeout(this.loadGoogleMapsScript, 3000);
             };
         },
@@ -222,7 +222,7 @@ export default {
             const fromLng = parseFloat(this.fromlong);
 
             if (isNaN(fromLat) || isNaN(fromLng)) {
-                console.error("Invalid latitude or longitude values");
+                // console.error("Invalid latitude or longitude values");
                 return;
             }
 
@@ -240,7 +240,7 @@ export default {
 
                 this.calculateAndDisplayRoute();
             } else {
-                console.error("Google Maps not loaded yet");
+                // console.error("Google Maps not loaded yet");
                 setTimeout(this.initMap, 3000);
             }
         },
@@ -256,9 +256,9 @@ export default {
                 isNaN(toLat) ||
                 isNaN(toLng)
             ) {
-                console.error(
-                    "Invalid latitude or longitude values for route calculation."
-                );
+                // console.error(
+                //     "Invalid latitude or longitude values for route calculation."
+                // );
                 return;
             }
 
@@ -276,14 +276,14 @@ export default {
                         this.addBusMarker(this.latbus, this.longbus);
                     }
                 } else {
-                    console.error("Directions request failed due to " + status);
+                    // console.error("Directions request failed due to " + status);
                 }
             });
         },
 
         addBusMarker(lat, lng) {
             if (!lat || !lng) {
-                console.error("Invalid bus coordinates:", lat, lng);
+                // console.error("Invalid bus coordinates:", lat, lng);
                 return;
             }
 

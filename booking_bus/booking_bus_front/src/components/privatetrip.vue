@@ -205,14 +205,13 @@ export default {
                 .then((response) => {
                     this.privateTrips = response.data;
                     this.loading = false;
-                    console.log(this.privateTrips);
+                    // console.log(this.privateTrips);
 
                     this.showOrders = false;
                     this.showForm = true;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error fetching private trips.");
-                    console.error(error);
                 });
             this.loading = true;
         },
@@ -230,9 +229,8 @@ export default {
 
                     this.showForm = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error fetching orders.");
-                    console.error(error);
                 });
         },
         openAcceptModal(tripId) {
@@ -257,9 +255,8 @@ export default {
                     this.fetchPrivateTrips();
                     this.price = "";
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error accepting order.");
-                    console.error(error);
                     this.price = "";
                 });
         },

@@ -188,7 +188,6 @@ export default {
                 headers: { Authorization: `Bearer ${token}` },
             }).then((response) => {
                 if (response.status == 200) {
-                    console.log(response);
                     window.localStorage.removeItem("access_token");
                     window.localStorage.removeItem("type_user");
                     router.push("/");

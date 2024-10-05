@@ -68,7 +68,7 @@ export default {
                 this.toast.success(
                     "Start point selected! Now click to set the end point."
                 );
-                console.log("Start point selected:", location.toString());
+                // console.log("Start point selected:", location.toString());
             } else if (!this.endMarker) {
                 this.endMarker = new google.maps.Marker({
                     position: location,
@@ -78,7 +78,7 @@ export default {
                 store.commit("setEnd", location);
                 this.toast.success("End point selected!");
                 this.calculateAndDisplayRoute();
-                console.log("End point selected:", location.toString());
+                // console.log("End point selected:", location.toString());
             } else {
                 // Remove old markers if both markers are already set
                 this.resetMarkers();
@@ -96,9 +96,9 @@ export default {
                     if (status === google.maps.DirectionsStatus.OK) {
                         this.directionsRenderer.setDirections(response);
                     } else {
-                        console.error(
-                            "Directions request failed due to " + status
-                        );
+                        // console.error(
+                        //     "Directions request failed due to " + status
+                        // );
                     }
                 }
             );
@@ -117,7 +117,7 @@ export default {
             this.toast.info(
                 "Points have been reset! Click on the map to set the start point."
             );
-            console.log("Points have been reset!");
+            // console.log("Points have been reset!");
         },
     },
 };
