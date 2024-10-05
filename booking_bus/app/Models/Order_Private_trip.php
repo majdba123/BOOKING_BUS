@@ -12,7 +12,7 @@ class Order_Private_trip extends Model
     use HasFactory;
     use SoftDeletes;
     protected $dates = [
-        'deleted_at'
+        'deleted_at',
     ];
     protected $hidden = [
         'pricing_id',

@@ -11,11 +11,13 @@ use App\Models\Bus_Trip;
 use App\Models\user;
 use App\Events\BreakTripEvent;
 use App\Events\PrivateNotification;
+use App\Models\Trip;
 use App\Models\UserNotification;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 
@@ -292,7 +294,7 @@ class DriverController extends Controller
             return response()->json(['error' => 'No Trpis found for the you'], 404);
         }
         // print($bus);
-        $trips = Bus_Trip::where('status', '<>', 'pending')
+        $trips = Bus_Trip::where('status', '=', 'completed')
             ->where('bus_id', $bus->bus_id)
             ->get();
 
@@ -315,14 +317,14 @@ class DriverController extends Controller
                 'bus_id' => $trip->bus_id,
                 'from' => $trip->trip->path->from ?? null,
                 'to' => $trip->trip->path->to ?? null,
-                'from_time_going' => $trip->from_time_going,
-                'to_time_going' => $trip->to_time_going,
-                'from_time_return' => $trip->from_time_return,
-                'to_time_return' => $trip->to_time_return,
+                'goingfromTime' => $trip->from_time_going,
+                'goingtoTime' => $trip->to_time_going,
+                'ReturnfromTime' => $trip->from_time_return,
+                'ReturntoTime' => $trip->to_time_return,
                 'date_end' => $trip->date_end,
                 'date_start' => $trip->date_start,
 
-                // 'distance' => $trip->trip->path->Distance ?? null,
+                'Distance' => $trip->trip->path->Distance ?? null,
                 // 'from_lat' => $trip->trip->path->from_latitude ?? null,
                 // 'from_long' => $trip->trip->path->from_longitude ?? null,
                 // 'to_lat' => $trip->trip->path->to_latitude ?? null,
@@ -809,7 +811,7 @@ class DriverController extends Controller
                         $type_reservation = 2;
                     }
                     $reservations = Reservation::where('pivoit_id', $pivoit_id)
-                        ->where('status', 'padding')
+                        ->where('status', 'pending')
                         ->where('type', $type_reservation)
                         ->get();
 

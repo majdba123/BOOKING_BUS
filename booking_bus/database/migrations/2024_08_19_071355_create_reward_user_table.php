@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('reward_user', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Reward::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();

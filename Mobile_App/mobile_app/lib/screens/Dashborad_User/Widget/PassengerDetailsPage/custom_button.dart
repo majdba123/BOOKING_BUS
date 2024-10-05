@@ -130,7 +130,7 @@ class _PassengerDetailsPageState extends State<PassengerDetailsPage> {
                                       children: [
                                         Text(
                                           selectedBoardingPoint != null
-                                              ? '🚌 ${selectedBoardingPoint!.nameBreak} @ 5:50am'
+                                              ? '🚌 ${selectedBoardingPoint!.nameBreak} '
                                               : '🚌 Not Selected',
                                           style: TextStyle(
                                             color: AppColors.primaryColor,

@@ -61,7 +61,7 @@ class HeraderSection extends StatelessWidget {
                   top: -1,
                   end: 0,
                 ),
-                badgeContent: Text('3'),
+                badgeContent: Text(''),
                 child: IconButton(
                   icon: Icon(Icons.notifications, color: Colors.white),
                   onPressed: () {

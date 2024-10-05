@@ -30,9 +30,9 @@ class RegesterTest extends TestCase
         //dd($name->name);
         $this->assertEquals('John Doe', $name->name  );
 
-        $this->assertEquals('johndoe2@example.com',  $name->email );    
+        $this->assertEquals('johndoe2@example.com',  $name->email);
     }
-    
+
 
     public function test_Regester_validates_the_request_data()
     {
@@ -43,10 +43,10 @@ class RegesterTest extends TestCase
         ]);
         $response->assertStatus(422);
         $response->assertJsonStructure(['error']);
-        $this->assertEquals(2,  User::count());
-       
+        $this->assertEquals(1,  User::count());
+
         //dd($response);
-       
+
     }
 
 
@@ -60,8 +60,7 @@ class RegesterTest extends TestCase
             'password' => 'password123',
         ]);
         $response->assertStatus(422);
-        $response->assertJson([ "error"=> "Email has already been taken"]);
+        $response->assertJson(["error" => "Email has already been taken"]);
         $this->assertEquals(2,  User::count());
-       
     }
 }

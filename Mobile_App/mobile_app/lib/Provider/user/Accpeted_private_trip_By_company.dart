@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:mobile_app/colors.dart';
 
-class AccpetedPrivateTripByCompany extends StatelessWidget {
+class AcceptedPrivateTripByCompany extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +16,7 @@ class AccpetedPrivateTripByCompany extends StatelessWidget {
         backgroundColor: AppColors.primaryColor,
         elevation: 0,
         title: Text(
-          'Accpeted Private Trip By Company',
+          'Accepted Private Trip By Company',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -26,30 +26,24 @@ class AccpetedPrivateTripByCompany extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<void>(
-          future: _fetchTrips(context),
+          future: _fetchTrips(context), // Call the fetch function here
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error loading trips'));
-            } else {
-              return Consumer<PrivateTripuserProvider>(
-                builder: (context, tripProvider, child) {
-                  if (tripProvider.isLoading) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  if (tripProvider.privatetripsRequest.isEmpty) {
-                    return Center(child: Text('No trips available'));
-                  }
-                  return ListView.builder(
-                    itemCount: tripProvider.privatetripsRequest.length,
-                    itemBuilder: (context, index) {
-                      return TripCard(index: index);
-                    },
-                  );
-                },
-              );
-            }
+            return Consumer<PrivateTripuserProvider>(
+              builder: (context, tripProvider, child) {
+                if (tripProvider.isLoading) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (tripProvider.privatetripsRequest.isEmpty) {
+                  return Center(child: Text('No trips available'));
+                }
+                return ListView.builder(
+                  itemCount: tripProvider.privatetripsRequest.length,
+                  itemBuilder: (context, index) {
+                    return TripCard(index: index);
+                  },
+                );
+              },
+            );
           },
         ),
       ),
@@ -59,11 +53,11 @@ class AccpetedPrivateTripByCompany extends StatelessWidget {
   Future<void> _fetchTrips(BuildContext context) async {
     final accessToken =
         Provider.of<AuthProvider>(context, listen: false).accessToken;
-    final tripId =
-        Provider.of<PrivateTripuserProvider>(context, listen: false).tripId;
-    await context
-        .read<PrivateTripuserProvider>()
-        .fetchPrivateTripsAccepetedRequsetByComapny(tripId!, accessToken);
+    final provider =
+        Provider.of<PrivateTripuserProvider>(context, listen: false);
+    final tripId = provider.tripId;
+    await provider.fetchPrivateTripsAccepetedRequsetByComapny(
+        tripId!, accessToken);
   }
 }
 

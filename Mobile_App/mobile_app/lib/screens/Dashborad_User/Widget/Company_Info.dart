@@ -67,7 +67,7 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                     aspectRatio: 16 / 9,
                     child: CachedNetworkImage(
                       imageUrl:
-                          'https://t3.ftcdn.net/jpg/02/51/59/46/360_F_251594672_c7xertPrElSFJ5eTd6V0CmQE1CyGC6Ke.jpg',
+                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpBxH7wPQNt1h22EZVZoYjUAiuhVq9AyafjpJFXxeOLcseRgLc07i5vNHJI0V77faZXJo&usqp=CAU',
                       placeholder: (context, url) => Center(
                         child: CircularProgressIndicator(),
                       ),
@@ -112,19 +112,19 @@ class _CompanyInfoPageState extends State<CompanyInfoPage> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Icons.person, color: Colors.grey[600]),
-                                SizedBox(width: 8),
-                                Text(
-                                  'User ID: ${company.userId}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     Icon(Icons.person, color: Colors.grey[600]),
+                            //     SizedBox(width: 8),
+                            //     // Text(
+                            //     //   'User ID: ${company.userId}',
+                            //     //   style: TextStyle(
+                            //     //     fontSize: 16,
+                            //     //     color: Colors.grey[600],
+                            //     //   ),
+                            //     // ),
+                            //   ],
+                            // ),
                             SizedBox(height: 20),
                             Divider(),
                             _buildAboutSection(),

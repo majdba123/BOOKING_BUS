@@ -2,8 +2,10 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
-
+use Illuminate\Support\Str;
 return new class extends Migration
 {
     /**
@@ -19,6 +21,7 @@ return new class extends Migration
             $table->string('point')->default(200);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

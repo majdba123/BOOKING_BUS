@@ -16,6 +16,7 @@ return new class extends Migration
 
             $table->id();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete();
+            $table->softDeletes();
             $table->integer('hours_before');
             $table->decimal('discount_percentage', 5, 2);
             $table->text('description');

@@ -74,13 +74,13 @@ class _ProfileCheckPageState extends State<ProfileCheckPage> {
       setState(() {
         _isChecking = false;
       });
-      if (authprovider.userType == "user") {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => DashboardUser()),
-        );
-      } else if (authprovider.userType == "driver") {
+      if (authprovider.userType == "driver") {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => DashboardDriver()),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => DashboardUser()),
         );
       }
     }

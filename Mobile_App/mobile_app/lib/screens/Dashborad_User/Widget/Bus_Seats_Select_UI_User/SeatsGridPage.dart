@@ -27,6 +27,7 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
   @override
   void initState() {
     super.initState();
+    selectedSeats = [];
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     providerSpecificBusTrip =
         Provider.of<BussofSpsccifTripProvider>(context, listen: false);

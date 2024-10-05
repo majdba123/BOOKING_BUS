@@ -40,14 +40,14 @@ Widget buildBreakStopTimeline(busTrip) {
                     width: segmentWidth,
                     child: Column(
                       children: [
-                        Text(
-                          '40',
-                          // breakPlace.time, // Time of the stop
-                          style: TextStyle(
-                            fontSize: 12.0,
-                            color: Colors.grey[600],
-                          ),
-                        ),
+                        // Text(
+                        //   '40',
+                        //   // breakPlace.time, // Time of the stop
+                        //   style: TextStyle(
+                        //     fontSize: 12.0,
+                        //     color: Colors.grey[600],
+                        //   ),
+                        // ),
                         SizedBox(height: 4.0),
                         Icon(
                           Icons.location_on,

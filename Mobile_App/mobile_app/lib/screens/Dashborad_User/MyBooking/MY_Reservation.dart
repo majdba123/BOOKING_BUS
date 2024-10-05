@@ -21,7 +21,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
     var accessToken = context.read<AuthProvider>().accessToken;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      reservationProvider.fetchReservations('padding', accessToken);
+      reservationProvider.fetchReservations('pending', accessToken);
     });
     super.initState();
   }
@@ -46,10 +46,10 @@ class _BookingsScreenState extends State<BookingsScreen> {
                   children: [
                     FilterButton(
                       text: 'Active',
-                      isSelected: reservationProvider.status == 'padding',
+                      isSelected: reservationProvider.status == 'pending',
                       onPressed: () async {
                         await reservationProvider.fetchReservations(
-                            'padding', accessToken);
+                            'pending', accessToken);
                       },
                     ),
                     FilterButton(
@@ -57,11 +57,11 @@ class _BookingsScreenState extends State<BookingsScreen> {
                       isSelected: reservationProvider.status == 'completed',
                       onPressed: () async {
                         await reservationProvider.fetchReservations(
-                            'finished', accessToken);
+                            'completed', accessToken);
                       },
                     ),
                     FilterButton(
-                      text: 'Cancelled',
+                      text: 'canceled',
                       isSelected: reservationProvider.status == 'canceled',
                       onPressed: () async {
                         await reservationProvider.fetchReservations(

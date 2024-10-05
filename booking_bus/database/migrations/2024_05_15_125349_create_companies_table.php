@@ -18,6 +18,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name_company');
+            $table->softDeletes();
             $table->timestamps();
         });
         $this->createCompanyUser();

@@ -169,7 +169,7 @@ class _BusCardofSpecicTripState extends State<BusCardofSpecicTrip> {
                         onTap: () {
                           print('the index is $index');
                           provider.selectIndexOfBustrip(index);
-
+                          provider.emptyTicketDetail();
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => SeatsGridPage(),

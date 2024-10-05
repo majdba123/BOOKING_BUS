@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('rewards', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('Reservation_Costs', 8, 2);
             $table->decimal('reward_percentage', 5, 2)->default(0);

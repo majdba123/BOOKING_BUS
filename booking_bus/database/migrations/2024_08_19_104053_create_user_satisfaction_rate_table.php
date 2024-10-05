@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('user_satisfaction_rate', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(SatisfactionRate::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();

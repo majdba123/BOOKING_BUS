@@ -16,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('cancel_reservations', function (Blueprint $table) {
             $table->id();
+            $table->softDeletes();
             $table->foreignIdFor(Reservation::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(CancellationRule::class)->constrained()->cascadeOnDelete();
             $table->decimal('refund_amount', 10, 2);

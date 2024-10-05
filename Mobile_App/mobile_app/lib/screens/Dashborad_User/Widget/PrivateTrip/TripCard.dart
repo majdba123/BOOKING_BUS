@@ -21,7 +21,7 @@ class TripCardPrivateTrip extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => AccpetedPrivateTripByCompany(),
+              builder: (context) => AcceptedPrivateTripByCompany(),
             ),
           );
         },
@@ -59,18 +59,18 @@ class TripCardPrivateTrip extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 4.0),
-                    decoration: BoxDecoration(
-                      color: Colors.green[50],
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Text(
-                      'N. ${privatetrip.id ?? 'ID not available'}',
-                      style: TextStyle(color: Colors.green[800]),
-                    ),
-                  ),
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(
+                  //       horizontal: 8.0, vertical: 4.0),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.green[50],
+                  //     borderRadius: BorderRadius.circular(8.0),
+                  //   ),
+                  //   child: Text(
+                  //     'N. ${privatetrip.id ?? 'ID not available'}',
+                  //     style: TextStyle(color: Colors.green[800]),
+                  //   ),
+                  // ),
                 ],
               ),
               const SizedBox(height: 16.0),
@@ -100,7 +100,7 @@ class TripCardPrivateTrip extends StatelessWidget {
                   ),
                   buildTimeLocationColumn(
                       privatetrip.to ?? 'Time not available',
-                      privatetrip.date ?? 'Date not available',
+                      privatetrip.time ?? 'Date not available',
                       context),
                 ],
               ),

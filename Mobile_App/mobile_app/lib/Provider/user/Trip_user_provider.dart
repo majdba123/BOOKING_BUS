@@ -117,7 +117,7 @@ class TripuserProvider with ChangeNotifier {
     final response = await http.get(headers: {
       'Authorization': 'Bearer $accessToken',
     }, Uri.parse(name_domain_server + 'user/trips'));
-
+    print(response.body);
     if (response.statusCode == 200) {
       final List<dynamic> tripList = json.decode(response.body);
       _alltrips = tripList.map((json) => AllTrips.fromJson(json)).toList();

@@ -10,15 +10,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Trip extends Model
 {
     use HasFactory;
+
     // use SoftDeletes;
+    use SoftDeletes;
     protected $dates = [
-        'deleted_at'
+        'deleted_at',
     ];
     protected $hidden = [
         'pricing_id',
         'pricing_type',
         // 'pricing',
     ];
+
     protected $fillable = [
         'company_id',
         'path_id',
@@ -61,6 +64,7 @@ class Trip extends Model
     {
         return $this->morphTo();
     }
+
     public function getPriceAttribute()
     {
         $pricingModel = $this->pricing_type::find($this->pricing_id);
@@ -68,7 +72,6 @@ class Trip extends Model
         if ($pricingModel) {
             return $pricingModel->cost;
         }
-
         return null;
     }
 }

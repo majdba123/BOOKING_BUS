@@ -286,6 +286,7 @@ class TripController extends Controller
 
             $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->find($trip->id);
             $trips1->price = $trips1->pricing ? $trips1->pricing->cost : null;
+
             $key = 'trip_' . $trips1->id;
             Cache::put($key, $trips1, now()->addMinutes(30));
 
@@ -414,6 +415,7 @@ class TripController extends Controller
                         } else {
                             return response()->json([
                                 'message' => 'bus active on trip ',
+                                404
                             ]);
                         }
                     }
@@ -522,7 +524,7 @@ class TripController extends Controller
                         'message' => 'bus has reservation ',
                     ]);
                 }
-                if ($bus_trip->event != 'stopped') {
+                if ($bus_trip->event == 'stopped') {
                     if ($bus) {
                         $bus->status = 'available';
                         $bus->save();
@@ -559,95 +561,31 @@ class TripController extends Controller
     }
 
 
-    /*   public function index_user()
-    {
-
-        //this commment by hamza
-        // $trips = Trip::where('status', ['pending' ,'finished_going'])->with('bus_trip')->get();
-        $trips = Trip::where('status', 'pending')->get();
-
-        $data = [];
-
-        foreach ($trips as $trip) {
-
-            // $busTrips = $trip->bus_trip;
-            // $busTripsData = [];
-            // foreach ($busTrips as $busTrip) {
-            //     $busTripData = [
-            //         'bus_trip_id' => $busTrip->id,
-            //         'bus_id' => $busTrip->bus_id,
-            //         'from_time' => $busTrip->from_time,
-            //         'to_time' => $busTrip->to_time,
-            //         'type' => $busTrip->type,
-            //         'event' => $busTrip->type,
-            //     ];
-
-            //     $pivotData = $busTrip->Pivoit;
-            //     $customPivotData = [];
-            //     foreach ($pivotData as $pivot) {
-            //         $customPivotData[] = [
-            //             'break_id'  => $pivot->id,
-            //             'government'  => $pivot->break_trip->break->area->name,
-            //             'name_break' => $pivot->break_trip->break->name,
-            //             'status' => $pivot->status,
-
-            //         ];
-            //     }
-            //     $busTripData['pivot'] = $customPivotData;
-
-            //     $seats = $busTrip->bus->seat; // Assuming you have a seats relationship on the bus_trip model
-            //     $seatsData = [];
-            //     foreach ($seats as $seat) {
-            //         $seatsData[] = [
-            //             'id' => $seat->id,
-            //             'status' => $seat->status,
-            //             // Add any other columns you want to include from the seats table
-            //         ];
-            //     }
-            //     $busTripData['seats'] = $seatsData;
-
-            //     $busTripsData[] = $busTripData;
-            // }
-
-            $data[] = [
-                'trip_id' => $trip->id,
-                'company_name' => $trip->company->user->name,
-                'from'  => $trip->path->from,
-                'to'  => $trip->path->to,
-                'price' => $trip->price,
-                // 'bus_trips' => $busTripsData,
-
-
-            ];
-        }
-        return response()->json($data);
-    }*/
-
     public function index_user()
     {
         $trips = [];
         foreach (Trip::where('status', 'pending')->pluck('id') as $trip_id) {
             $key = 'trip_' . $trip_id; // Create a unique cache key for each trip
             // Check if the trip is already cached
-            if (Cache::has($key)) {
-                $trips[] = Cache::get($key);
-            } else {
-                // If not, retrieve the trip from the database and cache it
-                $trip = Trip::where('id', $trip_id)
-                    ->with('path')
-                    ->first();
+            // if (Cache::has($key)) {
+            // $trips[] = Cache::get($key);
+            // } else {
+            // If not, retrieve the trip from the database and cache it
+            $trip = Trip::where('id', $trip_id)
+                ->with('path')
+                ->first();
 
-                $data = [
-                    'trip_id' => $trip->id,
-                    'company_name' => $trip->company->user->name,
-                    'from' => $trip->path->from,
-                    'to' => $trip->path->to,
-                    // 'price' => $trip->price,
-                    // 'bus_trips' => $busTripsData,
-                ];
-                $trips[] = $data;
-                // Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
-            }
+            $data = [
+                'trip_id' => $trip->id,
+                'company_name' => $trip->company->user->name,
+                'from'  => $trip->path->from,
+                'to'  => $trip->path->to,
+                'price' => $trip->pricing->cost,
+                // 'bus_trips' => $busTripsData,
+            ];
+            $trips[] = $data;
+            // Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
+            // }
         }
         return response()->json($trips);
     }
@@ -728,9 +666,9 @@ class TripController extends Controller
             $data[] = [
                 'trip_id' => $trip->id,
                 'company_name' => $trip->company->user->name,
-                'from' => $trip->path->from,
-                'to' => $trip->path->to,
-                // 'price' => $trip->price,
+                'from'  => $trip->path->from,
+                'to'  => $trip->path->to,
+                'price' => $trip->pricing->cost,
                 // 'bus_trips' => $busTripsData,
 
                 // Add any other columns you want to include from the trips table
@@ -743,7 +681,7 @@ class TripController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'trip_id' => 'required|exists:bus__trips,id',
+            'trip_id' => 'required|exists:bus__trips,id,deleted_at,NULL',
             'description' => 'required|string|max:100',
             'reasons' => 'required|array',
             'reasons.*' => 'string|max:50',
@@ -872,6 +810,13 @@ class TripController extends Controller
                     $company->point -= $refundPoints;
                     $user->point += $refundPoints;
 
+
+                    $massage = "Sorry we cancled Trip and we return to u the cost  : $user->id ";
+                    event(new PrivateNotification($user->id, $massage));
+                    UserNotification::create([
+                        'user_id' => Auth::user()->id,
+                        'notification' => $massage,
+                    ]);
                     $company->save();
                     $user->save();
                 } else {

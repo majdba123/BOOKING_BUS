@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             $table->decimal('latitude', 10, 8);
             $table->decimal('longitude', 11, 8);
+            $table->softDeletes();
+
             $table->timestamps();
         });
         DB::table('geolocations')->insert([

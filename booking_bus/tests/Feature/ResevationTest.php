@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Bus;
 use App\Models\Pivoit;
 use App\Models\Seat;
+use App\Models\Trip;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -28,19 +29,23 @@ class ResevationTest extends TestCase
         $bus1 = Bus::factory()->create([
             'status' => 'available',
         ]);
-        $seat1 =Seat::factory()->create([
-            'bus_id' => $bus1->id ,
+        $seat1 = Seat::factory()->create([
+            'bus_id' => $bus1->id,
             'status' => 0
         ]);
-        $seat2 =Seat::factory()->create([
-            'bus_id' => $bus1->id ,
+        $seat2 = Seat::factory()->create([
+            'bus_id' => $bus1->id,
             'status' => 0
         ]);
+
+
+
         $busTrip = Bus_Trip::factory()->create([
             'bus_id' => $bus1->id
         ]);
+        // dd($busTrip->id);
         $pivoit = Pivoit::factory()->create(['bus__trip_id' => $busTrip->id]);
-       // dd($busTrip->Pivoit);
+        // dd($busTrip->Pivoit);
         // Login as the user
         $response = $this->postJson('/api/login', [
             'email' => $user->email,
@@ -60,9 +65,9 @@ class ResevationTest extends TestCase
 
         // Make the request
         $response = $this->postJson('/api/user/store_reservation/' . $busTrip->id, $data, $headers);
-
+        dd($response);
         $response->assertStatus(200);
-       // dd($response);
+
         $this->assertDatabaseHas('reservations', [
             'user_id' => $user->id,
             'bus__trip_id' => $busTrip->id,
@@ -71,7 +76,7 @@ class ResevationTest extends TestCase
 
         foreach ($data['seat'] as $seatId) {
             $this->assertDatabaseHas('seat__reservations', [
-                'reservation_id' =>$response->json()['reservation_id'],
+                'reservation_id' => $response->json()['reservation_id'],
                 'seat_id' => $seatId,
             ]);
         }

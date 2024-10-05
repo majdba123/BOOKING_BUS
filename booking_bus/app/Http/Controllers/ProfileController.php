@@ -124,7 +124,7 @@ class ProfileController extends Controller
                     'price' =>  $reservation->price,
                     'type' => $typeTrip,
                     'bustrip_id' => $busTrip->id,
-                    'company_name' => $busTrip->trip->path->Company->user->name,
+                    'company_name' => $busTrip->trip->path->Company->name_company,
                     'Pickup_Point' => $reservation->pivoit->break_trip->break->name,
                     'from' => $busTrip->trip->path->from,
                     'to' => $busTrip->trip->path->to,
@@ -177,7 +177,7 @@ class ProfileController extends Controller
                 'phone' => $request->phone
             ]);
 
-            $massage = "you added your profile:  $profile  user_id : $user->id ";
+            $massage = "you update your profile successfully";
             event(new PrivateNotification($user->id, $massage));
             UserNotification::create([
                 'user_id' =>  $user->id,

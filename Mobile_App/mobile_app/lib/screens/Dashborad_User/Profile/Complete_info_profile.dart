@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_app/colors.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/constants.dart';
+import 'package:mobile_app/screens/WidgetApp/AppBar.dart';
+import 'package:mobile_app/widgets/CustomeCirculerProgress.dart';
 import 'package:provider/provider.dart';
 
 class CompleteProfilePage extends StatefulWidget {
@@ -23,7 +25,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
   final _formKey = GlobalKey<FormState>();
   File? _image;
   final _phoneController = TextEditingController();
-
+  bool iscomplete = false;
   Future<void> _pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -35,79 +37,12 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
     });
   }
 
-  Future<void> _submitProfile(BuildContext context) async {
-    if (_formKey.currentState!.validate() && _image != null) {
-      try {
-        var accessToken = authprovider.accessToken;
-
-        Uri uri;
-        if (authprovider.userType == "user") {
-          uri = Uri.parse(name_domain_server + 'user/store_profile_info');
-        } else if (authprovider.userType == "driver") {
-          uri = Uri.parse(name_domain_server + 'driver/store_profile_info');
-        } else {
-          throw Exception("Invalid user type");
-        }
-
-        var request = http.MultipartRequest('POST', uri)
-          ..headers['Authorization'] = 'Bearer $accessToken'
-          ..fields['phone'] = _phoneController.text
-          ..files.add(await http.MultipartFile.fromPath('image', _image!.path));
-
-        var response = await request.send();
-        var responseBody = await response.stream.bytesToString();
-
-        print('Status Code: ${response.statusCode}');
-        print('Response Body: $responseBody');
-
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          if (authprovider.userType == "user") {
-            Navigator.of(context).pushNamedAndRemoveUntil(
-                '/mainPageUser', (Route<dynamic> route) => false);
-          } else if (authprovider.userType == "driver") {
-            Navigator.of(context).pushNamedAndRemoveUntil(
-                '/driverPageUser', (Route<dynamic> route) => false);
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to update profile: $responseBody')),
-          );
-        }
-      } catch (e) {
-        print('An error occurred: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'An unexpected error occurred. Please try again later.')),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please complete the form and select an image')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          color: Colors.white,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        centerTitle: true,
-        backgroundColor: AppColors.primaryColor,
-        title: Text(
-          'Complete Profile',
-          style: TextStyle(color: Colors.white, fontSize: 22.0),
-        ),
-      ),
+      appBar: customeAppBar(context, 'Complete Profile', null),
       body: Container(
         height: screenHeight,
         width: screenWidth,
@@ -178,20 +113,35 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
                       },
                     ),
                     SizedBox(height: 40),
-                    ElevatedButton(
-                      onPressed: () => _submitProfile(context),
-                      child: Text(
-                        'Complete Profile',
-                        style: TextStyle(color: Colors.white, fontSize: 22.0),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
+                    Consumer<AuthProvider>(
+                      builder: (context, authProvider, child) {
+                        return authProvider.isLoading
+                            ? CustomeProgressIndecator(context)
+                            : ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    authprovider.submitProfile(
+                                      context,
+                                      _phoneController.text,
+                                      _image,
+                                    );
+                                  }
+                                },
+                                child: Text(
+                                  'Complete Profile',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 22.0),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryColor,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                              );
+                      },
                     ),
                   ],
                 ),
