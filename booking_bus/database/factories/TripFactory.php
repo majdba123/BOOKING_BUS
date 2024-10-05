@@ -1,5 +1,7 @@
 <?php
+
 namespace Database\Factories;
+
 use App\Models\CappingPricingModel;
 use App\Models\Company;
 use App\Models\DecreasingProportionalModel;
@@ -22,18 +24,21 @@ class TripFactory extends Factory
     protected $model = Trip::class;
     public function definition()
     {
+        $pricingModel = $this->faker->randomElement([
+            FixedPricingModel::class,
+            ProportionalPricingModel::class,
+            DecreasingProportionalModel::class,
+            CappingPricingModel::class
+        ]);
+
+        $pricing = $pricingModel::factory()->create();
         return [
-            'company_id' => Company::factory(), // create a company for each trip
-            'path_id' => Path::factory(), // create a path for each trip
+            'company_id' => Company::factory(),
+            'path_id' => Path::factory(),
             'status' => 'pending',
-            'pricing_id' => $this->faker->randomFloat(2, 50, 1000), // Random price
-            'pricing_type' => $this->faker->randomElement([
-                FixedPricingModel::class,
-                ProportionalPricingModel::class,
-                DecreasingProportionalModel::class,
-                CappingPricingModel::class
-            ]),
-            // 'price' => '20', // random price between 0 and 99999
+            'pricing_id' => $pricing->id,
+            'pricing_type' => $pricingModel,
+
         ];
     }
 }

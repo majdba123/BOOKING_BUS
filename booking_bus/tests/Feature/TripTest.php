@@ -68,10 +68,7 @@ class TripTest extends TestCase
             'lat_end' => 0.0012,
             'long_end' => 0.0012,   // Assuming you have a factory for Geolocation
             'Distance' => 700,
-            'lat_start' => 0.0015,
-            'long_start' => 0.0018,
-            'lat_end' => 0.0014,
-            'long_end' => 0.0010
+
 
         ];
         $headers = [
@@ -264,7 +261,6 @@ class TripTest extends TestCase
             'path_id' => $path->id,
             'company_id' => $company->id,
             'status' => "pending",
-            'status' => "pending",
         ]);
 
         // Create bus trips and breaks trips associated with the trip
@@ -284,7 +280,6 @@ class TripTest extends TestCase
         ]);
         $breakTrip2 = Breaks_Trip::factory()->create([
             'trip_id' => $trip->id,
-            'breaks_id' => $break2->id,
             'breaks_id' => $break2->id,
         ]);
 
