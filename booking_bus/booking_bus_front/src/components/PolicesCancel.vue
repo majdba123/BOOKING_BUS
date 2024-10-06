@@ -18,18 +18,32 @@
                 <div class="form-container">
                     <form class="profile-form" @submit.prevent="submitForm">
                         <div class="form-group">
-                            <label for="searchable-select">Searchable Select</label>
+                            <label for="searchable-select"
+                                >Searchable Select</label
+                            >
                             <div class="searchable-select-wrapper">
-                                <input type="text" v-model="searchQuery" @input="filterOptions" placeholder="Search..."
-                                    class="search-input" />
-                                <select id="searchable-select" v-if="filteredOptions.length > 0"
-                                    v-model="formData.trip_id">
+                                <input
+                                    type="text"
+                                    v-model="searchQuery"
+                                    @input="filterOptions"
+                                    placeholder="Search..."
+                                    class="search-input"
+                                />
+                                <select
+                                    id="searchable-select"
+                                    v-if="filteredOptions.length > 0"
+                                    v-model="formData.trip_id"
+                                >
                                     <option value="" disabled selected>
                                         Select an option
                                     </option>
-                                    <option v-for="(
+                                    <option
+                                        v-for="(
                                             option, index
-                                        ) in limitedOptions" :key="index" :value="option.value">
+                                        ) in limitedOptions"
+                                        :key="index"
+                                        :value="option.value"
+                                    >
                                         {{ option.text }}
                                     </option>
                                 </select>
@@ -38,18 +52,35 @@
                         </div>
                         <div class="form-group">
                             <label for="description">Description</label>
-                            <textarea id="description" v-model="formData.description"
-                                placeholder="Enter your description here" class="description-input"></textarea>
+                            <textarea
+                                id="description"
+                                v-model="formData.description"
+                                placeholder="Enter your description here"
+                                class="description-input"
+                            ></textarea>
                         </div>
                         <!-- Field Group with Buttons -->
-                        <div v-for="(field, index) in formData.reasons" :key="index" class="field-group">
+                        <div
+                            v-for="(field, index) in formData.reasons"
+                            :key="index"
+                            class="field-group"
+                        >
                             <div class="form-group">
                                 <label :for="'field-' + index">Problem</label>
                                 <div class="input-with-buttons">
-                                    <input type="text" :id="'field-' + index" v-model="field.value"
-                                        placeholder="Enter Problem" />
-                                    <button class="delete-btn" @click="removeField(index)">
-                                        <span class="material-icons">delete</span>
+                                    <input
+                                        type="text"
+                                        :id="'field-' + index"
+                                        v-model="field.value"
+                                        placeholder="Enter Problem"
+                                    />
+                                    <button
+                                        class="delete-btn"
+                                        @click="removeField(index)"
+                                    >
+                                        <span class="material-icons"
+                                            >delete</span
+                                        >
                                     </button>
                                     <button class="add-btn" @click="addField">
                                         <span class="material-icons">add</span>
@@ -62,14 +93,21 @@
                             <button type="submit" class="nav-btnd">
                                 Save Cancel
                             </button>
-                            <button type="button" class="nav-btnd" @click="showCompensationModal = true">
+                            <button
+                                type="button"
+                                class="nav-btnd"
+                                @click="showCompensationModal = true"
+                            >
                                 Financial compensation
                             </button>
                         </div>
 
                         <div class="modal" v-if="showCompensationModal">
                             <div class="modal-content">
-                                <button class="close-btn" @click="showCompensationModal = false">
+                                <button
+                                    class="close-btn"
+                                    @click="showCompensationModal = false"
+                                >
                                     &times;
                                 </button>
                                 <h3>Financial compensation</h3>
@@ -78,23 +116,39 @@
                                     <label for="compensation-percentage">
                                         Satisfaction Rate
                                     </label>
-                                    <input type="text" id="compensation-percentage" v-model="compensationData.rate"
-                                        placeholder="Enter the compensation percentage" />
+                                    <input
+                                        type="text"
+                                        id="compensation-percentage"
+                                        v-model="compensationData.rate"
+                                        placeholder="Enter the compensation percentage"
+                                    />
                                 </div>
 
                                 <div class="form-group">
                                     <label for="compensation-description">
                                         Description
                                     </label>
-                                    <textarea class="description-input" id="compensation-description" v-model="compensationData.satisfaction_rate_description
-                                        " placeholder="Enter compensation description"></textarea>
+                                    <textarea
+                                        class="description-input"
+                                        id="compensation-description"
+                                        v-model="
+                                            compensationData.satisfaction_rate_description
+                                        "
+                                        placeholder="Enter compensation description"
+                                    ></textarea>
                                 </div>
 
                                 <div class="modal-actions">
-                                    <button @click="saveCompensation" class="nav-btnd">
+                                    <button
+                                        @click="saveCompensation"
+                                        class="nav-btnd"
+                                    >
                                         Save
                                     </button>
-                                    <button @click="showCompensationModal = false" class="nav-btnd">
+                                    <button
+                                        @click="showCompensationModal = false"
+                                        class="nav-btnd"
+                                    >
                                         Cancel
                                     </button>
                                 </div>
@@ -111,20 +165,34 @@
 
             <!-- Form for adding or editing rewards -->
             <div class="form-container">
-                <form @submit.prevent="
-                    editingIndex !== null
-                        ? saveEditedChanges()
-                        : saveChanges()
-                    ">
+                <form
+                    @submit.prevent="
+                        editingIndex !== null
+                            ? saveEditedChanges()
+                            : saveChanges()
+                    "
+                >
                     <div class="form-group">
-                        <label for="reward-percentage">Reward Percentage:</label>
-                        <input type="text" v-model="reward_percentage" id="reward-percentage" required
-                            placeholder="Enter reward-percentage" />
+                        <label for="reward-percentage"
+                            >Reward Percentage:</label
+                        >
+                        <input
+                            type="text"
+                            v-model="reward_percentage"
+                            id="reward-percentage"
+                            required
+                            placeholder="Enter reward-percentage"
+                        />
                     </div>
                     <div class="form-group">
                         <label for="reservation-cost">Reservation Cost:</label>
-                        <input type="text" v-model="price" id="reservation-cost" required
-                            placeholder="Enter reservation-cost" />
+                        <input
+                            type="text"
+                            v-model="price"
+                            id="reservation-cost"
+                            required
+                            placeholder="Enter reservation-cost"
+                        />
                     </div>
                     <button type="submit" class="save-btn">
                         <span class="material-icons"> add </span>
@@ -153,23 +221,36 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(reward, index) in Rewards" :key="index">
+                                <tr
+                                    v-for="(reward, index) in Rewards"
+                                    :key="index"
+                                >
                                     <td>{{ index }}</td>
                                     <td>{{ reward.reward_percentage }}%</td>
                                     <td>{{ reward.Reservation_Costs }}</td>
 
                                     <td>
-                                        <button class="delete-btn" @click="
-                                            confirmDeleteReward(reward.id)
-                                            ">
-                                            <span class="material-icons">delete</span>
+                                        <button
+                                            class="delete-btn"
+                                            @click="
+                                                confirmDeleteReward(reward.id)
+                                            "
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
                                         </button>
                                     </td>
                                     <td>
-                                        <button class="edit-btn" @click="
-                                            editReward(index, reward.id)
-                                            ">
-                                            <span class="material-icons">edit</span>
+                                        <button
+                                            class="edit-btn"
+                                            @click="
+                                                editReward(index, reward.id)
+                                            "
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
                                         </button>
                                     </td>
                                 </tr>
@@ -190,7 +271,10 @@
                         <button @click="deleteReward" class="confirm-btn">
                             Yes
                         </button>
-                        <button @click="closeDeleteConfirmModal" class="cancels-btn">
+                        <button
+                            @click="closeDeleteConfirmModal"
+                            class="cancels-btn"
+                        >
                             No
                         </button>
                     </div>
@@ -207,18 +291,34 @@
                                 : "Add New Reward"
                         }}
                     </h2>
-                    <form @submit.prevent="
-                        editingIndex !== null
-                            ? saveEditedChanges()
-                            : saveChanges()
-                        ">
+                    <form
+                        @submit.prevent="
+                            editingIndex !== null
+                                ? saveEditedChanges()
+                                : saveChanges()
+                        "
+                    >
                         <div class="form-group">
-                            <label for="reward-percentage">Reward Percentage:</label>
-                            <input type="text" v-model="reward_percentage" id="reward-percentage" required />
+                            <label for="reward-percentage"
+                                >Reward Percentage:</label
+                            >
+                            <input
+                                type="text"
+                                v-model="reward_percentage"
+                                id="reward-percentage"
+                                required
+                            />
                         </div>
                         <div class="form-group">
-                            <label for="reservation-cost">Reservation Cost:</label>
-                            <input type="text" v-model="price" id="reservation-cost" required />
+                            <label for="reservation-cost"
+                                >Reservation Cost:</label
+                            >
+                            <input
+                                type="text"
+                                v-model="price"
+                                id="reservation-cost"
+                                required
+                            />
                         </div>
                         <div class="modal-actions">
                             <button type="submit" class="save-btn">
@@ -227,7 +327,11 @@
                                 </span>
                                 {{ editingIndex !== null ? "" : "Add Reward" }}
                             </button>
-                            <button type="button" class="cancel-btn" @click="closeModal">
+                            <button
+                                type="button"
+                                class="cancel-btn"
+                                @click="closeModal"
+                            >
                                 <span class="material-icons">cancel</span>
                             </button>
                         </div>
@@ -243,18 +347,35 @@
                 <form @submit.prevent="addRule()">
                     <div class="form-group">
                         <label for="hours-before">Hours Before:</label>
-                        <input type="number" v-model="ruleHoursBefore" id="hours-before" required
-                            placeholder="Enter hours before" />
+                        <input
+                            type="number"
+                            v-model="ruleHoursBefore"
+                            id="hours-before"
+                            required
+                            placeholder="Enter hours before"
+                        />
                     </div>
                     <div class="form-group">
-                        <label for="discount-percentage">Discount Percentage:</label>
-                        <input type="number" v-model="ruleDiscountPercentage" id="discount-percentage" required
-                            placeholder="Enter discount percentage" />
+                        <label for="discount-percentage"
+                            >Discount Percentage:</label
+                        >
+                        <input
+                            type="number"
+                            v-model="ruleDiscountPercentage"
+                            id="discount-percentage"
+                            required
+                            placeholder="Enter discount percentage"
+                        />
                     </div>
                     <div class="form-group">
                         <label for="description">Description:</label>
-                        <textarea v-model="ruleDescription" id="description" required placeholder="Enter description"
-                            class="description-input"></textarea>
+                        <textarea
+                            v-model="ruleDescription"
+                            id="description"
+                            required
+                            placeholder="Enter description"
+                            class="description-input"
+                        ></textarea>
                     </div>
                     <button type="submit" class="save-btn">
                         <span class="material-icons"> add </span>
@@ -268,7 +389,10 @@
                     <div class="spinner"></div>
                 </div>
                 <div v-else>
-                    <div v-if="!cancellationRules.length" class="no-data-message">
+                    <div
+                        v-if="!cancellationRules.length"
+                        class="no-data-message"
+                    >
                         No Data Available
                     </div>
                     <div v-else>
@@ -283,20 +407,33 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(rule, index) in cancellationRules" :key="rule.id">
+                                <tr
+                                    v-for="(rule, index) in cancellationRules"
+                                    :key="rule.id"
+                                >
                                     <td>{{ rule.hours_before }}</td>
                                     <td>{{ rule.discount_percentage }}%</td>
                                     <td>{{ rule.description }}</td>
                                     <td>
-                                        <button class="delete-btn" @click="
-                                            openDeleteConfirmModal(rule)
-                                            ">
-                                            <span class="material-icons">delete</span>
+                                        <button
+                                            class="delete-btn"
+                                            @click="
+                                                openDeleteConfirmModal(rule)
+                                            "
+                                        >
+                                            <span class="material-icons"
+                                                >delete</span
+                                            >
                                         </button>
                                     </td>
                                     <td>
-                                        <button class="edit-btn" @click="editRule(index, rule.id)">
-                                            <span class="material-icons">edit</span>
+                                        <button
+                                            class="edit-btn"
+                                            @click="editRule(index, rule.id)"
+                                        >
+                                            <span class="material-icons"
+                                                >edit</span
+                                            >
                                         </button>
                                     </td>
                                 </tr>
@@ -314,10 +451,16 @@
                         Are you sure you want to delete this cancellation rule?
                     </div>
                     <div class="dialog-footer">
-                        <button @click="deleteConfirmedRule" class="confirm-btn">
+                        <button
+                            @click="deleteConfirmedRule"
+                            class="confirm-btn"
+                        >
                             Yes
                         </button>
-                        <button @click="closeDeleteConfirmModal" class="cancels-btn">
+                        <button
+                            @click="closeDeleteConfirmModal"
+                            class="cancels-btn"
+                        >
                             No
                         </button>
                     </div>
@@ -334,21 +477,39 @@
                                 : "Add New Cancellation Rule"
                         }}
                     </h2>
-                    <form @submit.prevent="
-                        selectedRuleId !== null ? updateRule() : addRule()
-                        ">
+                    <form
+                        @submit.prevent="
+                            selectedRuleId !== null ? updateRule() : addRule()
+                        "
+                    >
                         <div class="form-group">
                             <label for="hours-before">Hours Before:</label>
-                            <input type="number" v-model="ruleHoursBefore" id="hours-before" required />
+                            <input
+                                type="number"
+                                v-model="ruleHoursBefore"
+                                id="hours-before"
+                                required
+                            />
                         </div>
                         <div class="form-group">
-                            <label for="discount-percentage">Discount Percentage:</label>
-                            <input type="number" v-model="ruleDiscountPercentage" id="discount-percentage" required />
+                            <label for="discount-percentage"
+                                >Discount Percentage:</label
+                            >
+                            <input
+                                type="number"
+                                v-model="ruleDiscountPercentage"
+                                id="discount-percentage"
+                                required
+                            />
                         </div>
                         <div class="form-group">
                             <label for="description">Description:</label>
-                            <textarea v-model="ruleDescription" id="description" required
-                                class="description-input"></textarea>
+                            <textarea
+                                v-model="ruleDescription"
+                                id="description"
+                                required
+                                class="description-input"
+                            ></textarea>
                         </div>
                         <div class="modal-actions">
                             <button type="submit" class="save-btn">
@@ -359,7 +520,11 @@
                                 </span>
                                 {{ selectedRuleId !== null ? "" : "Add Rule" }}
                             </button>
-                            <button type="button" class="cancel-btn" @click="closeRuleModal">
+                            <button
+                                type="button"
+                                class="cancel-btn"
+                                @click="closeRuleModal"
+                            >
                                 <span class="material-icons">cancel</span>
                             </button>
                         </div>
@@ -633,8 +798,9 @@ export default {
                 })
                 .catch((error) => {
                     const errorMessage = error.response
-                        ? `Error cancelling trip: ${error.response.data.message || error.response.data
-                        }`
+                        ? `Error cancelling trip: ${
+                              error.response.data.message || error.response.data
+                          }`
                         : `Error cancelling trip: ${error.message}`;
                     this.toast.error(errorMessage);
                 });

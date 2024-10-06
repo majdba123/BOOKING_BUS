@@ -65,7 +65,7 @@ class ResevationTest extends TestCase
 
         // Make the request
         $response = $this->postJson('/api/user/store_reservation/' . $busTrip->id, $data, $headers);
-        dd($response);
+       // dd($response);
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('reservations', [
