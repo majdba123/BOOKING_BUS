@@ -24,7 +24,7 @@ class ResevationTest extends TestCase
     {
         // Create a user and bus trip
         $user = User::factory()->create([
-            'point' =>  '1000.00'
+            'point' =>  '180000000000000000000.00'
         ]);
         $bus1 = Bus::factory()->create([
             'status' => 'available',
@@ -65,7 +65,7 @@ class ResevationTest extends TestCase
 
         // Make the request
         $response = $this->postJson('/api/user/store_reservation/' . $busTrip->id, $data, $headers);
-       // dd($response);
+        // dd($response);
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('reservations', [

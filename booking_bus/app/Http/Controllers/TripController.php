@@ -564,31 +564,50 @@ class TripController extends Controller
     public function index_user()
     {
         $trips = [];
-        foreach (Trip::where('status', 'pending')->pluck('id') as $trip_id) {
-            $key = 'trip_' . $trip_id; // Create a unique cache key for each trip
-            // Check if the trip is already cached
-            // if (Cache::has($key)) {
-            // $trips[] = Cache::get($key);
-            // } else {
-            // If not, retrieve the trip from the database and cache it
-            $trip = Trip::where('id', $trip_id)
-                ->with('path')
-                ->first();
 
-            $data = [
-                'trip_id' => $trip->id,
-                'company_name' => $trip->company->user->name,
-                'from'  => $trip->path->from,
-                'to'  => $trip->path->to,
-                'price' => $trip->pricing->cost,
-                // 'bus_trips' => $busTripsData,
-            ];
-            $trips[] = $data;
-            // Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
+        // Retrieve all pending trips with necessary relationships in one query
+        $pendingTrips = Trip::where('status', 'pending')
+            ->with(['path', 'company.user', 'pricing']) // Eager load necessary relationships
+            ->latest() // Retrieve the latest records
+            ->paginate(10); // Paginate the results
+
+        foreach ($pendingTrips as $trip) {
+            $key = 'trip_' . $trip->id; // Create a unique cache key for each trip
+
+            // Check if the trip data is already cached
+            // if (Cache::has($key)) {
+                // If cached, retrieve the cached data
+                $data = Cache::get($key);
+            // } else {
+                // If not cached, prepare the data for caching
+                $data = [
+                    'trip_id' => $trip->id,
+                    'company_name' => $trip->company->user->name,
+                    'from'  => $trip->path->from,
+                    'to'  => $trip->path->to,
+                    'price' => $trip->pricing->cost,
+                    // 'bus_trips' => $busTripsData,
+                ];
+                // Store the trip data in the cache
+                // Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
             // }
+
+            $trips[] = $data; // Collect data for response
         }
-        return response()->json($trips);
+
+        return response()->json([
+            'data' => $trips,
+            'pagination' => [
+                'total' => $pendingTrips->total(),
+                'per_page' => $pendingTrips->perPage(),
+                'current_page' => $pendingTrips->currentPage(),
+                'last_page' => $pendingTrips->lastPage(),
+                'from' => $pendingTrips->firstItem(),
+                'to' => $pendingTrips->lastItem(),
+            ],
+        ]);
     }
+
 
 
     public function trip_user_by_path(Request $request)
