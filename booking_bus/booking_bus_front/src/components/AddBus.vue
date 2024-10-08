@@ -871,7 +871,9 @@ export default {
                     this.toast.success("Bus added successfully!");
                     this.AllBus();
                 })
-                .catch(() => {
+                .catch((error) => {
+                    console.log(error);
+
                     this.toast.error("Error ADD");
                 });
         },

@@ -32,7 +32,7 @@
                                     v-for="(user, index) in filteredGovernment"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.point }}</td>
@@ -81,6 +81,30 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="button-container">
+                            <button
+                                type="button"
+                                @click="
+                                    current_page == first_page
+                                        ? (current_page = last_page)
+                                        : (current_page -= 1);
+                                    AllUsers();
+                                "
+                            >
+                                &#10508;
+                            </button>
+                            <button
+                                type="button"
+                                @click="
+                                    current_page == last_page
+                                        ? (current_page = first_page)
+                                        : (current_page += 1);
+                                    AllUsers();
+                                "
+                            >
+                                &#10511;
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -433,6 +457,9 @@ export default {
     name: "AddDriver",
     data() {
         return {
+            current_page: 1,
+            last_page: null,
+            first_page: null,
             loading: true,
             loading1: true,
             loading2: true,
@@ -546,16 +573,22 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/admin/all_user",
+                url:
+                    "http://127.0.0.1:8000/api/admin/all_user?page=" +
+                    this.current_page,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.Users = response.data;
-                    store.state.User = response.data;
+                    this.first_page = response.data.paginationfrom;
+                    this.last_page = response.data.pagination.last_page;
+                    this.Users = response.data.data;
+                    store.state.User = response.data.data;
                     this.loading = false;
+                    console.log(response.data);
                 })
-                .catch(() => {
+                .catch((error) => {
                     this.toast.error("Error getting drivers.");
+                    console.log(error);
                 });
             this.loading = true;
         },
@@ -909,6 +942,12 @@ table tbody tr:hover {
 .nav-btnd:hover {
     opacity: 0.9;
 }
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
 
 /* Responsive Design */
 @media (max-width: 1200px) {
@@ -1012,7 +1051,31 @@ select:focus {
     width: 20px;
     cursor: pointer;
 }
+button {
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 0 5px;
+}
 
+button:hover {
+    background-color: var(--clr-primary-variant);
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
 .edit-btn {
     color: #4caf50;
     background-color: #f1f1f1;

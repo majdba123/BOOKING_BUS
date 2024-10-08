@@ -255,6 +255,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="pagination">
+                    <button
+                        @click="prevPage('status')"
+                        :disabled="currentPageStatus === 1"
+                    >
+                        <span class="material-icons">skip_previous</span>
+                    </button>
+                    <span
+                        >Page {{ currentPageStatus }} of {{ totalPages }}</span
+                    >
+                    <button
+                        @click="nextPage('status')"
+                        :disabled="currentPageStatus === totalPages"
+                    >
+                        <span class="material-icons">skip_next</span>
+                    </button>
+                </div>
                 <div class="modal-footer">
                     <button @click="closeDriverStatusModal" class="close-modal">
                         Close
@@ -296,7 +313,7 @@
                                         ) in paginatedDriverWithBusData"
                                         :key="index"
                                     >
-                                        <td>{{ index }}</td>
+                                        <td>{{ index + 1 }}</td>
                                         <td>{{ driver.driver_name }}</td>
                                         <td>{{ driver.bus_id }}</td>
                                         <td>{{ driver.company_name }}</td>
@@ -304,6 +321,26 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="pagination">
+                            <button
+                                @click="prevPage('bus')"
+                                :disabled="currentPageBus === 1"
+                            >
+                                <span class="material-icons"
+                                    >skip_previous</span
+                                >
+                            </button>
+                            <span
+                                >Page {{ currentPageBus }} of
+                                {{ totalPages }}</span
+                            >
+                            <button
+                                @click="nextPage('bus')"
+                                :disabled="currentPageBus === totalPages"
+                            >
+                                <span class="material-icons">skip_next</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -622,6 +659,8 @@ export default {
             })
                 .then(() => {
                     this.toast.success("Driver assigned to bus successfully!");
+                    this.AllDriver();
+                    this.fetchBus();
                 })
                 .catch((error) => {
                     this.toast.error(error.response.data.error);
@@ -660,6 +699,7 @@ export default {
                 .then((response) => {
                     this.driverWithBusData = response.data;
                     this.loading2 = false;
+                    console.log(response.data);
 
                     // const endTime = performance.now();
                     // const duration = (endTime - startTime).toFixed(2);
@@ -790,7 +830,7 @@ export default {
     },
     computed: {
         filteredDrivers() {
-            return store.state.Driver.filter((driver) => {
+            return this.paginatedDrivers.filter((driver) => {
                 return (
                     driver.name
                         .toLowerCase()

@@ -83,7 +83,7 @@
                                     v-for="(user, index) in filteredCompany"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ user.name_company }}</td>
                                     <td>{{ user.user.email }}</td>
                                     <td v-if="user.user.profile?.phone != null">
@@ -142,32 +142,32 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="button-container">
+                            <button
+                                type="button"
+                                @click="
+                                    current_page == first_page
+                                        ? (current_page = last_page)
+                                        : (current_page -= 1);
+                                    AllCompany();
+                                "
+                            >
+                                &#10508;
+                            </button>
+                            <button
+                                type="button"
+                                @click="
+                                    current_page == last_page
+                                        ? (current_page = first_page)
+                                        : (current_page += 1);
+                                    AllCompany();
+                                "
+                            >
+                                &#10511;
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="button-container">
-                <button
-                    type="button"
-                    @click="
-                        current_page == first_page
-                            ? (current_page = last_page)
-                            : (current_page -= 1);
-                        AllCompany();
-                    "
-                >
-                    &#10508;
-                </button>
-                <button
-                    type="button"
-                    @click="
-                        current_page == last_page
-                            ? (current_page = first_page)
-                            : (current_page += 1);
-                        AllCompany();
-                    "
-                >
-                    &#10511;
-                </button>
             </div>
         </div>
         <div v-if="showInfoModal" class="modal">
@@ -351,6 +351,30 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <div class="button-container">
+                                <button
+                                    type="button"
+                                    @click="
+                                        current_page1 == first_page1
+                                            ? (current_page1 = last_page1)
+                                            : (current_page1 -= 1);
+                                        AllDriver(this.currentCompanyId);
+                                    "
+                                >
+                                    &#10508;
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="
+                                        current_page1 == last_page1
+                                            ? (current_page1 = first_page1)
+                                            : (current_page1 += 1);
+                                        AllDriver(this.currentCompanyId);
+                                    "
+                                >
+                                    &#10511;
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -394,6 +418,30 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <div class="button-container">
+                                <button
+                                    type="button"
+                                    @click="
+                                        current_page2 == first_page2
+                                            ? (current_page2 = last_page2)
+                                            : (current_page2 -= 1);
+                                        fetchBus(this.currentCompanyId);
+                                    "
+                                >
+                                    &#10508;
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="
+                                        current_page2 == last_page2
+                                            ? (current_page2 = first_page2)
+                                            : (current_page2 += 1);
+                                        fetchBus(this.currentCompanyId);
+                                    "
+                                >
+                                    &#10511;
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -795,6 +843,12 @@ export default {
     name: "AddCompany",
     data() {
         return {
+            current_page1: 1,
+            last_page1: null,
+            first_page1: null,
+            current_page2: 1,
+            last_page2: null,
+            first_page2: null,
             user_id: "",
             profittrip: "",
             current_page: 1,
@@ -1172,13 +1226,18 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: `http://127.0.0.1:8000/api/admin/all_bus_by_id_company/${company_id}`,
+                url:
+                    `http://127.0.0.1:8000/api/admin/all_bus_by_id_company/${company_id}` +
+                    this.current_page2,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
+                    this.first_page2 = response.data.pagination.from;
+                    this.last_page2 = response.data.pagination.last_page;
                     this.BusData = response.data;
                     // console.log(this.BusData);
                     this.loading2 = false;
+                    console.log(response.data);
                 })
                 .catch(() => {
                     this.toast.error("Error getting buses.");
@@ -1191,10 +1250,15 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: `http://127.0.0.1:8000/api/admin/all_driver_by_company/${company_id}`,
+                url:
+                    `http://127.0.0.1:8000/api/admin/all_driver_by_company/${company_id}` +
+                    this.current_page1,
+
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
+                    this.first_page1 = response.data.pagination.from;
+                    this.last_page1 = response.data.pagination.last_page;
                     this.driverStatusData = response.data;
                     this.loading1 = false;
                 })
