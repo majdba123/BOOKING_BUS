@@ -13,7 +13,7 @@ class FixedPricingModel extends Model
     protected $dates = [
         'deleted_at',
     ];
-    protected $fillable = ['cost'];
+    protected $fillable = ['id','cost'];
 
     public function busTrips()
     {

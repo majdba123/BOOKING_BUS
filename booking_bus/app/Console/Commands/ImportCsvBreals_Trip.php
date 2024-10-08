@@ -24,9 +24,7 @@ class ImportCsvBreals_Trip extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\breaks_trips.csv');
+        $filename = base_path('\public\breaks_trips.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,15 @@ class ImportCsvBreals_Trip extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            Breaks_trip::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $breaks_trip = new Breaks_trip();
+            $breaks_trip->id = $data['id']; // Use the id from the CSV file
+            // other columns...
+            $breaks_trip->id = $data['id'];
+            $breaks_trip->trip_id = $data['trip_id'];
+            $breaks_trip->break_id = $data['break_id'];
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Breaks Trip completed successfully!');
+    }
 }

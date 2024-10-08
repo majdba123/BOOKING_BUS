@@ -24,9 +24,7 @@ class ImportCsvGeolocation extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\geolocations.csv');
+        $filename = base_path('\public\geolocations.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,14 @@ class ImportCsvGeolocation extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            Geolocation::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $geolocation = new Geolocation();
+            $geolocation->id = $data['id']; // Use the id from the CSV file
+            $geolocation->latitude = $data['latitude'];
+            $geolocation->longitude = $data['longitude'];
+            $geolocation->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Geolocation completed successfully!');
+    }
 }

@@ -23,6 +23,7 @@ class Trip extends Model
     ];
 
     protected $fillable = [
+        'id',
         'company_id',
         'path_id',
         'status',

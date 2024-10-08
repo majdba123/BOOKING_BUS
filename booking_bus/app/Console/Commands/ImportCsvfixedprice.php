@@ -24,9 +24,7 @@ class ImportCsvfixedprice extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\fixed_pricing_models.csv');
+        $filename = base_path('\public\fixed_pricing_models.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,13 @@ class ImportCsvfixedprice extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            FixedPricingModel::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $fixed_pricing_model = new FixedPricingModel();
+            $fixed_pricing_model->id = $data['id']; // Use the id from the CSV file
+            $fixed_pricing_model->cost = $data['cost'];
+            $fixed_pricing_model->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Fixed Pricing Model completed successfully!');
+    }
 }
