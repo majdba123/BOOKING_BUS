@@ -34,11 +34,10 @@ class ImportCsvBreals_Trip extends Command
         while (($row = fgetcsv($file)) !== false) {
             $data = array_combine($header, $row);
             $breaks_trip = new Breaks_trip();
-            $breaks_trip->id = $data['id']; // Use the id from the CSV file
-            // other columns...
             $breaks_trip->id = $data['id'];
             $breaks_trip->trip_id = $data['trip_id'];
-            $breaks_trip->break_id = $data['break_id'];
+            $breaks_trip->breaks_id = $data['break_id'];
+            $breaks_trip->save();
         }
         fclose($file);
         $this->info('Import Breaks Trip completed successfully!');
