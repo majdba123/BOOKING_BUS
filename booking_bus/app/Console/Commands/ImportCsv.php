@@ -24,9 +24,7 @@ class ImportCsv extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\users.csv');
+        $filename = base_path('\public\users.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,18 @@ class ImportCsv extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-          User::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $user = new User();
+            $user->id = $data['id']; // Use the id from the CSV file
+            $user->name = $data['name'];
+            $user->type = $data['type'];
+            $user->email = $data['email'];
+            $user->point = $data['point'];
+            $user->password = $data['password'];
+            $user->email_verified_at = $data['email_verified_at'];
+            $user->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import User completed successfully!');
+    }
 }

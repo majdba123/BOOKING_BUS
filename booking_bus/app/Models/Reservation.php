@@ -18,15 +18,18 @@ class Reservation extends Model
     protected $keyType = 'string'; // Set the key type to UUID
     public $incrementing = false; // Disable auto-incrementing
 
-    public static function boot() {
-        parent::boot();
-        // Auto generate UUID when creating data User
-        static::creating(function ($model) {
+public static function boot() {
+    parent::boot();
+    // Auto generate UUID when creating data User if id is not set
+    static::creating(function ($model) {
+        if (!$model->id) {
             $model->id = Str::uuid();
-        });
-    }
+        }
+    });
+}
 
     protected $fillable = [
+        'id',
         'user_id',
         'pivoit_id',
         'bus__trip_id',

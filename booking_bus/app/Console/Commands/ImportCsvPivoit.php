@@ -24,9 +24,7 @@ class ImportCsvPivoit extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\pivoits.csv');
+        $filename = base_path('\public\pivoits.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,15 @@ class ImportCsvPivoit extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            Pivoit::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $pivoit = new Pivoit();
+            $pivoit->id = $data['id']; // Use the id from the CSV file
+            $pivoit->bus__trip_id = $data['bus__trip_id'];
+            $pivoit->breaks_trip_id = $data['breaks_trip_id'];
+            $pivoit->status = $data['status'];
+            $pivoit->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Pivoit completed successfully!');
+    }
 }

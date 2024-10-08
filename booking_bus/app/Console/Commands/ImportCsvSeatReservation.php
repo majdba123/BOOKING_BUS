@@ -24,9 +24,7 @@ class ImportCsvSeatReservation extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\seat_reservations.csv');
+        $filename = base_path('\public\seat_reservations.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,15 @@ class ImportCsvSeatReservation extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            Seat_Reservation::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $seat_reservation = new Seat_Reservation();
+            $seat_reservation->id = $data['id']; // Use the id from the CSV file
+            $seat_reservation->seat_id = $data['seat_id'];
+            $seat_reservation->reservation_id = $data['reservation_id'];
+            $seat_reservation->status = $data['status'];
+            $seat_reservation->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Seat Reservation completed successfully!');
+    }
 }

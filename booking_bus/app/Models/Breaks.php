@@ -18,6 +18,7 @@ class Breaks extends Model
 
 
     protected $fillable = [
+        'id',
         'name',
         'path_id',
         'geolocation_id',

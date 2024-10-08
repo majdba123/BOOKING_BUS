@@ -24,9 +24,7 @@ class ImportCsvTrip extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\trips.csv');
+        $filename = base_path('\public\trips.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,17 @@ class ImportCsvTrip extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            Trip::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $trip = new Trip();
+            $trip->id = $data['id']; // Use the id from the CSV file
+            $trip->company_id = $data['company_id'];
+            $trip->path_id = $data['path_id'];
+            $trip->status = $data['status'];
+            $trip->pricing_id = $data['pricing_id'];
+            $trip->pricing_type = $data['pricing_type'];
+            $trip->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Trip completed successfully!');
+    }
 }

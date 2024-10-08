@@ -24,9 +24,7 @@ class ImportCsvDriver extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\Driver.csv');
+        $filename = base_path('\public\Driver.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,16 @@ class ImportCsvDriver extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            Driver::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $driver = new Driver();
+            $driver->id = $data['id']; // Use the id from the CSV file
+            $driver->user_id = $data['user_id'];
+            $driver->company_id = $data['company_id'];
+            $driver->status = $data['status'];
+            $driver->Wages = $data['Wages'];
+            $driver->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Driver completed successfully!');
+    }
 }

@@ -24,9 +24,7 @@ class ImportCsvBreaks extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\breaks.csv');
+        $filename = base_path('\public\breaks.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,15 @@ class ImportCsvBreaks extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            Breaks::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $breaks = new Breaks();
+            $breaks->id = $data['id']; // Use the id from the CSV file
+            $breaks->path_id = $data['path_id'];
+            $breaks->name = $data['name'];
+            $breaks->geolocation_id = $data['geolocation_id'];
+            $breaks->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Breaks completed successfully!');
+    }
 }

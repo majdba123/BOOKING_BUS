@@ -24,9 +24,7 @@ class ImportCsvPath extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\paths.csv');
+        $filename = base_path('\public\paths.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,18 @@ class ImportCsvPath extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            Path::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $path = new Path();
+            $path->id = $data['id']; // Use the id from the CSV file
+            $path->company_id = $data['company_id'];
+            $path->from = $data['from'];
+            $path->from_location = $data['from_location'];
+            $path->to = $data['to'];
+            $path->to_location = $data['to_location'];
+            $path->Distance = $data['Distance'];
+            $path->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Path completed successfully!');
+    }
 }

@@ -16,7 +16,7 @@ class Geolocation extends Model
     ];
 
 
-    protected $fillable = ['latitude', 'longitude'];
+    protected $fillable = ['id','latitude', 'longitude'];
 
     public function area()
     {

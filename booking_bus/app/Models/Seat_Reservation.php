@@ -19,13 +19,15 @@ class Seat_Reservation extends Model
 
     public static function boot() {
         parent::boot();
-        // Auto generate UUID when creating data User
+        // Auto generate UUID when creating data User if id is not set
         static::creating(function ($model) {
-            $model->id = Str::uuid();
+            if (!$model->id) {
+                $model->id = Str::uuid();
+            }
         });
     }
-
     protected $fillable = [
+        'id',
         'seat_id',
         'reservation_id',
         'status',

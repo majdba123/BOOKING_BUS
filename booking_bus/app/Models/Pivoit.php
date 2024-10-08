@@ -16,6 +16,7 @@ class Pivoit extends Model
     ];
 
     protected $fillable = [
+        'id',
         'bus__trip_id',
         'breaks_trip_id',
         'status',

@@ -15,6 +15,7 @@ class Breaks_trip extends Model
         'deleted_at',
     ];
     protected $fillable = [
+        'id',
         'breaks_id',
         'trip_id',
 

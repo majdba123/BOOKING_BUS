@@ -24,9 +24,7 @@ class ImportCsvBus_Driver extends Command
      * Execute the console command.
      */
     public function handle() {
-
-        #$filename = base_path('public/GSM_final.csv');
-        $filename=base_path('\public\bus_drivers.csv');
+        $filename = base_path('\public\bus_drivers.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
@@ -34,9 +32,15 @@ class ImportCsvBus_Driver extends Command
         $header = fgetcsv($file);
         // Read the header row
         while (($row = fgetcsv($file)) !== false) {
-            Bus_Driver::create(array_combine($header, $row));
+            $data = array_combine($header, $row);
+            $bus_driver = new Bus_Driver();
+            $bus_driver->id = $data['id']; // Use the id from the CSV file
+            $bus_driver->bus_id = $data['bus_id'];
+            $bus_driver->driver_id = $data['driver_id'];
+            $bus_driver->status = $data['status'];
+            $bus_driver->save();
         }
         fclose($file);
-        $this->info('Import  User completed successfully!');
-      }
+        $this->info('Import Bus Driver completed successfully!');
+    }
 }
