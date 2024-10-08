@@ -3,11 +3,11 @@ php artisan import:csv_Company
 php artisan import:csv_Driver
 php artisan import:csv_Bus
 php artisan import:csv_Seat
-php artisan import:Bus_Driver
+php artisan import:csv_Bus_Driver
 php artisan import:csv_geolocation
 php artisan import:csv_Path
 php artisan import:csv_Breaks
-php artisan import:fixed_pricing_models
+php artisan import:csv_fixed_price
 php artisan import:csv_Trip
 php artisan import:csv_Breaks_trip
 php artisan import:csv_Bus_trip

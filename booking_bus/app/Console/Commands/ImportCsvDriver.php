@@ -24,7 +24,7 @@ class ImportCsvDriver extends Command
      * Execute the console command.
      */
     public function handle() {
-        $filename = base_path('\public\Driver.csv');
+        $filename = base_path('\public\drivers.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }

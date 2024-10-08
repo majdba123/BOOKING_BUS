@@ -24,7 +24,7 @@ class ImportCsvBus_trip extends Command
      * Execute the console command.
      */
     public function handle() {
-        $filename = base_path('\public\Bus_Trip.csv');
+        $filename = base_path('\public\bus_trips.csv');
         if (!file_exists($filename)) {
             $this->error('CSV file not found!'); return;
         }
