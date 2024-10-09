@@ -23,7 +23,7 @@ class DashboardController extends Controller
     {
         $company = Auth::user()->Company;
 
-        $reservations = $company->trip()->with('bus_trip.reservation.seat_reservation.seat', 'bus_trip.reservation.user', 'bus_trip.reservation.pivoit.break_trip.break', 'bus_trip.trip.path')->get()->map(function ($trip) {
+        $reservations = $company->trip()->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.trip.path')->get()->map(function ($trip) {
             return $trip->bus_trip->map(function ($busTrip) {
                 return $busTrip->reservation;
             });
@@ -64,29 +64,36 @@ class DashboardController extends Controller
     {
         $status = $request->input('status');
         $company = Auth::user()->Company;
-        $reservations = [];
 
-        foreach ($company->trip as $trip1) {
-            foreach ($trip1->bus_trip as $busTrip) {
-                foreach ($busTrip->Reservation as $reservation) {
-                    if (str_contains($reservation->status, $status)) {
-                        $customReservation = [
-                            'id' => $reservation->id,
-                            'price' => $reservation->price,
-                            'user_name' => $reservation->user->name,
-                            'user_id' => $reservation->user_id,
-                            'type' => $reservation->type,
-                            'status' => $reservation->status,
-                            'break' => $reservation->pivoit->break_trip->break->name,
-                            'from' => $reservation->pivoit->bus_trip->trip->path->from,
-                            'to' => $reservation->pivoit->bus_trip->trip->path->from,
-                        ];
-                        $reservations[] = $customReservation;
-                    }
-                }
-            }
-        }
-        return response()->json($reservations);
+        $reservations = $company->trip()->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.trip.path')->get()->map(function ($trip) {
+            return $trip->bus_trip->map(function ($busTrip) {
+                return $busTrip->reservation;
+            });
+        })->flatten(2);
+
+        $reservations = $reservations->filter(function ($reservation) use ($status) {
+            return str_contains($reservation->status, $status);
+        })->map(function ($reservation) {
+            return [
+                'id' => $reservation->id,
+                'price' => $reservation->price,
+                'user_name' => $reservation->user->name,
+                'user_id' => $reservation->user_id,
+                'type' => $reservation->type,
+                'status' => $reservation->status,
+                'break' => $reservation->pivoit->break_trip->break->name,
+                'from' => $reservation->pivoit->bus_trip->trip->path->from,
+                'to' => $reservation->pivoit->bus_trip->trip->path->from,
+            ];
+        });
+
+        $perPage = 4;
+        $currentPage = $request->input('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        $paginatedReservations = $reservations->slice($offset, $perPage)->values();
+
+        return response()->json($paginatedReservations);
     }
 
     public function all_reservation_by_bus_trip($bus_trip_id)
@@ -97,34 +104,30 @@ class DashboardController extends Controller
             ->whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company_id) {
                 $query->where('id', $company_id->id);
             })
-            ->get();
-
-        $customReservations = [];
-        foreach ($reservations as $reservation) {
-            $seats = [];
-            foreach ($reservation->seat_reservation as $seatReservation) {
-                $seats[] = [
-                    'id' => $seatReservation->seat->id,
-                    'status' => $seatReservation->seat->status
+            ->with('seat_reservation.seat', 'user', 'pivoit.break_trip.break', 'pivoit.bus_trip.trip.path')
+            ->get()
+            ->map(function ($reservation) {
+                $seats = $reservation->seat_reservation->map(function ($seatReservation) {
+                    return [
+                        'id' => $seatReservation->seat->id,
+                        'status' => $seatReservation->seat->status
+                    ];
+                });
+                return [
+                    'id' => $reservation->id,
+                    'price' => $reservation->price,
+                    'user_name' => $reservation->user->name,
+                    'user_id' => $reservation->user_id,
+                    'type' => $reservation->type,
+                    'status' => $reservation->status,
+                    'break' => $reservation->pivoit->break_trip->break->name,
+                    'from' => $reservation->pivoit->bus_trip->trip->path->from,
+                    'to' => $reservation->pivoit->bus_trip->trip->path->to,
+                    'seats' => $seats // array of seat names or properties
                 ];
-            }
-            $customReservation = [
-                'id' => $reservation->id,
-                'price' => $reservation->price,
-                'user_name' => $reservation->user->name,
-                'user_id' => $reservation->user_id,
-                'type' => $reservation->type,
-                'status' => $reservation->status,
-                'break' => $reservation->pivoit->break_trip->break->name,
-                'from' => $reservation->pivoit->bus_trip->trip->path->from,
-                'to' => $reservation->pivoit->bus_trip->trip->path->to,
-                'seats' => $seats // array of seat names or properties
+            });
 
-            ];
-            $customReservations[] = $customReservation;
-        }
-
-        return response()->json($customReservations);
+        return response()->json($reservations);
     }
 
     public function reser_by_break($pivoit_id)
