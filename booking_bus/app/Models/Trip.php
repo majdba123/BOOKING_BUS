@@ -17,9 +17,9 @@ class Trip extends Model
         'deleted_at',
     ];
     protected $hidden = [
-        // 'pricing_id',
-        // 'pricing_type',
-        'pricing',
+        'pricing_id',
+        'pricing_type',
+        // 'pricing',
     ];
 
     protected $fillable = [

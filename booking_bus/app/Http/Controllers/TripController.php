@@ -560,42 +560,47 @@ class TripController extends Controller
     }
 
 
+
     public function index_user()
     {
+        // Enable query logging
+        // DB::enableQueryLog();
+
         $trips = [];
 
-        // Retrieve all pending trips with necessary relationships in one query
+        // Eager load all pending trips with necessary relationships
         $pendingTrips = Trip::where('status', 'pending')
-            ->with(['path', 'company.user', 'pricing']) // Eager load necessary relationships
-            ->get(); // Get all matching trips at once
+            ->with(['path', 'company.user', 'pricing']) // Eager load relationships
+            ->get();
 
         foreach ($pendingTrips as $trip) {
             $key = 'trip_' . $trip->id; // Create a unique cache key for each trip
 
-            // Check if the trip data is already cached
-            // if (Cache::has($key)) {
-                // If cached, retrieve the cached data
-                $data = Cache::get($key);
-            // } else {
-                // If not cached, prepare the data for caching
+            // Check if the trip is already cached
+            if (Cache::has($key)) {
+                $trips[] = Cache::get($key);
+            } else {
                 $data = [
                     'trip_id' => $trip->id,
                     'company_name' => $trip->company->user->name,
                     'from'  => $trip->path->from,
                     'to'  => $trip->path->to,
                     'price' => $trip->pricing->cost,
-                    // 'bus_trips' => $busTripsData,
                 ];
-                // Store the trip data in the cache
-                // Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
-            // }
 
-            $trips[] = $data; // Collect data for response
+                $trips[] = $data;
+                Cache::put($key, $data, now()->addMinutes(30)); // Cache for 30 minutes
+            }
         }
 
-        return response()->json($trips);
-    }
+        // $queries = DB::getQueryLog();
+        // $queryCount = count($queries);
 
+        return response()->json(
+             $trips,
+            // 'query_count' => $queryCount // Show the number of queries executed
+        );
+    }
 
 
     public function trip_user_by_path(Request $request)

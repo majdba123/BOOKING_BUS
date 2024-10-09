@@ -18,6 +18,7 @@ use App\Models\Private_trip;
 use App\Models\Order_Private_trip;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class AdminDashBoardController extends Controller
 {
@@ -438,11 +439,25 @@ class AdminDashBoardController extends Controller
     }
 
     public function all_company()
-    {
-        $companies = Company::with('user.profile', 'user.address')->paginate(10);
-        return response()->json($companies);
-    }
+{
+    // Enable query logging
+    // DB::enableQueryLog();
 
+    // Fetch companies with eager loading
+    $companies = Company::with(['user.profile', 'user.address'])->paginate(10); // Eager load relationships
+
+    // Get the number of queries executed
+    // $queries = DB::getQueryLog();
+    // $queryCount = count($queries);
+
+    return response()->json(
+        // [
+        // 'companies' =>
+        $companies,
+        // 'query_count' => $queryCount // Show the number of queries executed
+    // ]
+);
+}
 
     public function company_by_id($company_id)
     {
@@ -1193,34 +1208,34 @@ class AdminDashBoardController extends Controller
                 ->doesntHave('company')->count();;
             $all_company = Company::count();
 
-        $dash = [
-            'pending_reservations' => $reservationCounts->get('pending', 0),
-            'completed_reservations' => $reservationCounts->get('completed', 0),
-            'out_reservation' => $reservationCounts->get('out', 0),
-            'pending_trip' => $trip_count->get('pending', 0),
-            'finished_trip' => $trip_count->get('finished', 0),
-            'finished_going_trip' => $trip_count->get('finished_going', 0),
-            'pending_bus_trip' => $bus_trip->get('pending', 0),
-            'finished_bus_trip' => $bus_trip->get('finished', 0),
-            'finished_going_bus_trip' => $bus_trip->get('finished_going', 0),
-            'total_profit_pending' => $reservationSums->get('pending', 0),
-            'total_profit_completed' => $reservationSums->get('completed', 0),
-            'total_profit_out' => $reservationSums->get('out', 0),
-            'all_drivers' => $allDrivers,
-            'pending_drivers' => $pending_Drivers,
-            'available_drivers' => $availableDrivers,
-            'completed_driver' => $completed_Drivers,
-            'allBuses' => $busCounts->sum(),
-            'completed_Buses' => $busCounts->get('completed', 0),
-            'availableBuses' => $busCounts->get('available', 0),
-            'pending_Buses' => $busCounts->get('pending', 0),
-            'inProgress_PrivateTrips' => $privateTripCounts->get('pending', 0),
-            'completed_PrivateTrips' => $privateTripCounts->get('accepted', 0),
-            'canceled_PrivateTrips' => $privateTripCounts->get('cancelled', 0),
-            'total_price_completed_PrivateTrips' => $acceptedTotalPrice,
-            'count_favourite' => $favourite_count,
-            'all_user' => $all_user,
-            'all_company' => $all_company,
+            $dash = [
+                'pending_reservations' => $reservationCounts->get('pending', 0),
+                'completed_reservations' => $reservationCounts->get('completed', 0),
+                'out_reservation' => $reservationCounts->get('out', 0),
+                'pending_trip' => $trip_count->get('pending', 0),
+                'finished_trip' => $trip_count->get('finished', 0),
+                'finished_going_trip' => $trip_count->get('finished_going', 0),
+                'pending_bus_trip' => $bus_trip->get('pending', 0),
+                'finished_bus_trip' => $bus_trip->get('finished', 0),
+                'finished_going_bus_trip' => $bus_trip->get('finished_going', 0),
+                'total_profit_pending' => $reservationSums->get('pending', 0),
+                'total_profit_completed' => $reservationSums->get('completed', 0),
+                'total_profit_out' => $reservationSums->get('out', 0),
+                'all_drivers' => $allDrivers,
+                'pending_drivers' => $pending_Drivers,
+                'available_drivers' => $availableDrivers,
+                'completed_driver' => $completed_Drivers,
+                'allBuses' => $busCounts->sum(),
+                'completed_Buses' => $busCounts->get('completed', 0),
+                'availableBuses' => $busCounts->get('available', 0),
+                'pending_Buses' => $busCounts->get('pending', 0),
+                'inProgress_PrivateTrips' => $privateTripCounts->get('pending', 0),
+                'completed_PrivateTrips' => $privateTripCounts->get('accepted', 0),
+                'canceled_PrivateTrips' => $privateTripCounts->get('cancelled', 0),
+                'total_price_completed_PrivateTrips' => $acceptedTotalPrice,
+                'count_favourite' => $favourite_count,
+                'all_user' => $all_user,
+                'all_company' => $all_company,
 
 
             ];
