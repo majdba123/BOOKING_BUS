@@ -22,11 +22,13 @@ class DashboardController extends Controller
     public function all_reservation(Request $request)
     {
         $company = Auth::user()->Company;
+        $perPage = $request->input('per_page', 4);
+        $currentPage = $request->input('page', 1);
     
         // Get all reservations for the company through the trip->bus_trip->reservation relationship
         $reservations = $company->trip()
             ->with('bus_trip.reservation.seat_reservation.seat', 'bus_trip.reservation.user', 'bus_trip.reservation.pivoit.break_trip.break', 'bus_trip.reservation.bus_trip.trip.path')
-            ->paginate($perPage = 4);
+            ->paginate($perPage);
     
         $reservations->transform(function ($trip) {
             $reservations = [];
