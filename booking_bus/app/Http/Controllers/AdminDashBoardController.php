@@ -21,21 +21,13 @@ use Illuminate\Support\Facades\Cache;
 
 class AdminDashBoardController extends Controller
 {
-    public function all_user()
+    public function all_user(Request $request)
     {
-        $key = 'all_users'; // Create a unique cache key
-        // Check if the data is already cached
-        if (Cache::has($key)) {
-            $users = Cache::get($key);
-        } else {
-            // If not, retrieve the data from the database and cache it
-            $users = User::where('type', '!=', 1) // Exclude users with type 0
-                ->doesntHave('driver')
-                ->doesntHave('company')
-                ->with(['profile', 'address'])
-                ->get();
-            Cache::put($key, $users, now()->addMinutes(30)); // Cache for 30 minutes
-        }
+        $users = User::where('type', '!=', 1) // Exclude users with type 0
+            ->doesntHave('driver')
+            ->doesntHave('company')
+            ->with(['profile', 'address'])
+            ->paginate(4);
         return response()->json($users);
     }
 
@@ -968,7 +960,7 @@ class AdminDashBoardController extends Controller
 
         // Loop through each bus trip and get its reservations
         foreach ($busTrips as $busTrip) {
-            $reservations = $busTrip->Reservation()->whereIn('status', ['completed', 'out'])->get();
+            $reservations = $busTrip->Reservation()->whereIn('status', ['pending','completed', 'out'])->get();
             // Calculate the total price for each bus trip
             foreach ($reservations as $reservation) {
                 $total_price += $reservation->price;
