@@ -39,27 +39,14 @@ class TripController extends Controller
     public function index()
     {
         $company_id = Auth::user()->Company->id;
-        $trips = [];
-        // Loop through each trip and cache it individually
-        foreach (Trip::where('company_id', $company_id)->pluck(column: 'id') as $trip_id) {
-            $key = 'trip_' . $trip_id; // Create a unique cache key for each trip
-            // Check if the trip is already cached
-            if (Cache::has($key)) {
-                $trips[] = Cache::get($key);
-            } else {
-                // If not, retrieve the trip from the database and cache it
+        $trips = Trip::where('company_id', $company_id)
+            ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
+            ->paginate(5);
 
-                $trip = Trip::where('id', $trip_id)
-                    ->with(['bus_trip.Pivoit', 'breaks_trip.break',  'path'])
-                    ->first();
-
-
-                $trip->price = $trip->pricing ? $trip->pricing->cost : null;
-                // $trips[] = $trip;
-                $trips[] = $trip;
-                Cache::put($key, $trip, now()->addMinutes(30)); // Cache for 30 minutes
-            }
+        foreach ($trips as $trip) {
+            $trip->price = $trip->pricing ? $trip->pricing->cost : null;
         }
+
         return response()->json($trips);
     }
 
