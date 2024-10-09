@@ -39,7 +39,6 @@ class ImportCsvFavourit extends Command
             $fav->id = $data['id']; // Use the id from the CSV file
             $fav->user_id = $data['user_id'];
             $fav->company_id = $data['company_id'];
-            $fav->rating = $data['rating'];
             $fav->save();
         }
         fclose($file);
