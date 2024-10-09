@@ -22,37 +22,51 @@ class DashboardController extends Controller
     public function all_reservation()
     {
         $company = Auth::user()->Company;
-        $reservations = [];
 
-        foreach ($company->trip as $trip1) {
-            foreach ($trip1->bus_trip as $busTrip) {
-                foreach ($busTrip->Reservation as $reservation) {
-                    $seats = [];
-                    foreach ($reservation->seat_reservation as $seatReservation) {
-                        $seats[] = [
-                            'id' => $seatReservation->seat->id,
-                            'status' => $seatReservation->seat->status
-                        ];
-                    }
-                    $customReservation = [
-                        'id' => $reservation->id,
-                        'price' => $reservation->price,
-                        'type' => $reservation->type,
-                        'status' => $reservation->status,
-                        'user_name' => $reservation->user->name,
-                        'user_id' => $reservation->user_id,
-                        'break' => $reservation->pivoit->break_trip->break->name,
-                        'from' => $reservation->pivoit->bus_trip->trip->path->from,
-                        'to' => $reservation->pivoit->bus_trip->trip->path->from,
-                        'seats' => $seats // array of seat names or properties
+        $reservations = $company->trip()
+            ->join('bus_trips', 'trips.id', '=', 'bus_trips.trip_id')
+            ->join('reservations', 'bus_trips.id', '=', 'reservations.bus_trip_id')
+            ->select([
+                'reservations.id',
+                'reservations.price',
+                'reservations.type',
+                'reservations.status',
+                'reservations.user_id',
+                'users.name as user_name',
+                'breaks.name as break',
+                'paths.from',
+                'paths.to',
+            ])
+            ->join('users', 'reservations.user_id', '=', 'users.id')
+            ->join('break_trips', 'reservations.id', '=', 'break_trips.reservation_id')
+            ->join('breaks', 'break_trips.break_id', '=', 'breaks.id')
+            ->join('paths', 'bus_trips.trip_id', '=', 'paths.trip_id')
+            ->paginate(10); // paginate reservations
 
+        $reservations->load('seat_reservation.seat');
 
-                    ];
-                    $reservations[] = $customReservation;
-                }
-            }
-        }
-        return response()->json($reservations);
+        $paginatedReservations = $reservations->map(function ($reservation) {
+            $seats = $reservation->seat_reservation->map(function ($seatReservation) {
+                return [
+                    'id' => $seatReservation->seat->id,
+                    'status' => $seatReservation->seat->status
+                ];
+            });
+            return [
+                'id' => $reservation->id,
+                'price' => $reservation->price,
+                'type' => $reservation->type,
+                'status' => $reservation->status,
+                'user_name' => $reservation->user_name,
+                'user_id' => $reservation->user_id,
+                'break' => $reservation->break,
+                'from' => $reservation->from,
+                'to' => $reservation->to,
+                'seats' => $seats // array of seat names or properties
+            ];
+        });
+
+        return response()->json($paginatedReservations);
     }
 
     public function all_reservation_by_status(Request $request)
