@@ -74,7 +74,7 @@
                                     v-for="(path, index) in filteredPaths"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ path.from }}</td>
                                     <td>{{ path.to }}</td>
                                     <td>{{ path.Distance }}</td>

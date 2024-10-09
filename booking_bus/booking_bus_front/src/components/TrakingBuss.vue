@@ -189,6 +189,7 @@ export default {
                 .then((response) => {
                     this.Paths = response.data;
                     this.loading = false;
+                    console.log(response.data);
                 })
                 .catch(() => {});
             this.loading = true;

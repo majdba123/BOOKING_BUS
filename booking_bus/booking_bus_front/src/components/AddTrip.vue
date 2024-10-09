@@ -56,7 +56,7 @@
                                         v-for="(trip, index) in tripStatusData"
                                         :key="index"
                                     >
-                                        <td>{{ index }}</td>
+                                        <td>{{ index + 1 }}</td>
                                         <td>{{ trip.price }}</td>
                                         <td>{{ trip.status }}</td>
                                     </tr>
@@ -218,7 +218,7 @@
                                     v-for="(trip, index) in filteredTrips"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ trip.status }}</td>
                                     <td>{{ trip.path?.from }}</td>
                                     <td>{{ trip.path?.to }}</td>

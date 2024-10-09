@@ -1261,6 +1261,7 @@ export default {
                     this.last_page1 = response.data.pagination.last_page;
                     this.driverStatusData = response.data;
                     this.loading1 = false;
+                    console.log(response.data, company_id);
                 })
                 .catch(() => {
                     window.alert("Error fetching driver status");
