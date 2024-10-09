@@ -8,7 +8,7 @@
 
                     <select v-model="trip_id" @change="AllPaths(trip_id)">
                         <option
-                            v-for="(busItem, i) in trips"
+                            v-for="(busItem, i) in trips.data"
                             :key="i"
                             :value="busItem.id"
                         >

@@ -259,6 +259,30 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="button-container">
+                            <button
+                                type="button"
+                                @click="
+                                    current_page == first_page
+                                        ? (current_page = last_page)
+                                        : (current_page -= 1);
+                                    AllTrips();
+                                "
+                            >
+                                &#10508;
+                            </button>
+                            <button
+                                type="button"
+                                @click="
+                                    current_page == last_page
+                                        ? (current_page = first_page)
+                                        : (current_page += 1);
+                                    AllTrips();
+                                "
+                            >
+                                &#10511;
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -798,6 +822,9 @@ export default {
     name: "AddTrip",
     data() {
         return {
+            current_page: 1,
+            last_page: null,
+            first_page: null,
             selectedPath: null,
             numberofstations: "",
             pricemax: "",
@@ -1566,12 +1593,17 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_trips",
+                url:
+                    "http://127.0.0.1:8000/api/company/all_trips?page=" +
+                    this.current_page,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    this.Trips = response.data;
-                    store.state.Trips = response.data;
+                    this.first_page = response.data.from;
+                    this.last_page = response.data.last_page;
+                    this.Trips = response.data.data;
+                    store.state.Trips = response.data.data;
+                    console.log(response.data);
                     this.loading = false;
                 })
                 .catch(() => {
@@ -1922,6 +1954,38 @@ h2 {
     border: 1px solid #ddd;
     border-radius: var(--border-radius-2);
     background-color: var(--clr-white);
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+button {
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 0 5px;
+}
+
+button:hover {
+    background-color: var(--clr-primary-variant);
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 .recent_orders table {
     background-color: var(--clr-white);
