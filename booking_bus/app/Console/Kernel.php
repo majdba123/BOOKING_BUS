@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
         \app\Console\Commands\ImportCsvPivoit::class,
         \app\Console\Commands\ImportCsvReservation::class,
         \app\Console\Commands\ImportCsvSeatReservation::class,
+        \app\Console\Commands\ImportCsvFavourit::class,
 
     ];
 
