@@ -14,7 +14,6 @@ use App\Models\Driver;
 use App\Models\Favourite;
 use App\Models\Bus;
 use App\Models\Order_Private_trip;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -25,9 +24,7 @@ class DashboardController extends Controller
         $company = Auth::user()->Company;
         $reservations = [];
 
-        $trips = $company->trip()->paginate(10); // paginate trips
-
-        foreach ($trips as $trip1) {
+        foreach ($company->trip as $trip1) {
             foreach ($trip1->bus_trip as $busTrip) {
                 foreach ($busTrip->Reservation as $reservation) {
                     $seats = [];
@@ -48,21 +45,14 @@ class DashboardController extends Controller
                         'from' => $reservation->pivoit->bus_trip->trip->path->from,
                         'to' => $reservation->pivoit->bus_trip->trip->path->from,
                         'seats' => $seats // array of seat names or properties
+
+
                     ];
                     $reservations[] = $customReservation;
                 }
             }
         }
-
-        $paginatedReservations = new LengthAwarePaginator(
-            $reservations,
-            count($reservations),
-            10, // items per page
-            null,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
-
-        return response()->json($paginatedReservations);
+        return response()->json($reservations);
     }
 
     public function all_reservation_by_status(Request $request)
