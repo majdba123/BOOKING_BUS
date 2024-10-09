@@ -23,7 +23,6 @@ class DashboardController extends Controller
     {
         $company = Auth::user()->Company;
         $perPage = $request->input('per_page', 4);
-        $currentPage = $request->input('page', 1);
     
         // Get all reservations for the company through the trip->bus_trip->reservation relationship
         $reservations = $company->trip()
@@ -58,7 +57,25 @@ class DashboardController extends Controller
             return $reservations;
         });
     
-        return response()->json($reservations);
+        $data = [
+            'data' => $reservations->items(),
+            'links' => [
+                'first' => $reservations->url(1),
+                'last' => $reservations->url($reservations->lastPage()),
+                'prev' => $reservations->previousPageUrl(),
+                'next' => $reservations->nextPageUrl(),
+            ],
+            'meta' => [
+                'current_page' => $reservations->currentPage(),
+                'from' => $reservations->firstItem(),
+                'last_page' => $reservations->lastPage(),
+                'per_page' => $reservations->perPage(),
+                'to' => $reservations->lastItem(),
+                'total' => $reservations->total(),
+            ],
+        ];
+    
+        return response()->json($data);
     }
     public function all_reservation_by_status(Request $request)
     {
