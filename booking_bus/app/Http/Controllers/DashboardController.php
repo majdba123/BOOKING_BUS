@@ -29,7 +29,8 @@ class DashboardController extends Controller
             ->with('bus_trip.reservation.seat_reservation.seat', 'bus_trip.reservation.user', 'bus_trip.reservation.pivoit.break_trip.break', 'bus_trip.reservation.bus_trip.trip.path')
             ->paginate($perPage);
     
-        $reservations->transform(function ($trip) {
+        // Transform the items on the current page
+        $transformedReservations = $reservations->items()->map(function ($trip) {
             $reservations = [];
             foreach ($trip->bus_trip as $busTrip) {
                 foreach ($busTrip->reservation as $reservation) {
@@ -55,10 +56,10 @@ class DashboardController extends Controller
                 }
             }
             return $reservations;
-        });
+        })->flatten();
     
         $data = [
-            'data' => $reservations->items(),
+            'data' => $transformedReservations,
             'links' => [
                 'first' => $reservations->url(1),
                 'last' => $reservations->url($reservations->lastPage()),
