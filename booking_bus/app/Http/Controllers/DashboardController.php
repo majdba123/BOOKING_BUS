@@ -24,7 +24,7 @@ class DashboardController extends Controller
         $company = Auth::user()->Company;
 
         // Get all bus_trip IDs for the company
-        $busTripIds = $company->trip()->pluck('bus_trip.id')->toArray();
+        $busTripIds = $company->trip()->bus_trip->pluck('id')->toArray();
 
         // Retrieve reservations for the bus_trip IDs
         $reservations = Reservation::whereIn('bus__trip_id', $busTripIds)
