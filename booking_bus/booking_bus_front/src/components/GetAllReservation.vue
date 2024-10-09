@@ -438,7 +438,7 @@
                     </div>
                     <div v-else>
                         <div
-                            v-if="!driverRatingsDetails.length > 0"
+                            v-if="!busreservation.length > 0"
                             class="no-data-message"
                         >
                             No Data Available
@@ -448,34 +448,24 @@
                                 <thead>
                                     <tr>
                                         <th>User ID</th>
-                                        <th>Rating</th>
-                                        <th>Comment</th>
-                                        <th>Date</th>
+                                        <th>User Name</th>
+                                        <th>Price</th>
+                                        <th>From</th>
+                                        <th>To</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr
                                         v-for="(
                                             rating, index
-                                        ) in driverRatingsDetails"
+                                        ) in busreservation"
                                         :key="index"
                                     >
                                         <td>{{ index + 1 }}</td>
-                                        <td>
-                                            <span
-                                                v-for="star in 5"
-                                                :key="star"
-                                                class="fa"
-                                                :class="{
-                                                    'fa-star':
-                                                        star <= rating.rating,
-                                                    'fa-star-o':
-                                                        star > rating.rating,
-                                                }"
-                                            ></span>
-                                        </td>
-                                        <td>{{ rating.comment }}</td>
-                                        <td>{{ rating.created_at }}</td>
+                                        <td>{{ rating.user_name }}</td>
+                                        <td>{{ rating.price }}</td>
+                                        <td>{{ rating.from }}</td>
+                                        <td>{{ rating.to }}</td>
                                     </tr>
                                 </tbody>
                             </table>
