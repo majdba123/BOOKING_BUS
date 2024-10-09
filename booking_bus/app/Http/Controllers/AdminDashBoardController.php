@@ -891,53 +891,40 @@ class AdminDashBoardController extends Controller
     }
 
 
-    public function all_reservation_of_company($company_id)
+    public function all_reservation_by_status(Request $request)
     {
-        $company = Company::findOrfail($company_id);
-        $reservations = [];
+        $status = $request->input('status');
+        $company = Auth::user()->Company;
 
-        $trips = $company->trip()->latest()->paginate(10);
+        $reservations = $company->trip()->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.trip.path')->get()->map(function ($trip) {
+            return $trip->bus_trip->map(function ($busTrip) {
+                return $busTrip->reservation;
+            });
+        })->flatten(2);
 
-        foreach ($trips as $trip1) {
-            foreach ($trip1->bus_trip as $busTrip) {
-                foreach ($busTrip->Reservation as $reservation) {
-                    $seats = [];
-                    foreach ($reservation->seat_reservation as $seatReservation) {
-                        $seats[] = [
-                            'id' => $seatReservation->seat->id,
-                            'status' => $seatReservation->seat->status
-                        ];
-                    }
-                    $customReservation = [
-                        'id' => $reservation->id,
-                        'price' => $reservation->price,
-                        'type' => $reservation->type,
-                        'status' => $reservation->status,
-                        'user_name' => $reservation->user->name,
-                        'user_id' => $reservation->user_id,
-                        'break' => $reservation->pivoit->break_trip->break->name,
-                        'from' => $reservation->pivoit->bus_trip->trip->path->from,
-                        'to' => $reservation->pivoit->bus_trip->trip->path->from,
-                        'seats' => $seats // array of seat names or properties
+        $reservations = $reservations->filter(function ($reservation) use ($status) {
+            return str_contains($reservation->status, $status);
+        })->map(function ($reservation) {
+            return [
+                'id' => $reservation->id,
+                'price' => $reservation->price,
+                'user_name' => $reservation->user->name,
+                'user_id' => $reservation->user_id,
+                'type' => $reservation->type,
+                'status' => $reservation->status,
+                'break' => $reservation->pivoit->break_trip->break->name,
+                'from' => $reservation->pivoit->bus_trip->trip->path->from,
+                'to' => $reservation->pivoit->bus_trip->trip->path->from,
+            ];
+        });
 
+        $perPage = 4;
+        $currentPage = $request->input('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
 
-                    ];
-                    $reservations[] = $customReservation;
-                }
-            }
-        }
+        $paginatedReservations = $reservations->slice($offset, $perPage)->values();
 
-        return response()->json([
-            'data' => $reservations,
-            'pagination' => [
-                'total' => $trips->total(),
-                'per_page' => $trips->perPage(),
-                'current_page' => $trips->currentPage(),
-                'last_page' => $trips->lastPage(),
-                'from' => $trips->firstItem(),
-                'to' => $trips->lastItem(),
-            ],
-        ]);
+        return response()->json($paginatedReservations);
     }
 
 
@@ -950,46 +937,54 @@ class AdminDashBoardController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
+
         $status = $request->input('status');
         $company = Company::findOrfail($company_id);
-        $reservations = [];
 
-        $trips = $company->trip()->latest()->paginate(10);
+        $reservations = $company->trip()->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.trip.path')
+            ->latest()
+            ->paginate(10);
 
-        foreach ($trips as $trip1) {
-            foreach ($trip1->bus_trip as $busTrip) {
-                $busTripReservations = $busTrip->Reservation()->latest()->paginate(10);
+        $reservations = $reservations->map(function ($trip) use ($status) {
+            return $trip->bus_trip->map(function ($busTrip) use ($status) {
+                return $busTrip->reservation->filter(function ($reservation) use ($status) {
+                    return str_contains($reservation->status, $status);
+                });
+            });
+        })->flatten(2);
 
-                foreach ($busTripReservations as $reservation) {
-                    if (str_contains($reservation->status, $status)) {
-                        $customReservation = [
-                            'id' => $reservation->id,
-                            'price' => $reservation->price,
-                            'user_name' => $reservation->user->name,
-                            'user_id' => $reservation->user_id,
-                            'type' => $reservation->type,
-                            'status' => $reservation->status,
-                            'break' => $reservation->pivoit->break_trip->break->name,
-                            'from' => $reservation->pivoit->bus_trip->trip->path->from,
-                            'to' => $reservation->pivoit->bus_trip->trip->path->from,
-                        ];
-                        $reservations[] = $customReservation;
-                    }
-                }
+        $reservations = $reservations->map(function ($reservation) {
+            $seats = $reservation->seat_reservation->map(function ($seatReservation) {
+                return [
+                    'id' => $seatReservation->seat->id,
+                    'status' => $seatReservation->seat->status
+                ];
+            });
+            return [
+                'id' => $reservation->id,
+                'price' => $reservation->price,
+                'user_name' => $reservation->user->name,
+                'user_id' => $reservation->user_id,
+                'type' => $reservation->type,
+                'status' => $reservation->status,
+                'break' => $reservation->pivoit->break_trip->break->name,
+                'from' => $reservation->pivoit->bus_trip->trip->path->from,
+                'to' => $reservation->pivoit->bus_trip->trip->path->to,
+                'seats' => $seats // array of seat names or properties
+            ];
+        });
 
-                return response()->json([
-                    'data' => $reservations,
-                    'pagination' => [
-                        'total' => $busTripReservations->total(),
-                        'per_page' => $busTripReservations->perPage(),
-                        'current_page' => $busTripReservations->currentPage(),
-                        'last_page' => $busTripReservations->lastPage(),
-                        'from' => $busTripReservations->firstItem(),
-                        'to' => $busTripReservations->lastItem(),
-                    ],
-                ]);
-            }
-        }
+        return response()->json([
+            'data' => $reservations,
+            'pagination' => [
+                'total' => $reservations->total(),
+                'per_page' => $reservations->perPage(),
+                'current_page' => $reservations->currentPage(),
+                'last_page' => $reservations->lastPage(),
+                'from' => $reservations->firstItem(),
+                'to' => $reservations->lastItem(),
+            ],
+        ]);
     }
 
     public function all_reservation_by_bus_trip($id, Request $request)
@@ -1045,7 +1040,7 @@ class AdminDashBoardController extends Controller
         // Check if the bus trip belongs to the company that made the request
 
         // Get all completed and out reservations for the bus trip
-        $reservations = $bus_trip->Reservation()->whereIn('status', ['completed', 'out'])->get();
+        $reservations = $bus_trip->Reservation()->whereIn('status', ['pending','completed', 'out'])->get();
 
         // Calculate the total price
         $total_price = 0;
@@ -1071,7 +1066,7 @@ class AdminDashBoardController extends Controller
 
         // Loop through each bus trip and get its reservations
         foreach ($busTrips as $busTrip) {
-            $reservations = $busTrip->Reservation()->whereIn('status', ['completed', 'out'])->get();
+            $reservations = $busTrip->Reservation()->whereIn('status', ['pending','completed', 'out'])->get();
             // Calculate the total price for each bus trip
             foreach ($reservations as $reservation) {
                 $total_price += $reservation->price;
