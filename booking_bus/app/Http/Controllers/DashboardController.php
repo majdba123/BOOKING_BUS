@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
-    public function all_reservation()
+    public function all_reservation(Request $request)
     {
         $company = Auth::user()->Company;
         $reservations = [];
@@ -51,7 +51,11 @@ class DashboardController extends Controller
             }
         }
 
-        $paginatedReservations = array_chunk($reservations, 4); // paginate reservations in chunks of 4
+        $perPage = 4;
+        $currentPage = $request->input('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        $paginatedReservations = array_slice($reservations, $offset, $perPage);
 
         return response()->json($paginatedReservations);
     }
