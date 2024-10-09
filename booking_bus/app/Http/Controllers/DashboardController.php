@@ -22,17 +22,17 @@ class DashboardController extends Controller
     public function all_reservation(Request $request)
     {
         $company = Auth::user()->Company;
-    
+
         // Get all bus_trip IDs for the company
-        $busTripIds = $company->trip()->pluck('bus_trip.id')->toArray();
-    
+        $busTripIds = $company->trip()->bus_trip->pluck('id')->toArray();
+
         // Retrieve reservations for the bus_trip IDs
         $reservations = Reservation::whereIn('bus__trip_id', $busTripIds)
             ->get()
             ->map(function ($reservation) {
                 // Load relationships lazily
                 $reservation->load('seat_reservation.seat', 'user', 'pivoit.break_trip.break', 'bus_trip.trip.path');
-    
+
                 $seats = [];
                 foreach ($reservation->seat_reservation as $seatReservation) {
                     $seats[] = [
@@ -53,11 +53,11 @@ class DashboardController extends Controller
                     'seats' => $seats // array of seat names or properties
                 ];
             });
-    
+
         $perPage = 4;
         $currentPage = $request->input('page', 1);
         $offset = ($currentPage - 1) * $perPage;
-    
+
         $paginatedReservations = $reservations->slice($offset, $perPage)->values();
 
         return response()->json($paginatedReservations);
