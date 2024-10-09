@@ -1195,6 +1195,7 @@ export default {
                 .then((response) => {
                     this.Reservation = response.data;
                     this.ReversationStatusData = response.data;
+                    console.log(response.data);
                     // console.log(this.Reservation);
                     this.loading4 = false;
                 })
