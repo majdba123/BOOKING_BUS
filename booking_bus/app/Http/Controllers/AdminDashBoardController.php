@@ -24,11 +24,23 @@ class AdminDashBoardController extends Controller
     public function all_user(Request $request)
     {
         $users = User::where('type', '!=', 1) // Exclude users with type 0
-            ->doesntHave('driver')
-            ->doesntHave('company')
-            ->with(['profile', 'address'])
-            ->paginate(4);
-        return response()->json($users);
+        ->doesntHave('driver')
+        ->doesntHave('company')
+        ->with(['profile', 'address'])
+        ->latest()
+        ->paginate(4);
+
+        return response()->json([
+            'data' => $users->items(),
+            'pagination' => [
+                'total' => $users->total(),
+                'per_page' => $users->perPage(),
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'from' => $users->firstItem(),
+                'to' => $users->lastItem(),
+            ],
+        ]);
     }
 
     public function user_details($id)
