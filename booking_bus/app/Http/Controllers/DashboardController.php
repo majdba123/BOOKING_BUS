@@ -23,56 +23,39 @@ class DashboardController extends Controller
     {
         $company = Auth::user()->Company;
 
-        $reservations = $company->trip()
-            ->join('bus_trips', 'trips.id', '=', 'bus_trips.trip_id')
-            ->join('reservations', 'bus_trips.id', '=', 'reservations.bus_trip_id')
-            ->join('seat_reservations', 'reservations.id', '=', 'seat_reservations.reservation_id')
-            ->join('seats', 'seat_reservations.seat_id', '=', 'seats.id')
-            ->join('users', 'reservations.user_id', '=', 'users.id')
-            ->join('pivoits', 'reservations.id', '=', 'pivoits.reservation_id')
-            ->join('break_trips', 'pivoits.id', '=', 'break_trips.pivoit_id')
-            ->join('breaks', 'break_trips.id', '=', 'breaks.id')
-            ->join('paths', 'trips.id', '=', 'paths.trip_id')
-            ->select([
-                'reservations.id',
-                'reservations.price',
-                'reservations.type',
-                'reservations.status',
-                'users.name as user_name',
-                'reservations.user_id',
-                'breaks.name as break_name',
-                'paths.from',
-                'paths.to',
-                'seats.id as seat_id',
-                'seats.status as seat_status'
-            ])
-            ->get();
+        $reservations = $company->trip()->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.trip.path')->get()->map(function ($trip) {
+            return $trip->bus_trip->map(function ($busTrip) {
+                return $busTrip->reservation;
+            });
+        })->flatten(2);
 
         $reservations = $reservations->map(function ($reservation) {
-            $seats = $reservation->pluck('seat_id')->map(function ($seatId) use ($reservation) {
-                return [
-                    'id' => $seatId,
-                    'status' => $reservation->pluck('seat_status')->first()
+            $seats = [];
+            foreach ($reservation->seat_reservation as $seatReservation) {
+                $seats[] = [
+                    'id' => $seatReservation->seat->id,
+                    'status' => $seatReservation->seat->status
                 ];
-            });
-
+            }
             return [
                 'id' => $reservation->id,
                 'price' => $reservation->price,
                 'type' => $reservation->type,
                 'status' => $reservation->status,
-                'user_name' => $reservation->user_name,
+                'user_name' => $reservation->user->name,
                 'user_id' => $reservation->user_id,
-                'break' => $reservation->break_name,
-                'from' => $reservation->from,
-                'to' => $reservation->to,
-                'seats' => $seats
+                'break' => $reservation->pivoit->break_trip->break->name,
+                'from' => $reservation->pivoit->bus_trip->trip->path->from,
+                'to' => $reservation->pivoit->bus_trip->trip->path->from,
+                'seats' => $seats // array of seat names or properties
             ];
         });
 
         $perPage = 4;
         $currentPage = $request->input('page', 1);
-        $paginatedReservations = $reservations->paginate($perPage);
+        $offset = ($currentPage - 1) * $perPage;
+
+        $paginatedReservations = $reservations->slice($offset, $perPage)->values();
 
         return response()->json($paginatedReservations);
     }
