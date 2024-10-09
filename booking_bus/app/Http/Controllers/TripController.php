@@ -274,11 +274,6 @@ class TripController extends Controller
             $trips1 = $trip->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->find($trip->id);
             $trips1->price = $trips1->pricing ? $trips1->pricing->cost : null;
 
-            $key = 'trip_' . $trips1->id;
-            Cache::put($key, $trips1, now()->addMinutes(30));
-
-            event(new NewTrip($trips1));
-
             return response()->json($trips1, 201);
         } catch (\Exception $e) {
             DB::rollBack();
