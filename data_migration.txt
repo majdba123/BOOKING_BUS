@@ -14,3 +14,11 @@ php artisan import:csv_Bus_trip
 php artisan import:csv_pivoit
 php artisan import:csv_reservation
 php artisan import:csv_Seat_reservation
+
+
+
+
+____________________________________
+php artisan test --filter=test_it_registers_a_new_user
+php artisan test --filter=test_login_invalid_password
+php artisan test --filter=test_login_invalid_email
