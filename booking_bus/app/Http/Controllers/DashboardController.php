@@ -24,7 +24,7 @@ class DashboardController extends Controller
         $company = Auth::user()->Company;
         $reservations = [];
 
-        $trips = $company->trip()->latest()->paginate(10);
+        $trips = $company->trip()->latest()->paginate(5);
 
         foreach ($trips as $trip1) {
             $busTrips = $trip1->bus_trip;
@@ -91,69 +91,87 @@ class DashboardController extends Controller
 
         $status = $request->input('status');
         $company = Auth::user()->Company;
-        $reservations = [];
 
-        $trips = $company->trip()->latest()->get();
+        try {
+            $trips = $company->trip()->latest()->with(['bus_trip.reservations' => function ($query) use ($status) {
+                $query->where('status', 'like', "%{$status}%");
+            }])->paginate(10);
 
-        foreach ($trips as $trip1) {
-            foreach ($trip1->bus_trip as $busTrip) {
-                $busTripReservations = $busTrip->Reservation()->latest()->get();
-
-                foreach ($busTripReservations as $reservation) {
-                    if (str_contains($reservation->status, $status)) {
-                        $customReservation = [
-                            'id' => $reservation->id,
-                            'price' => $reservation->price,
-                            'user_name' => $reservation->user->name,
-                            'user_id' => $reservation->user_id,
-                            'type' => $reservation->type,
-                            'status' => $reservation->status,
-                            'break' => $reservation->pivoit->break_trip->break->name,
-                            'from' => $reservation->pivoit->bus_trip->trip->path->from,
-                            'to' => $reservation->pivoit->bus_trip->trip->path->from,
-                        ];
-                        $reservations[] = $customReservation;
+            $reservations = [];
+            foreach ($trips as $trip) {
+                foreach ($trip->bus_trip as $busTrip) {
+                    foreach ($busTrip->reservations as $reservation) {
+                        $reservations[] = $this->formatReservation($reservation);
                     }
                 }
             }
+
+            return response()->json([
+                'data' => $reservations,
+                'pagination' => [
+                    'total' => $trips->total(),
+                    'per_page' => $trips->perPage(),
+                    'current_page' => $trips->currentPage(),
+                    'last_page' => $trips->lastPage(),
+                    'from' => $trips->firstItem(),
+                    'to' => $trips->lastItem(),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred while fetching reservations.'], 500);
         }
-
-        $paginatedReservations = collect($reservations)->paginate(10);
-
-        return response()->json([
-            'data' => $paginatedReservations->items(),
-            'pagination' => [
-                'total' => $paginatedReservations->total(),
-                'per_page' => $paginatedReservations->perPage(),
-                'current_page' => $paginatedReservations->currentPage(),
-                'last_page' => $paginatedReservations->lastPage(),
-                'from' => $paginatedReservations->firstItem(),
-                'to' => $paginatedReservations->lastItem(),
-            ],
-        ]);
     }
 
+    private function formatReservation($reservation)
+    {
+        return [
+            'id' => $reservation->id,
+            'price' => $reservation->price,
+            'user_name' => $reservation->user->name,
+            'user_id' => $reservation->user_id,
+            'type' => $reservation->type,
+            'status' => $reservation->status,
+            'break' => $reservation->pivoit->break_trip->break->name,
+            'from' => $reservation->pivoit->bus_trip->trip->path->from,
+            'to' => $reservation->pivoit->bus_trip->trip->path->from,
+        ];
+    }
     public function all_reservation_by_bus_trip($bus_trip_id)
     {
         $company_id = Auth::user()->Company;
 
-        $reservations = Reservation::where('bus__trip_id', $bus_trip_id)
-            ->whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company_id) {
-                $query->where('id', $company_id->id);
-            })
-            ->latest()
-            ->paginate(10);
+        try {
+            $reservations = Reservation::where('bus__trip_id', $bus_trip_id)
+                ->whereHas('pivoit.bus_trip.trip.company', function ($query) use ($company_id) {
+                    $query->where('id', $company_id->id);
+                })
+                ->latest('created_at')
+                ->paginate(10);
 
+            $customReservations = $this->formatReservations($reservations);
+
+            return response()->json([
+                'data' => $customReservations,
+                'pagination' => [
+                    'total' => $reservations->total(),
+                    'per_page' => $reservations->perPage(),
+                    'current_page' => $reservations->currentPage(),
+                    'last_page' => $reservations->lastPage(),
+                    'from' => $reservations->firstItem(),
+                    'to' => $reservations->lastItem(),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred while fetching reservations.'], 500);
+        }
+    }
+
+    private function formatReservations($reservations)
+    {
         $customReservations = [];
         foreach ($reservations as $reservation) {
-            $seats = [];
-            foreach ($reservation->seat_reservation as $seatReservation) {
-                $seats[] = [
-                    'id' => $seatReservation->seat->id,
-                    'status' => $seatReservation->seat->status
-                ];
-            }
-            $customReservation = [
+            $seats = $this->formatSeats($reservation->seat_reservation);
+            $customReservations[] = [
                 'id' => $reservation->id,
                 'price' => $reservation->price,
                 'user_name' => $reservation->user->name,
@@ -164,22 +182,21 @@ class DashboardController extends Controller
                 'from' => $reservation->pivoit->bus_trip->trip->path->from,
                 'to' => $reservation->pivoit->bus_trip->trip->path->to,
                 'seats' => $seats // array of seat names or properties
-
             ];
-            $customReservations[] = $customReservation;
         }
+        return $customReservations;
+    }
 
-        return response()->json([
-            'data' => $customReservations,
-            'pagination' => [
-                'total' => $reservations->total(),
-                'per_page' => $reservations->perPage(),
-                'current_page' => $reservations->currentPage(),
-                'last_page' => $reservations->lastPage(),
-                'from' => $reservations->firstItem(),
-                'to' => $reservations->lastItem(),
-            ],
-        ]);
+    private function formatSeats($seatReservations)
+    {
+        $seats = [];
+        foreach ($seatReservations as $seatReservation) {
+            $seats[] = [
+                'id' => $seatReservation->seat->id,
+                'status' => $seatReservation->seat->status
+            ];
+        }
+        return $seats;
     }
 
     public function reser_by_break($pivoit_id)
