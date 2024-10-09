@@ -93,7 +93,7 @@ class DashboardController extends Controller
         $company = Auth::user()->Company;
 
         try {
-            $trips = $company->trip()->latest()->with(['bus_trip.Reservation' => function ($query) use ($status) {
+            $trips = $company->trip()->latest()->with(['bus_trip.reservations' => function ($query) use ($status) {
                 $query->where('status', 'like', "%{$status}%");
             }])->paginate(10);
 
