@@ -27,49 +27,58 @@ class DashboardController extends Controller
         $trips = $company->trip()->latest()->paginate(10);
 
         foreach ($trips as $trip1) {
-            foreach ($trip1->bus_trip as $busTrip) {
+            $busTrips = $trip1->bus_trip;
+            foreach ($busTrips as $busTrip) {
                 $busTripReservations = $busTrip->Reservation()->latest()->paginate(10);
-
-                foreach ($busTripReservations as $reservation) {
-                    $seats = [];
-                    foreach ($reservation->seat_reservation as $seatReservation) {
-                        $seats[] = [
-                            'id' => $seatReservation->seat->id,
-                            'status' => $seatReservation->seat->status
-                        ];
-                    }
-                    $customReservation = [
-                        'id' => $reservation->id,
-                        'price' => $reservation->price,
-                        'type' => $reservation->type,
-                        'status' => $reservation->status,
-                        'user_name' => $reservation->user->name,
-                        'user_id' => $reservation->user_id,
-                        'break' => $reservation->pivoit->break_trip->break->name,
-                        'from' => $reservation->pivoit->bus_trip->trip->path->from,
-                        'to' => $reservation->pivoit->bus_trip->trip->path->from,
-                        'seats' => $seats // array of seat names or properties
-
-
-                    ];
-                    $reservations[] = $customReservation;
-                }
-
-                return response()->json([
-                    'data' => $reservations,
-                    'pagination' => [
-                        'total' => $busTripReservations->total(),
-                        'per_page' => $busTripReservations->perPage(),
-                        'current_page' => $busTripReservations->currentPage(),
-                        'last_page' => $busTripReservations->lastPage(),
-                        'from' => $busTripReservations->firstItem(),
-                        'to' => $busTripReservations->lastItem(),
-                    ],
-                ]);
+                $reservations = array_merge($reservations, $this->processReservations($busTripReservations));
             }
         }
+
+        return response()->json([
+            'data' => $reservations,
+            'pagination' => [
+                'total' => count($reservations),
+                'per_page' => 10,
+                'current_page' => 1,
+                'last_page' => ceil(count($reservations) / 10),
+                'from' => 1,
+                'to' => count($reservations),
+            ],
+        ]);
     }
 
+    private function processReservations($reservations)
+    {
+        $result = [];
+        foreach ($reservations as $reservation) {
+            // Process each reservation and add it to the result array
+            $result[] = [
+                'id' => $reservation->id,
+                'price' => $reservation->price,
+                'type' => $reservation->type,
+                'status' => $reservation->status,
+                'user_name' => $reservation->user->name,
+                'user_id' => $reservation->user_id,
+                'break' => $reservation->pivoit->break_trip->break->name,
+                'from' => $reservation->pivoit->bus_trip->trip->path->from,
+                'to' => $reservation->pivoit->bus_trip->trip->path->from,
+                'seats' => $this->getSeatReservations($reservation),
+            ];
+        }
+        return $result;
+    }
+
+    private function getSeatReservations($reservation)
+    {
+        $seats = [];
+        foreach ($reservation->seat_reservation as $seatReservation) {
+            $seats[] = [
+                'id' => $seatReservation->seat->id,
+                'status' => $seatReservation->seat->status
+            ];
+        }
+        return $seats;
+    }
     public function all_reservation_by_status(Request $request)
     {
         $validator = Validator::make($request->all(), [
