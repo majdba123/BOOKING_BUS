@@ -22,22 +22,26 @@ use Illuminate\Support\Facades\DB;
 
 class AdminDashBoardController extends Controller
 {
-    public function all_user()
+    public function all_user(Request $request)
     {
-        $key = 'all_users'; // Create a unique cache key
-        // Check if the data is already cached
-        if (Cache::has($key)) {
-            $users = Cache::get($key);
-        } else {
-            // If not, retrieve the data from the database and cache it
-            $users = User::where('type', '!=', 1) // Exclude users with type 0
-                ->doesntHave('driver')
-                ->doesntHave('company')
-                ->with(['profile', 'address'])
-                ->get();
-            Cache::put($key, $users, now()->addMinutes(30)); // Cache for 30 minutes
-        }
-        return response()->json($users);
+        $users = User::where('type', '!=', 1) // Exclude users with type 0
+            ->doesntHave('driver')
+            ->doesntHave('company')
+            ->with(['profile', 'address'])
+            ->latest()
+            ->paginate(10);
+
+        return response()->json([
+            'data' => $users->items(),
+            'pagination' => [
+                'total' => $users->total(),
+                'per_page' => $users->perPage(),
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'from' => $users->firstItem(),
+                'to' => $users->lastItem(),
+            ],
+        ]);
     }
 
     public function user_details($id)
@@ -71,15 +75,26 @@ class AdminDashBoardController extends Controller
             $query->orWhere('email', 'like', "%{$request->input('email')}%");
         }
 
-        $users = $query->with(['profile', 'address'])->get();
+        $users = $query->with(['profile', 'address'])
+            ->latest()
+            ->paginate(20);
 
         if ($users->isEmpty()) {
             return response()->json(['error' => 'No users found'], 404);
         }
 
-        return response()->json($users);
+        return response()->json([
+            'data' => $users->items(),
+            'pagination' => [
+                'total' => $users->total(),
+                'per_page' => $users->perPage(),
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'from' => $users->firstItem(),
+                'to' => $users->lastItem(),
+            ],
+        ]);
     }
-
     /*public function user_reservation($id)
     {
         $reservations = Reservation::where('user_id', $id)->get();
@@ -503,8 +518,22 @@ class AdminDashBoardController extends Controller
 
     public function all_driver_by_id_company($company_id)
     {
-        $drivers = Driver::where('company_id', $company_id)->with('user.profile', 'user.address',)->get();
-        return response()->json($drivers);
+        $drivers = Driver::where('company_id', $company_id)
+                        ->with('user.profile', 'user.address')
+                        ->latest()
+                        ->paginate(10);
+
+        return response()->json([
+            'data' => $drivers->items(),
+            'pagination' => [
+                'total' => $drivers->total(),
+                'per_page' => $drivers->perPage(),
+                'current_page' => $drivers->currentPage(),
+                'last_page' => $drivers->lastPage(),
+                'from' => $drivers->firstItem(),
+                'to' => $drivers->lastItem(),
+            ],
+        ]);
     }
 
     public function all_driver_status_by_id_company($company_id, Request $request)
@@ -529,8 +558,22 @@ class AdminDashBoardController extends Controller
 
     public function all_bus_by_id_company($company_id)
     {
-        $drivers = Bus::where('company_id', $company_id)->with('seat', 'company')->get();
-        return response()->json($drivers);
+        $buses = Bus::where('company_id', $company_id)
+                    ->with('seat', 'company')
+                    ->latest()
+                    ->paginate(10);
+
+        return response()->json([
+            'data' => $buses,
+            'pagination' => [
+                'total' => $buses->total(),
+                'per_page' => $buses->perPage(),
+                'current_page' => $buses->currentPage(),
+                'last_page' => $buses->lastPage(),
+                'from' => $buses->firstItem(),
+                'to' => $buses->lastItem(),
+            ],
+        ]);
     }
 
     public function all_bus_status_by_id_company($company_id, Request $request)
@@ -555,8 +598,22 @@ class AdminDashBoardController extends Controller
 
     public function all_trip_of_company($company_id)
     {
-        $trips = Trip::where('company_id', $company_id)->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])->get();
-        return response()->json($trips);
+        $trips = Trip::where('company_id', $company_id)
+                    ->with(['bus_trip.Pivoit', 'breaks_trip.break', 'path'])
+                    ->latest()
+                    ->paginate(10);
+
+        return response()->json([
+            'data' => $trips,
+            'pagination' => [
+                'total' => $trips->total(),
+                'per_page' => $trips->perPage(),
+                'current_page' => $trips->currentPage(),
+                'last_page' => $trips->lastPage(),
+                'from' => $trips->firstItem(),
+                'to' => $trips->lastItem(),
+            ],
+        ]);
     }
 
     public function trip_by_status_of_company(Request $request, $company_id)
@@ -689,7 +746,7 @@ class AdminDashBoardController extends Controller
             }
         }
 
-        $busTrips = $trip->bus_trip;
+        $busTrips = $trip->bus_trip->latest()->paginate(10);
 
 
         $busTripsData = [];
@@ -732,8 +789,17 @@ class AdminDashBoardController extends Controller
 
             $busTripsData[] = $busTripData;
         }
-
-        return response()->json($busTripsData);
+        return response()->json([
+            'data' => $busTripsData,
+            'pagination' => [
+                'total' => $busTrips->total(),
+                'per_page' => $busTrips->perPage(),
+                'current_page' => $busTrips->currentPage(),
+                'last_page' => $busTrips->lastPage(),
+                'from' => $busTrips->firstItem(),
+                'to' => $busTrips->lastItem(),
+            ],
+        ]);
     }
 
     public function get_all_BusTripsByFillter(Request $request)
@@ -833,7 +899,9 @@ class AdminDashBoardController extends Controller
         $company = Company::findOrfail($company_id);
         $reservations = [];
 
-        foreach ($company->trip as $trip1) {
+        $trips = $company->trip()->latest()->paginate(10);
+
+        foreach ($trips as $trip1) {
             foreach ($trip1->bus_trip as $busTrip) {
                 foreach ($busTrip->Reservation as $reservation) {
                     $seats = [];
@@ -861,7 +929,18 @@ class AdminDashBoardController extends Controller
                 }
             }
         }
-        return response()->json($reservations);
+
+        return response()->json([
+            'data' => $reservations,
+            'pagination' => [
+                'total' => $trips->total(),
+                'per_page' => $trips->perPage(),
+                'current_page' => $trips->currentPage(),
+                'last_page' => $trips->lastPage(),
+                'from' => $trips->firstItem(),
+                'to' => $trips->lastItem(),
+            ],
+        ]);
     }
 
 
@@ -878,9 +957,13 @@ class AdminDashBoardController extends Controller
         $company = Company::findOrfail($company_id);
         $reservations = [];
 
-        foreach ($company->trip as $trip1) {
+        $trips = $company->trip()->latest()->paginate(10);
+
+        foreach ($trips as $trip1) {
             foreach ($trip1->bus_trip as $busTrip) {
-                foreach ($busTrip->Reservation as $reservation) {
+                $busTripReservations = $busTrip->Reservation()->latest()->paginate(10);
+
+                foreach ($busTripReservations as $reservation) {
                     if (str_contains($reservation->status, $status)) {
                         $customReservation = [
                             'id' => $reservation->id,
@@ -896,9 +979,20 @@ class AdminDashBoardController extends Controller
                         $reservations[] = $customReservation;
                     }
                 }
+
+                return response()->json([
+                    'data' => $reservations,
+                    'pagination' => [
+                        'total' => $busTripReservations->total(),
+                        'per_page' => $busTripReservations->perPage(),
+                        'current_page' => $busTripReservations->currentPage(),
+                        'last_page' => $busTripReservations->lastPage(),
+                        'from' => $busTripReservations->firstItem(),
+                        'to' => $busTripReservations->lastItem(),
+                    ],
+                ]);
             }
         }
-        return response()->json($reservations);
     }
 
     public function all_reservation_by_bus_trip($id, Request $request)

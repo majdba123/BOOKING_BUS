@@ -596,10 +596,7 @@ class TripController extends Controller
         // $queries = DB::getQueryLog();
         // $queryCount = count($queries);
 
-        return response()->json(
-             $trips,
-            // 'query_count' => $queryCount // Show the number of queries executed
-        );
+        return response()->json($trips);
     }
 
 

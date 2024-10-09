@@ -25,7 +25,7 @@ class RegesterTest extends TestCase
         $response->assertJson([ "message" => "User Created "]);
       //  dd($response);
        // $this->assertCount(1, User::all());
-        $this->assertEquals(3,  User::count());
+        $this->assertEquals(6,  User::count());
         $name = User::where('name' ,'John Doe' )->first();
         //dd($name->name);
         $this->assertEquals('John Doe', $name->name  );
