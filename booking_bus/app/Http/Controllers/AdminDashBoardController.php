@@ -820,42 +820,40 @@ class AdminDashBoardController extends Controller
     public function all_reservation_of_company($company_id, Request $request)
     {
         $company = Company::findOrfail($company_id);
-
-        $reservations = $company->trip()->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.trip.path')->get()->map(function ($trip) {
-            return $trip->bus_trip->map(function ($busTrip) {
-                return $busTrip->reservation;
-            });
-        })->flatten(2);
-
-        $reservations = $reservations->map(function ($reservation) {
-            $seats = [];
-            foreach ($reservation->seat_reservation as $seatReservation) {
-                $seats[] = [
-                    'id' => $seatReservation->seat->id,
-                    'status' => $seatReservation->seat->status
-                ];
+    
+        $reservations = $company->trip()
+            ->with('bus_trip.reservation.seat_reservation.seat', 'bus_trip.reservation.user', 'bus_trip.reservation.pivoit.break_trip.break', 'bus_trip.reservation.bus_trip.trip.path')
+            ->paginate($perPage = 4);
+    
+        $reservations = $reservations->map(function ($trip) {
+            $reservations = [];
+            foreach ($trip->bus_trip as $busTrip) {
+                foreach ($busTrip->reservation as $reservation) {
+                    $seats = [];
+                    foreach ($reservation->seat_reservation as $seatReservation) {
+                        $seats[] = [
+                            'id' => $seatReservation->seat->id,
+                            'status' => $seatReservation->seat->status
+                        ];
+                    }
+                    $reservations[] = [
+                        'id' => $reservation->id,
+                        'price' => $reservation->price,
+                        'type' => $reservation->type,
+                        'status' => $reservation->status,
+                        'user_name' => $reservation->user->name,
+                        'user_id' => $reservation->user_id,
+                        'break' => $reservation->pivoit->break_trip->break->name,
+                        'from' => $reservation->bus_trip->trip->path->from,
+                        'to' => $reservation->bus_trip->trip->path->to,
+                        'seats' => $seats // array of seat names or properties
+                    ];
+                }
             }
-            return [
-                'id' => $reservation->id,
-                'price' => $reservation->price,
-                'type' => $reservation->type,
-                'status' => $reservation->status,
-                'user_name' => $reservation->user->name,
-                'user_id' => $reservation->user_id,
-                'break' => $reservation->pivoit->break_trip->break->name,
-                'from' => $reservation->pivoit->bus_trip->trip->path->from,
-                'to' => $reservation->pivoit->bus_trip->trip->path->to, // Corrected 'to' field
-                'seats' => $seats // array of seat names or properties
-            ];
-        });
-
-        $perPage = 4;
-        $currentPage = $request->input('page', 1);
-        $offset = ($currentPage - 1) * $perPage;
-
-        $paginatedReservations = $reservations->slice($offset, $perPage)->values();
-
-        return response()->json($paginatedReservations);
+            return $reservations;
+        })->flatten(1);
+    
+        return response()->json($reservations);
     }
 
     public function all_reservation_of_company__by_status(Request $request, $company_id)
