@@ -30,8 +30,8 @@ class DashboardController extends Controller
                 'bus_trip.Reservation.pivoit.break_trip.break:name',
                 'bus_trip.trip.path:from,to',
             ])
-            ->paginate($perPage = 4)
-            ->appends($request->query());
+            ->select('reservations.id', 'reservations.price', 'reservations.type', 'reservations.status', 'reservations.user_id')
+            ->paginate($perPage = 4);
     
         $reservations->transform(function ($reservation) {
             $seats = $reservation->seat_reservation->pluck('seat.id', 'seat.status');
