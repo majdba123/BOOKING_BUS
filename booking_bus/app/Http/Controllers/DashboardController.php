@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $reservations = $company->trip()->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.Reservation.bus_trip.trip.path')
             ->get()
             ->flatMap(function ($trip) {
-                return $trip->bus_trip->reservation;
+                return $trip->bus_trip->Reservation;
             })
             ->map(function ($reservation) {
                 $seats = [];
