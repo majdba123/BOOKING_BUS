@@ -24,17 +24,17 @@ class DashboardController extends Controller
         $company = Auth::user()->Company;
     
         $reservations = $company->trip()
-            ->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.trip.path')
-            ->paginate($perPage = 4);
+            ->with([
+                'bus_trip.Reservation.seat_reservation.seat:id,status',
+                'bus_trip.Reservation.user:name',
+                'bus_trip.Reservation.pivoit.break_trip.break:name',
+                'bus_trip.trip.path:from,to',
+            ])
+            ->paginate($perPage = 4)
+            ->appends($request->query());
     
         $reservations->transform(function ($reservation) {
-            $seats = [];
-            foreach ($reservation->seat_reservation as $seatReservation) {
-                $seats[] = [
-                    'id' => $seatReservation->seat->id,
-                    'status' => $seatReservation->seat->status
-                ];
-            }
+            $seats = $reservation->seat_reservation->pluck('seat.id', 'seat.status');
             return [
                 'id' => $reservation->id,
                 'price' => $reservation->price,
@@ -45,13 +45,12 @@ class DashboardController extends Controller
                 'break' => $reservation->pivoit->break_trip->break->name,
                 'from' => $reservation->pivoit->bus_trip->trip->path->from,
                 'to' => $reservation->pivoit->bus_trip->trip->path->to,
-                'seats' => $seats // array of seat names or properties
+                'seats' => $seats,
             ];
         });
     
         return response()->json($reservations);
     }
-
     public function all_reservation_by_status(Request $request)
     {
         $status = $request->input('status');
