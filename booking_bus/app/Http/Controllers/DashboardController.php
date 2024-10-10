@@ -22,19 +22,21 @@ class DashboardController extends Controller
     public function all_reservation(Request $request)
     {
         $company = Auth::user()->Company;
-    
-        $reservations = $company->trip()
-            ->with([
-                'bus_trip.Reservation.seat_reservation.seat:id,status',
-                'bus_trip.Reservation.user:name',
-                'bus_trip.Reservation.pivoit.break_trip.break:name',
-                'bus_trip.trip.path:from,to',
-            ])
-            ->select('reservations.id', 'reservations.price', 'reservations.type', 'reservations.status', 'reservations.user_id')
-            ->paginate($perPage = 4);
-    
-        $reservations->transform(function ($reservation) {
-            $seats = $reservation->seat_reservation->pluck('seat.id', 'seat.status');
+
+        $reservations = $company->trip()->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.trip.path')->get()->map(function ($trip) {
+            return $trip->bus_trip->map(function ($busTrip) {
+                return $busTrip->reservation;
+            });
+        })->flatten(2);
+
+        $reservations = $reservations->map(function ($reservation) {
+            $seats = [];
+            foreach ($reservation->seat_reservation as $seatReservation) {
+                $seats[] = [
+                    'id' => $seatReservation->seat->id,
+                    'status' => $seatReservation->seat->status
+                ];
+            }
             return [
                 'id' => $reservation->id,
                 'price' => $reservation->price,
@@ -44,13 +46,20 @@ class DashboardController extends Controller
                 'user_id' => $reservation->user_id,
                 'break' => $reservation->pivoit->break_trip->break->name,
                 'from' => $reservation->pivoit->bus_trip->trip->path->from,
-                'to' => $reservation->pivoit->bus_trip->trip->path->to,
-                'seats' => $seats,
+                'to' => $reservation->pivoit->bus_trip->trip->path->from,
+                'seats' => $seats // array of seat names or properties
             ];
         });
-    
-        return response()->json($reservations);
+
+        $perPage = 4;
+        $currentPage = $request->input('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        $paginatedReservations = $reservations->slice($offset, $perPage)->values();
+
+        return response()->json($paginatedReservations);
     }
+
     public function all_reservation_by_status(Request $request)
     {
         $status = $request->input('status');
