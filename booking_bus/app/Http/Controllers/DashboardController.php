@@ -20,43 +20,69 @@ use Illuminate\Support\Facades\Cache;
 class DashboardController extends Controller
 {
     public function all_reservation(Request $request)
-{
-    $company = Auth::user()->Company;
+    {
+        $company = Auth::user()->Company;
 
-    $reservations = $company->trip()
-        ->with('bus_trip.Reservation.seat_reservation.seat', 'bus_trip.Reservation.user', 'bus_trip.Reservation.pivoit.break_trip.break', 'bus_trip.Reservation.bus_trip.trip.path')
+        $reservations = $company->trip()
+
+        ->with('bus_trip.reservation.seat_reservation.seat', 'bus_trip.reservation.user', 'bus_trip.reservation.pivoit.break_trip.break', 'bus_trip.reservation.bus_trip.trip.path')
+
         ->paginate($perPage = 4);
 
-    $reservations->getCollection()->transform(function ($trip) {
+
+    $reservations = $reservations->map(function ($trip) {
+
         $reservations = [];
+
         foreach ($trip->bus_trip as $busTrip) {
+
             foreach ($busTrip->reservation as $reservation) {
+
                 $seats = [];
+
                 foreach ($reservation->seat_reservation as $seatReservation) {
+
                     $seats[] = [
+
                         'id' => $seatReservation->seat->id,
+
                         'status' => $seatReservation->seat->status
+
                     ];
+
                 }
+
                 $reservations[] = [
+
                     'id' => $reservation->id,
+
                     'price' => $reservation->price,
+
                     'type' => $reservation->type,
+
                     'status' => $reservation->status,
+
                     'user_name' => $reservation->user->name,
+
                     'user_id' => $reservation->user_id,
+
                     'break' => $reservation->pivoit->break_trip->break->name,
+
                     'from' => $reservation->bus_trip->trip->path->from,
+
                     'to' => $reservation->bus_trip->trip->path->to,
+
                     'seats' => $seats // array of seat names or properties
+
                 ];
+
             }
+
         }
         return $reservations;
-    });
-
+    })->flatten(1);
     return response()->json($reservations);
-}
+    }
 
     public function all_reservation_by_status(Request $request)
     {
