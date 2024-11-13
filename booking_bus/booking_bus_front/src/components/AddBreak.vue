@@ -17,7 +17,7 @@
                         <select
                             id="government"
                             v-model="Idgovernment"
-                            @change="updateMapLocation"
+                            @change="updateMapLocation(Idgovernment)"
                             required
                             class="custom-select"
                         >
@@ -281,9 +281,8 @@ export default {
                     this.fetchBreaks();
                     this.closeConfirmDeleteModal();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error deleting Break");
-                    console.error(error);
                 });
         },
         closeConfirmDeleteModal() {
@@ -323,9 +322,8 @@ export default {
                 .then((response) => {
                     this.governments = response.data;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting Path");
-                    console.error(error);
                 });
         },
         fetchBreaks() {
@@ -338,9 +336,8 @@ export default {
                 .then((response) => {
                     this.breaks = response.data;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting Breaks");
-                    console.error(error);
                 });
         },
         async handleSubmit() {
@@ -366,10 +363,8 @@ export default {
                         this.toast.success("Added Complete");
                         this.fetchBreaks();
                     })
-                    .catch((error) => {
+                    .catch(() => {
                         this.toast.error("Error Add Break");
-
-                        console.error(error);
                     });
             }
         },
@@ -394,9 +389,7 @@ export default {
                 .then((response) => {
                     this.breakbypath = response.data;
                 })
-                .catch((error) => {
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         updateBreak() {
             const access_token = window.localStorage.getItem("access_token");
@@ -415,9 +408,8 @@ export default {
                     this.fetchBreaks();
                     this.closeEditModal();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error updating Break");
-                    console.error(error);
                 });
         },
         closeEditModal() {
@@ -444,6 +436,7 @@ export default {
                 this.tomapLat = selectedGovernment.to_latitude;
                 this.tomapLng = selectedGovernment.to_longitude;
             }
+
             const selectedGovernmet = this.governments.find(
                 (gov) => gov.id === path
             );

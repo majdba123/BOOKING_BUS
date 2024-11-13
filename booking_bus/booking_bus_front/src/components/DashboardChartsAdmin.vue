@@ -155,9 +155,7 @@ export default {
                     this.processProfitsData();
                     this.createCharts();
                 })
-                .catch((error) => {
-                    console.error("Error fetching dashboard data:", error);
-                });
+                .catch(() => {});
         },
 
         processProfitsData() {

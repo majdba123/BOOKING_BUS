@@ -1,102 +1,34 @@
 <template>
-    <div class="insights">
-        <!-- Start selling -->
-        <div class="sales">
-            <span class="material-icons" aria-label="Sales">trending_up</span>
-            <div class="middle">
-                <div class="left">
-                    <h3>Company</h3>
-                    <h1>\${{ all_company }}</h1>
+    <div>
+        <div class="container">
+            <div class="portfolio">
+                <div class="card" id="storageCard">
+                    <div class="card-title">Company</div>
+                    <div class="card-icon">
+                        <i class="material-icons">apartment</i>
+                    </div>
+                    <div class="card-data">{{ all_company }}</div>
+                    <hr />
                 </div>
-                <div class="progress">
-                    <svg>
-                        <circle
-                            class="background-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                        ></circle>
-                        <circle
-                            class="sales-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                            :stroke-dashoffset="salesOffset"
-                        ></circle>
-                    </svg>
-
-                    <div class="number">{{ all_company }}%</div>
+                <div class="card" id="loveCard">
+                    <div class="card-title">Drivers</div>
+                    <div class="card-icon">
+                        <i class="material-icons">group</i>
+                    </div>
+                    <div class="card-data">{{ all_drivers }}</div>
+                    <hr />
                 </div>
-            </div>
-            <small>Last 24 Hours</small>
-        </div>
-        <!-- End selling -->
-
-        <!-- Start expenses -->
-        <div class="expenses">
-            <span class="material-icons" aria-label="Expenses">local_mall</span>
-            <div class="middle">
-                <div class="left">
-                    <h3>User</h3>
-                    <h1>\${{ all_user }}</h1>
-                </div>
-                <div class="progress">
-                    <svg>
-                        <circle
-                            class="background-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                        ></circle>
-                        <circle
-                            class="expenses-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                            :stroke-dashoffset="expensesOffset"
-                        ></circle>
-                    </svg>
-                    <div class="number">{{ all_user }}%</div>
+                <div class="card" id="gameCard">
+                    <div class="card-title">User</div>
+                    <div class="card-icon">
+                        <i class="material-icons">groups</i>
+                    </div>
+                    <div class="card-data">{{ all_user }}</div>
+                    <div class="card-hint"></div>
                 </div>
             </div>
-            <small>Last 24 Hours</small>
         </div>
-        <!-- End expenses -->
-
-        <!-- Start income -->
-        <div class="income">
-            <span class="material-icons" aria-label="Income"
-                >stacked_line_chart</span
-            >
-            <div class="middle">
-                <div class="left">
-                    <h3>Drivers</h3>
-                    <h1>\${{ all_drivers }}</h1>
-                </div>
-                <div class="progress">
-                    <svg>
-                        <circle
-                            class="background-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                        ></circle>
-                        <circle
-                            class="income-circle"
-                            r="30"
-                            cy="40"
-                            cx="40"
-                            :stroke-dashoffset="incomeOffset"
-                        ></circle>
-                    </svg>
-                    <div class="number">{{ all_drivers }}%</div>
-                </div>
-            </div>
-            <small>Last 24 Hours</small>
-        </div>
-        <!-- End income -->
     </div>
-    <!-- End insights -->
 </template>
 
 <script>
@@ -155,9 +87,7 @@ export default {
                         this.circumference -
                         (this.circumference * this.incomePercentage) / 100;
                 })
-                .catch((error) => {
-                    console.error("Error fetching data:", error);
-                });
+                .catch(() => {});
         },
     },
     mounted() {
@@ -166,237 +96,166 @@ export default {
 };
 </script>
 
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
-
-:root {
-    --clr-primary: #7380ec;
-    --clr-danger: #ff7782;
-    --clr-success: #41f1b6;
-    --clr-white: #fff;
-    --clr-info-dark: #7d8da1;
-    --clr-info-light: #e4e9f7;
-    --clr-dark: #363949;
-    --clr-warning: #ffbb55;
-    --clr-light: rgba(132, 139, 200, 0.18);
-    --clr-primary-variant: #111e88;
-    --clr-dark-variant: #677483;
-    --clr-color-background: #f6f6f9;
-
-    --card-border-radius: 2rem;
-    --border-radius-1: 0.4rem;
-    --border-radius-2: 0.8rem;
-    --border-radius-3: 1.2rem;
-
-    --card-padding: 1.8rem;
-    --padding-1: 1.2rem;
-
-    --box-shadow: 0 2rem 3rem var(--clr-light);
-    --circle-radius: 30px;
-    --circle-diameter: calc(var(--circle-radius) * 2);
-    --circle-circumference: calc(2 * var(--circle-radius) * 3.14159);
-
-    --font-size-small: 0.88rem;
-    --font-size-medium: 1.2rem;
-    --font-size-large: 1.6rem;
-
-    --padding-small: 0.5rem;
-    --padding-medium: 1.8rem;
-    --padding-large: 40px;
-
-    --transition-duration: 0.3s;
-    --transition-ease: ease;
+<style scoped>
+body {
+    padding: 32px;
+    background: #ddd;
+    font-family: "Roboto", sans-serif;
+    margin: 0;
 }
 
-body {
-    font-family: "Roboto", sans-serif;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-size: var(--font-size-small);
-    user-select: none;
-    overflow-x: hidden;
-    background: var(--clr-color-background);
+h1 {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0px 12px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    margin: 50px 0;
 }
 
 .container {
-    display: grid;
     width: 100%;
-    gap: var(--padding-medium);
-    grid-template-columns: 14rem auto 14rem;
-    margin-left: 0;
 }
 
-.insights {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--padding-small);
-    padding: var(--card-padding);
+.portfolio {
+    width: 1200px;
+    display: flex;
+    gap: 1;
+    justify-content: space-between;
+    margin-top: 1rem;
 }
 
-.insights > div {
-    background-color: var(--clr-white);
-    padding: var(--card-padding);
-    border-radius: var(--card-border-radius);
-    margin-top: var(--padding-small);
-    box-shadow: var(--box-shadow);
-    transition: box-shadow var(--transition-duration) var(--transition-ease);
+.card {
+    border-radius: 9px;
+    width: 90%;
+    color: var(--clr-dark);
+    margin: 16px;
+    padding: 24px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.2);
+}
+.card-title {
+    font-weight: bold;
+    font-size: 1.8rem;
+    text-align: left;
+    color: white;
 }
 
-.insights > div:hover {
-    box-shadow: none;
+.card-icon {
+    position: absolute;
+    top: -24px;
+    right: 16px;
+    color: white;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25%;
+    box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.15);
 }
 
-.insights > div span {
-    background: var(--clr-primary);
-    padding: var(--padding-small);
-    border-radius: 50%;
-    color: var(--clr-white);
-    font-size: 2rem;
+.card-icon i {
+    font-size: 4rem;
 }
 
-.insights > div.expenses span {
-    background: var(--clr-danger);
+.card-data {
+    font-size: 1.8rem;
+    font-weight: 400;
+    text-align: right;
+    padding-right: 16px;
+    color: white;
+}
+#storageCard {
+    background: linear-gradient(60deg, #5e35b1, #039be5); /* Same as the icon */
 }
 
-.insights > div.income span {
-    background: var(--clr-success);
+#loveCard {
+    background: linear-gradient(60deg, #f50057, #ff8a80); /* Same as the icon */
 }
 
-.insights > div .middle {
+#gameCard {
+    background: linear-gradient(60deg, #43a047, #ffeb3b); /* Same as the icon */
+}
+
+hr {
+    width: 90%;
+    margin: 16px auto;
+    border-color: white;
+}
+
+.card-hint {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    padding-left: 8px;
 }
 
-.insights > div .middle h1 {
-    font-size: var(--font-size-large);
-    color: var(--clr-dark);
+.card-hint i {
+    font-size: 1.3rem;
+    margin-right: 8px;
 }
 
-.insights .progress {
-    position: relative;
-    height: var(--circle-diameter);
-    width: var(--circle-diameter);
-    border-radius: 50%;
+.card-hint a {
+    font-size: 0.9rem;
+    font-weight: 300;
 }
 
-.insights svg {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+#storageCard .card-icon {
+    background: linear-gradient(60deg, #5e35b1, #039be5);
 }
 
-.insights svg circle {
-    fill: none;
-    stroke-width: 5;
-    stroke-dasharray: var(--circle-circumference);
-    transform: rotate(-90deg);
-    transform-origin: 50% 59.5%;
+#loveCard .card-icon {
+    background: linear-gradient(60deg, #f50057, #ff8a80);
 }
 
-.insights svg circle.background-circle {
-    stroke: var(--clr-info-light);
+#pizzaCard .card-icon {
+    background: linear-gradient(60deg, #fb8c00, #ffca29);
 }
 
-.insights svg circle.sales-circle {
-    stroke: var(--clr-primary);
+#gameCard .card-icon {
+    background: linear-gradient(60deg, #43a047, #ffeb3b);
 }
-
-.insights svg circle.expenses-circle {
-    stroke: var(--clr-danger);
-}
-
-.insights svg circle.income-circle {
-    stroke: var(--clr-success);
-}
-
-.insights .progress .number {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: var(--font-size-medium);
-    color: var(--clr-dark);
-}
-
 @media screen and (max-width: 1200px) {
     .container {
         width: 94%;
         grid-template-columns: 7rem auto 14rem;
     }
-
-    .insights {
-        padding: var(--padding-large);
-        grid-template-columns: repeat(1, 1fr);
-    }
 }
 
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
-    .container {
+    .portfolio {
         width: 100%;
+        display: block;
         grid-template-columns: repeat(1, 1fr);
     }
-
-    aside {
-        position: fixed;
-        width: 18rem;
-        z-index: 3;
-        background-color: var(--clr-white);
-        display: none;
-        left: -100px;
-        animation: menuAni 1s forwards;
-    }
-
-    @keyframes menuAni {
-        to {
-            left: 0;
-        }
-    }
-
-    aside .logo {
-        display: inline;
-    }
-
-    aside .sidebar h3 {
-        display: inline;
-    }
-
-    aside .sidebar a {
-        width: 100%;
-        height: 3.4rem;
-    }
-
-    aside .top .close span {
-        display: inline;
+    .card-icon {
         position: absolute;
-        right: 0;
-        font-size: 35px;
-        margin-right: 30px;
-    }
-
-    .right .top {
-        position: fixed;
-        top: 0;
-        left: 0;
+        top: -24px;
+        right: 16px;
+        background: linear-gradient(60deg, #ffa726, #ef6c00);
+        color: white;
+        width: auto;
+        height: auto;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 0 0.8rem;
-        background-color: var(--clr-white);
-        width: 100%;
-        height: 4.6rem;
-        z-index: 2;
-        box-shadow: var(--box-shadow);
-        margin: 0;
+        border-radius: 25%;
+        box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.15);
     }
-
-    .insights {
-        padding: var(--padding-large);
-        grid-template-columns: repeat(1, 1fr);
+    .card {
+        border-radius: 9px;
+        width: 390px;
+        background: white;
+        margin: 16px;
+        padding: 24px;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        box-sizing: border-box;
     }
 }
 </style>

@@ -139,7 +139,6 @@ export default {
                 headers: { Authorization: `Bearer ${token}` },
             }).then(function (response) {
                 if (response.status == 200) {
-                    console.log(response);
                     window.alert("Logout succesful");
                     window.localStorage.setItem(
                         "access_token",

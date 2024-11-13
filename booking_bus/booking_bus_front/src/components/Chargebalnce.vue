@@ -32,6 +32,7 @@
                                                 :src="item.image"
                                                 alt="Image"
                                                 class="item-image"
+                                                @click="viewImage(item.image)"
                                             />
                                         </td>
                                         <td>{{ item.point }}</td>
@@ -58,24 +59,14 @@
                 </div>
             </div>
         </div>
-        <div v-if="showItemModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">Item Details</div>
-                <div class="modal-body">
-                    <p><strong>User ID:</strong> {{ index }}</p>
-                    <p><strong>Point:</strong> {{ selectedItem.point }}</p>
-                    <p><strong>Status:</strong> {{ selectedItem.status }}</p>
-                    <img
-                        :src="selectedItem.image"
-                        alt="Image"
-                        class="item-image"
-                    />
-                </div>
-                <div class="modal-footer">
-                    <button @click="closeItemModal" class="close-modal">
-                        Close
-                    </button>
-                </div>
+
+        <!-- النافذة المنبثقة لعرض الصورة -->
+        <div v-if="showImageModal" class="modal" @click="closeImageModal">
+            <div class="modal-content" @click.stop>
+                <img :src="selectedImage" alt="Image" class="modal-image" />
+                <button @click="closeImageModal" class="close-modal">
+                    Close
+                </button>
             </div>
         </div>
     </div>
@@ -90,10 +81,9 @@ export default {
     data() {
         return {
             loading: true,
-
             items: [],
-            showItemModal: false,
-            selectedItem: {},
+            showImageModal: false,
+            selectedImage: "",
         };
     },
     methods: {
@@ -107,12 +97,10 @@ export default {
             })
                 .then((response) => {
                     this.items = response.data;
-                    console.log(response.data);
                     this.loading = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     toast.error("Error fetching data");
-                    console.error(error);
                 });
             this.loading = true;
         },
@@ -128,9 +116,8 @@ export default {
                     toast.success("Order accepted successfully");
                     this.fetchData();
                 })
-                .catch((error) => {
+                .catch(() => {
                     toast.error("Error accepting order");
-                    console.error(error);
                 });
         },
         cancelOrder(userId) {
@@ -145,9 +132,8 @@ export default {
                     toast.success("Order cancelled successfully");
                     this.fetchData();
                 })
-                .catch((error) => {
+                .catch(() => {
                     toast.error("Error cancelling order");
-                    console.error(error);
                 });
         },
         viewItem(item) {
@@ -157,6 +143,14 @@ export default {
         closeItemModal() {
             this.showItemModal = false;
             this.selectedItem = {};
+        },
+        viewImage(imageUrl) {
+            this.selectedImage = imageUrl;
+            this.showImageModal = true;
+        },
+        closeImageModal() {
+            this.showImageModal = false;
+            this.selectedImage = "";
         },
     },
     mounted() {
@@ -237,7 +231,7 @@ export default {
     padding: 10px 20px;
     margin: 10px;
     border: none;
-    border-radius: 25px;
+    border-radius: 9px;
     background: linear-gradient(90deg, var(--clr-primary) 0%, #007bff 100%);
     color: var(--clr-white);
     cursor: pointer;
@@ -323,7 +317,7 @@ export default {
 }
 
 .recent_orders table {
-    background-color: var(--clr-white);
+    background: var(--clr-color-background);
     width: 100%;
     border-radius: 10px;
     padding: 1rem;
@@ -390,11 +384,6 @@ export default {
     text-align: center;
 }
 
-.recent_orders thead {
-    background-color: var(--clr-primary);
-    color: var(--clr-white);
-}
-
 .recent_orders th,
 .recent_orders td {
     padding: 10px;
@@ -439,19 +428,19 @@ table tbody tr:last-child td {
     justify-content: center;
     align-items: center;
     position: fixed;
-    z-index: 1000;
+    z-index: 100;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
     background: var(--clr-white);
     padding: 20px;
     border-radius: var(--border-radius-2);
-    max-width: 90%;
+    max-width: 70%;
     width: 90%;
     height: auto;
     max-height: 80%;
@@ -517,6 +506,7 @@ table tbody tr:last-child td {
     border-radius: var(--border-radius-2);
     cursor: pointer;
     transition: background-color 0.3s;
+    margin: 10px;
 }
 
 .close-modal:hover {

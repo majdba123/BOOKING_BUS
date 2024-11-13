@@ -74,7 +74,7 @@
                                     v-for="(path, index) in filteredPaths"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ path.from }}</td>
                                     <td>{{ path.to }}</td>
                                     <td>{{ path.Distance }}</td>
@@ -218,23 +218,23 @@ export default {
         openMapModal(id) {
             this.id = id;
             const government = this.Paths.find((breack) => breack.id === id);
-            console.log(this.governments);
+            // console.log(this.governments);
             if (government) {
                 this.frommapLat = government.from_latitude;
                 this.frommapLog = government.from_longitude;
                 this.tomapLat = government.to_latitude;
                 this.tomapLog = government.to_longitude;
                 this.showMapModal = true;
-                console.log(
-                    this.tomapLog,
-                    this.frommapLat,
-                    this.frommapLog,
-                    this.tomapLat
-                );
+                // console.log(
+                //     this.tomapLog,
+                //     this.frommapLat,
+                //     this.frommapLog,
+                //     this.tomapLat
+                // );
             }
         },
         handleSubmit() {
-            console.log("Form Submitted", this.StartPath, this.EndPath);
+            // console.log("Form Submitted", this.StartPath, this.EndPath);
         },
         async CreatePath() {
             const token = window.localStorage.getItem("access_token");
@@ -260,7 +260,6 @@ export default {
                 });
 
                 if (response.status === 200) {
-                    console.log(response.data);
                     this.toast.success("Path Created Successfully", {
                         transition: "Vue-Toastification__bounce",
                         hideProgressBar: true,
@@ -274,7 +273,6 @@ export default {
                     await this.AllPaths();
                 }
             } catch (error) {
-                console.log("Error during path creation:", error);
                 this.toast.error("Error Creating Path", {
                     transition: "Vue-Toastification__shake",
                     hideProgressBar: true,
@@ -291,18 +289,18 @@ export default {
                 store.state.additionalBreaks.length > 0
             ) {
                 const latestPath = this.Paths[this.Paths.length - 1];
-                console.log("Latest Path:", latestPath);
+                // console.log("Latest Path:", latestPath);
                 const latestPathId = latestPath.id;
-                console.log(latestPathId);
-                console.log(store.state.additionalBreaks[0]);
-                console.log(store.state.additionalBreaks[0].name);
+                // console.log(latestPathId);
+                // console.log(store.state.additionalBreaks[0]);
+                // console.log(store.state.additionalBreaks[0].name);
 
                 for (
                     let index = 0;
                     index < store.state.additionalBreaks.length;
                     index++
                 ) {
-                    const breakResponse = await axios({
+                    await axios({
                         method: "post",
                         url: `http://127.0.0.1:8000/api/company/store_breaks/${latestPathId}`,
                         data: {
@@ -312,8 +310,6 @@ export default {
                         },
                         headers: { Authorization: `Bearer ${token}` },
                     });
-
-                    console.log(breakResponse.data);
                 }
             }
         },
@@ -330,7 +326,6 @@ export default {
 
                 this.Paths = response.data; // تحديث this.Paths
                 store.state.Paths = response.data; // تحديث الحالة في التخزين
-                console.log(response.data);
             } catch (error) {
                 this.toast.error("Error Getting Paths", {
                     transition: "Vue-Toastification__shake",
@@ -341,7 +336,6 @@ export default {
                     draggable: true,
                     draggablePercent: 0.6,
                 });
-                console.error(error);
             } finally {
                 this.loading = false; // التأكد من إيقاف التحميل
             }
@@ -383,7 +377,7 @@ export default {
                     });
                     this.AllPaths();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error Deleting Path", {
                         transition: "Vue-Toastification__shake",
                         hideProgressBar: true,
@@ -393,7 +387,6 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    console.error(error);
                 })
                 .finally(() => {
                     this.closeDeleteConfirmModal();
@@ -422,7 +415,7 @@ export default {
                     });
                     this.AllPaths();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error Deleting Path", {
                         transition: "Vue-Toastification__shake",
                         hideProgressBar: true,
@@ -432,7 +425,6 @@ export default {
                         draggable: true,
                         draggablePercent: 0.6,
                     });
-                    console.error(error);
                 })
                 .finally(() => {
                     this.closeEditConfirmModal();

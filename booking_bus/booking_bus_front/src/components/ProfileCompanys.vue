@@ -190,9 +190,7 @@ export default {
                     this.company.logoURL = response.data.profile_image;
                     this.checkDataFilled();
                 })
-                .catch((error) => {
-                    console.error("Error fetching company info:", error);
-                });
+                .catch(() => {});
         },
 
         checkDataFilled() {
@@ -212,9 +210,7 @@ export default {
                 .then((response) => {
                     this.addresses = response.data;
                 })
-                .catch((error) => {
-                    console.error("Error fetching company addresses:", error);
-                });
+                .catch(() => {});
         },
         createFormData() {
             const formData = new FormData();
@@ -256,7 +252,6 @@ export default {
                     toast.success("Company info stored successfully!");
                 })
                 .catch((error) => {
-                    console.error("Error storing company info:", error);
                     toast.error(
                         "Error storing company info: " +
                             (error.response
@@ -286,7 +281,6 @@ export default {
                     toast.success("Company info modified successfully!");
                 })
                 .catch((error) => {
-                    console.error("Error modifying company info:", error);
                     toast.error(
                         "Error modifying company info: " +
                             (error.response
@@ -336,7 +330,6 @@ export default {
                     );
                 })
                 .catch((error) => {
-                    console.error("Error saving address:", error);
                     toast.error(
                         "Error saving address: " +
                             (error.response
@@ -368,7 +361,6 @@ export default {
                     toast.success("Address deleted successfully!");
                 })
                 .catch((error) => {
-                    console.error("Error deleting address:", error);
                     toast.error(
                         "Error deleting address: " +
                             (error.response

@@ -96,13 +96,9 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    console.log(response);
                     this.bus = response.data;
                 })
-                .catch(function (error) {
-                    window.alert("Error get paths");
-                    console.error(error);
-                });
+                .catch(function () {});
         },
         fetchcomplated() {
             const access_token = window.localStorage.getItem("access_token");
@@ -112,13 +108,9 @@ export default {
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
-                    console.log(response);
                     this.bus1 = response.data;
                 })
-                .catch(function (error) {
-                    window.alert("Error get paths");
-                    console.error(error);
-                });
+                .catch(function () {});
         },
     },
 };

@@ -90,9 +90,7 @@ export default {
 
                         this.updateProgress();
                     })
-                    .catch((error) => {
-                        console.error("Error fetching data:", error);
-                    });
+                    .catch(() => {});
             }
         },
         updateProgress() {

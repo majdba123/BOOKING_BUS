@@ -11,9 +11,6 @@
             <button class="nav-btnd" @click="toggleAllReservationTheBus">
                 Reservation The Bus
             </button>
-            <button class="nav-btnd" @click="toggleAllDrivers">
-                All Drivers
-            </button>
         </header>
 
         <!-- Start all trips table -->
@@ -36,7 +33,7 @@
                                     <th>From</th>
                                     <th>To</th>
                                     <th>Price</th>
-                                    <th>View Ratings</th>
+                                    <th>View Buses</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -44,7 +41,7 @@
                                     v-for="(trip, index) in paginatedTrips"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ trip.status }}</td>
                                     <td>{{ trip.path?.from }}</td>
                                     <td>{{ trip.path?.to }}</td>
@@ -56,7 +53,7 @@
                                                 openTripRatingsModal(trip.id)
                                             "
                                         >
-                                            View Ratings
+                                            View Buses
                                         </button>
                                     </td>
                                 </tr>
@@ -112,7 +109,7 @@
                                     v-for="(driver, index) in paginatedDrivers"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ driver.name }}</td>
                                     <td>
                                         <button
@@ -190,10 +187,10 @@
                                 <tr
                                     v-for="(
                                         Reservation, index
-                                    ) in paginatedReservations"
+                                    ) in AllReservation"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ Reservation.price }}</td>
                                     <td>{{ Reservation.type }}</td>
                                     <td>{{ Reservation.user_name }}</td>
@@ -206,24 +203,28 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="pagination">
+                        <div class="button-container">
                             <button
-                                @click="currentPage--"
-                                :disabled="currentPage === 1"
+                                type="button"
+                                @click="
+                                    current_page == first_page
+                                        ? (current_page = last_page)
+                                        : (current_page -= 1);
+                                    fetchReservation();
+                                "
                             >
-                                <span class="material-icons"
-                                    >skip_previous</span
-                                >
+                                &#10508;
                             </button>
-                            <span
-                                >Page {{ currentPage }} of
-                                {{ totalPages }}</span
-                            >
                             <button
-                                @click="currentPage++"
-                                :disabled="currentPage === totalPages"
+                                type="button"
+                                @click="
+                                    current_page == last_page
+                                        ? (current_page = first_page)
+                                        : (current_page += 1);
+                                    fetchReservation();
+                                "
                             >
-                                <span class="material-icons">skip_next</span>
+                                &#10511;
                             </button>
                         </div>
                     </div>
@@ -279,7 +280,7 @@
                                         ) in ReservationStatusData"
                                         :key="index"
                                     >
-                                        <td>{{ index }}</td>
+                                        <td>{{ index + 1 }}</td>
 
                                         <td>{{ Reservation.user_name }}</td>
 
@@ -324,7 +325,7 @@
                                     v-for="(rating, index) in driverRatings"
                                     :key="index"
                                 >
-                                    <td>{{ index }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>
                                         <span
                                             v-for="star in 5"
@@ -351,7 +352,7 @@
         <div v-if="showTripRatingsModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Trip Ratings</h2>
+                    <h2>Trip Buses</h2>
                     <span class="close" @click="closeTripRatingsModal"
                         >&times;</span
                     >
@@ -371,10 +372,15 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>User ID</th>
-                                        <th>Rating</th>
-                                        <th>Comment</th>
-                                        <th>Date</th>
+                                        <th>BUS ID</th>
+                                        <th>Distance</th>
+                                        <th>Date Start</th>
+                                        <th>Date End</th>
+                                        <th>Going From Time</th>
+                                        <th>Return From Time</th>
+                                        <th>Going To Time</th>
+                                        <th>Return To Time</th>
+                                        <th>All Reservation</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -384,22 +390,30 @@
                                         ) in tripRatingsDetails"
                                         :key="index"
                                     >
-                                        <td>{{ index }}</td>
+                                        <td>{{ index + 1 }}</td>
                                         <td>
-                                            <span
-                                                v-for="star in 5"
-                                                :key="star"
-                                                class="fa"
-                                                :class="{
-                                                    'fa-star':
-                                                        star <= rating.rating,
-                                                    'fa-star-o':
-                                                        star > rating.rating,
-                                                }"
-                                            ></span>
+                                            {{ rating.Distance }}
                                         </td>
-                                        <td>{{ rating.comment }}</td>
-                                        <td>{{ rating.created_at }}</td>
+                                        <td>{{ rating.date_start }}</td>
+                                        <td>{{ rating.date_end }}</td>
+                                        <td>{{ rating.goingfromTime }}</td>
+                                        <td>
+                                            {{ rating.ReturnfromTime }}
+                                        </td>
+                                        <td>{{ rating.goingtoTime }}</td>
+                                        <td>{{ rating.date_end }}</td>
+                                        <td>
+                                            <button
+                                                class="status-btn view-ratings-btn"
+                                                @click="
+                                                    openDriverRatingsModal1(
+                                                        rating.bus_trip_id
+                                                    )
+                                                "
+                                            >
+                                                View Reservation
+                                            </button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -410,10 +424,10 @@
         </div>
 
         <!-- Modal for driver ratings -->
-        <div v-if="showDriverRatingsModal" class="modal">
+        <div v-if="showDriverRatingsModal1" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Driver Ratings</h2>
+                    <h2>Reservation</h2>
                     <span class="close" @click="closeDriverRatingsModal"
                         >&times;</span
                     >
@@ -424,7 +438,7 @@
                     </div>
                     <div v-else>
                         <div
-                            v-if="!driverRatingsDetails.length > 0"
+                            v-if="!busreservation.length > 0"
                             class="no-data-message"
                         >
                             No Data Available
@@ -434,34 +448,24 @@
                                 <thead>
                                     <tr>
                                         <th>User ID</th>
-                                        <th>Rating</th>
-                                        <th>Comment</th>
-                                        <th>Date</th>
+                                        <th>User Name</th>
+                                        <th>Price</th>
+                                        <th>From</th>
+                                        <th>To</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr
                                         v-for="(
                                             rating, index
-                                        ) in driverRatingsDetails"
+                                        ) in busreservation"
                                         :key="index"
                                     >
-                                        <td>{{ index }}</td>
-                                        <td>
-                                            <span
-                                                v-for="star in 5"
-                                                :key="star"
-                                                class="fa"
-                                                :class="{
-                                                    'fa-star':
-                                                        star <= rating.rating,
-                                                    'fa-star-o':
-                                                        star > rating.rating,
-                                                }"
-                                            ></span>
-                                        </td>
-                                        <td>{{ rating.comment }}</td>
-                                        <td>{{ rating.created_at }}</td>
+                                        <td>{{ index + 1 }}</td>
+                                        <td>{{ rating.user_name }}</td>
+                                        <td>{{ rating.price }}</td>
+                                        <td>{{ rating.from }}</td>
+                                        <td>{{ rating.to }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -481,6 +485,9 @@ export default {
     name: "GetAllReservation",
     data() {
         return {
+            current_page: 1,
+            last_page: null,
+            first_page: null,
             showReservationStatusModal: false,
             loading: true,
             loading1: true,
@@ -489,6 +496,7 @@ export default {
             loading4: false,
             loading5: true,
             loading6: true,
+            busreservation: [],
 
             showTripRatings: true,
             showDriverRatings: false,
@@ -508,6 +516,7 @@ export default {
             currentPageDrivers: 1,
             itemsPerPageDrivers: 10,
             currentPageTrips: 1,
+            showDriverRatingsModal1: false,
             itemsPerPageTrips: 10,
         };
     },
@@ -521,13 +530,9 @@ export default {
             })
                 .then((response) => {
                     this.ReservationStatusData = response.data;
-                    console.log(response.data);
                     this.loading3 = false;
                 })
-                .catch((error) => {
-                    window.alert("Error fetching bus status");
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading3 = true;
         },
         closeBusStatusModal() {
@@ -559,16 +564,19 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_reservation",
+                url:
+                    "http://127.0.0.1:8000/api/company/all_reservation?page=" +
+                    this.current_page,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     this.AllReservation = response.data;
+                    this.first_page = response.data.from;
+                    this.last_page = response.data.last_page;
+                    console.log(response.data, "sssss");
                     this.loading2 = false;
                 })
-                .catch((error) => {
-                    console.error("Error fetching trip ratings:", error);
-                });
+                .catch(() => {});
             this.loading2 = true;
         },
         fetchBusTrip(x) {
@@ -581,43 +589,24 @@ export default {
                 .then((response) => {
                     this.AllReservation = response.data;
                 })
-                .catch((error) => {
-                    console.error("Error fetching trip ratings:", error);
-                });
+                .catch(() => {});
         },
-        fetchDriverRatings() {
-            const access_token = window.localStorage.getItem("access_token");
-            axios({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_driver_rating",
-                headers: { Authorization: `Bearer ${access_token}` },
-            })
-                .then((response) => {
-                    this.driverRatings = response.data;
-                })
-                .catch((error) => {
-                    console.error("Error fetching driver ratings:", error);
-                });
-        },
+
         fetchTripRatingsByTripId(trip_id) {
             this.showTripRatingsModal = true;
 
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "post",
-                url: `http://127.0.0.1:8000/api/company/all_trip_rating_by_trip_id/${trip_id}`,
+                url: `http://127.0.0.1:8000/api/company/get_bus_trip/${trip_id}`,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
                     this.tripRatingsDetails = response.data;
                     this.loading5 = false;
+                    console.log(response.data);
                 })
-                .catch((error) => {
-                    console.error(
-                        "Error fetching trip ratings by trip ID:",
-                        error
-                    );
-                });
+                .catch(() => {});
             this.loading5 = true;
         },
         fetchDriverRatingsByDriverId(driver_id) {
@@ -633,12 +622,24 @@ export default {
                     this.driverRatingsDetails = response.data;
                     this.loading6 = false;
                 })
-                .catch((error) => {
-                    console.error(
-                        "Error fetching driver ratings by driver ID:",
-                        error
-                    );
-                });
+                .catch(() => {});
+            this.loading6 = true;
+        },
+        fetchDriverRatingsByDriverId1(driver_id) {
+            this.showDriverRatingsModal1 = true;
+
+            const access_token = window.localStorage.getItem("access_token");
+            axios({
+                method: "post",
+                url: `http://127.0.0.1:8000/api/company/all_reservation_by_bus_trip/${driver_id}`,
+                headers: { Authorization: `Bearer ${access_token}` },
+            })
+                .then((response) => {
+                    this.busreservation = response.data;
+                    this.loading6 = false;
+                    console.log(response.data);
+                })
+                .catch(() => {});
             this.loading6 = true;
         },
         AllTrips() {
@@ -650,12 +651,9 @@ export default {
             })
                 .then((response) => {
                     this.Trips = response.data;
-                    console.log(response.data);
                     this.loading = false;
                 })
-                .catch((error) => {
-                    console.error("Error Getting Trips:", error);
-                });
+                .catch(() => {});
             this.loading = true;
         },
         AllDriver() {
@@ -667,12 +665,9 @@ export default {
             })
                 .then((response) => {
                     this.Drivers = response.data;
-                    console.log(response.data);
                     this.loading1 = false;
                 })
-                .catch((error) => {
-                    console.error("Error getting drivers:", error);
-                });
+                .catch(() => {});
             this.loading1 = true;
         },
         openTripRatingsModal(tripId) {
@@ -684,8 +679,11 @@ export default {
         openDriverRatingsModal(driverId) {
             this.fetchDriverRatingsByDriverId(driverId);
         },
+        openDriverRatingsModal1(driverId) {
+            this.fetchDriverRatingsByDriverId1(driverId);
+        },
         closeDriverRatingsModal() {
-            this.showDriverRatingsModal = false;
+            this.showDriverRatingsModal1 = false;
         },
     },
     mounted() {
@@ -790,6 +788,38 @@ h2 {
 
 .recent_orders table:hover {
     box-shadow: none;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+button {
+    background-color: var(--clr-primary);
+    color: var(--clr-white);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 0 5px;
+}
+
+button:hover {
+    background-color: var(--clr-primary-variant);
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 .spinner {
     border: 4px solid var(--clr-light);
@@ -1006,6 +1036,7 @@ input:focus {
 }
 
 /* Modal styling */
+
 .modal {
     display: flex;
     justify-content: center;
@@ -1018,26 +1049,48 @@ input:focus {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
-    background-color: var(--clr-white);
-    color: var(--clr-dark);
+    background-color: var(--clr-color-background);
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
-    box-shadow: 0 2rem 3rem rgba(132, 139, 200, 0.18);
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
 }
 
 .modal-header,
-.modal-body,
+.modal-body div,
 .modal-footer {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .modal-header {
-    font-size: 1.2rem;
+    color: var(--clr-dark);
+    font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
+}
+
+.modal-body div div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-body div table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body div th,
+.modal-body div td {
+    padding: 12px;
+    text-align: left;
 }
 
 .modal-footer {
@@ -1045,10 +1098,44 @@ input:focus {
     justify-content: flex-end;
 }
 
+.modal-body table thead {
+    border-bottom: 2px solid var(--clr-dark);
+}
+
+.modal-body table tr th:first-child,
+.modal-body table tr td:first-child {
+    border-left: 1px solid var(--clr-dark);
+}
+
+.modal-body table tr th:last-child,
+.modal-body table tr td:last-child {
+    border-right: 1px solid var(--clr-dark);
+}
+
+.modal-body table th,
+.modal-body table td {
+    height: 100%;
+}
+
+.modal-body table td:first-child {
+    border-left: 1px solid var(--clr-dark);
+}
+
+.modal-body table td:last-child {
+    border-right: 1px solid var(--clr-dark);
+}
+
+.modal-body table th:first-child {
+    border-left: 1px solid var(--clr-dark);
+}
+
+.modal-body table th:last-child {
+    border-right: 1px solid var(--clr-dark);
+}
 .close-modal {
     padding: 8px 16px;
     background-color: #d9534f;
-    color: white;
+    color: var(--clr-white);
     border: none;
     border-radius: 5px;
     cursor: pointer;

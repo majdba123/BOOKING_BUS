@@ -94,8 +94,8 @@
                                     v-for="(bus, index) in Maintenance"
                                     :key="index"
                                 >
-                                    <th>{{ index }}</th>
-                                    <td>{{ bus.number_bus }}</td>
+                                    <th>{{ index + 1 }}</th>
+                                    <td>{{ bus.bus_id }}</td>
                                     <td>{{ bus.cost }}</td>
                                     <td>{{ bus.maintenance_date }}</td>
                                     <td>{{ bus.description }}</td>
@@ -191,8 +191,8 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(bus, index) in INC" :key="index">
-                                    <th>{{ index }}</th>
-                                    <td>{{ bus.number_bus }}</td>
+                                    <th>{{ index + 1 }}</th>
+                                    <td>{{ bus.bus_id }}</td>
                                     <td>{{ bus.insurance_cost }}</td>
                                     <td>{{ bus.insurance_date }}</td>
 
@@ -799,13 +799,7 @@ export default {
         closeEditModal1() {
             this.showEditModal1 = false;
         },
-        handleSubmit() {
-            console.log(
-                "Form Submitted",
-                this.number_bus,
-                this.number_passenger
-            );
-        },
+        handleSubmit() {},
         Addmaintenance() {
             const token = window.localStorage.getItem("access_token");
 
@@ -822,13 +816,11 @@ export default {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 )
-                .then((response) => {
-                    console.log(response);
+                .then(() => {
                     this.toast.success("Maintenance added successfully!");
                     this.Allmaintenance();
                 })
-                .catch((error) => {
-                    console.log(error);
+                .catch(() => {
                     this.toast.error("Error ADD");
                 });
         },
@@ -847,13 +839,11 @@ export default {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 )
-                .then((response) => {
-                    console.log(response);
+                .then(() => {
                     this.toast.success("Insurance added successfully!");
-                    this.AllBus();
+                    this.ALLINC();
                 })
-                .catch((error) => {
-                    console.log(error);
+                .catch(() => {
                     this.toast.error("Error ADD");
                 });
         },
@@ -877,13 +867,13 @@ export default {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 )
-                .then((response) => {
-                    console.log(response);
+                .then(() => {
                     this.toast.success("Bus added successfully!");
                     this.AllBus();
                 })
                 .catch((error) => {
                     console.log(error);
+
                     this.toast.error("Error ADD");
                 });
         },
@@ -906,7 +896,7 @@ export default {
                         headers: { Authorization: `Bearer ${access_token}` },
                     }
                 )
-                .then((response) => {
+                .then(() => {
                     this.Bus.splice(this.editingIndex, 1, this.editedBus);
                     this.editingIndex = null;
                     this.editedBus = {
@@ -917,16 +907,14 @@ export default {
                         purshaseprice: "",
                         purshasedate: "",
                     };
-                    console.log(response);
 
                     this.toast.success("Bus updated successfully!");
                     this.showEditModal = false;
                 })
-                .catch((error) => {
-                    console.log(this.editedBus);
+                .catch(() => {
+                    // console.log(this.editedBus);
 
                     this.toast.error("Error updating bus.");
-                    console.error(error);
                 });
         },
         updateBus1() {
@@ -946,7 +934,7 @@ export default {
                         headers: { Authorization: `Bearer ${access_token}` },
                     }
                 )
-                .then((response) => {
+                .then(() => {
                     this.editingIndex1 = null;
                     (this.editedBus1 = {
                         id: "",
@@ -955,16 +943,13 @@ export default {
                         description: "",
                         cost: "",
                     }),
-                        console.log(response);
-
-                    this.toast.success("Maintenance updated successfully!");
+                        this.toast.success("Maintenance updated successfully!");
                     this.showEditModal1 = false;
                 })
-                .catch((error) => {
-                    console.log(this.editedBus1);
+                .catch(() => {
+                    // console.log(this.editedBus1);
 
                     this.toast.error("Error updating Maintenance.");
-                    console.error(error);
                 });
         },
         AllBus() {
@@ -978,11 +963,9 @@ export default {
                     this.Bus = response.data;
                     store.state.Bus = response.data;
                     this.loading = false;
-                    console.log(response.data);
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error Getting Bus");
-                    console.error(error);
                 });
             this.loading = true;
         },
@@ -996,11 +979,8 @@ export default {
                 .then((response) => {
                     this.INC = response.data;
                     this.loading10 = false;
-                    console.log(response.data);
                 })
-                .catch((error) => {
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading10 = true;
         },
         Allmaintenance() {
@@ -1013,11 +993,8 @@ export default {
                 .then((response) => {
                     this.Maintenance = response.data;
                     this.loading10 = false;
-                    console.log(response.data);
                 })
-                .catch((error) => {
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading10 = true;
         },
         fetchBusStatus(status) {
@@ -1034,10 +1011,7 @@ export default {
                     this.busStatusData = response.data;
                     this.loading1 = false;
                 })
-                .catch((error) => {
-                    window.alert("Error fetching bus status");
-                    console.error(error);
-                });
+                .catch(() => {});
             this.loading1 = true;
         },
         openEditModal(bus, index) {
@@ -1051,27 +1025,27 @@ export default {
             this.showEditModal1 = true;
         },
         confirmDeleteBus(bus) {
-            console.log("Bus selected for deletion:", bus);
+            // console.log("Bus selected for deletion:", bus);
             this.busToDelete = bus;
             this.showDeleteConfirmModal = true;
         },
         confirmDeleteBus1(bus) {
-            console.log("insurance selected for deletion:", bus);
+            // console.log("insurance selected for deletion:", bus);
             this.busToDelete = bus;
             this.showDeleteConfirmModal1 = true;
         },
 
         confirmDeleteBus2(bus) {
-            console.log("insurance selected for deletion:", bus);
+            // console.log("insurance selected for deletion:", bus);
             this.busToDelete = bus;
             this.showDeleteConfirmModal2 = true;
         },
         deleteConfirmedBus() {
             if (this.busToDelete && this.busToDelete.id) {
-                console.log("Deleting bus:", this.busToDelete);
+                // console.log("Deleting bus:", this.busToDelete);
                 this.DeleteBus(this.busToDelete.id);
             } else {
-                console.error("No bus selected for deletion.");
+                // console.error("No bus selected for deletion.");
             }
             this.closeDeleteConfirmModal();
         },
@@ -1097,8 +1071,7 @@ export default {
                     this.toast.success("Bus deleted successfully");
                     this.AllBus();
                 })
-                .catch((error) => {
-                    console.error("Error during deletion:", error);
+                .catch(() => {
                     this.toast.error("Error deleting bus");
                 });
         },
@@ -1116,8 +1089,7 @@ export default {
                     this.toast.success("maintenance deleted successfully");
                     this.Allmaintenance();
                 })
-                .catch((error) => {
-                    console.error("Error during deletion:", error);
+                .catch(() => {
                     this.toast.error("Error deleting maintenance");
                 });
         },
@@ -1135,8 +1107,7 @@ export default {
                     this.toast.success("insurance deleted successfully");
                     this.ALLINC();
                 })
-                .catch((error) => {
-                    console.error("Error during deletion:", error);
+                .catch(() => {
                     this.toast.error("Error deleting insurance");
                 });
         },
@@ -1155,9 +1126,9 @@ export default {
             this.Maintenance;
         },
         openSeatsModal(busId, index) {
-            console.log(
-                `Opening seats modal for busId: ${busId}, index: ${index}`
-            );
+            // console.log(
+            //     `Opening seats modal for busId: ${busId}, index: ${index}`
+            // );
             this.fetchSeats(busId, index);
             this.startAutoRefresh(busId, index);
         },
@@ -1173,27 +1144,25 @@ export default {
                     }
                 )
                 .then((response) => {
-                    console.log("Fetched seats:", response.data);
                     this.Bus[index].seats = response.data;
                     this.seats = response.data;
                     this.showSeatsModal = true;
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching bus seats");
-                    console.error("Fetch seats error:", error);
                 });
         }, 300),
         startAutoRefresh(busId, index) {
-            console.log("Starting auto-refresh...");
+            // console.log("Starting auto-refresh...");
             this.stopAutoRefresh();
 
             this.refreshInterval = setInterval(() => {
-                console.log("Fetching seats...");
+                // console.log("Fetching seats...");
                 this.fetchSeats(busId, index);
             }, 10000);
         },
         stopAutoRefresh() {
-            console.log("Stopping auto-refresh...");
+            // console.log("Stopping auto-refresh...");
             if (this.refreshInterval) {
                 clearInterval(this.refreshInterval);
                 this.refreshInterval = null;

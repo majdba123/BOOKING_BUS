@@ -90,7 +90,7 @@ export default {
     watch: {
         searchQuery(newQuery) {
             store.commit("updateSearchQuery", newQuery);
-            console.log(store.state.searchQuery);
+            // console.log(store.state.searchQuery);
         },
     },
     computed: {
@@ -184,7 +184,7 @@ export default {
                 .classList.toggle("active", this.isDarkMode);
         },
         search() {
-            console.log("Searching for:", this.searchQuery);
+            // console.log("Searching for:", this.searchQuery);
         },
     },
     mounted() {
@@ -332,12 +332,36 @@ small {
 }
 
 /* aside */
+
+@keyframes colorShift {
+    0% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+    50% {
+        border-top-color: rgb(255, 255, 0);
+        border-bottom-color: rgb(0, 0, 255);
+        border-right-color: rgb(255, 105, 180);
+    }
+    100% {
+        border-top-color: rgb(0, 0, 255);
+        border-bottom-color: rgb(255, 255, 0);
+        border-right-color: rgb(128, 0, 128);
+    }
+}
+
 aside {
     height: 100vh;
     background-color: var(--clr-white);
     display: flex;
     flex-direction: column;
+    border-radius: 0 2.5rem 2.5rem 0;
     padding: 1rem;
+    border-bottom: 3px solid rgb(255, 0, 0);
+    border-top: 3px solid rgb(0, 0, 255);
+    border-left: 3px solid transparent;
+    animation: colorShift 5s infinite;
 }
 
 aside .top {
@@ -346,7 +370,6 @@ aside .top {
     align-items: center;
     margin-bottom: 15px;
 }
-
 aside .logo {
     display: flex;
     gap: 1rem;

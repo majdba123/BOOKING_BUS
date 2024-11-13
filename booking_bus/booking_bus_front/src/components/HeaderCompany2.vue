@@ -71,6 +71,7 @@
 </template>
 
 <script>
+import { useToast } from "vue-toastification";
 import axios from "axios";
 import photo from "@/components/photo.vue";
 import store from "@/store";
@@ -80,6 +81,7 @@ export default {
     components: { photo },
     data() {
         return {
+            toast: useToast(),
             messages: "",
             id: null,
             x: store.state.x,
@@ -110,13 +112,13 @@ export default {
             const channel = pusher.subscribe(
                 `notification-private-channel-${this.id}`
             );
-            console.log("Pusher Channel:", channel);
+            // console.log("Pusher Channel:", channel);
 
             channel.bind("PrivateNotification", (data) => {
                 const notification = data.message;
                 this.$store.commit("ADD_NOTIFICATION", notification);
                 this.messages = notification;
-                console.log("Notification:", this.messages);
+                // console.log("Notification:", this.messages);
                 if (this.messages != null) {
                     this.notifications = ["1"];
                 }
@@ -132,10 +134,18 @@ export default {
             })
                 .then((response) => {
                     this.id = response.data.id;
-                    console.log("User ID:", this.id);
+                    // console.log("User ID:", this.id);
                 })
                 .catch(() => {
-                    this.toast.error("Error getting user info.");
+                    this.toast.error("Error getting user info.", {
+                        transition: "Vue-Toastification__shake",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                    });
                 });
         },
         toggleProfileMenu() {
@@ -224,6 +234,9 @@ export default {
             }
         });
         this.updateDateTime();
+        this.intervalId = setInterval(() => {
+            this.updateDateTime();
+        }, 1000);
         this.fetchProfileInfo();
         this.fetchNotifications();
         if (document.body.classList.contains("dark-theme-variables")) {
@@ -232,6 +245,11 @@ export default {
             themeToggler.querySelectorAll("span").forEach((span) => {
                 span.classList.toggle("active");
             });
+        }
+    },
+    beforeUnmount() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
         }
     },
 };

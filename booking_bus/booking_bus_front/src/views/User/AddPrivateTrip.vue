@@ -71,14 +71,9 @@ export default {
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
-                .then((response) => {
-                    console.log(response);
-                    window.alert("Complete ADD");
-                })
-                .catch((error) => {
+                .then(() => {})
+                .catch(() => {
                     window.alert("ERROR ADD");
-                    console.error(error);
-                    console.log(this.date);
                 });
         },
     },

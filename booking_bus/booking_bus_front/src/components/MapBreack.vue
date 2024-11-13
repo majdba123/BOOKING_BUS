@@ -75,11 +75,11 @@ export default {
             routePath: null,
             polyline: null,
             addingBreak: false,
-            firstBreakAdded: false, // New flag for the first break
-            toast: useToast(), // Toast notification
-            showModal: false, // Controls the visibility of the modal
-            breakName: "", // Holds the input for the break name
-            selectedLatLng: null, // Holds the selected LatLng for the breakpoint
+            firstBreakAdded: false,
+            toast: useToast(),
+            showModal: false,
+            breakName: "",
+            selectedLatLng: null,
         };
     },
     watch: {
@@ -114,9 +114,9 @@ export default {
         if (this.shouldDisplayMap) {
             this.loadGoogleMapsScript();
         } else {
-            console.error(
-                "One or more coordinates are missing or invalid. Map will not be displayed."
-            );
+            // console.error(
+            //     "One or more coordinates are missing or invalid. Map will not be displayed."
+            // );
         }
     },
     methods: {
@@ -133,9 +133,7 @@ export default {
                 return;
             }
 
-            // إذا كانت الإحداثيات موجودة
             if (this.selectedLatLng) {
-                // إضافة النقطة في المتجر مع الاسم
                 this.$store.state.breakpoints.push({
                     name: this.breakName,
                     lat: this.selectedLatLng.lat(),

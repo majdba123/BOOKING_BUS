@@ -103,13 +103,14 @@
                                     v-for="(user, index) in filteredDrivers"
                                     :key="index"
                                 >
-                                    <td>{{ user.id }}</td>
+                                    <td>{{ index + 1 }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email_driver }}</td>
                                     <td>{{ user.Wages }}</td>
                                     <td>{{ user.status }}</td>
                                     <td>
                                         <select
+                                            v-if="user.status == 'pending'"
                                             :value="user.selectedBusId || ''"
                                             @change="
                                                 SelectDriver(
@@ -126,7 +127,9 @@
                                                 :key="index"
                                                 :value="bus.id"
                                             >
-                                                {{ bus.number_bus }}
+                                                {{ bus.number_bus }} Status:{{
+                                                    bus.status
+                                                }}
                                             </option>
                                         </select>
                                     </td>
@@ -232,7 +235,6 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
-                                        <th>Wages</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -243,40 +245,32 @@
                                         ) in paginatedDriverStatusData"
                                         :key="index"
                                     >
-                                        <td>{{ index }}</td>
+                                        <td>{{ index + 1 }}</td>
                                         <td>{{ driver.name }}</td>
                                         <td>{{ driver.email_driver }}</td>
-                                        <td>{{ driver.Wages }}</td>
                                         <td>{{ driver.status }}</td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="pagination">
-                                <button
-                                    @click="prevPage('status')"
-                                    :disabled="currentPageStatus === 1"
-                                >
-                                    <span class="material-icons"
-                                        >skip_previous</span
-                                    >
-                                </button>
-                                <span
-                                    >Page {{ currentPageStatus }} of
-                                    {{ totalPagesStatus }}</span
-                                >
-                                <button
-                                    @click="nextPage('status')"
-                                    :disabled="
-                                        currentPageStatus === totalPagesStatus
-                                    "
-                                >
-                                    <span class="material-icons"
-                                        >skip_next</span
-                                    >
-                                </button>
-                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="pagination">
+                    <button
+                        @click="prevPage('status')"
+                        :disabled="currentPageStatus === 1"
+                    >
+                        <span class="material-icons">skip_previous</span>
+                    </button>
+                    <span
+                        >Page {{ currentPageStatus }} of {{ totalPages }}</span
+                    >
+                    <button
+                        @click="nextPage('status')"
+                        :disabled="currentPageStatus === totalPages"
+                    >
+                        <span class="material-icons">skip_next</span>
+                    </button>
                 </div>
                 <div class="modal-footer">
                     <button @click="closeDriverStatusModal" class="close-modal">
@@ -319,7 +313,7 @@
                                         ) in paginatedDriverWithBusData"
                                         :key="index"
                                     >
-                                        <td>{{ index }}</td>
+                                        <td>{{ index + 1 }}</td>
                                         <td>{{ driver.driver_name }}</td>
                                         <td>{{ driver.bus_id }}</td>
                                         <td>{{ driver.company_name }}</td>
@@ -327,28 +321,26 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="pagination">
-                                <button
-                                    @click="prevPage('bus')"
-                                    :disabled="currentPageBus === 1"
+                        </div>
+                        <div class="pagination">
+                            <button
+                                @click="prevPage('bus')"
+                                :disabled="currentPageBus === 1"
+                            >
+                                <span class="material-icons"
+                                    >skip_previous</span
                                 >
-                                    <span class="material-icons"
-                                        >skip_previous</span
-                                    >
-                                </button>
-                                <span
-                                    >Page {{ currentPageBus }} of
-                                    {{ totalPagesBus }}</span
-                                >
-                                <button
-                                    @click="nextPage('bus')"
-                                    :disabled="currentPageBus === totalPagesBus"
-                                >
-                                    <span class="material-icons"
-                                        >skip_next</span
-                                    >
-                                </button>
-                            </div>
+                            </button>
+                            <span
+                                >Page {{ currentPageBus }} of
+                                {{ totalPages }}</span
+                            >
+                            <button
+                                @click="nextPage('bus')"
+                                :disabled="currentPageBus === totalPages"
+                            >
+                                <span class="material-icons">skip_next</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -434,6 +426,13 @@ export default {
     name: "AddDriver",
     data() {
         return {
+            memoryUsed: null,
+            frameRate: 0,
+            lastTimestamp: 0,
+            frameCount: 0,
+            measuring: false,
+            intervalId: null,
+            data: null,
             wages: "",
             loading: true,
             loading1: false,
@@ -469,6 +468,7 @@ export default {
         };
     },
     mounted() {
+        // this.fetch();
         this.AllDriver();
         this.fetchBus();
         this.isDarkMode = localStorage.getItem("theme") === "dark";
@@ -527,11 +527,10 @@ export default {
                     this.toast.success("Driver updated successfully!");
                     this.showEditModal = false;
                 })
-                .catch((error) => {
-                    console.log(this.editedDriver);
+                .catch(() => {
+                    // console.log(this.editedDriver);
 
                     this.toast.error("Error updating Driver.");
-                    console.error(error);
                 });
         },
 
@@ -568,7 +567,6 @@ export default {
 
                     if (this.password.length <= 8)
                         this.toast.error(error.response.data.error.password[0]);
-                    console.log(error);
                     this.toast.error(error.response.data.error.email[0]);
                 });
         },
@@ -590,7 +588,6 @@ export default {
                 })
                 .catch((error) => {
                     this.toast.error(error.response.data.error);
-                    console.error(error);
                 });
         },
 
@@ -615,9 +612,8 @@ export default {
                     });
                     this.loading = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting drivers.");
-                    console.error(error);
                 });
             this.loading = true;
         },
@@ -633,9 +629,8 @@ export default {
                     this.toast.success("Driver deleted successfully!");
                     this.AllDriver();
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error deleting driver.");
-                    console.error(error);
                 });
         },
         fetchBus() {
@@ -648,9 +643,8 @@ export default {
                 .then((response) => {
                     this.Bus = response.data;
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting buses.");
-                    console.error(error);
                 });
         },
         SelectDriver(event, userId) {
@@ -665,10 +659,11 @@ export default {
             })
                 .then(() => {
                     this.toast.success("Driver assigned to bus successfully!");
+                    this.AllDriver();
+                    this.fetchBus();
                 })
                 .catch((error) => {
                     this.toast.error(error.response.data.error);
-                    console.error("Error for Bus ID:", busId, error);
                 });
         },
 
@@ -683,16 +678,19 @@ export default {
                     this.driverStatusData = response.data;
                     this.loading1 = false;
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching driver status");
-                    console.error(error);
                 });
             this.loading1 = true;
         },
         fetchAllDriverWithBus() {
             this.showDriverWithBusModal = true;
+            this.loading2 = true;
+            const memoryBefore = performance.memory.usedJSHeapSize;
 
             const access_token = window.localStorage.getItem("access_token");
+            // const startTime = performance.now(); // بدء قياس الوقت
+
             axios({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/company/all_driver_with_bus",
@@ -701,13 +699,68 @@ export default {
                 .then((response) => {
                     this.driverWithBusData = response.data;
                     this.loading2 = false;
+                    console.log(response.data);
+
+                    // const endTime = performance.now();
+                    // const duration = (endTime - startTime).toFixed(2);
+
+                    // console.log("Fetch Time:", duration / 1000, "S");
+                    // console.log(
+                    //     "Frames during fetch:",
+                    //     Math.round(duration / (1000 / 60))
+                    // );
+                    const memoryAfter = performance.memory.usedJSHeapSize;
+                    this.memoryUsed = (
+                        (memoryAfter - memoryBefore) /
+                        1024 /
+                        1024
+                    ).toFixed(2);
+                    // console.log("Memory Usage:", this.memoryUsed, "MB");
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching drivers with bus.");
-                    console.error(error);
+                    this.loading2 = false;
                 });
-            this.loading2 = true;
         },
+
+        // fetch() {
+        //     this.loading2 = true;
+        //     const memoryBefore = performance.memory.usedJSHeapSize;
+
+        //     const access_token = window.localStorage.getItem("access_token");
+        //     const startTime = performance.now(); // بدء قياس الوقت
+
+        //     axios({
+        //         method: "get",
+        //         url: "http://127.0.0.1:8000/api/company/all_driver_with_bus",
+        //         headers: { Authorization: `Bearer ${access_token}` },
+        //     })
+        //         .then((response) => {
+        //             this.driverWithBusData = response.data;
+        //             this.loading2 = false;
+
+        //             const endTime = performance.now();
+        //             const duration = (endTime - startTime).toFixed(2);
+
+        //             console.log("Fetch Time:", duration / 1000, "ms"); // عرض الوقت المستغرق
+        //             console.log(
+        //                 "Frames during fetch:",
+        //                 Math.round(duration / (1000 / 60))
+        //             );
+        //             const memoryAfter = performance.memory.usedJSHeapSize;
+        //             this.memoryUsed = (
+        //                 (memoryAfter - memoryBefore) /
+        //                 1024 /
+        //                 1024
+        //             ).toFixed(2);
+        //             console.log("Memory Usage:", this.memoryUsed, "MB");
+        //         })
+        //         .catch((error) => {
+        //             window.alert("Error fetching drivers with bus.");
+        //             console.error(error);
+        //             this.loading2 = false;
+        //         });
+        // },
         toggleTheme() {
             this.isDarkMode = !this.isDarkMode;
             document.body.classList.toggle(
@@ -777,7 +830,7 @@ export default {
     },
     computed: {
         filteredDrivers() {
-            return store.state.Driver.filter((driver) => {
+            return this.paginatedDrivers.filter((driver) => {
                 return (
                     driver.name
                         .toLowerCase()
@@ -1279,6 +1332,7 @@ input:focus {
 }
 
 /* Modal styling */
+
 .modal {
     display: flex;
     justify-content: center;
@@ -1291,58 +1345,53 @@ input:focus {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
-    background: var(--clr-white);
+    background-color: var(--clr-color-background);
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 80%;
-    height: 50%;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    margin: 10px;
-}
-
-.modal-content::-webkit-scrollbar {
-    display: none;
+    border-radius: var(--border-radius-2);
+    max-width: 90%;
+    width: 90%;
+    height: auto;
+    max-height: 80%;
+    box-shadow: var(--box-shadow);
+    overflow: auto;
 }
 
 .modal-header,
-.modal-body,
+.modal-body div,
 .modal-footer {
-    margin-bottom: 10px;
-    color: var(--clr-dark);
+    margin-bottom: 15px;
 }
 
 .modal-header {
-    font-size: 1.2rem;
+    color: var(--clr-dark);
+    font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--clr-primary);
+}
+
+.modal-body div div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-body div table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-body div th,
+.modal-body div td {
+    padding: 12px;
+    text-align: left;
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-}
-.modal-body table {
-    width: 100%;
-    border-collapse: collapse;
-    color: var(--clr-dark);
-    text-align: center;
-}
-
-.modal-body table th,
-.modal-body table td {
-    padding: 8px;
-    text-align: center;
-    border: 1px solid var(--clr-dark);
-    border-left: none;
-    border-right: none;
-    vertical-align: middle;
-}
-
-.modal-body table tbody tr {
-    border-top: 1px solid var(--clr-dark);
 }
 
 .modal-body table thead {

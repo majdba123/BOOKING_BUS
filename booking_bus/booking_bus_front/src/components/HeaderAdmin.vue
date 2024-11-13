@@ -106,13 +106,13 @@ export default {
             const channel = pusher.subscribe(
                 `notification-private-channel-${this.id}`
             );
-            console.log("Pusher Channel:", channel);
+            // console.log("Pusher Channel:", channel);
 
             channel.bind("PrivateNotification", (data) => {
                 const notification = data.message;
                 this.$store.commit("ADD_NOTIFICATION", notification);
                 this.messages = notification;
-                console.log("Notification:", this.messages);
+                // console.log("Notification:", this.messages);
                 if (this.messages != null) {
                     this.notifications = ["1"];
                 }
@@ -128,11 +128,10 @@ export default {
             })
                 .then((response) => {
                     this.id = response.data.id;
-                    console.log("User ID:", this.id);
+                    // console.log("User ID:", this.id);
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting user info.");
-                    console.error(error);
                 });
         },
         toggleProfileMenu() {
@@ -221,6 +220,9 @@ export default {
             }
         });
         this.updateDateTime();
+        this.intervalId = setInterval(() => {
+            this.updateDateTime();
+        }, 1000);
         this.fetchProfileInfo();
         this.fetchNotifications(); // Fetch notifications on mount
         if (document.body.classList.contains("dark-theme-variables")) {
@@ -229,6 +231,11 @@ export default {
             themeToggler.querySelectorAll("span").forEach((span) => {
                 span.classList.toggle("active");
             });
+        }
+    },
+    beforeUnmount() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
         }
     },
 };

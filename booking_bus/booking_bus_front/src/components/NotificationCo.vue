@@ -53,11 +53,9 @@ export default {
             })
                 .then((response) => {
                     this.Notification = response.data;
-                    console.log(response.data);
                 })
-                .catch((error) => {
+                .catch(() => {
                     this.toast.error("Error getting Notification.");
-                    console.error(error);
                 });
             this.loading = true;
         },

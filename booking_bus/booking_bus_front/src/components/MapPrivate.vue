@@ -55,7 +55,7 @@ export default {
             };
 
             script.onerror = () => {
-                console.error("Failed to load Google Maps script");
+                // console.error("Failed to load Google Maps script");
                 setTimeout(this.loadGoogleMapsScript, 3000);
             };
         },
@@ -71,7 +71,7 @@ export default {
                 isNaN(toLat) ||
                 isNaN(toLng)
             ) {
-                console.error("Invalid latitude or longitude values");
+                // console.error("Invalid latitude or longitude values");
                 return;
             }
 
@@ -102,11 +102,11 @@ export default {
                     if (status === google.maps.DirectionsStatus.OK) {
                         this.directionsRenderer.setDirections(result);
                     } else {
-                        console.error("Failed to display directions:", status);
+                        // console.error("Failed to display directions:", status);
                     }
                 });
             } else {
-                console.error("Google Maps not loaded yet");
+                // console.error("Google Maps not loaded yet");
                 setTimeout(this.initMap, 3000);
             }
         },

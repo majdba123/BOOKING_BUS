@@ -47,13 +47,10 @@ export default {
                 headers: { Authorization: `Bearer ${token}` },
             })
                 .then((response) => {
-                    console.log(response);
+                    // console.log(response);
                     window.alert("Complete ADD");
                 })
-                .catch((error) => {
-                    window.alert("ERROR ADD");
-                    console.log(error);
-                });
+                .catch(() => {});
         },
     },
 };

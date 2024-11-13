@@ -37,7 +37,7 @@ export default {
             };
 
             script.onerror = () => {
-                console.error("Failed to load Google Maps script");
+                // console.error("Failed to load Google Maps script");
                 setTimeout(this.loadGoogleMapsScript, 3000);
             };
         },
@@ -75,7 +75,7 @@ export default {
 
                     places.forEach((place) => {
                         if (!place.geometry || !place.geometry.location) {
-                            console.log("Returned place contains no geometry");
+                            // console.log("Returned place contains no geometry");
                             return;
                         }
 
@@ -100,9 +100,9 @@ export default {
                             store.state.placeName = place.name;
                             store.state.lat = place.geometry.location.lat();
                             store.state.lng = place.geometry.location.lng();
-                            console.log(store.state.placeName);
-                            console.log(store.state.lat);
-                            console.log(store.state.lng);
+                            // console.log(store.state.placeName);
+                            // console.log(store.state.lat);
+                            // console.log(store.state.lng);
                         });
 
                         markers.push(marker);
@@ -118,7 +118,7 @@ export default {
                     this.toast.success("Please select the region(Click).");
                 });
             } else {
-                console.error("Google Maps not loaded yet");
+                // console.error("Google Maps not loaded yet");
                 setTimeout(this.initAutocomplete, 3000);
             }
         },

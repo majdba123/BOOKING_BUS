@@ -89,7 +89,7 @@ export default {
     watch: {
         searchQuery(newQuery) {
             store.commit("updateSearchQuery", newQuery);
-            console.log(store.state.searchQuery);
+            // console.log(store.state.searchQuery);
         },
     },
     methods: {

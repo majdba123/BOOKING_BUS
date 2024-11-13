@@ -99,7 +99,7 @@ export default {
     watch: {
         searchQuery(newQuery) {
             store.commit("updateSearchQuery", newQuery);
-            console.log(store.state.searchQuery);
+            // console.log(store.state.searchQuery);
         },
     },
     computed: {
@@ -193,7 +193,7 @@ export default {
                 .classList.toggle("active", this.isDarkMode);
         },
         search() {
-            console.log("Searching for:", this.searchQuery);
+            // console.log("Searching for:", this.searchQuery);
         },
     },
     mounted() {

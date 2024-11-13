@@ -283,11 +283,10 @@ export default {
             })
                 .then((response) => {
                     this.Trip = response.data;
-                    console.log(this.Trip);
+                    // console.log(this.Trip);
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching trips");
-                    console.error(error);
                 });
         },
         fetchTripDetails(tripId) {
@@ -301,9 +300,8 @@ export default {
                 .then((response) => {
                     this.selectedTrip = response.data[0];
                 })
-                .catch((error) => {
+                .catch(() => {
                     window.alert("Error fetching trip details");
-                    console.error(error);
                 });
         },
         closeDetails() {
@@ -330,10 +328,7 @@ export default {
                     window.alert("Deleted Complete");
                     this.fetchTrip();
                 })
-                .catch((error) => {
-                    window.alert("Error deleting trip");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         saveChanges() {
             const access_token = window.localStorage.getItem("access_token");
@@ -370,10 +365,7 @@ export default {
                     this.resetEditedPath();
                     window.alert("Complete update");
                 })
-                .catch((error) => {
-                    window.alert("Error updating path");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         fetchPaths() {
             const access_token = window.localStorage.getItem("access_token");
@@ -386,10 +378,7 @@ export default {
                 .then((response) => {
                     this.paths = response.data;
                 })
-                .catch((error) => {
-                    window.alert("Error getting paths");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         fetchGovernment() {
             const access_token = window.localStorage.getItem("access_token");
@@ -401,10 +390,7 @@ export default {
                 .then((response) => {
                     this.Government = response.data;
                 })
-                .catch((error) => {
-                    window.alert("Error getting Government");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         fetchAvailableBuses() {
             const access_token = window.localStorage.getItem("access_token");
@@ -415,12 +401,8 @@ export default {
             })
                 .then((response) => {
                     this.availableBuses = response.data;
-                    console.log(response.data);
                 })
-                .catch((error) => {
-                    window.alert("Error getting buses");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         fetchBreak() {
             const access_token = window.localStorage.getItem("access_token");
@@ -432,10 +414,7 @@ export default {
                 .then((response) => {
                     this.breaks = response.data;
                 })
-                .catch((error) => {
-                    window.alert("Error getting breaks");
-                    console.error(error);
-                });
+                .catch(() => {});
         },
         addBus() {
             this.editedPath.buses.push({

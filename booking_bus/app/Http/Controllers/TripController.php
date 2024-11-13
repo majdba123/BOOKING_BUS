@@ -235,7 +235,8 @@ class TripController extends Controller
 
             foreach ($availableBuses as $busId) {
                 $bus = Bus::find($busId['bus_id']);
-                if ($bus
+                if (
+                    $bus
                     // && $bus->status == 'available'
 
                 ) {
@@ -354,7 +355,7 @@ class TripController extends Controller
 
         if ($trip->path->company->id !== Auth::user()->Company->id) {
 
-            return response()->json(['error' => 'You are not authorized to update this trip.'], 403);
+            return response()->json(['error' => 'You are not authorized to update this break.'], 403);
         }
 
         DB::beginTransaction();

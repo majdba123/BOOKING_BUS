@@ -57,9 +57,7 @@ export default {
                         this.createChart();
                     });
                 })
-                .catch((error) => {
-                    console.error("Error fetching chart data:", error);
-                });
+                .catch(() => {});
         },
         createChart() {
             const canvas = this.$refs.driverChart;
@@ -107,10 +105,10 @@ export default {
                         },
                     });
                 } else {
-                    console.error("Failed to get context of canvas.");
+                    // console.error("Failed to get context of canvas.");
                 }
             } else {
-                console.error("Canvas element not found.");
+                // console.error("Canvas element not found.");
             }
         },
     },
