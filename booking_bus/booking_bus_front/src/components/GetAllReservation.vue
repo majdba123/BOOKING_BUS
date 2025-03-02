@@ -237,7 +237,7 @@
                 <div class="modal-body">
                     <button
                         class="status-btn"
-                        @click="fetchReservationStatus('padding')"
+                        @click="fetchReservationStatus('pending')"
                     >
                         Pending
                     </button>
@@ -290,6 +290,30 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <div class="button-container">
+                                <button
+                                    type="button"
+                                    @click="
+                                        current_page1 == first_page1
+                                            ? (current_page1 = last_page1)
+                                            : (current_page1 -= 1);
+                                        fetchReservationStatus();
+                                    "
+                                >
+                                    &#10508;
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="
+                                        current_page1 == last_page1
+                                            ? (current_page1 = first_page1)
+                                            : (current_page1 += 1);
+                                        fetchReservationStatus();
+                                    "
+                                >
+                                    &#10511;
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -488,6 +512,9 @@ export default {
             current_page: 1,
             last_page: null,
             first_page: null,
+            current_page1: 1,
+            last_page1: null,
+            first_page1: null,
             showReservationStatusModal: false,
             loading: true,
             loading1: true,
@@ -525,11 +552,16 @@ export default {
             const access_token = window.localStorage.getItem("access_token");
             axios({
                 method: "get",
-                url: ` http://127.0.0.1:8000/api/company/all_reservation_by_status?status=${status}`,
+                url:
+                    ` http://127.0.0.1:8000/api/company/all_reservation_by_status?status=${status}&page=` +
+                    this.current_page1,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
+                    this.first_page1 = response.data.from;
+                    this.last_page1 = response.data.last_page;
                     this.ReservationStatusData = response.data;
+                    console.log(response.data);
                     this.loading3 = false;
                 })
                 .catch(() => {});

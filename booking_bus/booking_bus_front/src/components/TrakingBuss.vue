@@ -16,6 +16,25 @@
                             {{ busItem.path.to }} Price:
                             {{ busItem.price }}
                         </option>
+                        <option disabled :value="null">
+                            --- Page {{ current_page }} of {{ last_page }} ---
+                        </option>
+                        <option
+                            disabled
+                            :value="null"
+                            v-if="current_page > 1"
+                            @click="previousPage"
+                        >
+                            Previous Page
+                        </option>
+                        <option
+                            disabled
+                            :value="null"
+                            v-if="current_page < last_page"
+                            @click="nextPage"
+                        >
+                            Next Page
+                        </option>
                     </select>
                 </div>
 
@@ -57,6 +76,9 @@ export default {
     components: { TrackingMap },
     data() {
         return {
+            current_page: 1,
+            last_page: null,
+            first_page: null,
             fromlat: "",
             fromlang: "",
             tolat: "",
@@ -126,16 +148,32 @@ export default {
             this.loading = true;
             return axios({
                 method: "get",
-                url: "http://127.0.0.1:8000/api/company/all_trips",
+                url:
+                    "http://127.0.0.1:8000/api/company/all_trips?page=" +
+                    this.current_page,
                 headers: { Authorization: `Bearer ${access_token}` },
             })
                 .then((response) => {
+                    this.first_page = response.data.from;
+                    this.last_page = response.data.last_page;
                     this.trips = response.data;
                     // console.log("User ID:", this.trips);
                 })
                 .catch(() => {
                     this.toast.error("Error getting user info.");
                 });
+        },
+        previousPage() {
+            if (this.current_page > 1) {
+                this.current_page--;
+                this.AllUsers();
+            }
+        },
+        nextPage() {
+            if (this.current_page < this.last_page) {
+                this.current_page++;
+                this.AllUsers();
+            }
         },
         closeMapModal() {
             this.showMapModal = false;

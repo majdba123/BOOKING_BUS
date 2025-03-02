@@ -52,46 +52,29 @@ export default {
         fetchData() {
             const accessToken = window.localStorage.getItem("access_token");
 
-            const cachedData = localStorage.getItem("dashboardData");
-            const cachedTime = localStorage.getItem("dashboardDataTime");
             const now = new Date().getTime();
 
-            if (
-                cachedData &&
-                cachedTime &&
-                now - cachedTime < this.cacheDuration
-            ) {
-                const data = JSON.parse(cachedData);
-                this.allBuses = data.allBuses || 0;
-                this.count_favourite = data.count_favourite || 0;
-                this.all_drivers = data.all_drivers || 0;
-                this.updateProgress();
-            } else {
-                axios
-                    .get(
-                        "http://127.0.0.1:8000/api/company/dashboard_company",
-                        {
-                            headers: {
-                                Authorization: `Bearer ${accessToken}`,
-                            },
-                        }
-                    )
-                    .then((response) => {
-                        const data = response.data;
-                        this.allBuses = data.allBuses || 0;
-                        this.count_favourite = data.count_favourite || 0;
-                        this.all_drivers = data.all_drivers || 0;
+            axios
+                .get("http://127.0.0.1:8000/api/company/dashboard_company", {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                })
+                .then((response) => {
+                    console.log(response);
+                    const data = response.data;
+                    this.allBuses = data.allBuses || 0;
+                    this.count_favourite = data.count_favourite || 0;
+                    this.all_drivers = data.all_drivers || 0;
 
-                        localStorage.setItem(
-                            "dashboardData",
-                            JSON.stringify(data)
-                        );
-                        localStorage.setItem("dashboardDataTime", now);
+                    localStorage.setItem("dashboardData", JSON.stringify(data));
+                    localStorage.setItem("dashboardDataTime", now);
 
-                        this.updateProgress();
-                    })
-                    .catch(() => {});
-            }
+                    this.updateProgress();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         },
         updateProgress() {
             const maxValue = 100;
