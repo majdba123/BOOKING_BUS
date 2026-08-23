@@ -32,7 +32,7 @@ The repository combines a Laravel REST API, a Vue web application, and a Flutter
 
 ### Administration & Access Control
 
-The backend exposes authenticated API flows for different platform actors, including administrative, transportation-company, driver, and passenger-oriented workflows. Laravel Sanctum is used for API authentication, with authorization checks applied to protected operations.
+The backend exposes authenticated API flows for different platform actors, including administrative, transportation-company, driver, and passenger-oriented workflows. Laravel Sanctum is used for API authentication, with role-specific middleware and protected route groups in the API layer.
 
 ## Architecture
 
@@ -79,7 +79,7 @@ See [System Overview](docs/system-overview.md) and [Architecture](docs/architect
 └── docs/                    # Project-level technical documentation
 ```
 
-A follow-up repository-structure cleanup will normalize these directories into clearer `backend/`, `web/`, and `mobile/` boundaries without changing business logic.
+The current source-directory names are intentionally preserved during this cleanup phase. Moving them to `backend/`, `web/`, and `mobile/` before runtime validation could break path-dependent tooling, project references, or deployment assumptions. Structural renaming is therefore deferred until it can be validated safely.
 
 ## Engineering Highlights
 
@@ -92,19 +92,26 @@ A follow-up repository-structure cleanup will normalize these directories into c
 
 ## Configuration & Security
 
-Runtime credentials and environment-specific values should be supplied through environment configuration rather than committed directly to the repository. Public API keys must be appropriately restricted at the provider level even when technically exposed to client applications.
+Runtime credentials and environment-specific values should be supplied through environment configuration rather than committed directly to the repository. Public client API keys must be appropriately restricted at the provider level even when technically exposed to web or mobile applications.
 
-No production credentials should be committed to this repository.
+The Laravel backend and Vue web client now include safe example environment templates. The Flutter API endpoint supports a `--dart-define` override while preserving the original local-development fallback during this non-breaking cleanup phase.
+
+See [Configuration and Secret Management](docs/configuration.md) for the migration policy and remaining client-key work.
 
 ## Project Status
 
-This repository is currently being professionalized for portfolio and engineering-review use. Repository presentation and configuration hygiene are being cleaned first; full runtime validation, dependency verification, builds, automated tests, and CI hardening are intentionally handled as a separate engineering phase.
+Repository presentation and configuration hygiene are being professionalized first. Full runtime validation, dependency verification, builds, automated tests, database execution, and CI hardening are intentionally handled as a separate engineering phase.
+
+No build or test success is claimed here until those checks are executed.
 
 ## Documentation
 
 - [System Overview](docs/system-overview.md)
 - [Architecture](docs/architecture.md)
+- [API Overview](docs/api-overview.md)
+- [Configuration & Secret Management](docs/configuration.md)
+- [Legacy Data Import Reference](docs/data-import.md)
 
 ---
 
-Built as a complete transportation-management ecosystem combining ERP-style operational workflows with passenger booking services.
+Built as a transportation-management ecosystem combining ERP-style operational workflows with passenger booking services.
