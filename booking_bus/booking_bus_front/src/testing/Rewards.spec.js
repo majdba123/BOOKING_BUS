@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 import { shallowMount } from "@vue/test-utils";
 import axios from "axios";
 import Rewards from "@/components/Rewards.vue";
