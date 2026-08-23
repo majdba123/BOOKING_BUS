@@ -1,0 +1,40 @@
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Editors and local IDE state
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Local logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Component build/dependency directories
+**/node_modules/
+**/vendor/
+**/.dart_tool/
+**/build/
+
+# Flutter / Dart local files
+**/.packages
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/android/local.properties
+
+# Laravel runtime artifacts
+**/storage/*.key
+**/public/hot
+**/public/storage
+
+# Keep component-specific .gitignore files as the source of truth for
+# framework-specific generated files not covered above.
