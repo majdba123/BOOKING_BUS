@@ -1,5 +1,7 @@
 # Transportation ERP Platform
 
+[English](README.md) | [العربية](README_AR.md)
+
 > Multi-company transportation management and booking ecosystem for fleet operations, drivers, routes, trips, reservations, operational costs, and passenger services across web and mobile applications.
 
 ## Overview
