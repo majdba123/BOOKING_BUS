@@ -52,11 +52,6 @@
         "webpack": "^5.94.0",
         "webpack-cli": "^5.1.4"
     },
-    "jest": {
-        "moduleNameMapper": {
-            "^axios$": "<rootDir>/node_modules/axios/dist/node/axios.cjs"
-        }
-    },
     "_id": "booking_bus_front@0.1.0",
     "readme": "ERROR: No README data found!"
 }
