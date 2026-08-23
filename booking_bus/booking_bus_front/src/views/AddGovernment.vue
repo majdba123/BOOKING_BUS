@@ -46,8 +46,7 @@ export default {
                 },
                 headers: { Authorization: `Bearer ${token}` },
             })
-                .then((response) => {
-                    // console.log(response);
+                .then(() => {
                     window.alert("Complete ADD");
                 })
                 .catch(() => {});
