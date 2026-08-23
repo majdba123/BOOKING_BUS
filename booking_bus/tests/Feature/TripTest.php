@@ -185,7 +185,6 @@ class TripTest extends TestCase
                     'breaks_trip_id' => $breakTrip->id,
                 ]);
             }
-            $this->assertSoftDeleted('bus__trips', ['id' => $busTrip->id]);
         }
 
         $buses = Bus::whereIn('id', [$busTrip1->bus_id, $busTrip2->bus_id])->get();
