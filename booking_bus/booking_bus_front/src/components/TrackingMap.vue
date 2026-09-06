@@ -14,6 +14,7 @@
 
 <script>
 /* global google */
+import { loadGoogleMaps } from "@/utils/googleMapsLoader";
 
 export default {
     name: "TrackingMap",
@@ -74,8 +75,13 @@ export default {
             return this.latbus !== null && this.longbus !== null;
         },
     },
-    mounted() {
-        this.loadGoogleMapsScript();
+    async mounted() {
+        try {
+            await loadGoogleMaps();
+            this.initMap();
+        } catch (error) {
+            console.error("Unable to initialize Google Maps:", error);
+        }
     },
     watch: {
         fromlat() {
@@ -91,12 +97,12 @@ export default {
             this.updateMap();
         },
         latbus(newLat) {
-            if (newLat !== null && this.longbus !== null) {
+            if (newLat !== null && this.longbus !== null && this.map) {
                 this.updateBusPosition(newLat, this.longbus);
             }
         },
         longbus(newLng) {
-            if (newLng !== null && this.latbus !== null) {
+            if (newLng !== null && this.latbus !== null && this.map) {
                 this.updateBusPosition(this.latbus, newLng);
             }
         },
@@ -104,16 +110,14 @@ export default {
 
     methods: {
         updateMap() {
-            if (this.shouldDisplayMap) {
-                if (
-                    this.map &&
-                    this.directionsService &&
-                    this.directionsRenderer
-                ) {
-                    this.calculateAndDisplayRoute();
-                } else {
-                    this.initMap();
-                }
+            if (!this.shouldDisplayMap || typeof google === "undefined") {
+                return;
+            }
+
+            if (this.map && this.directionsService && this.directionsRenderer) {
+                this.calculateAndDisplayRoute();
+            } else {
+                this.initMap();
             }
         },
         updateBusPosition(lat, lng) {
@@ -130,9 +134,9 @@ export default {
                 this.lastPosition = newLatLng;
                 return;
             }
-            const duration = 2000; // 2 second animation for smooth movement
+            const duration = 2000;
             const easeOutQuad = (t) => t * (2 - t);
-            let startTime = performance.now();
+            const startTime = performance.now();
             const animate = (currentTime) => {
                 const elapsedTime = currentTime - startTime;
                 const progress = Math.min(elapsedTime / duration, 1);
@@ -168,9 +172,6 @@ export default {
                 isNaN(busLat) ||
                 isNaN(busLng)
             ) {
-                // console.error(
-                //     "Invalid latitude or longitude values for path drawing."
-                // );
                 return;
             }
 
@@ -181,7 +182,7 @@ export default {
             };
 
             if (this.busPath) {
-                this.busPath.setMap(null); // Remove the existing path if any
+                this.busPath.setMap(null);
             }
 
             this.directionsService.route(request, (result, status) => {
@@ -189,60 +190,34 @@ export default {
                     this.busPath = new google.maps.Polyline({
                         path: result.routes[0].overview_path,
                         geodesic: true,
-                        strokeColor: "#FF5733", // Improved color
+                        strokeColor: "#FF5733",
                         strokeOpacity: 0.8,
-                        strokeWeight: 4, // Thicker line for better visibility
+                        strokeWeight: 4,
                         map: this.map,
                     });
-                } else {
-                    // console.error("Directions request failed due to " + status);
                 }
             });
-        },
-
-        loadGoogleMapsScript() {
-            const script = document.createElement("script");
-            script.src =
-                "https://maps.googleapis.com/maps/api/js?key=AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44&libraries=places,geometry";
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-
-            script.onload = () => {
-                this.initMap();
-            };
-
-            script.onerror = () => {
-                // console.error("Failed to load Google Maps script");
-                setTimeout(this.loadGoogleMapsScript, 3000);
-            };
         },
         initMap() {
             const fromLat = parseFloat(this.fromlat);
             const fromLng = parseFloat(this.fromlong);
 
-            if (isNaN(fromLat) || isNaN(fromLng)) {
-                // console.error("Invalid latitude or longitude values");
+            if (isNaN(fromLat) || isNaN(fromLng) || typeof google === "undefined") {
                 return;
             }
 
-            if (typeof google !== "undefined") {
-                this.map = new google.maps.Map(document.getElementById("map"), {
-                    center: { lat: fromLat, lng: fromLng },
-                    zoom: 7,
-                    mapTypeId: "roadmap",
-                });
-                this.directionsService = new google.maps.DirectionsService();
-                this.directionsRenderer = new google.maps.DirectionsRenderer({
-                    map: this.map,
-                    suppressMarkers: true,
-                });
+            this.map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: fromLat, lng: fromLng },
+                zoom: 7,
+                mapTypeId: "roadmap",
+            });
+            this.directionsService = new google.maps.DirectionsService();
+            this.directionsRenderer = new google.maps.DirectionsRenderer({
+                map: this.map,
+                suppressMarkers: true,
+            });
 
-                this.calculateAndDisplayRoute();
-            } else {
-                // console.error("Google Maps not loaded yet");
-                setTimeout(this.initMap, 3000);
-            }
+            this.calculateAndDisplayRoute();
         },
         calculateAndDisplayRoute() {
             const fromLat = parseFloat(this.fromlat);
@@ -256,9 +231,6 @@ export default {
                 isNaN(toLat) ||
                 isNaN(toLng)
             ) {
-                // console.error(
-                //     "Invalid latitude or longitude values for route calculation."
-                // );
                 return;
             }
 
@@ -275,15 +247,12 @@ export default {
                     if (this.hasBus) {
                         this.addBusMarker(this.latbus, this.longbus);
                     }
-                } else {
-                    // console.error("Directions request failed due to " + status);
                 }
             });
         },
 
         addBusMarker(lat, lng) {
-            if (!lat || !lng) {
-                // console.error("Invalid bus coordinates:", lat, lng);
+            if (lat === null || lng === null) {
                 return;
             }
 
@@ -297,7 +266,6 @@ export default {
             });
 
             this.lastPosition = new google.maps.LatLng(lat, lng);
-
             this.drawBusPath();
         },
     },
