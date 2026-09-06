@@ -69,11 +69,24 @@ See [System Overview](docs/system-overview.md) and [Architecture](docs/architect
 | Real-time | Pusher |
 | Database | Relational database through Laravel ORM/migrations |
 | Testing | PHPUnit / Laravel Feature & Unit tests, Vue unit-test setup |
+| CI | GitHub Actions validation for backend and web client |
+
+## CI Validation
+
+The repository contains [`.github/workflows/validate-backend-web.yml`](.github/workflows/validate-backend-web.yml) for pull-request and manual validation.
+
+The current workflow validates two application layers independently:
+
+- **Laravel backend:** starts a MySQL 8 test service, prepares a testing environment, verifies application boot/routes, and runs the Laravel test suite.
+- **Vue web client:** uses deterministic `npm ci`, then runs linting, unit tests, and a production bundle build.
+
+This gives repository-level evidence for the **testing, GitHub Actions, CI/CD, environment configuration, and production-oriented delivery practices** described in my CV without claiming deployment or runtime results that have not been directly observed.
 
 ## Current Repository Layout
 
 ```text
 .
+├── .github/workflows/       # CI validation
 ├── booking_bus/             # Laravel backend and current Vue web application
 │   └── booking_bus_front/   # Vue web application
 ├── Mobile_App/
@@ -91,6 +104,7 @@ The current source-directory names are intentionally preserved because changing 
 - Passenger and driver mobile flows
 - Real-time integration through Pusher
 - Existing Laravel Feature and Unit tests for authentication, reservations, trips, and selected business logic
+- GitHub Actions validation for backend and Vue web layers
 - Centralized Google Maps configuration for Vue and Flutter clients instead of hardcoded provider keys
 - Environment-driven CORS allowlists instead of wildcard browser origins
 - Dedicated Android release-signing configuration rather than debug signing for production builds
@@ -109,13 +123,13 @@ Runtime credentials and environment-specific values are kept outside committed s
 
 Older public commits contained client-side provider values. Current-source cleanup does not revoke historical exposure; historically exposed keys still require provider-side rotation/restriction and validation.
 
-See [Configuration and Secret Management](docs/configuration.md) for the exact setup and rotation policy.
+See [Configuration and Secret Management](docs/configuration.md) for the exact setup and rotation policy and [`SECURITY.md`](SECURITY.md) for vulnerability reporting.
 
 ## Project Status
 
-The repository has been cleaned up for portfolio presentation and configuration hygiene without claiming runtime guarantees that have not been executed in the current environment.
+The repository has been cleaned up for portfolio presentation and configuration hygiene without claiming runtime guarantees that have not been observed.
 
-Repository documentation, secret handling, CORS configuration, Maps-key handling, and Android release-signing configuration have been hardened. Full dependency installation, builds, automated test execution, database migration validation, and end-to-end runtime verification should still be treated as separate executable validation steps.
+Repository documentation, secret handling, CORS configuration, Maps-key handling, Android release-signing configuration, and CI validation definitions have been hardened. Actual workflow-run status and full end-to-end runtime behavior should still be evaluated from executable validation rather than inferred from documentation alone.
 
 ## Documentation
 
@@ -124,6 +138,7 @@ Repository documentation, secret handling, CORS configuration, Maps-key handling
 - [API Overview](docs/api-overview.md)
 - [Configuration & Secret Management](docs/configuration.md)
 - [Legacy Data Import Reference](docs/data-import.md)
+- [Security Policy](SECURITY.md)
 
 ---
 
