@@ -8,6 +8,8 @@
 
 <script>
 /* global google */
+import { loadGoogleMaps } from "@/utils/googleMapsLoader";
+
 export default {
     name: "MapPrivate",
     props: {
@@ -39,26 +41,15 @@ export default {
             directionsRenderer: null,
         };
     },
-    mounted() {
-        this.loadGoogleMapsScript();
+    async mounted() {
+        try {
+            await loadGoogleMaps();
+            this.initMap();
+        } catch (error) {
+            console.error("Unable to initialize Google Maps:", error);
+        }
     },
     methods: {
-        loadGoogleMapsScript() {
-            const script = document.createElement("script");
-            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44&libraries=places`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-
-            script.onload = () => {
-                this.initMap();
-            };
-
-            script.onerror = () => {
-                // console.error("Failed to load Google Maps script");
-                setTimeout(this.loadGoogleMapsScript, 3000);
-            };
-        },
         initMap() {
             const fromLat = parseFloat(this.fromlat);
             const fromLng = parseFloat(this.fromlng);
@@ -71,7 +62,6 @@ export default {
                 isNaN(toLat) ||
                 isNaN(toLng)
             ) {
-                // console.error("Invalid latitude or longitude values");
                 return;
             }
 
@@ -101,13 +91,8 @@ export default {
                 this.directionsService.route(request, (result, status) => {
                     if (status === google.maps.DirectionsStatus.OK) {
                         this.directionsRenderer.setDirections(result);
-                    } else {
-                        // console.error("Failed to display directions:", status);
                     }
                 });
-            } else {
-                // console.error("Google Maps not loaded yet");
-                setTimeout(this.initMap, 3000);
             }
         },
     },
