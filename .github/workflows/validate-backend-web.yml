@@ -3,11 +3,19 @@ name: Validate Backend and Web
 on:
   push:
     branches:
+      - main
       - chore/repository-professionalization
   pull_request:
     branches:
       - main
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: transportation-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   backend:
