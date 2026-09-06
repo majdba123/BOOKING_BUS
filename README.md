@@ -81,7 +81,7 @@ See [System Overview](docs/system-overview.md) and [Architecture](docs/architect
 └── docs/                    # Project-level technical documentation
 ```
 
-The current source-directory names are intentionally preserved during this cleanup phase. Moving them to `backend/`, `web/`, and `mobile/` before runtime validation could break path-dependent tooling, project references, or deployment assumptions. Structural renaming is therefore deferred until it can be validated safely.
+The current source-directory names are intentionally preserved because changing historical project paths without full runtime validation can break tooling, references, and deployment assumptions.
 
 ## Engineering Highlights
 
@@ -91,20 +91,31 @@ The current source-directory names are intentionally preserved during this clean
 - Passenger and driver mobile flows
 - Real-time integration through Pusher
 - Existing Laravel Feature and Unit tests for authentication, reservations, trips, and selected business logic
+- Centralized Google Maps configuration for Vue and Flutter clients instead of hardcoded provider keys
+- Environment-driven CORS allowlists instead of wildcard browser origins
+- Dedicated Android release-signing configuration rather than debug signing for production builds
 
 ## Configuration & Security
 
-Runtime credentials and environment-specific values should be supplied through environment configuration rather than committed directly to the repository. Public client API keys must be appropriately restricted at the provider level even when technically exposed to web or mobile applications.
+Runtime credentials and environment-specific values are kept outside committed source code through framework-appropriate configuration.
 
-The Laravel backend and Vue web client now include safe example environment templates. The Flutter API endpoint supports a `--dart-define` override while preserving the original local-development fallback during this non-breaking cleanup phase.
+- Laravel uses private `.env` configuration with a safe committed template.
+- Browser CORS origins are controlled through `CORS_ALLOWED_ORIGINS`.
+- Vue reads its Maps key from `VUE_APP_GOOGLE_MAPS_API_KEY` through a centralized loader.
+- Flutter reads service keys through `--dart-define` via `lib/config/app_config.dart`.
+- Android injects its Maps SDK key through Gradle/local configuration rather than a manifest literal.
+- Android release signing uses private `key.properties`/keystore configuration, both excluded from source control.
+- Environment variants and local secret files are excluded by `.gitignore` patterns.
 
-See [Configuration and Secret Management](docs/configuration.md) for the migration policy and remaining client-key work.
+Older public commits contained client-side provider values. Current-source cleanup does not revoke historical exposure; historically exposed keys still require provider-side rotation/restriction and validation.
+
+See [Configuration and Secret Management](docs/configuration.md) for the exact setup and rotation policy.
 
 ## Project Status
 
-Repository presentation and configuration hygiene are being professionalized first. Full runtime validation, dependency verification, builds, automated tests, database execution, and CI hardening are intentionally handled as a separate engineering phase.
+The repository has been cleaned up for portfolio presentation and configuration hygiene without claiming runtime guarantees that have not been executed in the current environment.
 
-No build or test success is claimed here until those checks are executed.
+Repository documentation, secret handling, CORS configuration, Maps-key handling, and Android release-signing configuration have been hardened. Full dependency installation, builds, automated test execution, database migration validation, and end-to-end runtime verification should still be treated as separate executable validation steps.
 
 ## Documentation
 
