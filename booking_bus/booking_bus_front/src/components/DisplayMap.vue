@@ -8,6 +8,8 @@
 
 <script>
 /* global google */
+import { loadGoogleMaps } from "@/utils/googleMapsLoader";
+
 export default {
     name: "DisplayMap",
     props: {
@@ -51,41 +53,20 @@ export default {
             routePath: null,
         };
     },
-    mounted() {
-        this.loadGoogleMapsScript();
+    async mounted() {
+        try {
+            await loadGoogleMaps();
+            this.initMap();
+        } catch (error) {
+            console.error("Unable to initialize Google Maps:", error);
+        }
     },
     methods: {
-        loadGoogleMapsScript() {
-            // Remove any existing Google Maps script to avoid loading multiple times
-            const existingScript = document.querySelector(
-                'script[src*="maps.googleapis.com"]'
-            );
-            if (existingScript) {
-                existingScript.remove();
-            }
-
-            const script = document.createElement("script");
-            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44&libraries=places,geometry`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-
-            script.onload = () => {
-                // console.log("Google Maps API loaded successfully.");
-                this.initMap();
-            };
-
-            script.onerror = () => {
-                // console.error("Failed to load Google Maps API script.");
-            };
-        },
         initMap() {
             if (typeof google === "undefined") {
-                // console.error("Google Maps API is not available.");
                 return;
             }
 
-            // Parse and validate all latitude and longitude values
             const fromLat = parseFloat(this.fromlat);
             const fromLng = parseFloat(this.fromlong);
             const toLat = parseFloat(this.tolat);
@@ -93,32 +74,15 @@ export default {
             const lat = this.lat ? parseFloat(this.lat) : null;
             const lng = this.lng ? parseFloat(this.lng) : null;
 
-            // Log the values to debug
-            // console.log("Parsed values:", {
-            //     fromLat,
-            //     fromLng,
-            //     toLat,
-            //     toLng,
-            //     lat,
-            //     lng,
-            // });
-
-            // Validate all latitude and longitude values
             if (
                 isNaN(fromLat) ||
                 isNaN(fromLng) ||
                 isNaN(toLat) ||
                 isNaN(toLng) ||
-                (lat !== null && isNaN(lng))
+                (lat !== null && (lng === null || isNaN(lng)))
             ) {
-                // console.error("Invalid latitude or longitude values");
                 return;
             }
-
-            // console.log("Initializing map with center:", {
-            //     lat: (fromLat + toLat) / 2,
-            //     lng: (fromLng + toLng) / 2,
-            // });
 
             this.map = new google.maps.Map(document.getElementById("map"), {
                 center: {
@@ -139,13 +103,9 @@ export default {
                 suppressMarkers: true,
             });
 
-            if (fromLat && fromLng && toLat && toLng) {
-                this.calculateAndDisplayRoute(fromLat, fromLng, toLat, toLng);
-            }
+            this.calculateAndDisplayRoute(fromLat, fromLng, toLat, toLng);
 
             if (lat !== null && lng !== null) {
-                // console.log("Adding marker at:", { lat, lng });
-
                 this.marker = new google.maps.Marker({
                     position: { lat, lng },
                     map: this.map,
@@ -164,18 +124,8 @@ export default {
         },
         calculateAndDisplayRoute(fromLat, fromLng, toLat, toLng) {
             if (!this.directionsService || !this.directionsRenderer) {
-                // console.error(
-                //     "DirectionsService or DirectionsRenderer is not available."
-                // );
                 return;
             }
-
-            // console.log("Calculating route from:", {
-            //     fromLat,
-            //     fromLng,
-            //     toLat,
-            //     toLng,
-            // });
 
             const request = {
                 origin: { lat: fromLat, lng: fromLng },
@@ -185,10 +135,7 @@ export default {
 
             this.directionsService.route(request, (result, status) => {
                 if (status === google.maps.DirectionsStatus.OK) {
-                    // console.log("Route calculated successfully.");
                     this.directionsRenderer.setDirections(result);
-                } else {
-                    // console.error("Directions request failed due to " + status);
                 }
             });
         },
