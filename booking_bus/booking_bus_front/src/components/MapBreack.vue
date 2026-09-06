@@ -26,6 +26,7 @@
 /* global google */
 
 import { useToast } from "vue-toastification";
+import { loadGoogleMaps } from "@/utils/googleMapsLoader";
 
 export default {
     name: "MapBreak",
@@ -110,20 +111,24 @@ export default {
             );
         },
     },
-    mounted() {
-        if (this.shouldDisplayMap) {
-            this.loadGoogleMapsScript();
-        } else {
-            // console.error(
-            //     "One or more coordinates are missing or invalid. Map will not be displayed."
-            // );
+    async mounted() {
+        if (!this.shouldDisplayMap) {
+            return;
+        }
+
+        try {
+            await loadGoogleMaps();
+            this.initMap();
+        } catch (error) {
+            console.error("Unable to initialize Google Maps:", error);
+            this.toast.error("Unable to load Google Maps.");
         }
     },
     methods: {
         updateMap() {
             if (this.map && this.directionsService && this.directionsRenderer) {
                 this.calculateAndDisplayRoute();
-            } else {
+            } else if (typeof google !== "undefined") {
                 this.initMap();
             }
         },
@@ -148,11 +153,9 @@ export default {
                 });
 
                 this.map.setCenter(this.selectedLatLng);
-
-                // إعادة تعيين المتغيرات
                 this.addingBreak = false;
-                this.breakName = ""; // إعادة تعيين الحقل النصي
-                this.showModal = false; // إخفاء المودال
+                this.breakName = "";
+                this.showModal = false;
 
                 setTimeout(() => {
                     newMarker.setAnimation(null);
@@ -161,29 +164,10 @@ export default {
                 this.toast.error("No LatLng selected for the break.");
             }
         },
-        // Cancel the naming of the break
         cancelBreakName() {
             this.showModal = false;
-            this.breakName = ""; // Clear the input
-            this.addingBreak = false; // Reset adding break mode
-        },
-        loadGoogleMapsScript() {
-            const script = document.createElement("script");
-            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44&libraries=places,geometry`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-
-            script.onload = () => {
-                this.initMap();
-            };
-
-            script.onerror = () => {
-                this.toast.error(
-                    "Failed to load Google Maps script, retrying..."
-                );
-                setTimeout(this.loadGoogleMapsScript, 3000);
-            };
+            this.breakName = "";
+            this.addingBreak = false;
         },
         initMap() {
             const fromLat = parseFloat(this.fromlat);
@@ -194,34 +178,33 @@ export default {
                 return;
             }
 
-            if (typeof google !== "undefined") {
-                this.map = new google.maps.Map(document.getElementById("map"), {
-                    center: { lat: fromLat, lng: fromLng },
-                    zoom: 7,
-                    mapTypeId: "roadmap",
-                });
+            if (typeof google === "undefined") {
+                this.toast.error("Google Maps is not available.");
+                return;
+            }
 
-                this.directionsService = new google.maps.DirectionsService();
-                this.directionsRenderer = new google.maps.DirectionsRenderer({
-                    map: this.map,
-                    suppressMarkers: true,
-                });
+            this.map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: fromLat, lng: fromLng },
+                zoom: 7,
+                mapTypeId: "roadmap",
+            });
 
-                this.calculateAndDisplayRoute();
+            this.directionsService = new google.maps.DirectionsService();
+            this.directionsRenderer = new google.maps.DirectionsRenderer({
+                map: this.map,
+                suppressMarkers: true,
+            });
 
-                this.map.addListener("click", (event) => {
-                    if (this.addingBreak) {
-                        this.handleMapClick(event.latLng);
-                    }
-                });
+            this.calculateAndDisplayRoute();
 
-                // Automatically add the first breakpoint after the route is displayed
-                if (!this.firstBreakAdded) {
-                    this.prepareToAddBreak();
+            this.map.addListener("click", (event) => {
+                if (this.addingBreak) {
+                    this.handleMapClick(event.latLng);
                 }
-            } else {
-                this.toast.error("Google Maps not loaded yet");
-                setTimeout(this.initMap, 3000);
+            });
+
+            if (!this.firstBreakAdded) {
+                this.prepareToAddBreak();
             }
         },
         calculateAndDisplayRoute() {
@@ -292,8 +275,6 @@ export default {
 
             const closestPoint = this.findClosestPointOnPolyline(latLng);
             this.selectedLatLng = closestPoint;
-
-            // Open the modal for name input
             this.showModal = true;
 
             const newMarker = new google.maps.Marker({
@@ -304,7 +285,6 @@ export default {
             });
 
             this.map.setCenter(closestPoint);
-
             this.addingBreak = false;
 
             setTimeout(() => {
