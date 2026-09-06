@@ -11,6 +11,7 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:mobile_app/Provider/Auth_provider.dart';
 import 'package:mobile_app/Provider/user/private_Trip_provider.dart';
 import 'package:mobile_app/colors.dart';
+import 'package:mobile_app/config/app_config.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -105,7 +106,7 @@ class _MapViewState extends State<MapUI> {
       });
       await _getAddress();
     }).catchError((e) {
-      print(e);
+      // Location errors are surfaced by the UI flow without logging user data.
     });
   }
 
@@ -122,9 +123,8 @@ class _MapViewState extends State<MapUI> {
         startAddressController.text = _currentAddress;
         _startAddress = _currentAddress;
       });
-      print(_currentAddress);
     } catch (e) {
-      print(e);
+      // Avoid writing user location/address data to application logs.
     }
   }
 
@@ -132,15 +132,13 @@ class _MapViewState extends State<MapUI> {
     setState(() {
       _isLoading = true;
     });
-    final apiKey =
-        'AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44'; // Replace with your Google Maps API key
+    final apiKey = AppConfig.requireGoogleMapsApiKey();
 
     try {
       if (_startAddress.isEmpty || _destinationAddress.isEmpty) {
         throw Exception('Start or destination address cannot be empty');
       }
 
-      // Retrieve coordinates from Google Maps Geocoding API
       final startResponse = await http.get(Uri.parse(
           'https://maps.googleapis.com/maps/api/geocode/json?address=${Uri.encodeComponent(_startAddress)}&key=$apiKey'));
       final destinationResponse = await http.get(Uri.parse(
@@ -162,7 +160,6 @@ class _MapViewState extends State<MapUI> {
       final double destinationLatitude = destinationLocation['lat'];
       final double destinationLongitude = destinationLocation['lng'];
 
-      // Define start and destination markers
       final Marker startMarker = Marker(
         markerId: MarkerId('start'),
         position: LatLng(startLatitude, startLongitude),
@@ -183,12 +180,10 @@ class _MapViewState extends State<MapUI> {
         icon: BitmapDescriptor.defaultMarker,
       );
 
-      // Adding markers to the list
       markers.clear();
       markers.add(startMarker);
       markers.add(destinationMarker);
 
-      // Adjust camera bounds to include both markers
       final LatLngBounds bounds = LatLngBounds(
         northeast: LatLng(
           max(startLatitude, destinationLatitude),
@@ -204,8 +199,6 @@ class _MapViewState extends State<MapUI> {
         CameraUpdate.newLatLngBounds(bounds, 100.0),
       );
 
-      // Create and add the polyline to the map
-      // Retrieve distance using Google Maps Distance Matrix API
       final distanceResponse = await http.get(Uri.parse(
           'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${Uri.encodeComponent(_startAddress)}&destinations=${Uri.encodeComponent(_destinationAddress)}&key=$apiKey'));
 
@@ -220,8 +213,7 @@ class _MapViewState extends State<MapUI> {
         final elements = rows[0]['elements'] as List;
 
         if (elements.isNotEmpty) {
-          final distance =
-              elements[0]['distance']['value']; // Distance in meters
+          final distance = elements[0]['distance']['value'];
           final duration = elements[0]['duration']['text'];
           final distanceInKm = distance / 1000;
           setState(() {
@@ -234,20 +226,13 @@ class _MapViewState extends State<MapUI> {
       await _createPolylines(startLatitude, startLongitude, destinationLatitude,
           destinationLongitude);
 
-      // Calculate distance between the two locations
-
-      setState(() {
-// Convert to kilometers
-        print('DISTANCE: $_placeDistance km');
-      });
       setState(() {
         _isLoading = false;
       });
       return true;
     } catch (e) {
-      print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(content: Text('Unable to calculate the route. Please try again.')),
       );
       setState(() {
         _isLoading = false;
@@ -259,9 +244,6 @@ class _MapViewState extends State<MapUI> {
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
         backgroundColor: Colors.transparent,
-        // shape: const RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-        // ),
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
@@ -279,8 +261,7 @@ class _MapViewState extends State<MapUI> {
                         : 0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors
-                        .white70, // The color for the bottom sheet content
+                    color: Colors.white70,
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(20.0)),
                   ),
@@ -421,17 +402,16 @@ class _MapViewState extends State<MapUI> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    // alignment: Alignment.center,
                                     children: [
-                                      if (!_isLoading) // Show the text only if _isLoading is false
+                                      if (!_isLoading)
                                         Text(
-                                          'Serach'.toUpperCase(),
+                                          'Search'.toUpperCase(),
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 20.0,
                                           ),
                                         ),
-                                      if (_isLoading) // Show the loading spinner if _isLoading is true
+                                      if (_isLoading)
                                         CircularProgressIndicator(
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
@@ -574,8 +554,6 @@ class _MapViewState extends State<MapUI> {
                                     ),
                                   ),
                                   onPressed: () async {
-                                    print('sned order message');
-
                                     final from = startAddressController.text;
                                     final to =
                                         destinationAddressController.text;
@@ -613,48 +591,40 @@ class _MapViewState extends State<MapUI> {
                                           message!.isNotEmpty) {
                                         WidgetsBinding.instance
                                             .addPostFrameCallback((_) {
-                                          print('ddd');
                                           AwesomeDialog(
                                             context: context,
                                             animType: AnimType.leftSlide,
                                             headerAnimationLoop: false,
                                             dialogType: DialogType.success,
                                             showCloseIcon: true,
-                                            title: 'Succes',
+                                            title: 'Success',
                                             desc:
-                                                'Private Trip add it Succesufly ',
+                                                'Private trip created successfully.',
                                             btnOkOnPress: () {
                                               Navigator.of(context)
                                                   .pushNamedAndRemoveUntil(
                                                       '/ProfilePage',
                                                       (Route<dynamic> route) =>
                                                           false);
-                                              debugPrint('OnClcik');
                                             },
                                             btnOkIcon: Icons.check_circle,
-                                            onDismissCallback: (type) {
-                                              debugPrint(
-                                                  'Dialog Dissmiss from callback $type');
-                                            },
+                                            onDismissCallback: (type) {},
                                           ).show();
                                           message = null;
                                         });
                                       }
                                     } catch (error) {
-                                      print(error);
                                       WidgetsBinding.instance
                                           .addPostFrameCallback((_) {
-                                        print('ddd');
-                                        Container();
                                         AwesomeDialog(
                                           context: context,
                                           animType: AnimType.rightSlide,
                                           headerAnimationLoop: false,
                                           dialogType: DialogType.error,
                                           showCloseIcon: true,
-                                          title: 'Error Dialog',
+                                          title: 'Error',
                                           desc:
-                                              'Error During Create Priavte Trip Try later ....',
+                                              'Unable to create the private trip. Please try again later.',
                                           btnOkOnPress: () {
                                             Navigator.of(context)
                                                 .pushNamedAndRemoveUntil(
@@ -664,10 +634,7 @@ class _MapViewState extends State<MapUI> {
                                           },
                                           btnOkIcon: Icons.check_circle,
                                           btnOkColor: Colors.red,
-                                          onDismissCallback: (type) {
-                                            debugPrint(
-                                                'Dialog Dissmiss from callback $type');
-                                          },
+                                          onDismissCallback: (type) {},
                                         ).show();
                                       });
                                     }
@@ -700,7 +667,7 @@ class _MapViewState extends State<MapUI> {
     double destLat,
     double destLng,
   ) {
-    const double earthRadius = 6371000; // Earth's radius in meters
+    const double earthRadius = 6371000;
 
     final double dLat = _toRadians(destLat - startLat);
     final double dLng = _toRadians(destLng - startLng);
@@ -730,7 +697,7 @@ class _MapViewState extends State<MapUI> {
   ) async {
     polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey: "AIzaSyDd9RLeRSNjmt1AIx22VeWqwbxYh3myC44",
+      googleApiKey: AppConfig.requireGoogleMapsApiKey(),
       request: PolylineRequest(
         origin: PointLatLng(startLatitude, startLongitude),
         destination: PointLatLng(destinationLatitude, destinationLongitude),
@@ -740,8 +707,6 @@ class _MapViewState extends State<MapUI> {
     fromlocation = PointLatLng(startLatitude, startLongitude);
     tolocation = PointLatLng(destinationLatitude, destinationLongitude);
 
-    print(fromlocation);
-    print(tolocation);
     polylineCoordinates.clear();
 
     if (result.points.isNotEmpty) {
@@ -765,8 +730,6 @@ class _MapViewState extends State<MapUI> {
   @override
   void initState() {
     super.initState();
-
-    // _getCurrentLocation();
   }
 
   @override
@@ -781,7 +744,6 @@ class _MapViewState extends State<MapUI> {
         key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
-            // Map View
             GoogleMap(
               markers: Set<Marker>.from(markers),
               initialCameraPosition: _initialLocation,
@@ -796,7 +758,6 @@ class _MapViewState extends State<MapUI> {
               },
             ),
 
-            // Show zoom buttons
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.only(left: 10.0, bottom: 30.0),
@@ -806,9 +767,9 @@ class _MapViewState extends State<MapUI> {
                   children: <Widget>[
                     ClipOval(
                       child: Material(
-                        color: Colors.blue.shade100, // button color
+                        color: Colors.blue.shade100,
                         child: InkWell(
-                          splashColor: Colors.blue, // inkwell color
+                          splashColor: Colors.blue,
                           child: SizedBox(
                             width: 50,
                             height: 50,
@@ -825,9 +786,9 @@ class _MapViewState extends State<MapUI> {
                     SizedBox(height: 20),
                     ClipOval(
                       child: Material(
-                        color: Colors.blue.shade100, // button color
+                        color: Colors.blue.shade100,
                         child: InkWell(
-                          splashColor: Colors.blue, // inkwell color
+                          splashColor: Colors.blue,
                           child: SizedBox(
                             width: 50,
                             height: 50,
@@ -853,9 +814,9 @@ class _MapViewState extends State<MapUI> {
                   padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
                   child: ClipOval(
                     child: Material(
-                      color: Colors.orange.shade100, // button color
+                      color: Colors.orange.shade100,
                       child: InkWell(
-                        splashColor: Colors.orange, // inkwell color
+                        splashColor: Colors.orange,
                         child: SizedBox(
                           width: 56,
                           height: 56,
